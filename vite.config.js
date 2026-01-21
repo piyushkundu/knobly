@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 import { globSync } from 'glob';
+import { defineConfig } from 'vite';
 
 // Dynamic input generation
 const inputs = globSync('**/*.html', {
