@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="fileHandlingApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python File Handling | Complete Guide</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --text-color: #333;
+            --light-text: #ecf0f1;
+            --bg-color: #f9f9f9;
+            --dark-bg: #2c3e50;
+            --code-bg: #1e1e1e;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --border-radius: 8px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: #0796ff;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--light-text);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .logo i {
+            font-size: 1.8rem;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            width: 300px;
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--light-text);
+            outline: none;
+            width: 100%;
+            margin-left: 8px;
+        }
+        
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .main-container {
+            display: flex;
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: white;
+            padding: 2rem 1rem;
+            position: fixed;
+            height: calc(100vh - var(--header-height));
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            left: 10px;
+            top: calc(var(--header-height) + 10px);
+            z-index: 101;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color);
+            display: block;
+            padding: 8px 10px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--primary-color);
+            padding-left: 15px;
+        }
+        
+        .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sub-menu {
+            list-style: none;
+            margin-left: 20px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .sub-menu.show {
+            display: block;
+        }
+        
+        .sub-menu .nav-link {
+            font-size: 0.9rem;
+            padding: 6px 10px;
+        }
+        
+        .toggle-btn {
+            float: right;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-btn.rotated {
+            transform: rotate(180deg);
+        }
+        
+        .content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: calc(100% - var(--sidebar-width));
+        }
+        
+        .section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: var(--dark-bg);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        h3 {
+            color: var(--secondary-color);
+            font-size: 1.4rem;
+            margin: 1.2rem 0 0.8rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .code-block {
+            background-color: var(--code-bg);
+            border-radius: var(--border-radius);
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 0.5rem 1rem;
+            color: var(--light-text);
+            font-family: monospace;
+        }
+        
+        .code-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--light-text);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .copy-btn:hover {
+            color: var(--primary-color);
+        }
+        
+        pre {
+            margin: 0;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        
+        code {
+            font-family: 'Fira Code', Consolas, monospace;
+            font-size: 0.9rem;
+        }
+        
+        .inline-code {
+            background-color: rgba(52, 152, 219, 0.1);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Fira Code', Consolas, monospace;
+            color: var(--primary-color);
+        }
+        
+        .note {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+        
+        .warning {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+        
+        .example {
+            background-color: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid #2ecc71;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+        
+        .tabs {
+            margin: 2rem 0;
+        }
+        
+        .tab-header {
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+        
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            margin-right: 2px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .tab-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            padding: 1.5rem;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+        
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #f7f7f7;
+        }
+        
+        tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .key-points {
+            background-color: rgba(52, 152, 219, 0.05);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin: 2rem 0;
+        }
+        
+        .key-points h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        
+        .key-points ul {
+            padding-left: 1.5rem;
+            margin-bottom: 0;
+        }
+        
+        footer {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            margin-left: var(--sidebar-width);
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(20px);
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 992px) {
+            :root {
+                --sidebar-width: 250px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(calc(-1 * var(--sidebar-width)));
+                z-index: 99;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+                max-width: 100%;
+            }
+            
+            .menu-toggle {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            footer {
+                margin-left: 0;
+            }
+        }
+        
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-in-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body ng-controller="FileHandlingController">
+    <header>
+        <div class="logo">
+            <i class="fab fa-python"></i>
+            <span>Python File Handling</span>
+        </div>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search topics..." ng-model="searchQuery">
+        </div>
+    </header>
+    
+    <button class="menu-toggle" ng-click="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="main-container">
+        <aside class="sidebar" ng-class="{'active': sidebarActive}">
+            <h3>Contents</h3>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#introduction" class="nav-link" ng-class="{'active': currentSection === 'introduction'}" ng-click="scrollTo('introduction')">10.1 Introduction</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#text-file-processing" class="nav-link" ng-class="{'active': currentSection === 'text-file-processing'}" ng-click="toggleSubmenu($event, 'text')">
+                            10.2 Text File Processing
+                            <button class="toggle-btn" ng-class="{'rotated': submenuActive === 'text'}">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </a>
+                        <ul class="sub-menu" ng-class="{'show': submenuActive === 'text'}">
+                            <li><a href="#open" class="nav-link" ng-click="scrollTo('open')">10.2.1 open()</a></li>
+                            <li><a href="#close" class="nav-link" ng-click="scrollTo('close')">10.2.2 close()</a></li>
+                            <li><a href="#write" class="nav-link" ng-click="scrollTo('write')">10.2.3 write()</a></li>
+                            <li><a href="#readline" class="nav-link" ng-click="scrollTo('readline')">10.2.4 readline()</a></li>
+                            <li><a href="#more-commands" class="nav-link" ng-click="scrollTo('more-commands')">10.2.5 More commands</a></li>
+                            <li><a href="#random-reading" class="nav-link" ng-click="scrollTo('random-reading')">10.2.6 Random Reading</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#binary-file-processing" class="nav-link" ng-class="{'active': currentSection === 'binary-file-processing'}" ng-click="toggleSubmenu($event, 'binary')">
+                            10.3 Binary File Processing
+                            <button class="toggle-btn" ng-class="{'rotated': submenuActive === 'binary'}">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </a>
+                        <ul class="sub-menu" ng-class="{'show': submenuActive === 'binary'}">
+                            <li><a href="#pickle-module" class="nav-link" ng-click="scrollTo('pickle-module')">10.3.1 'pickle' module</a></li>
+                            <li><a href="#binary-open" class="nav-link" ng-click="scrollTo('binary-open')">10.3.2 open()</a></li>
+                            <li><a href="#binary-close" class="nav-link" ng-click="scrollTo('binary-close')">10.3.3 close()</a></li>
+                            <li><a href="#dump" class="nav-link" ng-click="scrollTo('dump')">10.3.4 dump()</a></li>
+                            <li><a href="#load" class="nav-link" ng-click="scrollTo('load')">10.3.5 load()</a></li>
+                            <li><a href="#eof" class="nav-link" ng-click="scrollTo('eof')">10.3.6 End of File</a></li>
+                            <li><a href="#deletion" class="nav-link" ng-click="scrollTo('deletion')">10.3.7 Deletion of records</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#oop-file-processing" class="nav-link" ng-class="{'active': currentSection === 'oop-file-processing'}" ng-click="scrollTo('oop-file-processing')">10.4 Object Oriented File Processing</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <main class="content">
+            <div id="introduction" class="section slide-in">
+                <h1>Python File Handling</h1>
+                <p>File handling is an essential part of any programming language, and Python makes it simple with its intuitive interface. This guide provides a comprehensive overview of file operations in Python, ranging from basic text file handling to advanced binary and object-oriented file processing.</p>
+                
+                <div class="key-points">
+                    <h3>Why File Handling is Important</h3>
+                    <ul>
+                        <li>Persistent data storage beyond program execution</li>
+                        <li>Processing large datasets that can't fit in memory</li>
+                        <li>Data exchange between applications</li>
+                        <li>Configuration management</li>
+                        <li>Logging and record keeping</li>
+                    </ul>
+                </div>
+                
+                <p>Python supports various file types including:</p>
+                <ul>
+                    <li><strong>Text files</strong>: Human-readable files containing text data</li>
+                    <li><strong>Binary files</strong>: Files containing binary data, such as images, audio, and custom data structures</li>
+                    <li><strong>CSV files</strong>: Comma-separated values for tabular data</li>
+                    <li><strong>JSON files</strong>: JavaScript Object Notation for structured data</li>
+                    <li><strong>XML files</strong>: Extensible Markup Language for hierarchical data</li>
+                </ul>
+                
+                <p>Let's dive into each type of file processing to understand how Python handles different file operations.</p>
+            </div>
+            
+            <div id="text-file-processing" class="section slide-in">
+                <h2>10.2 Text File Processing</h2>
+                <p>Text files store data in human-readable format, with each character represented by its ASCII or Unicode value. Python provides simple and efficient ways to read from and write to text files.</p>
+                
+                <div id="open" class="subsection">
+                    <h3>10.2.1 open()</h3>
+                    <p>Before you can read or write a file, you need to open it. The built-in <span class="inline-code">open()</span> function returns a file object that can be used to interact with the file.</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Syntax</span>
+                            <div class="code-actions">
+                                <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <pre><code class="python">file_object = open(filename, mode)</code></pre>
+                    </div>
+                    
+                    <p>The <span class="inline-code">open()</span> function takes two parameters:</p>
+                    <ul>
+                        <li><strong>filename</strong>: The path to the file you want to open.</li>
+                        <li><strong>mode</strong>: A string that specifies the purpose of opening the file.</li>
+                    </ul>
+                    
+                    <div class="example">
+                        <h4>Common File Modes:</h4>
+                        <ul>
+                            <li><span class="inline-code">'r'</span>: Read (default) - Opens a file for reading</li>
+                            <li><span class="inline-code">'w'</span>: Write - Opens a file for writing. Creates a new file if it doesn't exist or truncates the file if it exists</li>
+                            <li><span class="inline-code">'a'</span>: Append - Opens a file for appending. Creates a new file if it doesn't exist</li>
+                            <li><span class="inline-code">'x'</span>: Exclusive creation - Creates a new file, fails if the file already exists</li>
+                            <li><span class="inline-code">'t'</span>: Text mode (default)</li>
+                            <li><span class="inline-code">'b'</span>: Binary mode</li>
+                            <li><span class="inline-code">'+'</span>: Update (read and write)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Example</span>
+                            <div class="code-actions">
+                                <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <pre><code class="python"># Opening a file for reading
+f = open('example.txt', 'r')
+
+# Opening a file for writing
+f = open('example.txt', 'w')
+
+# Opening a file for appending
+f = open('example.txt', 'a')
+
+# Opening a binary file for reading
+f = open('image.jpg', 'rb')</code></pre>
+                    </div>
+                    
+                    <div class="note">
+                        <p><strong>Note:</strong> It's a good practice to use relative or absolute paths when opening files, especially if your file is not in the same directory as your Python script.</p>
+                    </div>
+                </div>
+                
+                <div id="close" class="subsection">
+                    <h3>10.2.2 close()</h3>
+                    <p>When you're done with a file, it's important to close it using the <span class="inline-code">close()</span> method. This frees up system resources and ensures that all data is written to the file.</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Syntax</span>
+                            <div class="code-actions">
+                                <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <pre><code class="python">file_object.close()</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Example</span>
+                            <div class="code-actions">
+                                <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <pre><code class="python"># Open a file
+f = open('example.txt', 'w')
+
+# Do some operations with the file
+f.write('Hello, World!')
+
+# Close the file
+f.close()</code></pre>
+                    </div>
+                    
+                    <div class="note">
+                        <p><strong>Best Practice:</strong> Use the <span class="inline-code">with</span> statement, which automatically closes the file after the block is executed, even if an exception occurs:</p>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Using with statement</span>
+                            <div class="code-actions">
+                                <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <pre><code class="python">with open('example.txt', 'w') as f:
+    f.write('Hello, World!')
+# File is automatically closed after the block</code></pre>
+                    </div>
+                </div>
+                
+                <div id="write" class="subsection">
+                    <h3>10.2.3 write()</h3>
+                    <p>The <span class="inline-code">write()</span> method writes a string to the file. It returns the number of characters written.</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Syntax</span>
+                            <div class="code-actions">
+                                <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <pre><code class="python">file_object.write(string)</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Example</span>
+                            <div class="code-actions">
+                                <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <pre><code class="python"># Writing a single line
+with open('example.txt', 'w') as f:
+    f.write('Hello, World!')
+
+# Writing multiple lines
+with open('example.txt', 'w') as f:
+    f.write('First line\n')
+    f.write('Second line\n')
+    f.write('Third line\n')</code></pre>
+                    </div>
+                    
+                    <div class="note">
+                        <p><strong>Note:</strong> The <span class="inline-code">write()</span> method does not add a newline character automatically. You need to add <span class="inline-code">\n</span> explicitly if you want a new line.</p>
+                    </div>
+                </div>
+                
+                <div id="readline" class="subsection">
+                    <h3>10.2.4 readline()</h3>
+                    <p>The <span class="inline-code">readline()</span> method reads a single line from the file. A newline character (<span class="inline-code">\n</span>) is kept at the end of the string.</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Syntax</span>
+                            <div class="code-actions">
+                                <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <pre><code class="python">line = file_object.readline()</code></pre>
+                    </div>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Example</span>
+                            <div class="code-actions">
+                                <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <pre><code class="python"># Reading a single line
+                            with open('example.txt', 'r') as f:
+                                line = f.readline()
+                                print(line)
+                            
+                            # Reading all lines one by one
+                            with open('example.txt', 'r') as f:
+                                line = f.readline()
+                                while line:
+                                    print(line, end='')
+                                    line = f.readline()</code></pre>
+                                                </div>
+                                                
+                                                <div class="warning">
+                                                    <p><strong>Warning:</strong> <span class="inline-code">readline()</span> returns an empty string when it reaches the end of the file.</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="more-commands" class="subsection">
+                                                <h3>10.2.5 More commands to write and read the file</h3>
+                                                <p>Python provides several other methods to read and write files efficiently.</p>
+                                                
+                                                <h4>Reading Multiple Lines:</h4>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>readlines() Method</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python"># Reading all lines into a list
+                            with open('example.txt', 'r') as f:
+                                lines = f.readlines()
+                                
+                            for line in lines:
+                                print(line, end='')</code></pre>
+                                                </div>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>read() Method</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python"># Reading the entire file content
+                            with open('example.txt', 'r') as f:
+                                content = f.read()
+                                print(content)</code></pre>
+                                                </div>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>File Iteration</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python"># Reading file line by line using a for loop
+                            with open('example.txt', 'r') as f:
+                                for line in f:
+                                    print(line, end='')</code></pre>
+                                                </div>
+                                                
+                                                <h4>Writing Multiple Lines:</h4>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>writelines() Method</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python"># Writing a list of strings to a file
+                            lines = ['First line\n', 'Second line\n', 'Third line\n']
+                            with open('example.txt', 'w') as f:
+                                f.writelines(lines)</code></pre>
+                                                </div>
+                                                
+                                                <div class="note">
+                                                    <p><strong>Note:</strong> The <span class="inline-code">writelines()</span> method does not add newline characters between the strings. If you want newlines, you need to include them in your strings.</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="random-reading" class="subsection">
+                                                <h3>10.2.6 Random Reading in file</h3>
+                                                <p>Python allows you to move the file pointer to any position in the file for random access.</p>
+                                                
+                                                <div class="tabs">
+                                                    <div class="tab-header">
+                                                        <button class="tab-btn active" onclick="showTab(event, 'seek-tab')">seek()</button>
+                                                        <button class="tab-btn" onclick="showTab(event, 'tell-tab')">tell()</button>
+                                                    </div>
+                                                    <div class="tab-content">
+                                                        <div id="seek-tab" class="tab-pane active">
+                                                            <p>The <span class="inline-code">seek()</span> method sets the file's current position at the specified offset.</p>
+                                                            
+                                                            <div class="code-block">
+                                                                <div class="code-header">
+                                                                    <span>Syntax</span>
+                                                                    <div class="code-actions">
+                                                                        <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                                    </div>
+                                                                </div>
+                                                                <pre><code class="python">file_object.seek(offset, whence)</code></pre>
+                                                            </div>
+                                                            
+                                                            <p>Parameters:</p>
+                                                            <ul>
+                                                                <li><strong>offset</strong>: Number of bytes to be moved</li>
+                                                                <li><strong>whence</strong>: Position from where the bytes are to be moved
+                                                                    <ul>
+                                                                        <li>0 - Beginning of the file (default)</li>
+                                                                        <li>1 - Current position</li>
+                                                                        <li>2 - End of the file</li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                            
+                                                            <div class="code-block">
+                                                                <div class="code-header">
+                                                                    <span>Example</span>
+                                                                    <div class="code-actions">
+                                                                        <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                                    </div>
+                                                                </div>
+                                                                <pre><code class="python"># Move to the 5th byte in the file
+                            with open('example.txt', 'r') as f:
+                                f.seek(5)
+                                print(f.read(10))  # Read 10 bytes from position 5
+                                
+                            # Move to the 3rd byte before the end
+                            with open('example.txt', 'r') as f:
+                                f.seek(-3, 2)
+                                print(f.read())  # Read from 3 bytes before the end to the end</code></pre>
+                                                            </div>
+                                                        </div>
+                                                        <div id="tell-tab" class="tab-pane">
+                                                            <p>The <span class="inline-code">tell()</span> method returns the current position of the file pointer.</p>
+                                                            
+                                                            <div class="code-block">
+                                                                <div class="code-header">
+                                                                    <span>Syntax</span>
+                                                                    <div class="code-actions">
+                                                                        <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                                    </div>
+                                                                </div>
+                                                                <pre><code class="python">position = file_object.tell()</code></pre>
+                                                            </div>
+                                                            
+                                                            <div class="code-block">
+                                                                <div class="code-header">
+                                                                    <span>Example</span>
+                                                                    <div class="code-actions">
+                                                                        <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                                    </div>
+                                                                </div>
+                                                                <pre><code class="python">with open('example.txt', 'r') as f:
+                                print(f.tell())  # Prints 0 (start of file)
+                                
+                                f.read(5)  # Read 5 bytes
+                                print(f.tell())  # Prints 5
+                                
+                                f.read(10)  # Read 10 more bytes
+                                print(f.tell())  # Prints 15</code></pre>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div id="binary-file-processing" class="section slide-in">
+                                            <h2>10.3 Binary File Processing</h2>
+                                            <p>Binary files store data in the form of bytes, making them suitable for non-text data like images, audio files, and serialized objects. Unlike text files, binary files are not human-readable and require special methods to handle them.</p>
+                                            
+                                            <div id="pickle-module" class="subsection">
+                                                <h3>10.3.1 'pickle' module</h3>
+                                                <p>The <span class="inline-code">pickle</span> module implements a powerful algorithm for serializing and de-serializing Python object structures. "Pickling" is the process of converting a Python object into a byte stream, and "unpickling" is the reverse process.</p>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Importing pickle</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python">import pickle</code></pre>
+                                                </div>
+                                                
+                                                <div class="example">
+                                                    <h4>Key Features of pickle:</h4>
+                                                    <ul>
+                                                        <li>Preserves the relationships between Python objects</li>
+                                                        <li>Can serialize nearly all Python objects</li>
+                                                        <li>Supports multiple protocols for backward compatibility</li>
+                                                        <li>Secure against erroneous or maliciously constructed data</li>
+                                                    </ul>
+                                                </div>
+                                                
+                                                <div class="warning">
+                                                    <p><strong>Security Warning:</strong> Never unpickle data received from untrusted sources, as it can execute arbitrary code during unpickling.</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="binary-open" class="subsection">
+                                                <h3>10.3.2 open()</h3>
+                                                <p>To work with binary files, you need to open them in binary mode by adding <span class="inline-code">'b'</span> to the mode string.</p>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Syntax</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python">file_object = open(filename, mode)</code></pre>
+                                                </div>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Example</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python"># Open a binary file for writing
+                            binary_file = open('data.bin', 'wb')
+                            
+                            # Open a binary file for reading
+                            binary_file = open('data.bin', 'rb')
+                            
+                            # Open a binary file for both reading and writing
+                            binary_file = open('data.bin', 'rb+')</code></pre>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="binary-close" class="subsection">
+                                                <h3>10.3.3 close()</h3>
+                                                <p>Just like with text files, it's important to close binary files when you're done with them.</p>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Example</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python"># Open a binary file
+                            binary_file = open('data.bin', 'wb')
+                            
+                            # Perform operations
+                            # ...
+                            
+                            # Close the file
+                            binary_file.close()</code></pre>
+                                                </div>
+                                                
+                                                <div class="note">
+                                                    <p><strong>Best Practice:</strong> Use the <span class="inline-code">with</span> statement to automatically close binary files:</p>
+                                                </div>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Using with statement</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python">with open('data.bin', 'wb') as binary_file:
+                                # Perform operations
+                                # ...
+                            # File is automatically closed after the block</code></pre>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="dump" class="subsection">
+                                                <h3>10.3.4 dump()</h3>
+                                                <p>The <span class="inline-code">dump()</span> function from the <span class="inline-code">pickle</span> module serializes an object and writes it to a file object.</p>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Syntax</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python">pickle.dump(obj, file, protocol=None)</code></pre>
+                                                </div>
+                                                
+                                                <p>Parameters:</p>
+                                                <ul>
+                                                    <li><strong>obj</strong>: The Python object to be serialized</li>
+                                                    <li><strong>file</strong>: The file object where the serialized object will be written</li>
+                                                    <li><strong>protocol</strong>: The protocol version to use (optional)</li>
+                                                </ul>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Example</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python">import pickle
+                            
+                            # Data to be serialized
+                            data = {
+                                'name': 'John',
+                                'age': 30,
+                                'skills': ['Python', 'JavaScript', 'SQL']
+                            }
+                            
+                            # Serialize and save to a binary file
+                            with open('data.pickle', 'wb') as f:
+                                pickle.dump(data, f)
+                            
+                            # Serialize multiple objects to the same file
+                            items = [1, 2, 3, 4, 5]
+                            more_data = {'a': 100, 'b': 200}
+                            
+                            with open('multiple_objects.pickle', 'wb') as f:
+                                pickle.dump(items, f)
+                                pickle.dump(more_data, f)</code></pre>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="load" class="subsection">
+                                                <h3>10.3.5 load()</h3>
+                                                <p>The <span class="inline-code">load()</span> function deserializes a Python object from a file-like object.</p>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Syntax</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python">obj = pickle.load(file)</code></pre>
+                                                </div>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Example</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python">import pickle
+                            
+                            # Load a serialized object from a file
+                            with open('data.pickle', 'rb') as f:
+                                loaded_data = pickle.load(f)
+                                
+                            print(loaded_data)  # Prints the original dictionary
+                            
+                            # Load multiple objects from the same file
+                            with open('multiple_objects.pickle', 'rb') as f:
+                                loaded_items = pickle.load(f)
+                                loaded_more_data = pickle.load(f)
+                                
+                            print(loaded_items)      # Prints [1, 2, 3, 4, 5]
+                            print(loaded_more_data)  # Prints {'a': 100, 'b': 200}</code></pre>
+                                                </div>
+                                                
+                                                <div class="note">
+                                                    <p><strong>Note:</strong> When loading multiple objects, you must load them in the same order they were dumped.</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="eof" class="subsection">
+                                                <h3>10.3.6 Checking End of File</h3>
+                                                <p>When reading binary files, it's important to know when you've reached the end of the file (EOF). The <span class="inline-code">pickle</span> module raises an <span class="inline-code">EOFError</span> exception when it tries to unpickle from an empty file or when all objects have been unpickled.</p>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Example</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python">import pickle
+                            
+                            # Read all pickled objects from a file
+                            objects = []
+                            with open('multiple_objects.pickle', 'rb') as f:
+                                while True:
+                                    try:
+                                        obj = pickle.load(f)
+                                        objects.append(obj)
+                                    except EOFError:
+                                        break
+                            
+                            print(objects)  # Prints all unpickled objects</code></pre>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="deletion" class="subsection">
+                                                <h3>10.3.7 Deletion of records</h3>
+                                                <p>Unlike databases, binary files don't support direct deletion of records. Instead, you need to read all the data, modify it in memory, and then write it back to the file.</p>
+                                                
+                                                <div class="code-block">
+                                                    <div class="code-header">
+                                                        <span>Example: Deleting a record</span>
+                                                        <div class="code-actions">
+                                                            <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <pre><code class="python">import pickle
+                            
+                            # Function to delete a record from a binary file
+                            def delete_record(filename, key_to_delete):
+                                # Read all records
+                                records = []
+                                with open(filename, 'rb') as f:
+                                    while True:
+                                        try:
+                                            record = pickle.load(f)
+                                            # Skip the record to be deleted
+                                            if record['id'] != key_to_delete:
+                                                records.append(record)
+                                        except EOFError:
+                                            break
+                                
+                                # Write back all records except the deleted one
+                                with open(filename, 'wb') as f:
+                                    for record in records:
+                                        pickle.dump(record, f)
+                            
+                            # Example usage
+                            students = [
+                                {'id': 1, 'name': 'Alice', 'grade': 'A'},
+                                {'id': 2, 'name': 'Bob', 'grade': 'B'},
+                                {'id': 3, 'name': 'Charlie', 'grade': 'C'}
+                            ]
+                            
+                            # Save records to a file
+                            with open('students.pickle', 'wb') as f:
+                                for student in students:
+                                    pickle.dump(student, f)
+                            
+                            # Delete the record with id=2
+                            delete_record('students.pickle', 2)
+                            
+                            # Verify deletion
+                            with open('students.pickle', 'rb') as f:
+                                while True:
+                                    try:
+                                        print(pickle.load(f))
+                                    except EOFError:
+                                        break</code></pre>
+                                                </div>
+                                                
+                                                <div class="note">
+                                                    <p><strong>Note:</strong> For larger datasets, consider using a database system like SQLite, which provides more efficient ways to handle record management.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div id="oop-file-processing" class="section slide-in">
+                                            <h2>10.4 Object Oriented File Processing</h2>
+                                            <p>Object-Oriented File Processing combines the power of OOP with file handling to create more maintainable and reusable code. This approach is particularly useful when working with complex data structures or when you need to perform multiple operations on the same file.</p>
+                                            
+                                            <div class="example">
+                                                <h4>Benefits of OOP File Processing:</h4>
+                                                <ul>
+                                                    <li>Encapsulation of file operations</li>
+                                                    <li>Reusable code across multiple files</li>
+                                                    <li>Better error handling and resource management</li>
+                                                    <li>Abstraction of complex file operations</li>
+                                                </ul>
+                                            </div>
+                                            
+                                            <div class="code-block">
+                                                <div class="code-header">
+                                                    <span>Example: TextFileManager Class</span>
+                                                    <div class="code-actions">
+                                                        <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                    </div>
+                                                </div>
+                                                <pre><code class="python">class TextFileManager:
+                                def __init__(self, filename, mode='r'):
+                                    """Initialize the file manager with a filename and mode"""
+                                    self.filename = filename
+                                    self.mode = mode
+                                    self.file = None
+                                
+                                def __enter__(self):
+                                    """Context manager entry point"""
+                                    self.file = open(self.filename, self.mode)
+                                    return self
+                                
+                                def __exit__(self, exc_type, exc_val, exc_tb):
+                                    """Context manager exit point"""
+                                    if self.file:
+                                        self.file.close()
+                                
+                                def read_all(self):
+                                    """Read the entire file content"""
+                                    if 'r' not in self.mode:
+                                        raise ValueError("File not opened in read mode")
+                                    return self.file.read()
+                                
+                                def read_lines(self):
+                                    """Read all lines as a list"""
+                                    if 'r' not in self.mode:
+                                        raise ValueError("File not opened in read mode")
+                                    return self.file.readlines()
+                                
+                                def write(self, content):
+                                    """Write content to the file"""
+                                    if 'w' not in self.mode and 'a' not in self.mode and '+' not in self.mode:
+                                        raise ValueError("File not opened in write mode")
+                                    self.file.write(content)
+                                
+                                def write_lines(self, lines):
+                                    """Write multiple lines to the file"""
+                                    if 'w' not in self.mode and 'a' not in self.mode and '+' not in self.mode:
+                                        raise ValueError("File not opened in write mode")
+                                    self.file.writelines(lines)
+                            
+                            # Example usage
+                            with TextFileManager('example.txt', 'w') as file_manager:
+                                file_manager.write("Hello, World!\n")
+                                file_manager.write_lines(["Line 1\n", "Line 2\n", "Line 3\n"])
+                            
+                            with TextFileManager('example.txt', 'r') as file_manager:
+                                content = file_manager.read_all()
+                                print(content)</code></pre>
+                                            </div>
+                                            
+                                            <div class="code-block">
+                                                <div class="code-header">
+                                                    <span>Example: BinaryFileManager Class using pickle</span>
+                                                    <div class="code-actions">
+                                                        <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                    </div>
+                                                </div>
+                                                <pre><code class="python">import pickle
+                            
+                            class BinaryFileManager:
+                                def __init__(self, filename, mode='rb'):
+                                    """Initialize the binary file manager"""
+                                    self.filename = filename
+                                    self.mode = mode
+                                    self.file = None
+                                
+                                def __enter__(self):
+                                    """Context manager entry point"""
+                                    self.file = open(self.filename, self.mode)
+                                    return self
+                                
+                                def __exit__(self, exc_type, exc_val, exc_tb):
+                                    """Context manager exit point"""
+                                    if self.file:
+                                        self.file.close()
+                                
+                                def save_object(self, obj):
+                                    """Save a Python object to the binary file"""
+                                    if 'b' not in self.mode or ('w' not in self.mode and 'a' not in self.mode and '+' not in self.mode):
+                                        raise ValueError("File not opened in binary write mode")
+                                    pickle.dump(obj, self.file)
+                                
+                                def load_object(self):
+                                    """Load a Python object from the binary file"""
+                                    if 'b' not in self.mode or 'r' not in self.mode:
+                                        raise ValueError("File not opened in binary read mode")
+                                    return pickle.load(self.file)
+                                
+                                def load_all_objects(self):
+                                    """Load all objects from the binary file"""
+                                    if 'b' not in self.mode or 'r' not in self.mode:
+                                        raise ValueError("File not opened in binary read mode")
+                                    
+                                    objects = []
+                                    try:
+                                        while True:
+                                            objects.append(self.load_object())
+                                    except EOFError:
+                                        pass
+                                    
+                                    return objects
+                            
+                            # Example usage
+                            student = {
+                                'name': 'John Doe',
+                                'age': 21,
+                                'courses': ['Math', 'Physics', 'Computer Science']
+                            }
+                            
+                            # Save an object
+                            with BinaryFileManager('student.pickle', 'wb') as bin_manager:
+                                bin_manager.save_object(student)
+                            
+                            # Load an object
+                            with BinaryFileManager('student.pickle', 'rb') as bin_manager:
+                                loaded_student = bin_manager.load_object()
+                                print(loaded_student)</code></pre>
+                                            </div>
+                                            
+                                            <div class="code-block">
+                                                <div class="code-header">
+                                                    <span>Example: Student Record Management System</span>
+                                                    <div class="code-actions">
+                                                        <button class="copy-btn" ng-click="copyCode($event)"><i class="far fa-copy"></i></button>
+                                                    </div>
+                                                </div>
+                                                <pre><code class="python">import pickle
+                            import os
+                            
+                            class Student:
+                                def __init__(self, id, name, age, grade):
+                                    self.id = id
+                                    self.name = name
+                                    self.age = age
+                                    self.grade = grade
+                                
+                                def __str__(self):
+                                    return f"Student(id={self.id}, name={self.name}, age={self.age}, grade={self.grade})"
+                            
+                            class StudentDatabase:
+                                def __init__(self, filename):
+                                    self.filename = filename
+                                
+                                def save_student(self, student):
+                                    """Add a new student or update existing one"""
+                                    students = self.get_all_students()
+                                    
+                                    # Update if student already exists, otherwise add new
+                                    student_exists = False
+                                    for i, s in enumerate(students):
+                                        if s.id == student.id:
+                                            students[i] = student
+                                            student_exists = True
+                                            break
+                                    
+                                    if not student_exists:
+                                        students.append(student)
+                                    
+                                    # Save all students
+                                    with open(self.filename, 'wb') as f:
+                                        for s in students:
+                                            pickle.dump(s, f)
+                                
+                                def get_student(self, student_id):
+                                    """Get a student by ID"""
+                                    students = self.get_all_students()
+                                    for student in students:
+                                        if student.id == student_id:
+                                            return student
+                                    return None
+                                
+                                def delete_student(self, student_id):
+                                    """Delete a student by ID"""
+                                    students = self.get_all_students()
+                                    students = [s for s in students if s.id != student_id]
+                                    
+                                    # Save the updated list
+                                    with open(self.filename, 'wb') as f:
+                                        for student in students:
+                                            pickle.dump(student, f)
+                                
+                                def get_all_students(self):
+                                    """Get all students from the database"""
+                                    students = []
+                                    
+                                    # Create the file if it doesn't exist
+                                    if not os.path.exists(self.filename):
+                                        open(self.filename, 'wb').close()
+                                        return students
+                                    
+                                    # Read all students
+                                    with open(self.filename, 'rb') as f:
+                                        while True:
+                                            try:
+                                                student = pickle.load(f)
+                                                students.append(student)
+                                            except EOFError:
+                                                break
+                                    
+                                    return students
+                            
+                            # Example usage
+                            def main():
+                                db = StudentDatabase('students.db')
+                                
+                                # Add students
+                                db.save_student(Student(1, "Alice Smith", 20, "A"))
+                                db.save_student(Student(2, "Bob Johnson", 22, "B"))
+                                db.save_student(Student(3, "Charlie Brown", 21, "A-"))
+                                
+                                # Retrieve and display all students
+                                print("All Students:")
+                                for student in db.get_all_students():
+                                    print(student)
+                                
+                                # Get a specific student
+                                print("\nStudent with ID 2:")
+                                student = db.get_student(2)
+                                if student:
+                                    print(student)
+                                
+                                # Update a student
+                                updated_student = Student(2, "Bob Johnson", 23, "A")  # Changed grade and age
+                                db.save_student(updated_student)
+                                
+                                # Delete a student
+                                db.delete_student(3)
+                                
+                                # Display after changes
+                                print("\nAfter updates:")
+                                for student in db.get_all_students():
+                                    print(student)
+                            
+                            if __name__ == "__main__":
+                                main()</code></pre>
+                                            </div>
+                                            
+                                            <div class="key-points">
+                                                <h3>Key Advantages of OOP for File Handling</h3>
+                                                <ul>
+                                                    <li><strong>Encapsulation:</strong> File operations and associated data are bundled together</li>
+                                                    <li><strong>Inheritance:</strong> Create specialized file handlers by extending base classes</li>
+                                                    <li><strong>Abstraction:</strong> Hide complex file operations behind simple interfaces</li>
+                                                    <li><strong>Polymorphism:</strong> Use different file handlers interchangeably if they share the same interface</li>
+                                                    <li><strong>Resource Management:</strong> Context managers ensure proper resource cleanup</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </main>
+                                </div>

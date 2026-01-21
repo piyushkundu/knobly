@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLevel CCC Exam Portal</title>
+    <style>
+    /* General Styling */
+    body {
+        background-color: #f9f9f9;
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    /* Website Name and Countdown Styling */
+    .website-container {
+        text-align: center;
+        padding: 0 10px;
+        transition: opacity 1s ease-in-out;
+    }
+
+    .website-name {
+        font-size: 2.5rem;
+        color: #4a90e2;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    /* Motivational Quote Section */
+    .quote-container {
+        margin-top: 20px;
+        font-size: 1.25rem;
+        color: #555;
+        font-style: italic;
+        padding: 0 10px;
+    }
+
+    /* Timer Box Styling */
+    .timer-box {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background-color: #fff;
+        border: 2px solid #4a90e2;
+        border-radius: 10px;
+        padding: 10px 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        display: none; /* Hidden until the exam starts */
+        font-size: 1.5rem;
+        color: #ff6347;
+        transition: opacity 1s ease;
+    }
+
+    /* Full Page Form Container */
+    .form-container {
+        width: 100%;
+        height: 100%;
+        display: none; /* Hidden until the exam starts */
+    }
+
+    iframe {
+        width: 100%;
+        height: 100vh;
+        border: none;
+        border-radius: 0;
+    }
+
+    /* Start Button Styling */
+    .start-btn {
+        padding: 1rem 2rem;
+        font-size: 1.25rem;
+        color: #fff;
+        background-color: #28a745;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 2rem;
+    }
+
+    .start-btn:hover {
+        background-color: #218838;
+    }
+
+    /* Countdown Styling */
+    .countdown {
+        display: none;
+        font-size: 3rem;
+        color: #ff6347;
+        margin-top: 1rem;
+    }
+
+    /* Responsive Styling */
+    @media only screen and (max-width: 768px) {
+        .website-name {
+            font-size: 2rem;
+        }
+
+        .timer-box {
+            font-size: 1.25rem;
+            top: 10px;
+            right: 10px;
+        }
+
+        .start-btn {
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .countdown {
+            font-size: 2rem;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        .website-name {
+            font-size: 1.5rem;
+        }
+
+        .timer-box {
+            font-size: 1rem;
+        }
+
+        .start-btn {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .countdown {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+</head>
+<body>
+
+    <div class="website-container" id="websiteContainer">
+        <div class="website-name" id="websiteName">olevelcccexam.link</div>
+        <!-- Motivational Quote Section -->
+        <div class="quote-container" id="quoteContainer">
+           The expert in anything was once a beginner." – Helen Hayes
+        </div>
+        <div class="countdown" id="countdown">10</div>
+    </div>
+
+    <!-- Timer Box -->
+    <div class="timer-box" id="examTimer">01:00:00</div>
+
+    <!-- Start Exam Button -->
+    <button class="start-btn" id="startButton">Start Test</button>
+
+    <!-- Google Form Embed (Initially hidden) -->
+    <div class="form-container" id="formContainer">
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfLnTRYBEeieoZOv2Zql4eiuptp-pn3MClfuoKOeeQAIpjqRQ/viewform?usp=sharing&ouid=106628923725361928968" frameborder="0">Loading…</iframe>
+    </div>
+
+    <script>
+        // Elements
+        const startButton = document.getElementById('startButton');
+        const formContainer = document.getElementById('formContainer');
+        const websiteContainer = document.getElementById('websiteContainer');
+        const countdownElement = document.getElementById('countdown');
+        const examTimer = document.getElementById('examTimer');
+
+        // Start Exam Function
+        startButton.addEventListener('click', function() {
+            // Hide the start button
+            startButton.style.display = 'none';
+
+            // Show countdown
+            countdownElement.style.display = 'block';
+            startCountdown(10); // Start countdown from 10 seconds
+        });
+
+        // Countdown Function
+        function startCountdown(seconds) {
+            let countdown = seconds;
+            countdownElement.innerText = countdown;
+
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownElement.innerText = countdown;
+
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownElement.style.display = 'none'; // Hide countdown
+                    startExamTimer(); // Start the exam timer
+                }
+            }, 1000);
+        }
+
+        // Function to start the exam timer
+        function startExamTimer() {
+            examTimer.style.display = 'block'; // Show exam timer
+            let time = 3600; // 1 hour in seconds
+
+            const timerInterval = setInterval(() => {
+                let minutes = Math.floor(time / 60);
+                let seconds = time % 60;
+                let hours = Math.floor(minutes / 60);
+                minutes = minutes % 60;
+
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                hours = hours < 10 ? '0' + hours : hours;
+
+                examTimer.innerHTML = `${hours}:${minutes}:${seconds}`;
+
+                if (time <= 0) {
+                    clearInterval(timerInterval);
+                    examTimer.innerHTML = "Time's up!";
+                    formContainer.style.display = 'none'; // Hide form when time's up
+                }
+
+                time--;
+            }, 1000);
+
+            // Show the form after countdown
+            showForm();
+        }
+
+        // Function to show the form with a smooth transition
+        function showForm() {
+            websiteContainer.style.opacity = '0'; // Fade out website container
+            setTimeout(() => {
+                formContainer.style.display = 'block'; // Show the form
+                formContainer.style.opacity = '1'; // Fade in the form
+                formContainer.style.transition = 'opacity 1s ease-in-out';
+            }, 1000); // Wait for fade out to complete
+        }
+    </script>
+
+</body>
+</html>

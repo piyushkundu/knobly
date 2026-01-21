@@ -1,0 +1,2933 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knobly OS | Ultimate Edition</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700;800;900&display=swap" rel="stylesheet" />
+
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.35.0/dist/tabler-icons.min.css" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Outfit", "sans-serif"],
+            gaming: ["Rajdhani", "sans-serif"],
+          },
+          colors: {
+            deep: "#050505",
+            primary: "#22d3ee",
+          },
+          animation: {
+            "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            "float": "float 6s ease-in-out infinite",
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' },
+            }
+          }
+        },
+      },
+    };
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+  <style>
+    /* --- CORE STYLES --- */
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      cursor: default;
+      user-select: none;
+      transition: background-color 0.4s ease, color 0.4s ease, background-image 0.4s ease;
+    }
+
+    button,
+    a,
+    .glass-card,
+    .video-item,
+    input,
+    .ctx-item,
+    select {
+      cursor: pointer;
+    }
+
+    ::selection {
+      background: #22d3ee;
+      color: #000;
+    }
+
+    /* INPUT & SELECT STYLES (Global) */
+    input,
+    select,
+    textarea {
+      background-color: rgba(0, 0, 0, 0.5) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #9ca3af !important;
+    }
+
+    /* --- LIGHT MODE INPUT FIXES --- */
+    body.light-mode input,
+    body.light-mode select,
+    body.light-mode textarea {
+      background-color: #ffffff !important;
+      color: #1e293b !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+
+    body.light-mode input::placeholder,
+    body.light-mode textarea::placeholder {
+      color: #64748b !important;
+    }
+
+    /* SEARCH INPUT BORDER FIX (DARK + LIGHT) */
+    .search-shell input {
+      background-color: transparent !important;
+      color: #ffffff !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    .search-shell input::placeholder {
+      color: #9ca3af !important;
+    }
+
+    body.light-mode .search-shell input {
+      background-color: transparent !important;
+      color: #0f172a !important;
+      border: none !important;
+      box-shadow: none !important;
+      font-weight: 600;
+    }
+
+    body.light-mode .search-shell input::placeholder {
+      color: #94a3b8 !important;
+    }
+
+    /* SCROLLBAR HIDING CLASS */
+    .custom-scroll {
+      overflow-x: hidden !important;
+      overflow-y: auto;
+      scrollbar-width: none;
+      /* Firefox */
+      -ms-overflow-style: none;
+      /* IE and Edge */
+    }
+
+    .custom-scroll::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+      /* Chrome, Safari */
+    }
+
+    .scroll-x-soft {
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+    }
+
+    .scroll-x-soft::-webkit-scrollbar {
+      height: 0;
+    }
+
+    body {
+      background-color: #01030f;
+      color: white;
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+
+    /* BOOT SCREEN */
+    #boot-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* K. GLITCH + JHAPKI EFFECT */
+    .boot-k-glitch {
+      position: relative;
+      font-family: "Rajdhani", sans-serif;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      color: #e0faff;
+      text-shadow:
+        0 0 12px rgba(34, 211, 238, 0.7),
+        0 0 24px rgba(34, 211, 238, 0.5);
+      animation: bootBaseOn 0.95s ease-out forwards;
+    }
+
+    .boot-k-glitch::before,
+    .boot-k-glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      mix-blend-mode: screen;
+    }
+
+    .boot-k-glitch::before {
+      color: #22d3ee;
+      text-shadow: -2px 0 10px rgba(34, 211, 238, 0.9);
+      animation: bootGlitch 0.5s ease-out 0.05s forwards;
+    }
+
+    .boot-k-glitch::after {
+      color: #fb7185;
+      text-shadow: 2px 0 10px rgba(248, 113, 113, 0.9);
+      animation: bootGlitch 0.6s ease-out 0.08s forwards;
+    }
+
+    @keyframes bootBaseOn {
+      0% {
+        opacity: 0;
+        filter: blur(8px);
+      }
+
+      25% {
+        opacity: 0.3;
+        filter: blur(4px);
+      }
+
+      45% {
+        opacity: 1;
+        filter: blur(0px);
+      }
+
+      60% {
+        opacity: 0.6;
+        filter: blur(1px);
+      }
+
+      80% {
+        opacity: 1;
+        filter: blur(0px);
+      }
+
+      100% {
+        opacity: 1;
+        filter: blur(0px);
+        text-shadow: 0 0 20px rgba(34, 211, 238, 0.9);
+      }
+    }
+
+    @keyframes bootGlitch {
+      0% {
+        opacity: 0;
+        transform: translate(0, 0);
+        clip-path: inset(0 0 0 0);
+      }
+
+      15% {
+        opacity: 1;
+        transform: translate(-2px, -1px) skewX(-6deg);
+        clip-path: inset(0 0 55% 0);
+      }
+
+      35% {
+        transform: translate(2px, 1px) skewX(4deg);
+        clip-path: inset(40% 0 0 0);
+      }
+
+      55% {
+        transform: translate(-1px, 1px) skewX(-3deg);
+        clip-path: inset(10% 0 20% 0);
+      }
+
+      75% {
+        opacity: 0.6;
+        transform: translate(1px, -2px);
+        clip-path: inset(0 0 0 0);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(0, 0);
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    /* WALLPAPERS (dark) */
+    body.wallpaper-default:not(.light-mode) {
+      background-image:
+        radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.22) 0, transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(139, 92, 246, 0.25) 0, transparent 60%),
+        linear-gradient(120deg, rgba(56, 189, 248, 0.16) 0, transparent 22%, transparent 78%, rgba(236, 72, 153, 0.16) 100%),
+        radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.95) 0, #020617 60%);
+    }
+
+    body.wallpaper-ocean:not(.light-mode) {
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.35) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.35) 0, transparent 55%),
+        linear-gradient(135deg, #020617 0%, #0f172a 35%, #0b1120 100%);
+    }
+
+    body.wallpaper-purple:not(.light-mode) {
+      background-image:
+        radial-gradient(circle at 10% 0%, rgba(244, 114, 182, 0.3) 0, transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(129, 140, 248, 0.35) 0, transparent 55%),
+        linear-gradient(135deg, #020617 0%, #111827 35%, #020617 100%);
+    }
+
+    body.wallpaper-sunset:not(.light-mode) {
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(251, 113, 133, 0.35) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(253, 186, 116, 0.35) 0, transparent 55%),
+        linear-gradient(135deg, #020617 0%, #0f172a 40%, #0b1120 100%);
+    }
+
+    body.wallpaper-matrix:not(.light-mode) {
+      background-image:
+        radial-gradient(circle at 10% 0%, rgba(34, 197, 94, 0.35) 0, transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(45, 212, 191, 0.35) 0, transparent 55%),
+        linear-gradient(135deg, #020617 0%, #020617 40%, #020617 100%);
+    }
+
+    /* LIGHT wallpapers */
+    body.light-mode.wallpaper-default {
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(191, 219, 254, 0.7) 0, transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(224, 242, 254, 0.7) 0, transparent 55%),
+        linear-gradient(135deg, #e5f3ff 0%, #f8fafc 60%, #e5f2ff 100%);
+    }
+
+    body.light-mode.wallpaper-ocean {
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.5) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.4) 0, transparent 55%),
+        linear-gradient(135deg, #e0f2fe 0%, #f9fafb 60%, #e0f2fe 100%);
+    }
+
+    body.light-mode.wallpaper-purple {
+      background-image:
+        radial-gradient(circle at 10% 0%, rgba(244, 114, 182, 0.5) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(129, 140, 248, 0.5) 0, transparent 55%),
+        linear-gradient(135deg, #fdf2ff 0%, #f9fafb 60%, #eef2ff 100%);
+    }
+
+    body.light-mode.wallpaper-sunset {
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(251, 146, 60, 0.55) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(248, 113, 113, 0.55) 0, transparent 55%),
+        linear-gradient(135deg, #fff7ed 0%, #fefce8 60%, #ffe4e6 100%);
+    }
+
+    body.light-mode.wallpaper-matrix {
+      background-image:
+        radial-gradient(circle at 10% 0%, rgba(34, 197, 94, 0.55) 0, transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(45, 212, 191, 0.55) 0, transparent 55%),
+        linear-gradient(135deg, #ecfdf5 0%, #f9fafb 60%, #ecfdf3 100%);
+    }
+
+    /* --- LIGHT MODE UI TWEAKS (COMPLETE FIX) --- */
+    body.light-mode {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+    }
+
+    /* Fixed: Panels and Cards in Light Mode */
+    body.light-mode .glass-panel {
+      background: #ffffff !important;
+      backdrop-filter: none !important;
+      border: 1px solid #cbd5e1 !important;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    body.light-mode .glass-card {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+      transform-style: preserve-3d !important;
+      transform: perspective(1000px);
+    }
+
+    body.light-mode .glass-card:hover {
+      border-color: #3b82f6 !important;
+      box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15) !important;
+      transform: translateY(-5px);
+    }
+
+    /* Fixed: Icon and Text Colors in Light Mode */
+    body.light-mode .devicon-fix {
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18)) !important;
+      opacity: 1 !important;
+    }
+
+    /* OVERRIDES FOR TAILWIND COLORS IN LIGHT MODE */
+    body.light-mode .text-gray-100 {
+      color: #0f172a !important;
+      font-weight: 600 !important;
+    }
+
+    body.light-mode .text-gray-200 {
+      color: #1e293b !important;
+      font-weight: 700 !important;
+    }
+
+    body.light-mode .text-gray-300 {
+      color: #334155 !important;
+      font-weight: 600 !important;
+    }
+
+    body.light-mode .text-gray-400 {
+      color: #64748b !important;
+      font-weight: 500 !important;
+    }
+
+    body.light-mode .text-gray-500 {
+      color: #94a3b8 !important;
+    }
+
+    body.light-mode .text-white {
+      color: #0f172a !important;
+    }
+
+    body.light-mode .knobly-header-style {
+      color: #0f172a !important;
+      text-shadow: none !important;
+    }
+
+    /* Fixed: App Card Titles in Light Mode */
+    body.light-mode .glass-card h3 {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+
+    /* Fixed: Notifications and Recent Apps Lists backgrounds */
+    body.light-mode .bg-white\/5 {
+      background-color: rgba(255, 255, 255, 0.6) !important;
+      border: 1px solid #cbd5e1 !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Fixed: Search Shell in Light Mode */
+    body.light-mode .search-shell {
+      background-color: #f1f5f9 !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+
+    body.light-mode .search-shell:focus-within {
+      background-color: #ffffff !important;
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15) !important;
+    }
+
+    body.light-mode .search-shell-icon {
+      color: #64748b !important;
+    }
+
+    /* Fixed: Navigation Buttons */
+    body.light-mode .nav-btn {
+      color: #64748b;
+    }
+
+    body.light-mode .nav-btn:hover {
+      background: #e2e8f0;
+      color: #0284c7;
+    }
+
+    body.light-mode .nav-btn.is-active {
+      background: #e0f2fe;
+      color: #0284c7;
+      border: 1px solid #bae6fd;
+      box-shadow: none;
+    }
+
+    /* Fixed: Video Items */
+    body.light-mode .video-item {
+      background: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    body.light-mode .video-item:hover {
+      background: #ffffff !important;
+      border-color: #3b82f6 !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    body.light-mode .video-active {
+      background: #eff6ff !important;
+      border-color: #3b82f6 !important;
+    }
+
+    /* DARK MODE DEFAULT STYLES */
+    .glass-panel {
+      background: radial-gradient(circle at 0% 0%, rgba(30, 41, 59, 0.7), rgba(2, 6, 23, 0.85));
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: border 0.2s, box-shadow 0.2s;
+      box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.28);
+      transform-style: preserve-3d;
+      transform: perspective(1000px);
+      padding: 0.6rem 0.4rem;
+    }
+
+    .glass-card:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.5);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .app-icon-tile {
+      width: 2.9rem;
+      height: 2.9rem;
+      border-radius: 9999px;
+      background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.9));
+      border: 2px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 8px 18px -8px rgba(15, 23, 42, 0.9);
+      transform: translateZ(20px);
+    }
+
+    .app-icon-accent-cyan {
+      box-shadow: 0 10px 22px -10px rgba(56, 189, 248, 0.9);
+      border-color: rgba(148, 163, 184, 0.8);
+    }
+
+    .border-orange {
+      border-color: #fb923c !important;
+    }
+
+    .border-blue {
+      border-color: #60a5fa !important;
+    }
+
+    .border-yellow {
+      border-color: #facc15 !important;
+    }
+
+    .border-cyan {
+      border-color: #22d3ee !important;
+    }
+
+    .border-emerald {
+      border-color: #34d399 !important;
+    }
+
+    .border-sky {
+      border-color: #38bdf8 !important;
+    }
+
+    .border-red {
+      border-color: #f97373 !important;
+    }
+
+    .border-indigo {
+      border-color: #818cf8 !important;
+    }
+
+    .border-slate {
+      border-color: #cbd5e1 !important;
+    }
+
+    .border-pink {
+      border-color: #fb7185 !important;
+    }
+
+    .border-purple {
+      border-color: #a855f7 !important;
+    }
+
+    body.light-mode .app-icon-tile {
+      background: #ffffff !important;
+      box-shadow: 0 4px 10px -4px rgba(15, 23, 42, 0.2) !important;
+    }
+
+    .devicon-fix {
+      font-size: 2.4rem;
+      filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.55));
+      transition: transform 0.18s ease, filter 0.18s ease;
+    }
+
+    .glass-card:hover .devicon-fix {
+      transform: translateY(-1px);
+      filter: drop-shadow(0 4px 8px rgba(15, 23, 42, 0.7));
+    }
+
+    .search-shell {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .search-shell:focus-within {
+      border-color: #22d3ee;
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.25);
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .knobly-header-style {
+      font-family: "Rajdhani", sans-serif;
+      font-weight: 900;
+      color: white;
+      letter-spacing: 0.16em;
+      text-shadow: 0 0 18px rgba(34, 211, 238, 0.5);
+    }
+
+    #knobly-logo {
+      animation: logoBlink 1s ease-in-out infinite;
+    }
+
+    @keyframes logoBlink {
+
+      0%,
+      100% {
+        text-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
+        opacity: 0.96;
+      }
+
+      20% {
+        text-shadow: 0 0 2px rgba(34, 211, 238, 0.1);
+        opacity: 0.7;
+      }
+
+      40% {
+        text-shadow: 0 0 14px rgba(34, 211, 238, 0.7);
+        opacity: 1;
+      }
+
+      60% {
+        text-shadow: 0 0 4px rgba(34, 211, 238, 0.2);
+        opacity: 0.8;
+      }
+    }
+
+    .theme-flash-circle {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px;
+      height: 160px;
+      border-radius: 9999px;
+      pointer-events: none;
+      z-index: 9998;
+      background: radial-gradient(circle, rgba(34, 211, 238, 0.95), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+    }
+
+    body.light-mode .theme-flash-circle {
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.9), transparent 60%);
+      mix-blend-mode: normal;
+    }
+
+    .video-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .video-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(56, 189, 238, 0.3);
+    }
+
+    .video-active {
+      background: rgba(34, 211, 238, 0.1);
+      border-color: rgba(34, 211, 238, 0.5);
+    }
+
+    .yt-cta-join {
+      background: #ef4444;
+      color: #f9fafb;
+      border-radius: 9999px;
+      padding: 0.375rem 0.9rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+
+    .yt-cta-join:hover {
+      box-shadow: 0 6px 16px rgba(239, 68, 68, 0.6);
+      transform: scale(1.05);
+    }
+
+    .context-menu {
+      position: fixed;
+      z-index: 99990;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 238, 0.2);
+      border-radius: 12px;
+      padding: 6px;
+      min-width: 190px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      transform-origin: top left;
+    }
+
+    body.light-mode .context-menu {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .ctx-item {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #e2e8f0;
+      transition: all 0.1s;
+    }
+
+    body.light-mode .ctx-item {
+      color: #334155;
+      font-weight: 500;
+    }
+
+    .ctx-item:hover {
+      background: rgba(34, 211, 238, 0.15);
+      color: #22d3ee;
+    }
+
+    body.light-mode .ctx-item:hover {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    .ctx-separator {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 4px 0;
+    }
+
+    body.light-mode .ctx-separator {
+      background: #e2e8f0;
+    }
+
+    /* MODAL FIX */
+    .fixed.z-50 {
+      z-index: 99999 !important;
+    }
+
+    .draggable-modal {
+      position: fixed;
+      z-index: 100;
+      margin: 0 !important;
+      box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at 0% 0%, rgba(30, 41, 59, 0.95), rgba(2, 6, 23, 0.98));
+      backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform: scale(0.95);
+      animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      color: #e5e7eb;
+    }
+
+    @keyframes modalPop {
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    body.light-mode .draggable-modal {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.15);
+      color: #0f172a;
+    }
+
+    /* LOGIN / ADD APP MODAL BACKGROUND FIX FOR LIGHT MODE */
+    body.light-mode .fixed.z-50 .bg-\[\#0f172a\] {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    body.light-mode .fixed.z-50 .bg-\[\#0f172a\] input,
+    body.light-mode .fixed.z-50 .bg-\[\#0f172a\] select {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+      border-color: #cbd5e1 !important;
+    }
+
+    textarea.notes-area {
+      background: rgba(0, 0, 0, 0.5);
+      border-color: rgba(148, 163, 184, 0.6);
+      color: #e5e7eb;
+    }
+
+    body.light-mode textarea.notes-area {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+      color: #0f172a;
+      box-shadow: inset 0 1px 2px rgba(148, 163, 184, 0.35);
+    }
+
+    body.light-mode .notes-meta {
+      color: #9ca3af !important;
+    }
+
+    div:where(.swal2-container) div:where(.swal2-popup) {
+      background: rgba(15, 23, 42, 0.9) !important;
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 238, 0.3);
+      border-radius: 24px;
+      color: white;
+    }
+
+    body.light-mode div:where(.swal2-container) div:where(.swal2-popup) {
+      background: #ffffff !important;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    div:where(.swal2-icon) {
+      border-color: #22d3ee !important;
+      color: #22d3ee !important;
+    }
+
+    div:where(.swal2-icon).swal2-warning {
+      border-color: #f87171 !important;
+      color: #f87171 !important;
+    }
+
+    /* TAB & FILTER BUTTONS */
+    .tab-btn {
+      position: relative;
+      border-radius: 0;
+      border-bottom-width: 2px;
+      border-color: transparent;
+    }
+
+    .tab-btn::before {
+      content: none;
+    }
+
+    .tab-btn-active {
+      color: #22d3ee !important;
+      border-color: #22d3ee;
+      background: transparent;
+    }
+
+    body.light-mode .tab-btn-active {
+      color: #0f172a !important;
+      border-color: #0ea5e9 !important;
+      background: transparent !important;
+    }
+
+    .apps-filter-btn {
+      position: relative;
+      border-bottom-width: 2px;
+      border-color: transparent;
+    }
+
+    .apps-filter-btn-active {
+      color: #22d3ee !important;
+      border-color: #22d3ee;
+    }
+
+    body.light-mode .apps-filter-btn-active {
+      color: #0f172a !important;
+      border-color: #0ea5e9 !important;
+    }
+
+    .settings-tab-btn {
+      position: relative;
+      border-bottom-width: 2px;
+      padding-bottom: 4px;
+    }
+
+    .settings-tab-btn-active {
+      color: #22d3ee;
+      border-color: #22d3ee;
+      background: rgba(34, 211, 238, 0.08);
+    }
+
+    body.light-mode .settings-tab-btn-active {
+      color: #0f172a;
+      border-color: #0ea5e9 !important;
+      background: #e0f2fe;
+    }
+
+    .wallpaper-thumb-default {
+      background-image:
+        radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.5) 0, transparent 60%),
+        radial-gradient(circle at 90% 100%, rgba(139, 92, 246, 0.6) 0, transparent 60%);
+    }
+
+    .wallpaper-thumb-ocean {
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.7) 0, transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.7) 0, transparent 60%);
+    }
+
+    .wallpaper-thumb-purple {
+      background-image:
+        radial-gradient(circle at 10% 0%, rgba(244, 114, 182, 0.7) 0, transparent 60%),
+        radial-gradient(circle at 90% 100%, rgba(129, 140, 248, 0.7) 0, transparent 60%);
+    }
+
+    .wallpaper-thumb-sunset {
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(251, 113, 133, 0.7) 0, transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(253, 186, 116, 0.8) 0, transparent 60%);
+    }
+
+    .wallpaper-thumb-matrix {
+      background-image:
+        radial-gradient(circle at 10% 0%, rgba(34, 197, 94, 0.8) 0, transparent 60%),
+        radial-gradient(circle at 90% 100%, rgba(45, 212, 191, 0.8) 0, transparent 60%);
+    }
+
+    .knobly-low-perf * {
+      transition: none !important;
+      animation: none !important;
+    }
+
+    .knobly-low-perf .glass-panel,
+    .knobly-low-perf .glass-card {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      box-shadow: none !important;
+    }
+
+    .settings-app-list {
+      /* handled via utilities */
+    }
+
+    .stats-recent-list {
+      max-height: 260px;
+    }
+
+    @media (min-width: 768px) {
+      .stats-recent-list {
+        max-height: 260px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .devicon-fix {
+        font-size: 2.1rem;
+      }
+
+      .glass-card {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0.35rem 0.1rem !important;
+        border-radius: 0 !important;
+      }
+
+      .app-icon-tile {
+        width: 3rem !important;
+        height: 3rem !important;
+        border-radius: 9999px !important;
+        border-width: 2px !important;
+        box-shadow: 0 6px 12px -6px rgba(15, 23, 42, 0.95) !important;
+      }
+
+      body.light-mode .app-icon-tile {
+        background: #ffffff !important;
+        box-shadow: 0 4px 10px -4px rgba(15, 23, 42, 0.18) !important;
+      }
+
+      .grid.grid-cols-3 {
+        gap: 0.45rem !important;
+      }
+
+      .mobile-dock {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(125, 211, 252, 0.18);
+      }
+
+      .settings-mobile-section {
+        max-height: 260px;
+      }
+
+      .draggable-modal {
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90% !important;
+        max-width: 340px !important;
+        margin: 0 !important;
+      }
+    }
+
+    .mobile-dock {
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: rgba(5, 11, 20, 0.9);
+      border-radius: 0;
+      border-top: 1px solid rgba(30, 64, 175, 0.5);
+      box-shadow: 0 -10px 25px -18px rgba(15, 23, 42, 0.95);
+    }
+
+    body.light-mode .mobile-dock {
+      background: #ffffff;
+      border-top-color: #cbd5e1;
+      box-shadow: 0 -10px 25px -18px rgba(0, 0, 0, 0.1);
+    }
+
+    .slide-youtube-enter-active,
+    .slide-youtube-leave-active {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .slide-youtube-enter-from,
+    .slide-youtube-leave-to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    .active-press:active {
+      transform: scale(0.97);
+      transition: transform 0.08s;
+    }
+
+    .ph-fill.ph-youtube-logo:before {
+      content: "\e4fc";
+      color: white !important;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    window.onerror = function (message, source, lineno, colno, error) {
+      alert("System Error:\n" + message + "\nLine: " + lineno);
+    };
+    window.addEventListener('unhandledrejection', function (event) {
+      alert("Unhandled Promise Rejection:\n" + event.reason);
+    });
+  </script>
+  <div id="boot-screen">
+    <div
+      class="text-6xl font-gaming font-black text-cyan-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] mb-4 boot-k-glitch"
+      data-text="K.">
+      K.
+    </div>
+    <div class="w-48 h-1 bg-gray-800 rounded-full overflow-hidden">
+      <div id="boot-bar" class="h-full bg-cyan-400 w-0 shadow-[0_0_10px_#22d3ee]"></div>
+    </div>
+    <div class="mt-2 text-xs text-gray-500 font-mono">INITIALIZING SYSTEM.</div>
+  </div>
+
+  <div id="app" v-cloak
+    class="h-screen w-screen flex flex-col lg:flex-row gap-4 lg:gap-6 pt-3 px-3 pb-14 lg:p-6 relative select-none opacity-0"
+    @click="handleGlobalClick">
+    <transition enter-active-class="animate__animated animate__fadeIn animate__faster"
+      leave-active-class="animate__animated animate__fadeOut animate__faster">
+      <div v-if="showContextMenu" class="context-menu" :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }"
+        @click.stop>
+        <div class="ctx-item" @click="refreshPage">
+          <i class="ph-bold ph-arrow-clockwise"></i> Refresh System
+        </div>
+        <div class="ctx-item" @click="toggleTheme">
+          <i class="ph-bold" :class="isLightMode ? 'ph-moon-stars' : 'ph-sun'"></i>
+          {{ isLightMode ? 'Dark Mode' : 'Light Mode' }}
+        </div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item" @click="changeWallpaper">
+          <i class="ph-bold ph-image"></i> Change Wallpaper
+        </div>
+        <div class="ctx-item" @click="sortApps">
+          <i class="ph-bold ph-list-dashes"></i> Sort Apps
+        </div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item" :style="user ? 'color: #ef4444;' : 'color: #22d3ee;'"
+          @click="user ? shutDown() : (showLoginModal = true, isSignUp = false)">
+          <i class="ph-bold" :class="user ? 'ph-sign-out' : 'ph-sign-in'"></i>
+          {{ user ? 'Log Out' : 'Login / Sign Up' }}
+        </div>
+      </div>
+    </transition>
+
+    <transition enter-active-class="animate__animated animate__fadeIn animate__faster"
+      leave-active-class="animate__animated animate__fadeOut animate__faster">
+      <div v-if="showAppContextMenu" class="context-menu" :style="{ top: appContextY + 'px', left: appContextX + 'px' }"
+        @click.stop>
+        <div class="ctx-item" @click="addAppToGroup('Main')">
+          <i class="ph-bold ph-folder-notch-plus"></i> Add to Main
+        </div>
+        <div class="ctx-item" @click="addAppToGroup('OLevel')">
+          <i class="ph-bold ph-brackets-angle"></i> Add to OLevel
+        </div>
+        <div class="ctx-item" @click="addAppToGroup('CCC')">
+          <i class="ph-bold ph-pen-nib"></i> Add to CCC
+        </div>
+
+        <div class="ctx-separator"></div>
+
+        <div class="ctx-item" v-if="!isInFavourites(contextApp)" @click="pinToFavourites">
+          <i class="ph-bold ph-push-pin"></i> Add to favourites
+        </div>
+        <div class="ctx-item" v-else @click="removeFromFavourites">
+          <i class="ph-bold ph-x-circle"></i> Remove from favourites
+        </div>
+
+        <div class="ctx-separator"></div>
+
+        <div class="ctx-item" @click="renameSoon">
+          <i class="ph-bold ph-text-t"></i> Rename (soon)
+        </div>
+      </div>
+    </transition>
+
+    <aside id="left-sidebar"
+      class="glass-panel w-[70px] shrink-0 h-full rounded-[24px] flex-col items-center justify-between px-4 py-6 z-10 hidden lg:flex">
+      <div
+        class="text-3xl font-gaming font-black text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.7)] cursor-pointer hover:scale-110 transition-transform knobly-header-style">
+        K.
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <button v-for="item in navItems" :key="item.id" @click="activeNav = item.id"
+          class="nav-btn w-11 h-11 rounded-3xl flex items-center justify-center transition-all duration-200 relative group border border-transparent active-press"
+          :class="activeNav === item.id
+              ? 'bg-cyan-500/20 text-cyan-200 shadow-[0_8px_18px_rgba(15,23,42,0.8)] border-cyan-400/70 is-active'
+              : 'text-gray-500 hover:text-white hover:bg-white/5 hover:border-white/10'">
+          <i :class="item.icon" class="text-2xl"></i>
+        </button>
+      </div>
+
+      <button @click="handleProfileClick"
+        class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/10 transition-all border border-white/5 hover:border-white/40 active-press"
+        :title="user ? 'Log Out' : 'Login'">
+        <i class="ph-bold text-lg" :class="user ? 'ph-sign-out text-red-400' : 'ph-sign-in text-cyan-400'"></i>
+      </button>
+    </aside>
+
+    <main
+      class="glass-panel flex-1 rounded-[28px] px-4 md:px-6 lg:px-8 py-5 lg:py-6 flex flex-col gap-4 overflow-hidden relative z-10 mb-14 lg:mb-0"
+      @touchstart.passive="handleTouchStart" @touchend.passive="handleTouchEnd">
+      <header class="flex flex-col gap-3 shrink-0 border-b border-white/5 pb-3">
+
+        <div v-if="isMobile && activeNav === 'apps'" class="flex flex-col gap-2">
+          <div class="relative w-full group">
+            <div class="search-shell relative rounded-xl flex items-center px-3 py-3">
+              <i class="ph-bold ph-magnifying-glass text-gray-500 mr-2 transition-colors text-sm search-shell-icon"></i>
+              <input type="text" ref="searchInput" v-model="searchQuery" placeholder="Search apps..."
+                class="bg-transparent w-full text-sm text-white focus:outline-none placeholder-gray-400 font-medium" />
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="activeNav === 'settings' || activeNav === 'stats' || activeNav === 'youtube'"
+          class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div id="knobly-logo" class="text-2xl md:text-3xl knobly-header-style">
+              KNOBLY
+            </div>
+            <span class="text-[10px] md:text-xs text-gray-400 uppercase tracking-[0.2em]">
+              {{ activeNav === 'youtube' ? 'YouTube' : (activeNav === 'settings' ? 'Settings' : 'System Stats') }}
+            </span>
+          </div>
+          <div class="flex items-center gap-2 md:gap-3">
+            <button @click="toggleLogModal"
+              class="relative w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press"
+              :class="isLightMode ? 'bg-white/90 border-slate-300' : ''" :title="'Activity Center'">
+              <i class="ph-bold ph-bell-simple text-xs md:text-sm"
+                :class="unreadCount > 0 ? 'text-cyan-300' : (isLightMode ? 'text-slate-500' : 'text-gray-400')"></i>
+              <span v-if="unreadCount > 0"
+                class="absolute top-0 right-0 -mt-1 -mr-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white shadow-sm border border-black/50">
+                {{ unreadCount > 9 ? '9+' : unreadCount }}
+              </span>
+            </button>
+
+            <button @click="toggleTheme"
+              class="w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press"
+              :class="isLightMode ? 'bg-white/90 border-slate-300' : ''"
+              :title="isLightMode ? 'Switch to dark mode' : 'Switch to light mode'">
+              <i v-if="!isLightMode" class="ph-bold ph-moon-stars text-xs md:text-sm text-cyan-300"></i>
+              <i v-else class="ph-bold ph-sun-dim text-xs md:text-sm text-yellow-500"></i>
+            </button>
+
+            <button @click="handleProfileClick"
+              class="w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press overflow-hidden"
+              :class="isLightMode ? 'bg-white/90 border-slate-300' : ''"
+              :title="user ? 'Profile / Logout' : 'Login / Signup'">
+              <img v-if="user && user.photoURL" :src="user.photoURL" class="w-full h-full object-cover" />
+              <i v-else class="ph-bold ph-user text-xs md:text-sm"
+                :class="user ? 'text-cyan-300' : 'text-gray-400'"></i>
+            </button>
+          </div>
+        </div>
+
+        <div v-else class="flex flex-col gap-3">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-3">
+                <div id="knobly-logo" class="text-2xl md:text-3xl knobly-header-style">
+                  KNOBLY
+                </div>
+                <div class="flex items-center gap-1.5 opacity-70">
+                  <i class="ph-bold ph-calendar-blank text-cyan-400 text-xs"></i>
+                  <span class="text-[9px] md:text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400">
+                    {{ dateString }}
+                  </span>
+                </div>
+              </div>
+              <h1 class="text-xl md:text-2xl font-semibold text-white leading-tight mt-0.5">
+                {{ greeting }},
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                  {{ user ? (user.displayName || userName) : (userName || 'Guest') }}
+                </span>
+              </h1>
+
+              <div v-if="isMobile && activeNav === 'home'"
+                class="flex flex-col gap-2 mt-4 lg:hidden w-full border-t border-white/10 pt-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i class="ph-bold ph-clock text-lg text-cyan-400"></i>
+                    <span class="text-2xl font-bold tracking-wide text-white">{{ currentTime }}</span>
+                  </div>
+                  <div class="flex flex-col items-end">
+                    <div class="flex items-center gap-1 text-yellow-400">
+                      <i class="ph-fill ph-cloud-sun text-lg"></i>
+                      <span class="text-xl font-bold">{{ weatherTemp }}</span>
+                    </div>
+                    <span class="text-xs font-medium text-gray-400 uppercase tracking-widest">{{ cityName }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col items-end gap-2 shrink-0">
+              <div class="flex items-center gap-2 md:gap-3">
+                <button @click="toggleLogModal"
+                  class="relative w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press"
+                  :class="isLightMode ? 'bg-white/90 border-slate-300' : ''" :title="'Activity Center'">
+                  <i class="ph-bold ph-bell-simple text-xs md:text-sm"
+                    :class="unreadCount > 0 ? 'text-cyan-300' : (isLightMode ? 'text-slate-500' : 'text-gray-400')"></i>
+                  <span v-if="unreadCount > 0"
+                    class="absolute top-0 right-0 -mt-1 -mr-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white shadow-sm border border-black/50">
+                    {{ unreadCount > 9 ? '9+' : unreadCount }}
+                  </span>
+                </button>
+                <button @click="toggleTheme"
+                  class="w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press"
+                  :class="isLightMode ? 'bg-white/90 border-slate-300' : ''"
+                  :title="isLightMode ? 'Switch to dark mode' : 'Switch to light mode'">
+                  <i v-if="!isLightMode" class="ph-bold ph-moon-stars text-xs md:text-sm text-cyan-300"></i>
+                  <i v-else class="ph-bold ph-sun-dim text-xs md:text-sm text-yellow-500"></i>
+                </button>
+
+                <button @click="handleProfileClick"
+                  class="w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press overflow-hidden"
+                  :class="isLightMode ? 'bg-white/90 border-slate-300' : ''"
+                  :title="user ? 'Profile / Logout' : 'Login / Signup'">
+                  <img v-if="user && user.photoURL" :src="user.photoURL" class="w-full h-full object-cover" />
+                  <i v-else class="ph-bold ph-user text-xs md:text-sm"
+                    :class="user ? 'text-cyan-300' : 'text-gray-400'"></i>
+                </button>
+
+                <div class="relative w-48 md:w-60 lg:w-72 group" v-if="!isMobile || activeNav !== 'apps'">
+                  <div class="search-shell relative rounded-xl flex items-center px-3 md:px-4 py-2">
+                    <i
+                      class="ph-bold ph-magnifying-glass text-gray-500 mr-2 md:mr-3 transition-colors text-xs md:text-sm search-shell-icon"></i>
+                    <input type="text" ref="searchInput" v-model="searchQuery" placeholder="Search system... (Ctrl + K)"
+                      class="bg-transparent w-full text-[11px] md:text-sm text-white focus:outline-none placeholder-gray-400 font-medium" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <section v-if="activeNav === 'settings'" class="flex-1 mt-1 flex flex-col min-h-0">
+        <div
+          class="glass-panel rounded-2xl px-3 md:px-5 py-3 flex flex-col gap-3 border border-white/10 flex-1 overflow-hidden">
+          <div class="flex items-center justify-between gap-2 shrink-0">
+            <div>
+              <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-1">
+                Settings
+              </div>
+              <div class="text-xs md:text-sm text-gray-200">
+                Personalize Knobly OS
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] md:text-[11px] text-gray-400 uppercase tracking-[0.18em]">Performance</span>
+              <button @click="togglePerformance"
+                class="relative w-10 md:w-11 h-5 md:h-6 rounded-full border border-white/20 flex items-center px-0.5 transition-all"
+                :class="performanceMode ? 'bg-emerald-500/60' : 'bg-slate-700/70'">
+                <span class="w-4 md:w-5 h-4 md:h-5 rounded-full bg-white shadow-md transform transition-transform"
+                  :style="{ transform: performanceMode ? 'translateX(16px)' : 'translateX(0px)' }"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-2 max-w-xs">
+            <div class="search-shell relative rounded-xl flex items-center px-3 py-1.5">
+              <i class="ph-bold ph-magnifying-glass text-gray-500 mr-2 text-xs search-shell-icon"></i>
+              <input type="text" v-model="settingsSearch" @input="handleSettingsSearch" placeholder="Search settings..."
+                class="bg-transparent w-full text-[11px] text-white focus:outline-none placeholder-gray-400 font-medium" />
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-2 border-b border-white/10 pb-1 shrink-0">
+            <button v-for="tab in settingsTabs" :key="tab.id" @click="activeSettingsTab = tab.id"
+              class="settings-tab-btn flex-1 text-[10px] md:text-[11px] uppercase tracking-[0.18em] text-center active-press"
+              :class="activeSettingsTab === tab.id
+                ? 'settings-tab-btn-active'
+                : 'border-white/10 text-gray-400'">
+              {{ tab.label }}
+            </button>
+          </div>
+
+          <div class="mt-2 flex-1 overflow-y-auto custom-scroll pr-1 text-xs">
+
+            <div v-if="activeSettingsTab === 'profile'" class="flex flex-col gap-3">
+              <div class="text-[12px] font-bold uppercase tracking-[0.18em] text-gray-300">
+                Profile
+              </div>
+
+              <div v-if="!user"
+                class="flex flex-col gap-3 p-4 border border-dashed border-white/20 rounded-xl bg-white/5 text-center">
+                <div class="text-cyan-300 font-bold">You are currently a Guest</div>
+                <p class="text-gray-400">Log in to keep your settings and apps safe.</p>
+                <button @click="showLoginModal = true; isSignUp = false"
+                  class="bg-cyan-500 text-black font-bold py-2 rounded-lg hover:bg-cyan-400">Login / Sign Up</button>
+
+                <hr class="border-white/10 my-2" />
+                <label class="flex flex-col gap-1 text-left">
+                  <span class="uppercase tracking-[0.18em] text-[9px] text-gray-400">Local Guest Name</span>
+                  <input v-model="userName" type="text" maxlength="20"
+                    class="px-3 py-1.5 rounded-xl text-xs focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
+                    placeholder="Enter a name to display in greeting" />
+                </label>
+                <button @click="saveUserName"
+                  class="self-start mt-1 px-3 py-1.5 rounded-xl bg-slate-700 text-white text-[10px] font-bold uppercase tracking-[0.18em] hover:bg-slate-600 transition-all">
+                  Save Guest Name
+                </button>
+              </div>
+
+              <div v-else class="flex flex-col gap-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-cyan-500/50">
+                    <img v-if="user.photoURL" :src="user.photoURL" class="w-full h-full object-cover" />
+                    <div v-else
+                      class="w-full h-full bg-cyan-900 flex items-center justify-center text-cyan-200 font-bold text-xl">
+                      {{user.email[0].toUpperCase()}}</div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-bold text-white text-sm" v-if="!isEditingName">
+                      {{user.displayName || 'User'}}
+                      <button @click="isEditingName = true" class="ml-2 text-cyan-400 hover:text-cyan-300 text-xs"><i
+                          class="ph-bold ph-pencil-simple"></i></button>
+                    </div>
+                    <div v-else class="flex items-center gap-2">
+                      <input v-model="editNameVal"
+                        class="rounded px-2 py-1 text-xs focus:border-cyan-400 outline-none w-32" />
+                      <button @click="updateProfile" class="text-emerald-400 hover:text-emerald-300"><i
+                          class="ph-bold ph-check"></i></button>
+                      <button @click="isEditingName = false" class="text-red-400 hover:text-red-300"><i
+                          class="ph-bold ph-x"></i></button>
+                    </div>
+                    <div class="text-gray-400 text-xs">{{user.email}}</div>
+                    <div v-if="user.email" class="text-cyan-400 text-[10px] font-mono mt-0.5">
+                      @{{user.email.split('@')[0]}}</div>
+                    <div v-if="isAdmin" class="text-red-400 text-[10px] font-bold uppercase mt-1">Administrator</div>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-emerald-900/10 border border-emerald-500/20 p-2 rounded text-emerald-200 text-xs flex items-center gap-2">
+                  <i class="ph-bold ph-cloud-check text-lg"></i>
+                  <span>Your account is active.</span>
+                </div>
+
+                <button @click="openAddAppModal(false)"
+                  class="w-full py-2 bg-white/5 border border-white/10 !text-white rounded-lg font-bold hover:bg-white/10 text-xs">
+                  + Add Custom App
+                </button>
+
+                <button @click="shutDown"
+                  class="w-full py-2 bg-red-500/10 border border-red-500/50 text-red-400 rounded-lg font-bold hover:bg-red-500/20">Sign
+                  Out</button>
+              </div>
+            </div>
+
+            <div v-else-if="activeSettingsTab === 'appearance'" class="flex flex-col gap-2">
+              <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
+                Wallpapers
+              </div>
+              <div class="flex items-center gap-3 scroll-x-soft pt-1 pb-1">
+                <button v-for="wp in wallpaperOptions" :key="'wp-' + wp.id" @click="setWallpaper(wp.id)"
+                  class="relative flex-shrink-0 w-20 h-12 rounded-xl overflow-hidden border transition-all active-press"
+                  :class="[
+                    'bg-slate-900/80',
+                    wp.thumbClass,
+                    selectedWallpaper === wp.id 
+                      ? 'border-cyan-400 shadow-[0_0_14px_rgba(34,211,238,0.6)]' 
+                      : 'border-white/10 hover:border-cyan-300/70'
+                  ]">
+                  <span
+                    class="absolute bottom-1 left-1 text-[8px] font-semibold uppercase tracking-[0.16em] text-white/80 drop-shadow">
+                    {{ wp.label }}
+                  </span>
+                </button>
+              </div>
+              <p class="text-[10px] text-gray-400 mt-1">
+                Choose wallpapers. They auto-adapt for light / dark theme.
+              </p>
+            </div>
+
+            <div v-else-if="activeSettingsTab === 'apps'" class="flex flex-col gap-2 h-full">
+              <div class="text-[12px] font-bold uppercase tracking-[0.18em] text-gray-300 shrink-0">
+                App Management
+              </div>
+
+              <div class="flex-1 overflow-y-auto custom-scroll">
+                <div v-if="isAdmin" class="mb-4 border border-cyan-500/30 bg-cyan-900/10 p-2 rounded-lg">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-cyan-400 font-bold uppercase tracking-wider text-[10px]">Global Admin Panel</span>
+                    <button @click="openAddAppModal(true)"
+                      class="px-2 py-1 bg-cyan-600 !text-white rounded text-[9px]">Add Global App</button>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <div v-for="app in globalApps" :key="app.id"
+                      class="flex justify-between items-center bg-white/5 p-1 rounded">
+                      <span class="text-white">{{app.name}}</span>
+                      <button @click="deleteGlobalApp(app)" class="text-red-400 hover:text-red-300"><i
+                          class="ph-bold ph-trash"></i></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="user" class="mb-4">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-300 font-bold uppercase tracking-wider text-[10px]">My Custom Apps</span>
+                    <button @click="openAddAppModal(false)"
+                      class="px-2 py-1 bg-gray-700 !text-white rounded text-[9px] hover:bg-gray-600">+ Add App</button>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <div v-for="app in myCustomApps" :key="app.id"
+                      class="flex justify-between items-center bg-white/5 p-1 rounded">
+                      <span class="text-white flex items-center gap-2"><i :class="app.icon"></i> {{app.name}}</span>
+                      <button @click="deleteCustomApp(app)" class="text-red-400 hover:text-red-300"><i
+                          class="ph-bold ph-trash"></i></button>
+                    </div>
+                    <div v-if="myCustomApps.length === 0" class="text-gray-500 italic">No custom apps yet.</div>
+                  </div>
+                </div>
+
+                <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 mt-2">Visibility</div>
+                <div class="settings-app-list overflow-visible text-[11px] text-gray-200">
+                  <div v-for="app in allAppsList" :key="'manage-' + (app.id || app.name)"
+                    class="flex items-center justify-between gap-2 py-0.5 px-1 rounded-lg hover:bg-white/5">
+                    <span class="flex items-center gap-1.5 min-w-0">
+                      <i :class="[app.icon, 'text-xs', app.color]"></i>
+                      <span class="truncate">{{ app.name }}</span>
+                    </span>
+                    <button @click="toggleAppVisibility(app)"
+                      class="px-2 py-0.5 rounded-full border text-[10px] active-press shrink-0" :class="hiddenAppsSet.has(app.id || app.name)
+                          ? 'border-emerald-400 text-emerald-300 bg-emerald-500/10'
+                          : 'border-slate-500 text-slate-300 bg-slate-800/40'">
+                      {{ hiddenAppsSet.has(app.id || app.name) ? 'Show' : 'Hide' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section v-else-if="activeNav === 'stats'" class="flex-1 mt-1 flex flex-col">
+        <div
+          class="glass-panel rounded-2xl px-3 md:px-5 py-4 flex flex-col gap-4 border border-white/10 flex-1 overflow-hidden">
+          <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
+            <div>
+              <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-1">
+                System Stats
+              </div>
+              <div class="text-xs md:text-sm text-gray-200">
+                Overview of your Knobly OS usage
+              </div>
+            </div>
+            <div class="text-right text-[10px] text-gray-400 uppercase tracking-[0.18em]">
+              Uptime<br />
+              <span class="text-cyan-400 text-[11px]">{{ uptimeString }}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs mt-1">
+            <div class="glass-card rounded-2xl flex flex-col gap-1.5 px-3 py-3 md:px-4 md:py-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] uppercase tracking-[0.18em] text-gray-400">Total Apps</span>
+                <i class="ph-bold ph-squares-four text-cyan-400 text-sm"></i>
+              </div>
+              <div class="text-xl font-bold text-white">{{ allAppsList.length }}</div>
+            </div>
+            <div class="glass-card rounded-2xl flex flex-col gap-1.5 px-3 py-3 md:px-4 md:py-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] uppercase tracking-[0.18em] text-gray-400">Favourites</span>
+                <i class="ph-bold ph-star text-yellow-400 text-sm"></i>
+              </div>
+              <div class="text-xl font-bold text-white">{{ favourites.length }}</div>
+            </div>
+            <div class="glass-card rounded-2xl flex flex-col gap-1.5 px-3 py-3 md:px-4 md:py-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] uppercase tracking-[0.18em] text-gray-400">Hidden</span>
+                <i class="ph-bold ph-eye-slash text-red-400 text-sm"></i>
+              </div>
+              <div class="text-xl font-bold text-white">{{ hiddenAppsSet.size }}</div>
+            </div>
+            <div class="glass-card rounded-2xl flex flex-col gap-1.5 px-3 py-3 md:px-4 md:py-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] uppercase tracking-[0.18em] text-gray-400">Performance</span>
+                <i class="ph-bold ph-rocket-launch text-emerald-400 text-sm"></i>
+              </div>
+              <div class="text-xs font-semibold text-gray-200">
+                {{ performanceMode ? 'High visuals' : 'Battery saver' }}
+              </div>
+            </div>
+            <div
+              class="glass-card rounded-2xl flex flex-col gap-1.5 col-span-2 md:col-span-2 px-3 py-3 md:px-4 md:py-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] uppercase tracking-[0.18em] text-gray-400">Theme</span>
+                <i class="ph-bold" :class="isLightMode ? 'ph-sun text-yellow-400' : 'ph-moon-stars text-cyan-300'"></i>
+              </div>
+              <div class="text-xs font-semibold text-gray-200">
+                {{ isLightMode ? 'Light mode' : 'Dark mode' }} Ã¢‚¬¢ Wallpaper: {{ selectedWallpaper }}
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-recent-list mt-2 overflow-y-auto custom-scroll pr-1">
+            <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-2">
+              Recent Apps
+            </div>
+            <div v-if="recentApps.length === 0" class="text-[11px] text-gray-500">
+              Launch some apps to see them here.
+            </div>
+            <div v-else class="flex flex-col gap-1.5 text-[11px]">
+              <div v-for="app in recentApps" :key="'recent-' + (app.id || app.name)"
+                class="flex items-center justify-between py-1 px-2 rounded-xl bg-white/5 border border-white/10">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center">
+                    <i :class="[app.icon, 'text-sm', app.color]"></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-gray-100">{{ app.name }}</div>
+                    <div class="text-[9px] uppercase tracking-[0.16em] text-gray-400">{{ app.type }}</div>
+                  </div>
+                </div>
+                <button
+                  class="text-[9px] px-2 py-1 rounded-full border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/10 active:scale-95 transition-all"
+                  @click="openModal(app)">
+                  Open
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section v-else-if="activeNav === 'youtube'" class="flex-1 mt-1 flex flex-col overflow-hidden">
+        <div class="glass-panel w-full rounded-[28px] flex-1 p-0 flex flex-col min-h-0 overflow-hidden mb-3">
+          <div class="p-4 pb-2 flex justify-between items-center border-b border-white/5 bg-white/[0.02]">
+            <h3 class="text-[9px] font-bold text-gray-400 uppercase tracking-widest font-gaming">MY CONTENT</h3>
+            <div class="flex items-center gap-2 bg-red-600/10 px-2 py-0.5 rounded border border-red-600/30">
+              <i class="ph-fill ph-youtube-logo text-red-500 text-xs"></i>
+              <span class="text-[9px] font-bold text-red-400 tracking-wider">PLAYER</span>
+            </div>
+          </div>
+          <div class="w-full aspect-video bg-black">
+            <iframe class="w-full h-full" :src="`https://www.youtube.com/embed/${currentVideo.id}?autoplay=0`"
+              title="YouTube video player" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+          </div>
+          <div class="flex flex-col flex-1 custom-scroll p-2 gap-2 bg-black/20 overflow-y-auto">
+            <div v-for="(video, index) in myVideos" :key="index" @click="playVideo(video)"
+              :class="['video-item p-2 rounded-lg cursor-pointer flex items-start gap-3 active-press', currentVideo.id === video.id ? 'video-active' : '']">
+              <div class="w-20 h-12 bg-gray-800 rounded overflow-hidden shrink-0 relative group">
+                <img :src="`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`"
+                  class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                <div class="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-transparent">
+                  <i class="ph-fill ph-play text-white text-xs"></i>
+                </div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-[11px] font-semibold text-gray-200 leading-tight line-clamp-2">
+                  {{ video.title }}
+                </h4>
+                <p class="text-[9px] text-gray-500 mt-1">{{ video.views }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a href="https://youtube.com/@knobly1" target="_blank"
+          class="glass-panel w-full yt-cta rounded-[22px] p-3 flex items-center justify-between group transition-all shrink-0 hover:bg-red-500/5 active-press">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-9 h-9 yt-cta-logo rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+              <i class="ph-fill ph-youtube-logo text-lg"></i>
+            </div>
+            <div class="font-bold text-[11px] text-gray-200">Knobly OS</div>
+          </div>
+          <div class="yt-cta-join text-[9px] font-bold">JOIN</div>
+        </a>
+      </section>
+
+      <nav v-if="!searchQuery && activeNav === 'home'" class="flex gap-3 md:gap-4 shrink-0 justify-center pt-2">
+        <button v-for="tab in tabs" :key="tab" @click="switchTab(tab)"
+          class="tab-btn pb-1.5 text-[10px] md:text-[11px] font-bold tracking-wide uppercase transition-all relative px-3 md:px-5 active-press"
+          :class="activeTab === tab
+            ? 'tab-btn-active'
+            : 'text-gray-500 hover:text-white'">
+          {{ tab }}
+        </button>
+      </nav>
+
+      <nav v-if="activeNav === 'apps'"
+        class="flex gap-4 shrink-0 pt-2 border-b border-white/10 pb-1 justify-between items-center">
+        <div class="flex gap-4">
+          <button class="apps-filter-btn text-[10px] md:text-[11px] font-bold tracking-[0.18em] uppercase active-press"
+            :class="appsFilter === 'all'
+              ? 'apps-filter-btn-active'
+              : 'text-gray-500 hover:text-white'" @click="appsFilter = 'all'">
+            All Apps
+          </button>
+          <button class="apps-filter-btn text-[10px] md:text-[11px] font-bold tracking-[0.18em] uppercase active-press"
+            :class="appsFilter === 'hidden'
+              ? 'apps-filter-btn-active'
+              : 'text-gray-500 hover:text-white'" @click="appsFilter = 'hidden'">
+            Hidden / Disabled
+          </button>
+        </div>
+
+        <button v-if="user" @click="openAddAppModal(false)"
+          class="text-cyan-400 hover:text-cyan-300 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+          <i class="ph-bold ph-plus-circle text-lg"></i> Add
+        </button>
+      </nav>
+
+      <div v-if="activeNav !== 'settings' && activeNav !== 'stats' && activeNav !== 'youtube'"
+        class="flex-1 pt-4 overflow-y-auto custom-scroll pr-1 relative overflow-x-hidden">
+        <div id="tool-grid" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5 pb-4">
+          <div v-for="app in filteredTools" :key="app.id || app.name" @click="openModal(app)"
+            @contextmenu.prevent="openAppContextMenu($event, app)"
+            class="glass-card app-card rounded-[22px] flex flex-col items-center justify-center gap-2 cursor-pointer group relative overflow-hidden active-press"
+            data-tilt data-tilt-scale="1.05">
+            <div v-if="isInFavourites(app)" class="absolute top-2 right-2 text-yellow-400 text-xs z-20">
+              <i class="ph-fill ph-star"></i>
+            </div>
+
+            <div v-if="isNewApp(app)"
+              class="absolute top-2 left-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded z-20 shadow-md">
+              NEW
+            </div>
+
+            <div :class="[
+                'w-12 h-12 sm:w-16 sm:h-16 app-icon-tile flex items-center justify-center transition-transform duration-300 bg-black/40 shadow-inner border z-10 backdrop-blur-md group-hover:scale-[1.03] rounded-full',
+                iconAccentClass,
+                app.borderClass
+              ]">
+              <i :class="[app.icon, 'devicon-fix', app.color]"></i>
+            </div>
+            <div class="text-center z-10 pointer-events-none">
+              <h3
+                class="font-semibold text-gray-200 text-[11px] sm:text-xs md:text-sm group-hover:text-cyan-300 transition-colors leading-tight">
+                {{ app.name }}
+              </h3>
+              <div v-if="(app.id === 'notes' || app.name === 'Notes') && notesText && notesText.length > 0"
+                class="text-[8px] text-emerald-400 mt-0.5 uppercase tracking-[0.16em]"> &bull; Saved
+              </div>
+              <p class="text-[9px] text-gray-400 mt-0.5 uppercase tracking-[0.14em]" v-if="activeNav !== 'apps'">
+                {{ app.type }}
+              </p>
+            </div>
+          </div>
+
+          <div v-if="activeTab === 'Favourites' && !searchQuery && favourites.length === 0 && activeNav !== 'apps'"
+            class="col-span-3 sm:col-span-4 lg:col-span-5 flex flex-col items-center justify-center py-6 text-center text-gray-500 text-xs">
+            <i class="ph-bold ph-push-pin text-2xl mb-2 text-cyan-400/70"></i>
+            <p class="uppercase tracking-[0.18em] text-[9px]">Right-click any app &amp; choose "Add to favourites"</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside id="right-sidebar"
+      class="hidden xl:flex w-[320px] min-w-[320px] max-w-[320px] flex-col gap-4 h-full z-10 shrink-0">
+      <div
+        class="glass-panel w-full rounded-[28px] p-4 flex items-center justify-between relative overflow-hidden shrink-0">
+        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent pointer-events-none"></div>
+        <div class="relative">
+          <div class="text-4xl font-black tracking-tight text-white leading-none mb-1">{{ currentTime }}</div>
+          <div class="text-[9px] font-bold text-cyan-400 uppercase tracking-widest">
+            {{ cityName }}
+          </div>
+        </div>
+        <div class="text-right relative">
+          <i class="ph-fill ph-cloud-sun text-2xl text-yellow-400 drop-shadow-md mb-1 animate-float"></i>
+          <div class="text-lg font-semibold text-white tracking-tight">
+            {{ weatherTemp }}
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-panel w-full rounded-[28px] flex-1 p-0 flex flex-col min-h-0 overflow-hidden">
+        <div class="p-4 pb-2 flex justify-between items-center border-b border-white/5 bg-white/[0.02]">
+          <h3 class="text-[9px] font-bold text-gray-400 uppercase tracking-widest font-gaming">MY CONTENT</h3>
+          <div class="flex items-center gap-2 bg-red-600/10 px-2 py-0.5 rounded border border-red-600/30">
+            <i class="ph-fill ph-youtube-logo text-red-500 text-xs"></i>
+            <span class="text-[9px] font-bold text-red-400 tracking-wider">PLAYER</span>
+          </div>
+        </div>
+        <div class="w-full aspect-video bg-black">
+          <iframe class="w-full h-full" :src="`https://www.youtube.com/embed/${currentVideo.id}?autoplay=0`"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+        <div class="flex flex-col flex-1 custom-scroll p-2 gap-2 bg-black/20 overflow-y-auto">
+          <div v-for="(video, index) in myVideos" :key="index" @click="playVideo(video)"
+            :class="['video-item p-2 rounded-lg cursor-pointer flex items-start gap-3 active-press', currentVideo.id === video.id ? 'video-active' : '']">
+            <div class="w-20 h-12 bg-gray-800 rounded overflow-hidden shrink-0 relative group">
+              <img :src="`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`"
+                class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+              <div class="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-transparent">
+                <i class="ph-fill ph-play text-white text-xs"></i>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h4 class="text-[11px] font-semibold text-gray-200 leading-tight line-clamp-2">
+                {{ video.title }}
+              </h4>
+              <p class="text-[9px] text-gray-500 mt-1">{{ video.views }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a href="https://youtube.com/@knobly1" target="_blank"
+        class="glass-panel w-full yt-cta rounded-[22px] p-3 flex items-center justify-between group transition-all shrink-0 hover:bg-red-500/5 active-press">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-9 h-9 yt-cta-logo rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+            <i class="ph-fill ph-youtube-logo text-lg"></i>
+          </div>
+          <div class="font-bold text-[11px] text-gray-200">Knobly OS</div>
+        </div>
+        <div class="yt-cta-join text-[9px] font-bold">JOIN</div>
+      </a>
+    </aside>
+    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto transition-opacity duration-300"
+        @click="showModal = false"></div>
+      <div
+        class="draggable-modal w-full max-w-sm rounded-[28px] p-7 text-center border border-white/10 flex flex-col items-center pointer-events-auto"
+        :style="{ top: modalPos.y + 'px', left: modalPos.x + 'px' }" @click.stop>
+        <div
+          class="absolute top-0 left-0 w-full h-14 z-20 cursor-grab active:cursor-grabbing flex justify-end pr-5 pt-5"
+          @mousedown="startDrag">
+          <button class="text-gray-400 hover:text-white transition-colors" @mousedown.stop @click="showModal = false">
+            <i class="ph-bold ph-x text-xl"></i>
+          </button>
+        </div>
+        <div
+          class="w-24 h-24 rounded-3xl flex items-center justify-center mb-5 bg-[#1a1a20] shadow-2xl border border-white/10 z-10 pointer-events-none select-none relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 to-transparent opacity-50"></div>
+          <i :class="[selectedApp.icon, 'text-6xl', selectedApp.color]" class="relative z-10 drop-shadow-2xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-white mb-1 z-10 select-none">{{ selectedApp.name }}</h2>
+        <span
+          class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-6 border border-cyan-500/20 px-2 py-1 rounded bg-cyan-900/20 z-10 select-none">
+          {{ selectedApp.type }}
+        </span>
+        <button @click="launchApp"
+          class="w-full bg-white text-black font-bold py-3 rounded-xl hover:scale-105 transition-all text-sm shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] z-10 active:scale-95">
+          Launch Application
+        </button>
+      </div>
+    </div>
+
+    <div v-if="showNotesModal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto transition-opacity duration-300"
+        @click="showNotesModal = false"></div>
+      <div
+        class="draggable-modal w-full max-w-md rounded-[28px] p-6 text-left border border-white/10 flex flex-col gap-4 pointer-events-auto"
+        :style="{ top: modalPos.y + 'px', left: modalPos.x + 'px' }" @click.stop>
+        <div
+          class="absolute top-0 left-0 w-full h-14 z-20 cursor-grab active:cursor-grabbing flex justify-between items-center px-5 pt-4"
+          @mousedown="startDrag">
+          <div class="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-cyan-300">
+            <i class="ti ti-notes text-base"></i>
+            <span>Notes</span>
+          </div>
+          <button class="text-gray-400 hover:text-white transition-colors" @mousedown.stop
+            @click="showNotesModal = false">
+            <i class="ph-bold ph-x text-xl"></i>
+          </button>
+        </div>
+        <div class="pt-10 flex flex-col gap-3">
+          <textarea v-model="notesText"
+            class="notes-area w-full h-40 rounded-2xl border text-sm px-4 py-3 resize-none custom-scroll focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
+            placeholder="Write your notes here... (auto-saved on Save)"></textarea>
+          <div class="flex items-center justify-between gap-2">
+            <span class="notes-meta text-[10px] text-gray-500 uppercase tracking-[0.16em]">
+              {{ user ? 'Synced' : 'Local Only'}}
+            </span>
+            <button @click="saveNotes"
+              class="px-4 py-2 rounded-xl bg-cyan-500 text-black text-xs font-bold uppercase tracking-[0.16em] hover:bg-cyan-400 active:scale-95 transition-all">
+              Save Notes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="showLogModal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto transition-opacity duration-300"
+        @click="showLogModal = false"></div>
+      <div
+        class="draggable-modal w-full max-w-md rounded-[28px] p-6 text-left border border-white/10 flex flex-col gap-4 pointer-events-auto"
+        :style="{ top: modalPos.y + 'px', left: modalPos.x + 'px' }" @click.stop>
+        <div
+          class="absolute top-0 left-0 w-full h-14 z-20 cursor-grab active:cursor-grabbing flex justify-between items-center px-5 pt-4"
+          @mousedown="startDrag">
+          <div class="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-cyan-300">
+            <i class="ph-bold ph-bell-simple text-base"></i>
+            <span>Activity Center</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <button class="text-gray-400 hover:text-white transition-colors" @mousedown.stop
+              @click="showLogModal = false">
+              <i class="ph-bold ph-x text-xl"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-10 flex flex-col gap-3 max-h-72 custom-scroll pr-1">
+          <div v-if="activityLog.length === 0" class="text-[11px] text-gray-400 text-center py-4">
+            No new notifications.
+          </div>
+          <div v-else class="flex flex-col gap-2 text-[11px]">
+            <div v-for="(item, index) in activityLog" :key="'log-' + index"
+              class="flex items-start justify-between gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 relative group">
+              <div class="flex-1 min-w-0">
+                <div class="font-medium text-gray-100 truncate flex items-center gap-2">
+                  <i v-if="item.isAdminMsg" class="ph-fill ph-megaphone text-yellow-400"></i>
+                  {{ item.message }}
+                </div>
+                <div class="flex justify-between items-center mt-1">
+                  <div class="text-[9px] uppercase tracking-[0.16em] text-gray-400">
+                    {{ item.date }} Ã¢‚¬¢ {{ item.time }}
+                  </div>
+                  <a v-if="item.link" :href="item.link" target="_blank"
+                    class="text-[9px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded uppercase font-bold hover:bg-cyan-500/40">Open
+                    Link</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="showLoginModal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+      <div class="absolute inset-0 bg-black/80 backdrop-blur-md pointer-events-auto transition-opacity duration-300"
+        @click="showLoginModal = false"></div>
+      <div
+        class="pointer-events-auto relative w-[90%] max-w-md max-h-[85vh] overflow-y-auto custom-scroll bg-[#0f172a] border border-cyan-500/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(6,182,212,0.15)] overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/20 blur-3xl rounded-full pointer-events-none">
+        </div>
+
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl md:text-2xl font-gaming font-bold text-white tracking-widest">{{ isSignUp ? 'CREATE ACCOUNT' : 'SYSTEM LOGIN' }}</h2>
+          <button @click="showLoginModal = false" class="text-gray-400 hover:text-white"><i
+              class="ph-bold ph-x text-xl"></i></button>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <div v-if="authError" class="bg-red-500/10 border border-red-500/30 text-red-400 text-xs p-3 rounded-lg">{{ authError }}</div>
+
+          <div v-if="isSignUp" class="flex flex-col gap-3">
+            <div>
+              <label class="text-[10px] uppercase text-cyan-400 font-bold tracking-wider mb-2 block">Choose
+                Avatar</label>
+              <div class="flex gap-2 justify-center flex-wrap">
+                <img v-for="av in avatarOptions" :key="av" :src="av" @click="authForm.selectedAvatar = av"
+                  class="w-10 h-10 rounded-full border-2 cursor-pointer transition-all hover:scale-110 bg-white/10"
+                  :class="authForm.selectedAvatar === av ? 'border-cyan-400 shadow-[0_0_10px_#22d3ee]' : 'border-transparent opacity-60 hover:opacity-100'" />
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Full Name</label>
+              <input v-model="authForm.fullName" type="text"
+                class="rounded-lg p-2.5 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                placeholder="John Doe">
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Username</label>
+              <input v-model="authForm.username" type="text"
+                class="rounded-lg p-2.5 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                placeholder="@johndoe">
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Email Address</label>
+              <input v-model="authForm.email" type="email"
+                class="rounded-lg p-3 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                placeholder="user@knobly.os">
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Password</label>
+              <input v-model="authForm.password" type="password"
+                class="rounded-lg p-3 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                placeholder="Ã¢‚¬¢Ã¢‚¬¢Ã¢‚¬¢Ã¢‚¬¢Ã¢‚¬¢Ã¢‚¬¢Ã¢‚¬¢Ã¢‚¬¢">
+            </div>
+          </div>
+
+          <button @click="handleAuth" :disabled="authLoading"
+            class="mt-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-3 rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+            {{ authLoading ? 'PROCESSING...' : (isSignUp ? 'REGISTER' : 'AUTHENTICATE') }}
+          </button>
+
+          <div class="flex items-center gap-3 my-2">
+            <div class="h-[1px] bg-white/10 flex-1"></div>
+            <span class="text-[10px] text-gray-500 uppercase">OR</span>
+            <div class="h-[1px] bg-white/10 flex-1"></div>
+          </div>
+
+          <button @click="handleGoogleLogin"
+            class="bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+            <i class="ph-bold ph-google-logo text-lg"></i> Continue with Google
+          </button>
+
+          <div class="text-center mt-2 text-xs text-gray-400">
+            {{ isSignUp ? 'Already have an account?' : "Don't have an account?" }}
+            <a @click="isSignUp = !isSignUp; authError = ''"
+              class="text-cyan-400 font-bold hover:underline ml-1 cursor-pointer">{{ isSignUp ? 'Login' : 'Sign Up'
+              }}</a>
+          </div>
+          <div class="text-center mt-1 text-xs" v-if="!isSignUp">
+            <a @click="handlePasswordReset" class="text-gray-500 hover:text-white cursor-pointer underline">Forgot
+              Password?</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="showAddAppModal" class="fixed inset-0 z-[100] flex items-center justify-center">
+      <div class="absolute inset-0 bg-black/80 backdrop-blur-md pointer-events-auto transition-opacity duration-300"
+        @click="showAddAppModal = false"></div>
+      <div
+        class="pointer-events-auto relative w-[90%] max-w-md bg-[#0f172a] border border-white/10 rounded-3xl p-6 shadow-2xl z-50">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-white uppercase tracking-wider">
+            {{ addAppForm.isGlobal ? 'Add Global App (Admin)' : 'Add Custom App' }}
+          </h3>
+          <button @click="showAddAppModal = false" class="text-gray-400 hover:text-white"><i
+              class="ph-bold ph-x text-xl"></i></button>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <div>
+            <label class="text-[10px] uppercase text-gray-400 font-bold tracking-wider mb-2 block">1. Select
+              Icon</label>
+            <div
+              class="grid grid-cols-6 gap-2 h-32 overflow-y-auto custom-scroll p-1 bg-black/20 rounded-lg border border-white/5">
+              <button v-for="icon in iconLibrary" :key="icon" @click="addAppForm.icon = icon"
+                class="w-10 h-10 rounded-lg flex items-center justify-center transition-all"
+                :class="addAppForm.icon === icon ? 'bg-cyan-500 text-white shadow-[0_0_10px_rgba(34,211,238,0.5)]' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'">
+                <i :class="icon" class="text-lg"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] uppercase text-gray-400 font-bold tracking-wider">2. App Name</label>
+            <input v-model="addAppForm.name" type="text"
+              class="rounded-lg p-2.5 text-sm focus:border-cyan-400 focus:outline-none"
+              placeholder="e.g., My Portfolio">
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] uppercase text-gray-400 font-bold tracking-wider">3. App Link (URL)</label>
+            <input v-model="addAppForm.link" type="text"
+              class="rounded-lg p-2.5 text-sm focus:border-cyan-400 focus:outline-none" placeholder="https://...">
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] uppercase text-gray-400 font-bold tracking-wider">4. Select Category</label>
+            <select v-model="addAppForm.category"
+              class="rounded-lg p-2.5 text-sm focus:border-cyan-400 focus:outline-none">
+              <option value="Main">Main</option>
+              <option value="OLevel">OLevel</option>
+              <option value="CCC">CCC</option>
+            </select>
+          </div>
+
+          <button @click="submitNewApp"
+            class="mt-2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-900/20">
+            <i class="ph-bold ph-plus mr-1"></i> Add Application
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <nav class="lg:hidden fixed bottom-0 left-0 w-full z-30">
+      <div class="mobile-dock flex items-center justify-around px-4 py-2.5">
+        <button @click="activeNav = 'home'"
+          class="nav-btn flex items-center justify-center w-9 h-9 rounded-2xl border border-transparent transition-all active-press"
+          :class="activeNav === 'home'
+              ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/70 is-active'
+              : 'text-gray-400 hover:text-white hover:bg-white/5 hover:border-white/20'">
+          <i class="ph-bold ph-house text-lg"></i>
+        </button>
+
+        <button @click="activeNav = 'apps'"
+          class="nav-btn flex items-center justify-center w-9 h-9 rounded-2xl border border-transparent transition-all active-press"
+          :class="activeNav === 'apps'
+              ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/70 is-active'
+              : 'text-gray-400 hover:text-white hover:bg-white/5 hover:border-white/20'">
+          <i class="ph-bold ph-squares-four text-lg"></i>
+        </button>
+
+        <button @click="activeNav = 'youtube'"
+          class="nav-btn flex items-center justify-center w-9 h-9 rounded-2xl border border-transparent transition-all active-press"
+          :class="activeNav === 'youtube'
+              ? 'bg-red-500/20 text-red-400 border-red-500/60 shadow-[0_0_15px_rgba(220,38,38,0.4)]'
+              : 'text-gray-400 hover:text-red-400 hover:bg-white/5 hover:border-white/20'">
+          <i class="ph-fill ph-youtube-logo text-lg"></i>
+        </button>
+
+        <button @click="activeNav = 'stats'"
+          class="nav-btn flex items-center justify-center w-9 h-9 rounded-2xl border border-transparent transition-all active-press"
+          :class="activeNav === 'stats'
+              ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/70 is-active'
+              : 'text-gray-400 hover:text-white hover:bg-white/5 hover:border-white/20'">
+          <i class="ph-bold ph-chart-bar text-lg"></i>
+        </button>
+
+        <button @click="activeNav = 'settings'"
+          class="nav-btn flex items-center justify-center w-9 h-9 rounded-2xl border border-transparent transition-all active-press"
+          :class="activeNav === 'settings'
+              ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/70 is-active'
+              : 'text-gray-400 hover:text-white hover:bg-white/5 hover:border-white/20'">
+          <i class="ph-bold ph-gear text-lg"></i>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <script type="module">
+    import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+    import { auth, db } from './firebase-config.js';
+    import {
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut,
+      updateProfile,
+      sendPasswordResetEmail,
+      signInWithPopup,
+      GoogleAuthProvider
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import {
+      collection,
+      addDoc,
+      getDocs,
+      getDoc,
+      doc,
+      setDoc,
+      updateDoc,
+      deleteDoc,
+      query,
+      where,
+      orderBy,
+      onSnapshot,
+      limit,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    createApp({
+      data() {
+        return {
+          user: null,
+          isAdmin: false,
+          isEditingName: false,
+          editNameVal: "",
+
+          // Auth State
+          showLoginModal: false,
+          isSignUp: false,
+          authLoading: false,
+          authError: "",
+          authForm: { fullName: "", email: "", password: "", username: "", selectedAvatar: "" },
+
+          avatarOptions: [
+            "https://api.dicebear.com/7.x/adventurer/svg?seed=Felix",
+            "https://api.dicebear.com/7.x/adventurer/svg?seed=Aneka",
+            "https://api.dicebear.com/7.x/bottts/svg?seed=Tech",
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=Jack",
+            "https://api.dicebear.com/7.x/micah/svg?seed=Molly",
+            "https://api.dicebear.com/7.x/notionists/svg?seed=Leo"
+          ],
+
+          // App Management
+          showAddAppModal: false,
+          addAppForm: { name: "", link: "", icon: "ph-bold ph-globe", category: "Main", isGlobal: false },
+          iconLibrary: [
+            "ph-bold ph-globe", "ph-bold ph-code", "ph-bold ph-game-controller",
+            "ph-bold ph-music-notes", "ph-bold ph-camera", "ph-bold ph-chat",
+            "ph-bold ph-shopping-cart", "ph-bold ph-briefcase", "ph-bold ph-book",
+            "ph-bold ph-monitor", "ph-bold ph-pencil", "ph-bold ph-rocket",
+            "ti ti-brand-github", "ti ti-brand-twitter", "ti ti-brand-instagram"
+          ],
+
+          globalApps: [],
+          myCustomApps: [],
+          newAppBadgeDuration: 3 * 24 * 60 * 60 * 1000,
+
+          // Navigation
+          activeNav: "home",
+          navItems: [
+            { id: "home", icon: "ph-bold ph-house" },
+            { id: "apps", icon: "ph-bold ph-squares-four" },
+            { id: "stats", icon: "ph-bold ph-chart-bar" },
+            { id: "settings", icon: "ph-bold ph-gear" },
+          ],
+
+          // Content Logic
+          activeTab: "Main",
+          tabs: ["Main", "OLevel", "CCC", "Favourites"],
+          appsFilter: "all",
+          currentTime: "",
+          searchQuery: "",
+          showModal: false,
+          selectedApp: {},
+          weatherTemp: "--Ã‚°C",
+          cityName: "System Local",
+          greeting: "Hello",
+          dateString: "",
+          userName: "",
+          isLightMode: false,
+          showYoutubePanel: false,
+
+          // Modals Position
+          modalPos: { x: 0, y: 0 },
+          isDragging: false,
+          dragOffset: { x: 0, y: 0 },
+
+          // Context Menus
+          showContextMenu: false,
+          contextMenuX: 0,
+          contextMenuY: 0,
+          showAppContextMenu: false,
+          appContextX: 0,
+          appContextY: 0,
+          contextApp: null,
+
+          // YouTube Data
+          currentVideo: { id: "bJzb-RuUcMU", title: "React in 100 Seconds", views: "Featured" },
+          myVideos: [],
+
+          performanceMode: true,
+          selectedWallpaper: "default",
+          wallpaperOptions: [
+            { id: "default", label: "Core", thumbClass: "wallpaper-thumb-default" },
+            { id: "ocean", label: "Ocean", thumbClass: "wallpaper-thumb-ocean" },
+            { id: "purple", label: "Neon", thumbClass: "wallpaper-thumb-purple" },
+            { id: "sunset", label: "Sunset", thumbClass: "wallpaper-thumb-sunset" },
+            { id: "matrix", label: "Matrix", thumbClass: "wallpaper-thumb-matrix" },
+          ],
+
+          favourites: [],
+          recentApps: [],
+          showNotesModal: false,
+          notesText: "",
+          iconAccent: "cyan",
+          hiddenApps: [],
+          touchStartX: 0,
+          touchStartY: 0,
+          bootTime: Date.now(),
+          uptimeTick: 0,
+          settingsTabs: [
+            { id: "profile", label: "Profile" },
+            { id: "appearance", label: "Appearance" },
+            { id: "apps", label: "Apps" },
+          ],
+          activeSettingsTab: "profile",
+          settingsSearch: "",
+          isMobile: typeof window !== "undefined" ? window.innerWidth <= 640 : false,
+
+          // Notifications
+          showLogModal: false,
+          activityLog: [],
+          unreadCount: 0,
+
+          // Static Base Apps
+          baseApps: {
+            Main: [
+              { id: "security", name: "Security", type: "Cyber", link: "cybersecurity.html", icon: "ph-bold ph-shield-check", color: "text-emerald-400", borderClass: "border-emerald" },
+              { id: "aiweb", name: "AI Web", type: "Future", link: "Aiwebsite.html", icon: "ph-bold ph-robot", color: "text-purple-400", borderClass: "border-purple" },
+              { id: "html", name: "HTML", type: "Structure", link: "html/basichtml.html", icon: "ti ti-brand-html5", color: "text-orange-500", borderClass: "border-orange" },
+              { id: "css", name: "CSS", type: "Style", link: "WebDesigning/csspage.html", icon: "ti ti-brand-css3", color: "text-blue-500", borderClass: "border-blue" },
+              { id: "w3css", name: "W3.CSS", type: "Framework", link: "WebDesigning/w3css.html", icon: "ph-bold ph-layout", color: "text-green-400", borderClass: "border-green" },
+              { id: "js", name: "JS", type: "Scripting", link: "WebDesigning/javascript.html", icon: "ti ti-brand-javascript", color: "text-yellow-400", borderClass: "border-yellow" },
+              { id: "js", name: "Test", type: "Scripting", link: "deshboard.html", icon: "ti ti-test", color: "text-yellow-400", borderClass: "border-yellow" },
+              { id: "notes", name: "Notes", type: "Utility", icon: "ti ti-notes", color: "text-cyan-300", borderClass: "border-cyan" }
+            ],
+            OLevel: [
+              { id: "syllabus", name: "Syllabus", type: "Info", link: "syllabus.html", icon: "ph-bold ph-list-bullets", color: "text-gray-300", borderClass: "border-slate" },
+              { id: "olevel-notes", name: "O-Level Notes", type: "Study", link: "olevelnotes.html", icon: "ph-bold ph-notebook", color: "text-emerald-400", borderClass: "border-emerald" },
+              { id: "it-tools", name: "IT Tools", type: "Module 1", link: "m1r5ptest/practiceTests.html", icon: "ph-bold ph-desktop", color: "text-sky-400", borderClass: "border-sky" },
+              { id: "iot", name: "IoT", type: "Module 4", link: "iot.html", icon: "ph-bold ph-wifi-high", color: "text-orange-400", borderClass: "border-orange" },
+              { id: "python", name: "Python", type: "Module 3", link: "python/python.html", icon: "ti ti-brand-python", color: "text-yellow-400", borderClass: "border-yellow" },
+              { id: "mcq", name: "MCQ Bank", type: "Practice", link: "otherwebsites.html", icon: "ph-bold ph-bank", color: "text-emerald-400", borderClass: "border-emerald" },
+              { id: "webdes", name: "Web Des.", type: "Course", link: "WebDesigning/webdesigning.html", icon: "ph-bold ph-paint-brush", color: "text-pink-400", borderClass: "border-pink" }
+            ],
+            CCC: [
+              { id: "ccc-notes", name: "CCC Notes", type: "Study", link: "cccnotes.html", icon: "ph-bold ph-notebook", color: "text-emerald-400", borderClass: "border-emerald" },
+              { id: "ccc-test", name: "CCC Test", type: "Cert", link: "practice_test/practice_test.html", icon: "ph-bold ph-certificate", color: "text-yellow-500", borderClass: "border-yellow" },
+              { id: "live-test", name: "Live Test", type: "Exam", link: "chapter1test.html", icon: "ph-bold ph-broadcast", color: "text-red-500", borderClass: "border-red" },
+              { id: "mock-test", name: "Mock Test", type: "Practice", link: "test.html", icon: "ph-bold ph-exam", color: "text-blue-400", borderClass: "border-blue" },
+              { id: "shortcuts", name: "Shortcuts", type: "Utility", link: "shortcutkey/LibreOffice_shortcutkey.html", icon: "ph-bold ph-keyboard", color: "text-slate-300", borderClass: "border-slate" }
+            ]
+          },
+        };
+      },
+      computed: {
+        apps() {
+          const all = JSON.parse(JSON.stringify(this.baseApps));
+          const mergeApps = (list, isCustom) => {
+            list.forEach(app => {
+              const cat = app.category || 'Main';
+              if (!all[cat]) all[cat] = [];
+              if (!all[cat].some(a => a.id === app.id)) {
+                all[cat].push({
+                  id: app.id,
+                  name: app.name,
+                  type: isCustom ? "My App" : "Global App",
+                  icon: app.icon_class,
+                  color: isCustom ? "text-emerald-400" : "text-white",
+                  borderClass: isCustom ? "border-emerald" : "border-white",
+                  link: app.link,
+                  isCustom: isCustom,
+                  created_at: app.created_at
+                });
+              }
+            });
+          };
+          mergeApps(this.globalApps, false);
+          mergeApps(this.myCustomApps, true);
+          return all;
+        },
+        filteredTools() {
+          const query = this.searchQuery.toLowerCase();
+          const hideSet = this.hiddenAppsSet;
+          const filterVisible = (list) => list.filter(app => !hideSet.has(app.id || app.name));
+
+          if (this.activeNav === "apps") {
+            let base = this.appsFilter === "hidden"
+              ? this.allAppsList.filter(app => hideSet.has(app.id || app.name))
+              : this.allAppsList.filter(app => !hideSet.has(app.id || app.name));
+            if (!query) return base;
+            return base.filter(app => app.name.toLowerCase().includes(query));
+          }
+          if (!query) {
+            if (this.activeTab === "Favourites") return filterVisible(this.favourites);
+            return filterVisible(this.apps[this.activeTab] || []);
+          }
+          const allApps = [...filterVisible(this.favourites), ...filterVisible(this.allAppsList)];
+          const unique = [];
+          const seen = new Set();
+          for (const app of allApps) {
+            const key = app.id || app.name;
+            if (!seen.has(key)) { seen.add(key); unique.push(app); }
+          }
+          return unique.filter((app) => app.name.toLowerCase().includes(query));
+        },
+        allAppsList() { return Object.values(this.apps).flat(); },
+        hiddenAppsSet() { return new Set(this.hiddenApps || []); },
+        iconAccentClass() { return "app-icon-accent-cyan"; },
+        uptimeString() {
+          const diffSec = Math.floor((Date.now() - this.bootTime) / 1000);
+          const hours = Math.floor(diffSec / 3600);
+          const minutes = Math.floor((diffSec % 3600) / 60);
+          if (hours === 0 && minutes === 0) return "Just now";
+          if (hours === 0) return `${minutes} min`;
+          return `${hours}h ${minutes}m`;
+        },
+      },
+      watch: {
+        activeTab() { this.$nextTick(() => { this.animateTabChange(); }); },
+        searchQuery() { this.$nextTick(() => { this.animateTabChange(); }); },
+        activeNav() { this.animateNavTransition(); },
+        user(newVal) {
+          if (newVal) {
+            this.loadUserData();
+            this.checkAdminRole();
+            this.editNameVal = newVal.displayName || '';
+          } else {
+            this.loadLocalData();
+            this.isAdmin = false;
+            this.myCustomApps = [];
+          }
+        }
+      },
+      methods: {
+        async fetchVideos() {
+          try {
+            const q = query(collection(db, 'videos'), orderBy('created_at', 'desc'));
+            const snapshot = await getDocs(q);
+            if (!snapshot.empty) {
+              this.myVideos = snapshot.docs.map(doc => {
+                const v = doc.data();
+                return {
+                  id: v.youtube_id,
+                  title: v.title,
+                  views: v.views || 'Featured'
+                };
+              });
+              this.currentVideo = this.myVideos[0];
+            }
+          } catch (e) { console.error("Error fetching videos:", e); }
+        },
+
+        isNewApp(app) {
+          if (!app.created_at) return false;
+          // Handle Firestore Timestamp or JS Date or ISO string
+          let created;
+          if (app.created_at && typeof app.created_at.toDate === 'function') {
+            created = app.created_at.toDate().getTime();
+          } else {
+            created = new Date(app.created_at).getTime();
+          }
+          return (Date.now() - created) < this.newAppBadgeDuration;
+        },
+
+        handleProfileClick() {
+          if (this.user) {
+            this.activeNav = 'settings';
+            this.activeSettingsTab = 'profile';
+          } else {
+            this.isSignUp = false;
+            this.showLoginModal = true;
+          }
+        },
+        async handleAuth() {
+          this.authLoading = true;
+          this.authError = "";
+          try {
+            if (this.isSignUp) {
+              if (!this.authForm.username || !this.authForm.selectedAvatar) {
+                throw new Error("Please select an avatar and enter a username.");
+              }
+              const userCredential = await createUserWithEmailAndPassword(auth, this.authForm.email, this.authForm.password);
+              const user = userCredential.user;
+
+              await updateProfile(user, {
+                displayName: this.authForm.fullName,
+                photoURL: this.authForm.selectedAvatar
+              });
+
+              // Create profile doc
+              await setDoc(doc(db, 'profiles', user.uid), {
+                id: user.uid,
+                email: user.email,
+                full_name: this.authForm.fullName,
+                username: this.authForm.username,
+                avatar_url: this.authForm.selectedAvatar,
+                role: 'user',
+                created_at: serverTimestamp()
+              });
+
+              this.logActivity("Account created successfully");
+              this.showLoginModal = false;
+              Swal.fire({ icon: 'success', title: 'Welcome!', text: 'Account created. You are now logged in.' });
+            } else {
+              await signInWithEmailAndPassword(auth, this.authForm.email, this.authForm.password);
+              this.logActivity("Logged in successfully");
+              this.showLoginModal = false;
+              const Toast = Swal.mixin({ toast: true, position: 'top', showConfirmButton: false, timer: 3000 });
+              Toast.fire({ icon: 'success', title: 'Synced with Cloud' });
+            }
+          } catch (err) {
+            this.authError = err.message;
+          } finally {
+            this.authLoading = false;
+          }
+        },
+        async handleGoogleLogin() {
+          try {
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
+            // Check if profile exists, if not create it?
+            // For simplicity, we assume profile creation or we can check here.
+            const user = result.user;
+            const docRef = doc(db, 'profiles', user.uid);
+            const docSnap = await getDoc(docRef);
+            if (!docSnap.exists()) {
+              await setDoc(docRef, {
+                id: user.uid,
+                email: user.email,
+                full_name: user.displayName,
+                username: user.email.split('@')[0],
+                avatar_url: user.photoURL,
+                role: 'user',
+                created_at: serverTimestamp()
+              });
+            }
+          } catch (error) {
+            this.authError = error.message;
+          }
+        },
+        async handlePasswordReset() {
+          if (!this.authForm.email) {
+            this.authError = "Please enter email first.";
+            return;
+          }
+          try {
+            await sendPasswordResetEmail(auth, this.authForm.email);
+            Swal.fire('Check Email', 'Password reset link sent.', 'info');
+          } catch (error) {
+            this.authError = error.message;
+          }
+        },
+        async updateProfile() {
+          if (!this.user || !this.editNameVal) return;
+          try {
+            await updateProfile(this.user, { displayName: this.editNameVal });
+            this.user.displayName = this.editNameVal;
+            this.isEditingName = false;
+            await updateDoc(doc(db, 'profiles', this.user.uid), { full_name: this.editNameVal });
+            Swal.fire({ icon: 'success', title: 'Profile Updated', timer: 1500, showConfirmButton: false });
+          } catch (error) {
+            Swal.fire('Error', error.message, 'error');
+          }
+        },
+        async handleLogout() {
+          await signOut(auth);
+          this.user = null;
+          this.logActivity("Signed out");
+          Swal.fire({ icon: 'info', title: 'Signed Out', text: 'Switched to Guest Mode' });
+        },
+        async checkAdminRole() {
+          if (!this.user) return;
+          const docRef = doc(db, 'profiles', this.user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists() && docSnap.data().role === 'admin') {
+            this.isAdmin = true;
+          }
+        },
+        async loadUserData() {
+          if (!this.user) return;
+          const settingsRef = doc(db, 'user_settings', this.user.uid);
+          const docSnap = await getDoc(settingsRef);
+
+          if (docSnap.exists()) {
+            const settings = docSnap.data();
+            if (settings.theme) {
+              this.isLightMode = (settings.theme === 'light');
+              this.applyThemeFromState();
+            }
+            if (settings.wallpaper_id) {
+              this.selectedWallpaper = settings.wallpaper_id;
+              this.applyWallpaper();
+            }
+            if (settings.notes_data) this.notesText = settings.notes_data;
+            if (settings.favorites) this.favourites = this.mapIdsToApps(settings.favorites);
+            if (settings.hidden_apps) this.hiddenApps = settings.hidden_apps;
+            this.performanceMode = settings.performance_mode;
+            this.applyPerformanceFromState();
+          }
+
+          const appsQ = query(collection(db, 'apps'), where('user_id', '==', this.user.uid));
+          const appsSnap = await getDocs(appsQ);
+          this.myCustomApps = appsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+          this.fetchGlobalApps();
+        },
+        async saveUserDataToCloud() {
+          if (!this.user) return;
+          const updates = {
+            user_id: this.user.uid,
+            theme: this.isLightMode ? 'light' : 'dark',
+            wallpaper_id: this.selectedWallpaper,
+            performance_mode: this.performanceMode,
+            favorites: this.favourites.map(a => a.id || a.name),
+            hidden_apps: this.hiddenApps,
+            notes_data: this.notesText,
+            updated_at: serverTimestamp()
+          };
+          try {
+            await setDoc(doc(db, 'user_settings', this.user.uid), updates, { merge: true });
+          } catch (e) { console.error("Save failed", e); }
+        },
+        async fetchGlobalApps() {
+          const q = query(collection(db, 'apps'), where('user_id', '==', null));
+          const snapshot = await getDocs(q);
+          this.globalApps = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        },
+        openAddAppModal(isGlobal) {
+          this.addAppForm = { name: "", link: "", icon: "ph-bold ph-globe", category: "Main", isGlobal: isGlobal };
+          this.showAddAppModal = true;
+        },
+        async submitNewApp() {
+          if (!this.addAppForm.name || !this.addAppForm.link) return;
+          if (!this.user) {
+            Swal.fire('Login Required', 'You must be logged in to add custom apps.', 'warning');
+            return;
+          }
+          const newApp = {
+            name: this.addAppForm.name,
+            link: this.addAppForm.link,
+            icon_class: this.addAppForm.icon,
+            category: this.addAppForm.category,
+            user_id: this.addAppForm.isGlobal ? null : this.user.uid,
+            created_at: serverTimestamp()
+          };
+
+          try {
+            // If local update needed immediately, we might need the ID.
+            const docRef = await addDoc(collection(db, 'apps'), newApp);
+            // Manually add to list to see update immediately? 
+            // Or rely on real-time listener?
+            // Supabase logic added manual push.
+            const addedApp = { id: docRef.id, ...newApp, created_at: new Date() };
+
+            this.showAddAppModal = false;
+            if (this.addAppForm.isGlobal) {
+              this.globalApps.push(addedApp);
+            } else {
+              this.myCustomApps.push(addedApp);
+            }
+            this.logActivity(`Added new app: ${this.addAppForm.name}`);
+            Swal.fire({ icon: 'success', title: 'App Added', timer: 1500, showConfirmButton: false });
+          } catch (error) {
+            Swal.fire('Error', error.message, 'error');
+          }
+        },
+        async deleteCustomApp(app) {
+          try {
+            await deleteDoc(doc(db, 'apps', app.id));
+            this.myCustomApps = this.myCustomApps.filter(a => a.id !== app.id);
+            this.logActivity(`Deleted app: ${app.name}`);
+          } catch (e) { console.error(e); }
+        },
+        async deleteGlobalApp(app) {
+          try {
+            await deleteDoc(doc(db, 'apps', app.id));
+            this.globalApps = this.globalApps.filter(a => a.id !== app.id);
+            this.logActivity(`Deleted global app: ${app.name}`);
+          } catch (e) { console.error(e); }
+        },
+        mapIdsToApps(ids) {
+          const all = Object.values(this.apps).flat();
+          const found = [];
+          ids.forEach(id => {
+            const app = all.find(a => (a.id || a.name) === id);
+            if (app) found.push(app);
+          });
+          return found;
+        },
+        loadLocalData() {
+          const savedPerf = localStorage.getItem("knobly-performance");
+          if (savedPerf === "low") this.performanceMode = false; else this.performanceMode = true;
+          const savedWallpaper = localStorage.getItem("knobly-wallpaper");
+          if (savedWallpaper) this.selectedWallpaper = savedWallpaper;
+          this.applyWallpaper();
+          const savedTheme = localStorage.getItem("knobly-theme");
+          this.isLightMode = (savedTheme === "light");
+          this.applyThemeFromState();
+          const savedNotes = localStorage.getItem("knobly-notes");
+          if (savedNotes) this.notesText = savedNotes;
+          const savedName = localStorage.getItem("knobly-username");
+          if (savedName) this.userName = savedName;
+          const favStored = localStorage.getItem("knobly-favourites");
+          if (favStored) this.favourites = this.mapIdsToApps(JSON.parse(favStored));
+          const hiddenStored = localStorage.getItem("knobly-hidden-apps");
+          if (hiddenStored) this.hiddenApps = JSON.parse(hiddenStored);
+          this.fetchGlobalApps();
+        },
+        toggleTheme() {
+          const goingToLight = !this.isLightMode;
+          this.themeFlash(goingToLight);
+          this.isLightMode = goingToLight;
+          if (this.user) this.saveUserDataToCloud();
+          else localStorage.setItem("knobly-theme", this.isLightMode ? "light" : "dark");
+          this.applyThemeFromState();
+          this.applyWallpaper();
+          this.$nextTick(() => { this.animateTabChange(); });
+          this.logActivity(`Theme switched to ${this.isLightMode ? "Light" : "Dark"} mode`);
+        },
+        setWallpaper(id) {
+          this.selectedWallpaper = id;
+          if (this.user) this.saveUserDataToCloud();
+          else localStorage.setItem("knobly-wallpaper", id);
+          this.applyWallpaper();
+          this.logActivity(`Wallpaper set to ${id}`);
+        },
+        togglePerformance() {
+          this.performanceMode = !this.performanceMode;
+          if (this.user) this.saveUserDataToCloud();
+          else localStorage.setItem("knobly-performance", this.performanceMode ? "high" : "low");
+          this.applyPerformanceFromState();
+          if (!this.performanceMode) this.destroyTilt();
+          else this.animateTabChange();
+          this.logActivity(`Performance: ${this.performanceMode ? "High" : "Low"}`);
+        },
+        saveNotes() {
+          if (this.user) this.saveUserDataToCloud();
+          else localStorage.setItem("knobly-notes", this.notesText || "");
+          Swal.fire({ icon: "success", title: "Notes Saved", timer: 1500, showConfirmButton: false });
+        },
+        toggleAppVisibility(app) {
+          const id = app.id || app.name;
+          const idx = this.hiddenApps.indexOf(id);
+          if (idx === -1) {
+            this.hiddenApps.push(id);
+            this.logActivity(`Hidden app: ${app.name}`);
+          } else {
+            this.hiddenApps.splice(idx, 1);
+            this.logActivity(`Shown app: ${app.name}`);
+          }
+          if (this.user) this.saveUserDataToCloud();
+          else localStorage.setItem("knobly-hidden-apps", JSON.stringify(this.hiddenApps));
+        },
+        saveUserName() {
+          localStorage.setItem("knobly-username", this.userName || "");
+          Swal.fire({ icon: "success", title: "Guest Name Saved", timer: 1500, showConfirmButton: false });
+        },
+        pinToFavourites() {
+          if (!this.contextApp) return;
+          if (!this.isInFavourites(this.contextApp)) {
+            this.favourites.push(this.contextApp);
+            if (this.user) this.saveUserDataToCloud();
+            else {
+              const ids = this.favourites.map((a) => a.id || a.name);
+              localStorage.setItem("knobly-favourites", JSON.stringify(ids));
+            }
+            Swal.fire({ icon: "success", title: `Added to favourites`, timer: 1000, showConfirmButton: false, toast: true, position: 'bottom-end' });
+          }
+          this.showAppContextMenu = false;
+        },
+        removeFromFavourites() {
+          if (!this.contextApp) return;
+          const key = this.contextApp.id || this.contextApp.name;
+          this.favourites = this.favourites.filter((a) => (a.id || a.name) !== key);
+          if (this.user) this.saveUserDataToCloud();
+          else {
+            const ids = this.favourites.map((a) => a.id || a.name);
+            localStorage.setItem("knobly-favourites", JSON.stringify(ids));
+          }
+          Swal.fire({ icon: "info", title: `Removed from favourites`, timer: 1000, showConfirmButton: false, toast: true, position: 'bottom-end' });
+          this.showAppContextMenu = false;
+        },
+        handleResize() { this.isMobile = window.innerWidth <= 640; },
+        logActivity(message, link = null, isAdminMsg = false) {
+          const now = new Date();
+          const entry = {
+            message,
+            link,
+            isAdminMsg,
+            time: now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }),
+            date: now.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          };
+          this.activityLog.unshift(entry);
+          if (this.activityLog.length > 30) this.activityLog.pop();
+        },
+        toggleLogModal() {
+          if (!this.showLogModal) this.centerModal();
+          this.showLogModal = !this.showLogModal;
+          this.showContextMenu = false; this.showAppContextMenu = false;
+          if (this.showLogModal) this.unreadCount = 0;
+          if (this.showLogModal) {
+            this.unreadCount = 0;
+            localStorage.setItem('knobly_last_read_time', new Date().toISOString());
+          }
+        },
+
+        async fetchNotifications() {
+          try {
+            const q = query(collection(db, 'notifications'), orderBy('created_at', 'desc'), limit(20));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+              this.activityLog = snapshot.docs.map(doc => {
+                const n = doc.data();
+                let dateObj;
+                if (n.created_at && typeof n.created_at.toDate === 'function') dateObj = n.created_at.toDate();
+                else dateObj = new Date(n.created_at);
+
+                return {
+                  message: n.message,
+                  link: n.link,
+                  isAdminMsg: true,
+                  time: dateObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }),
+                  date: dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+                  rawDate: dateObj.toISOString()
+                };
+              });
+
+              const lastReadTime = localStorage.getItem('knobly_last_read_time');
+              if (lastReadTime) {
+                const unreadItems = this.activityLog.filter(item => {
+                  return new Date(item.rawDate) > new Date(lastReadTime);
+                });
+                this.unreadCount = unreadItems.length;
+              } else {
+                this.unreadCount = this.activityLog.length;
+              }
+            }
+          } catch (e) { console.error(e); }
+        },
+
+        animateIntro() {
+          const bootEl = document.getElementById("boot-screen");
+          if (!this.performanceMode) {
+            if (bootEl) bootEl.style.display = "none";
+            gsap.set("#app", { opacity: 1 });
+            this.applyWallpaper();
+            this.initTilt();
+            return;
+          }
+          const tl = gsap.timeline();
+          tl.to("#boot-bar", { width: "100%", duration: 1.5, ease: "power2.inOut" })
+            .to("#boot-screen", { opacity: 0, duration: 0.8, delay: 0.2, onComplete: () => { if (bootEl) bootEl.style.display = "none"; } })
+            .to("#app", { opacity: 1, duration: 0.8 }, "-=0.5")
+            .from("#left-sidebar", { x: -50, opacity: 0, duration: 0.8, ease: "back.out(1.7)" }, "-=0.4")
+            .from("#right-sidebar", { x: 50, opacity: 0, duration: 0.8, ease: "back.out(1.7)" }, "-=0.6")
+            .from("main", { y: 20, opacity: 0, duration: 0.8, ease: "power3.out" }, "-=0.6")
+            .from("#tool-grid .glass-card", { y: 50, scale: 0.8, opacity: 0, duration: 0.6, stagger: 0.05, ease: "back.out(1.2)", onComplete: () => { gsap.set("#tool-grid .glass-card", { clearProps: "all" }); this.initTilt(); } }, "-=0.4")
+            .call(() => { this.applyWallpaper(); });
+        },
+        animateTabChange() {
+          if (!this.performanceMode) { this.initTilt(); return; }
+          gsap.killTweensOf("#tool-grid .glass-card");
+          gsap.fromTo("#tool-grid .glass-card", { y: 30, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.4, stagger: 0.05, ease: "back.out(1.2)", onComplete: () => this.initTilt() });
+        },
+        animateNavTransition() {
+          if (!this.performanceMode) return;
+          const main = document.querySelector("main");
+          if (!main) return;
+          gsap.fromTo(main, { y: 16, opacity: 0.85 }, { y: 0, opacity: 1, duration: 0.35, ease: "power2.out" });
+          if (this.activeNav !== "settings" && this.activeNav !== "stats" && this.activeNav !== "youtube") { this.$nextTick(() => this.animateTabChange()); }
+        },
+        updateTime() {
+          const now = new Date();
+          let hours = now.getHours();
+          let minutes = String(now.getMinutes()).padStart(2, "0");
+          if (hours < 12) this.greeting = "Good Morning";
+          else if (hours < 18) this.greeting = "Good Afternoon";
+          else this.greeting = "Good Evening";
+          hours = hours % 12 || 12;
+          this.currentTime = `${hours}:${minutes}`;
+          this.dateString = now.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+          this.uptimeTick++;
+        },
+        centerModal() { this.modalPos = { x: (window.innerWidth / 2) - 192, y: (window.innerHeight / 2) - 200 }; },
+        openModal(app) {
+          if (app.id === "notes" || app.name === "Notes") { this.openNotes(); return; }
+          if (app.link) {
+            window.open(app.link, '_blank');
+            this.logActivity(`Opened ${app.name}`);
+            this.addRecentApp(app);
+            return;
+          }
+          this.selectedApp = app; this.centerModal(); this.showModal = true; this.showContextMenu = false; this.showAppContextMenu = false;
+        },
+        openNotes() {
+          this.centerModal(); this.showNotesModal = true; this.showContextMenu = false; this.showAppContextMenu = false;
+          const notesApp = this.allAppsList.find((a) => a.id === "notes" || a.name === "Notes");
+          if (notesApp) this.addRecentApp(notesApp);
+        },
+        switchTab(tab) { this.activeTab = tab; },
+        switchToNextTab() { const idx = this.tabs.indexOf(this.activeTab); const next = (idx + 1) % this.tabs.length; this.activeTab = this.tabs[next]; },
+        switchToPrevTab() { const idx = this.tabs.indexOf(this.activeTab); const prev = (idx - 1 + this.tabs.length) % this.tabs.length; this.activeTab = this.tabs[prev]; },
+        handleTouchStart(e) { if (!e.changedTouches || !e.changedTouches.length) return; const t = e.changedTouches[0]; this.touchStartX = t.clientX; this.touchStartY = t.clientY; },
+        handleTouchEnd(e) { if (!e.changedTouches || !e.changedTouches.length) return; const t = e.changedTouches[0]; const dx = t.clientX - this.touchStartX; const dy = t.clientY - this.touchStartY; if (Math.abs(dx) > 60 && Math.abs(dy) < 40 && this.activeNav !== "apps" && this.activeNav !== "settings") { if (dx < 0) this.switchToNextTab(); else this.switchToPrevTab(); } },
+        startDrag(event) { this.isDragging = true; this.dragOffset.x = event.clientX - this.modalPos.x; this.dragOffset.y = event.clientY - this.modalPos.y; document.body.style.cursor = "move"; window.addEventListener("mousemove", this.doDrag); window.addEventListener("mouseup", this.stopDrag); },
+        doDrag(event) { if (this.isDragging) { this.modalPos.x = event.clientX - this.dragOffset.x; this.modalPos.y = event.clientY - this.dragOffset.y; } },
+        stopDrag() { this.isDragging = false; document.body.style.cursor = "default"; window.removeEventListener("mousemove", this.doDrag); window.removeEventListener("mouseup", this.stopDrag); },
+        handleRightClick(e) { const appEl = e.target.closest(".app-card"); if (appEl) return; e.preventDefault(); this.showContextMenu = true; this.showAppContextMenu = false; this.contextMenuX = e.clientX; this.contextMenuY = e.clientY; if (this.contextMenuX + 190 > window.innerWidth) { this.contextMenuX = window.innerWidth - 195; } if (this.contextMenuY + 220 > window.innerHeight) { this.contextMenuY = window.innerHeight - 225; } },
+        openAppContextMenu(e, app) { this.contextApp = app; this.showAppContextMenu = true; this.showContextMenu = false; this.appContextX = e.clientX; this.appContextY = e.clientY; if (this.appContextX + 190 > window.innerWidth) { this.appContextX = window.innerWidth - 195; } if (this.appContextY + 200 > window.innerHeight) { this.appContextY = window.innerHeight - 205; } },
+        handleGlobalClick() { if (this.showContextMenu) this.showContextMenu = false; if (this.showAppContextMenu) this.showAppContextMenu = false; },
+        refreshPage() { window.location.reload(); },
+        changeWallpaper() { this.showContextMenu = false; Swal.fire({ title: "Wallpapers", text: "Open Settings > Appearance to change wallpaper.", icon: "info", confirmButtonText: "OK", background: this.isLightMode ? "#fff" : "#0f172a", color: this.isLightMode ? "#000" : "#fff", }); },
+        sortApps() { this.showContextMenu = false; Object.keys(this.baseApps).forEach((tab) => { this.baseApps[tab].sort((a, b) => a.name.localeCompare(b.name)); }); this.$nextTick(() => { this.animateTabChange(); }); const Toast = Swal.mixin({ toast: true, position: "top-end", showConfirmButton: false, timer: 2000, timerProgressBar: true, background: this.isLightMode ? "#fff" : "#1e293b", color: this.isLightMode ? "#000" : "#fff", }); Toast.fire({ icon: "success", title: "Apps Sorted Alphabetically" }); this.logActivity("Apps sorted alphabetically"); },
+        shutDown() {
+          this.showContextMenu = false;
+          this.showAppContextMenu = false;
+          if (this.user) {
+            this.handleLogout();
+            return;
+          }
+          Swal.fire({ title: "System Reset", text: "Are you sure you want to reset Guest Mode?", icon: "warning", showCancelButton: true, confirmButtonColor: "#ef4444", cancelButtonColor: "#3b82f6", confirmButtonText: "Yes, Reset", background: this.isLightMode ? "rgba(255,255,255,0.9)" : "rgba(15,23,42,0.9)", color: this.isLightMode ? "#0f172a" : "#fff", }).then((result) => { if (result.isConfirmed) { this.logActivity("System reset initiated"); gsap.to("#app", { scale: 0.9, opacity: 0, duration: 0.5 }); gsap.to("body", { backgroundColor: "#000", duration: 0.5, delay: 0.4, onComplete: () => { document.body.innerHTML = "<div style='height:100vh; background:black; display:flex; align-items:center; justify-content:center; color:#333; font-family:monospace;'>SYSTEM HALTED</div>"; }, }); } });
+        },
+        launchApp() { this.showModal = false; this.addRecentApp(this.selectedApp); const Toast = Swal.mixin({ toast: true, position: "top", showConfirmButton: false, timer: 2500, background: this.isLightMode ? "#fff" : "rgba(15,23,42,0.95)", color: this.isLightMode ? "#000" : "#fff", didOpen: (toast) => { toast.addEventListener("mouseenter", Swal.stopTimer); toast.addEventListener("mouseleave", Swal.resumeTimer); }, }); Toast.fire({ icon: "success", title: `Launching ${this.selectedApp.name}...`, }); this.logActivity(`Launched ${this.selectedApp.name}`); },
+        fetchWeather() { if (navigator.geolocation) { navigator.geolocation.getCurrentPosition(async (pos) => { try { const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current_weather=true`); const weatherData = await weatherRes.json(); this.weatherTemp = Math.round(weatherData.current_weather.temperature) + "Ã‚°C"; const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&localityLanguage=en`); const geoData = await geoRes.json(); this.cityName = geoData.city || geoData.locality || "System Local"; } catch (e) { this.useFallbackWeather(); } }, () => this.useFallbackWeather()); } else { this.useFallbackWeather(); } },
+        useFallbackWeather() { this.weatherTemp = "24Ã‚°C"; this.cityName = "System Local"; },
+        playVideo(video) { this.currentVideo = video; },
+        themeFlash(goingToLight) { if (!this.performanceMode || typeof gsap === "undefined") return; const flash = document.createElement("div"); flash.className = "theme-flash-circle"; document.body.appendChild(flash); gsap.fromTo(flash, { scale: 0, opacity: 0.95 }, { scale: 6, opacity: 0, duration: 0.45, ease: "power2.out", onComplete: () => flash.remove(), }); const main = document.querySelector("main"); if (main) { gsap.fromTo(main, { scale: 0.96, filter: "blur(2px)", opacity: 0.7 }, { scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.4, ease: "power2.out" }); } },
+        applyPerformanceFromState() { if (this.performanceMode) { document.body.classList.remove("knobly-low-perf"); } else { document.body.classList.add("knobly-low-perf"); } },
+        applyThemeFromState() { if (this.isLightMode) { document.body.classList.add("light-mode"); } else { document.body.classList.remove("light-mode"); } },
+        toggleYoutube() { this.showYoutubePanel = !this.showYoutubePanel; },
+        openYTChannel() { window.open("https://youtube.com/@knobly1", "_blank"); },
+        handleKeydown(event) { const key = event.key.toLowerCase(); if ((event.ctrlKey || event.metaKey) && key === "k") { event.preventDefault(); if (this.$refs.searchInput) this.$refs.searchInput.focus(); } if (key === "escape") { if (this.showModal) this.showModal = false; if (this.showContextMenu) this.showContextMenu = false; if (this.showAppContextMenu) this.showAppContextMenu = false; if (this.showNotesModal) this.showNotesModal = false; if (this.showLogModal) this.showLogModal = false; } },
+        destroyTilt() { const tiltElements = document.querySelectorAll("#tool-grid [data-tilt]"); tiltElements.forEach((el) => { if (el.vanillaTilt) { el.vanillaTilt.destroy(); } }); },
+        initTilt() { this.$nextTick(() => { if (typeof VanillaTilt === "undefined") return; if (!this.performanceMode) { this.destroyTilt(); return; } if (window.innerWidth <= 640) { this.destroyTilt(); return; } const tiltElements = document.querySelectorAll("#tool-grid [data-tilt]"); tiltElements.forEach((el) => { if (el.vanillaTilt) el.vanillaTilt.destroy(); }); if (tiltElements.length) { VanillaTilt.init(tiltElements, { max: 12, speed: 400, glare: true, "max-glare": 0.2, scale: 1.05, }); } }); },
+        applyWallpaper() { const classes = ["wallpaper-default", "wallpaper-ocean", "wallpaper-purple", "wallpaper-sunset", "wallpaper-matrix",]; classes.forEach((c) => document.body.classList.remove(c)); const targetClass = "wallpaper-" + (this.selectedWallpaper || "default"); document.body.classList.add(targetClass); },
+        saveHiddenApps() { localStorage.setItem("knobly-hidden-apps", JSON.stringify(this.hiddenApps)); },
+        addRecentApp(app) { if (!app) return; const id = app.id || app.name; const existing = this.recentApps.filter((a) => (a.id || a.name) !== id); this.recentApps = [app, ...existing].slice(0, 6); },
+        handleSettingsSearch() { const q = (this.settingsSearch || "").toLowerCase().trim(); if (!q) return; if (q.includes("wall") || q.includes("theme") || q.includes("light") || q.includes("dark") || q.includes("background")) { this.activeSettingsTab = "appearance"; return; } if (q.includes("app") || q.includes("icon") || q.includes("hide") || q.includes("show")) { this.activeSettingsTab = "apps"; return; } if (q.includes("name") || q.includes("profile") || q.includes("user")) { this.activeSettingsTab = "profile"; } },
+        isInFavourites(app) { if (!app) return false; const key = app.id || app.name; return this.favourites.some((a) => (a.id || a.name) === key); },
+        addAppToGroup(targetGroup) { if (!this.contextApp) return; const id = this.contextApp.id || this.contextApp.name; Object.keys(this.baseApps).forEach((group) => { const arr = this.baseApps[group]; const idx = arr.findIndex((a) => (a.id || a.name) === id); if (idx !== -1) arr.splice(idx, 1); }); const targetArr = this.baseApps[targetGroup]; if (targetArr && !targetArr.some((a) => (a.id || a.name) === id)) { targetArr.push(this.contextApp); } this.showAppContextMenu = false; const Toast = Swal.mixin({ toast: true, position: "bottom-end", showConfirmButton: false, timer: 1700, background: this.isLightMode ? "#ffffff" : "#020617", color: this.isLightMode ? "#0f172a" : "#e5e7eb", }); Toast.fire({ icon: "success", title: `Moved to ${targetGroup}`, }); this.logActivity(`Moved ${this.contextApp.name} to ${targetGroup}`); },
+        renameSoon() { this.showAppContextMenu = false; Swal.fire({ title: "Rename coming soon", text: "App renaming feature will be added in a future build of Knobly OS.", icon: "info", confirmButtonText: "OK", background: this.isLightMode ? "#fff" : "#0f172a", color: this.isLightMode ? "#000" : "#fff", }); },
+      },
+      mounted() {
+        window.vueAppMounted = true;
+        // INIT AUTH STATE
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            this.user = user;
+          } else {
+            this.user = null;
+            this.loadLocalData();
+          }
+        });
+
+        // --- REAL TIME LISTENERS ---
+        // 1. Listen for NEW Notifications
+        const notifQ = query(collection(db, 'notifications'), orderBy('created_at', 'desc'), limit(1));
+        onSnapshot(notifQ, (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === 'added') {
+              const data = change.doc.data();
+              this.logActivity(data.message, data.link, true);
+              this.unreadCount++;
+              const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 4000 });
+              Toast.fire({ icon: 'info', title: 'New System Message', text: data.message });
+            }
+          });
+        });
+
+        // 2. Listen for NEW Global Apps
+        const appsQ = query(collection(db, 'apps'), where('user_id', '==', null));
+        onSnapshot(appsQ, (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === 'added') {
+              const data = change.doc.data();
+              if (!this.globalApps.some(a => a.id === change.doc.id)) {
+                this.globalApps.push({ id: change.doc.id, ...data });
+              }
+            } else if (change.type === 'removed') {
+              this.globalApps = this.globalApps.filter(a => a.id !== change.doc.id);
+            }
+          });
+        });
+
+        // 3. LISTEN FOR NEW VIDEOS
+        const videosQ = query(collection(db, 'videos'));
+        onSnapshot(videosQ, () => {
+          this.fetchVideos();
+        });
+
+        // --- FETCH DATA ---
+        this.fetchNotifications();
+        this.fetchVideos();
+
+        this.updateTime();
+        setInterval(this.updateTime, 1000);
+        this.fetchWeather();
+
+        window.addEventListener("click", this.handleGlobalClick);
+        window.addEventListener("keydown", this.handleKeydown);
+        window.addEventListener("contextmenu", this.handleRightClick);
+        window.addEventListener("resize", this.handleResize);
+
+        // Initial animation with safety check
+        this.animateIntro();
+
+        // Safety timeout to ensure boot screen is removed
+        setTimeout(() => {
+          const bootEl = document.getElementById("boot-screen");
+          if (bootEl && bootEl.style.display !== 'none') {
+            console.warn("Force hiding boot screen via safety timeout");
+            bootEl.style.display = 'none';
+            const appEl = document.getElementById('app');
+            if (appEl) appEl.style.opacity = 1;
+          }
+        }, 4000);
+      },
+      beforeUnmount() {
+        window.removeEventListener("click", this.handleGlobalClick);
+        window.removeEventListener("keydown", this.handleKeydown);
+        window.removeEventListener("mousemove", this.doDrag);
+        window.removeEventListener("mouseup", this.stopDrag);
+        window.removeEventListener("contextmenu", this.handleRightClick);
+        window.removeEventListener("resize", this.handleResize);
+      },
+    }).mount("#app");
+  </script>
+  <script>
+    setTimeout(function () {
+      if (!window.vueAppMounted) {
+        console.error("Vue App failed to mount.");
+        const bootEl = document.getElementById("boot-screen");
+        if (bootEl) {
+          const msg = document.createElement("div");
+          msg.style.color = "red";
+          msg.style.marginTop = "20px";
+          msg.innerText = "Error: System failed to initialize. Check console.";
+          bootEl.appendChild(msg);
+        }
+      }
+    }, 5000);
+  </script>
+</body>
+
+</html>

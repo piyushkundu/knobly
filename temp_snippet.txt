@@ -1,0 +1,45 @@
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="space-y-4">
+                     <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                        <h3 class="text-sm font-bold text-emerald-500 uppercase tracking-wider">Badges</h3>
+                        <div v-if="editingBadgeId" class="text-[10px] text-emerald-400 animate-pulse">EDITING</div>
+                     </div>
+
+                     <div class="glass-panel p-4 rounded-xl space-y-3 border"
+                        :class="editingBadgeId ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-white/5'">
+                        <input v-model="badgeForm.badge_name" type="text" placeholder="Badge Name"
+                           class="input-field w-full p-2 rounded text-xs">
+                        <div class="flex gap-2">
+                           <input v-model="badgeForm.badge_icon" type="text" placeholder="Icon Class (ph-medal)"
+                              class="input-field flex-1 p-2 rounded text-xs">
+                           <div
+                              class="w-8 h-8 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                              <i :class="badgeForm.badge_icon || 'ph-medal'"></i>
+                           </div>
+                        </div>
+                        <textarea v-model="badgeForm.description" placeholder="Description (Optional)"
+                           class="input-field w-full p-2 rounded text-xs h-16 resize-none"></textarea>
+                        <div class="flex gap-2 items-center">
+                           <label class="text-[10px] text-gray-400">Bonus Points:</label>
+                           <input v-model="badgeForm.xp_reward" type="number" placeholder="0"
+                              class="input-field flex-1 p-2 rounded text-xs">
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                           <button v-if="editingBadgeId" @click="cancelBadgeEdit"
+                              class="w-1/3 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded text-xs">CANCEL</button>
+                           <button @click="saveBadge"
+                              class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs">
+                              {{ editingBadgeId ? 'UPDATE BADGE' : 'ADD BADGE' }}
+                           </button>
+                        </div>
+                     </div>
+
+                     <div class="grid grid-cols-2 gap-3 h-80 md:h-96 overflow-y-auto custom-scroll pr-2">
+                        <div v-if="badges.length === 0" class="col-span-2 text-center text-xs text-gray-500 p-4">
+                           <i class="ph-duotone ph-warning text-xl mb-1"></i><br>No badges found.
+                        </div>
+   

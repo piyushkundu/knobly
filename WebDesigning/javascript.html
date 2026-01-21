@@ -1,0 +1,2346 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Fundamentals Explained</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            touch-action: manipulation;
+
+        }
+        section li{
+          list-style: inside;
+        }
+        
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #2c3e50;
+            padding: 20px;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-logo {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background-color: #3498db;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            max-width: calc(100% - 270px);
+        }
+
+        .section {
+            background-color: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .code-block {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .practice-questions {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .operator-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .operator-table th, .operator-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .operator-table th {
+            background-color: #f2f2f2;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+                max-width: 100%;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --gradient-start: #6a11cb;
+            --gradient-end: #2575fc;
+        }
+
+        
+
+        /* Premium Header Styles */
+        .premium-header {
+            position: relative;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 100px 20px 50px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .header-subtitle {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+
+        .header-cta {
+            display: inline-block;
+            background-color: white;
+            color: var(--gradient-start);
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header-cta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Header Background Animation */
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        .header-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(45deg, transparent 20%, rgba(255,255,255,0.05) 50%, transparent 80%),
+                linear-gradient(135deg, transparent 10%, rgba(255,255,255,0.05) 50%, transparent 90%);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                background-position: 0 0, 0 0;
+            }
+            100% {
+                background-position: 50px 50px, 100px 100px;
+            }
+        }
+
+        /* Rest of the previous styles remain the same */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #2c3e50;
+            padding: 20px;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .content {
+            
+            margin-left: 250px;
+            padding: 20px;
+            max-width: calc(100% - 270px);
+        }
+
+        /* Remaining previous CSS stays the same */
+        @media (max-width: 768px) {
+            .content {
+                
+                margin-left: 0;
+                max-width: 100%;
+            }
+
+            .header-title {
+                font-size: 2.5rem;
+            }
+
+            .header-subtitle {
+                font-size: 1rem;
+            }
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #2c3e50;
+            padding: 20px;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-logo {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background-color: #3498db;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            max-width: calc(100% - 270px);
+        }
+
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1100;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .menu-toggle.close {
+            background-color: #e74c3c;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+                max-width: 100%;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+ 
+    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
+   
+
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-logo">JavaScript Guide</div>
+      <ul class="sidebar-nav">
+            <li><a href="#introduction" class="nav-link">Introduction</a></li>
+        <li><a href="#variables" class="nav-link">Variables</a></li>
+        <li><a href="#variable-rules" class="nav-link">Variable Naming Rules</a></li>
+        <li><a href="#variable-practice" class="nav-link">Variable Practice</a></li>
+        <li><a href="#keywords" class="nav-link">Keywords</a></li>
+        <li><a href="#operators" class="nav-link">Operators</a></li>
+        <li><a href="#assignment-operators" class="nav-link">Assignment Operators</a></li>
+        <li><a href="#relational-logical-operators" class="nav-link">Relational & Logical Operators</a></li>
+        <li><a href="#conditional-operator" class="nav-link">Conditional Operator</a></li>
+         <li><a href="#data-types" class="nav-link">Data Types</a></li>
+        <li><a href="#write-methods" class="nav-link">Write/WriteLn Methods</a></li>
+        <li><a href="#comments" class="nav-link">JavaScript Comments</a></li>
+        <li><a href="#popup-boxes" class="nav-link">Popup Boxes</a></li>
+        <li><a href="#conditional-statements" class="nav-link">Conditional Statements</a></li>
+        <li><a href="#if-statement" class="nav-link">If Statement</a></li>
+        <li><a href="#if-else-statement" class="nav-link">If...Else Statement</a></li>
+        <li><a href="#else-if-statement" class="nav-link">Else If Statement</a></li>
+        <li><a href="#nested-if-statement" class="nav-link">Nested If Statement</a></li>
+        <li><a href="#complex-conditions" class="nav-link">Complex-Conditions</a></li>
+        <li><a href="#while-loops" class="nav-link">While-Loops</a></li>
+        <li><a href="#functions" class="nav-link">Functions</a></li>
+       
+          
+      </ul>
+  </div>
+
+    <div class="content">
+      <header class="premium-header">
+        <div class="header-bg"></div>
+        <div class="header-content">
+            <h1 class="header-title">JavaScript Fundamentals</h1>
+            <p class="header-subtitle">
+                Dive deep into the world of JavaScript, learn its core concepts, and become a proficient web developer with our comprehensive guide.
+            </p>
+            <a href="#introduction" class="header-cta">
+                Start Learning <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </header>
+        <section id="introduction" class="section">
+            <h2>Introduction to JavaScript</h2>
+            <p>JavaScript is a versatile, high-level programming language primarily used for creating interactive and dynamic web pages. Originally developed by Brendan Eich in 1995 while working at Netscape Communications, JavaScript quickly became a fundamental technology for web development.</p>
+            
+            <h3>Historical Background</h3>
+            <p>In the mid-1990s, Netscape Navigator was the dominant web browser, and there was a need for a lightweight, browser-based scripting language. Brendan Eich was tasked with creating a language that could be easily used by web developers to add interactivity to websites. In just 10 days, he developed the initial version of JavaScript, which was originally named "Mocha" and later renamed to "LiveScript" before finally becoming "JavaScript".</p>
+            
+            <h3>Key Characteristics</h3>
+            <ul>
+                <li><strong>Interpreted Language:</strong> JavaScript is an interpreted language, which means it is executed directly by the browser without needing to be compiled beforehand. This allows for more flexible and dynamic code execution.</li>
+                <li><strong>Client-Side Scripting:</strong> Primarily used in web browsers to create interactive web pages, JavaScript can manipulate HTML and CSS, handle events, validate forms, and create dynamic content.</li>
+                <li><strong>Multi-Paradigm:</strong> Supports multiple programming paradigms including object-oriented, functional, and imperative programming styles.</li>
+            </ul>
+
+            <div class="code-block">
+                <pre>// Basic JavaScript example demonstrating its interpretive nature
+console.log("Hello, JavaScript!");
+
+function greetUser(name) {
+    return `Welcome, ${name}!`;
+}
+
+// This code is interpreted and executed directly by the browser
+alert(greetUser("Developer"));</pre>
+            </div>
+
+            <h3>Standardization</h3>
+            <p>After its creation at Netscape, JavaScript was submitted to ECMA International for standardization. This led to the ECMAScript specification, with JavaScript being the most well-known implementation. The language has undergone several versions, with ES6 (ECMAScript 2015) introducing significant improvements and modern features.</p>
+        </section>
+            
+           
+
+        <section id="variables" class="section">
+            <h2>Understanding Variables</h2>
+            <p>Variables are containers for storing data values. In JavaScript, you can declare variables using three keywords:</p>
+            
+            <div class="code-block">
+                <pre>// var: Function or globally scoped
+var age = 25;
+
+// let: Block-scoped, can be updated
+let name = "John";
+
+// const: Block-scoped, cannot be reassigned
+const PI = 3.14159;</pre>
+            </div>
+
+            <ul>
+                <li><strong>var:</strong> Older way of declaring variables, function-scoped</li>
+                <li><strong>let:</strong> Introduced in ES6, block-scoped, can be updated</li>
+                <li><strong>const:</strong> Block-scoped, cannot be reassigned once declared</li>
+            </ul>
+        </section>
+
+        <section id="variable-rules" class="section">
+            <h2>Variable Naming Rules</h2>
+            <p>JavaScript has specific rules for naming variables:</p>
+            
+            <h3>Correct Variable Names:</h3>
+            <div class="code-block">
+                <pre>// Valid variable names
+let name = "John";
+let age123 = 25;
+let _privateVar = "secret";
+let $specialVar = "special";
+let firstName = "John";
+let user_name = "jane";</pre>
+            </div>
+
+            <h3>Incorrect Variable Names:</h3>
+            <div class="code-block">
+                <pre>// Invalid variable names
+let 123name = "John";  // Cannot start with a number
+let first-name = "John";  // Cannot use hyphens
+let class = "JavaScript";  // Cannot use reserved keywords
+let #specialVar = "test";  // Cannot use special characters except $ and _</pre>
+            </div>
+
+            <h4>Variable Naming Rules:</h4>
+            <ul>
+                <li>Must start with a letter, underscore (_), or dollar sign ($)</li>
+                <li>Can contain letters, numbers, underscores, and dollar signs</li>
+                <li>Are case-sensitive (age and Age are different variables)</li>
+                <li>Cannot use JavaScript reserved keywords</li>
+                <li>Use camelCase for naming (firstName, lastName)</li>
+            </ul>
+        </section>
+
+        <section id="variable-practice" class="section">
+            <h2>Variable Practice Exercises</h2>
+            <div class="practice-questions">
+                <h3>Identify Correct and Incorrect Variable Names</h3>
+                <p>Determine if the following variable names are correct or incorrect:</p>
+                <ol>
+                    <li>user_name</li>
+                    <li>123username</li>
+                    <li>firstName</li>
+                    <li>first-name</li>
+                    <li>$price</li>
+                    <li>_hidden</li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="variable-quiz" class="section">
+            <h2>Variable Quiz</h2>
+            <div class="practice-questions">
+                <h3>Test Your Knowledge</h3>
+                <ol>
+                    <li>What is the difference between 'let' and 'const'?</li>
+                    <li>Can you start a variable name with a number?</li>
+                    <li>What naming convention is recommended in JavaScript?</li>
+                    <li>How many ways can you declare a variable in JavaScript?</li>
+                </ol>
+            </div>
+        </section>
+        <section id="keywords" class="section">
+          <h2>JavaScript Keywords</h2>
+          <p>Keywords are reserved words in JavaScript that have special meanings and cannot be used as variable names, function names, or identifiers.</p>
+          
+          <div class="code-block">
+              <pre>// Examples of using keywords
+let name = "John";  // 'let' is a keyword for variable declaration
+const PI = 3.14159;  // 'const' is a keyword for constant declaration
+if (age >= 18) {  // 'if' is a control flow keyword
+  console.log("You are an adult");
+}
+function greet() {  // 'function' is a keyword for defining functions
+  return "Hello!";
+}</pre>
+          </div>
+
+          <h3>Common JavaScript Keywords</h3>
+          <ul>
+              <li><strong>Declaration Keywords:</strong> var, let, const</li>
+              <li><strong>Control Flow:</strong> if, else, switch, case, default</li>
+              <li><strong>Loop Keywords:</strong> for, while, do, break, continue</li>
+              <li><strong>Function Keywords:</strong> function, return, yield</li>
+              <li><strong>Object and Class:</strong> class, this, super, new, delete</li>
+              <li><strong>Error Handling:</strong> try, catch, finally, throw</li>
+              <li><strong>Other Important Keywords:</strong> import, export, async, await</li>
+          </ul>
+
+          <div class="practice-questions">
+              <h3>Important Notes about Keywords</h3>
+              <ul>
+                  <li>Keywords cannot be used as variable or function names</li>
+                  <li>They have predefined meanings in the JavaScript language</li>
+                  <li>Using a keyword incorrectly will result in a syntax error</li>
+              </ul>
+          </div>
+      </section>
+
+      <!-- New Operators Section -->
+      <section id="operators" class="section">
+          <h2>JavaScript Operators</h2>
+          <p>Operators are special symbols used to perform operations on variables and values. JavaScript supports several types of operators.</p>
+
+          <h3>Arithmetic Operators</h3>
+          <table class="operator-table">
+              <thead>
+                  <tr>
+                      <th>Operator</th>
+                      <th>Description</th>
+                      <th>Example</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td>+</td>
+                      <td>Addition</td>
+                      <td>let sum = 5 + 3; // sum is 8</td>
+                  </tr>
+                  <tr>
+                      <td>-</td>
+                      <td>Subtraction</td>
+                      <td>let diff = 10 - 4; // diff is 6</td>
+                  </tr>
+                  <tr>
+                      <td>*</td>
+                      <td>Multiplication</td>
+                      <td>let product = 5 * 3; // product is 15</td>
+                  </tr>
+                  <tr>
+                      <td>/</td>
+                      <td>Division</td>
+                      <td>let quotient = 15 / 3; // quotient is 5</td>
+                  </tr>
+                  <tr>
+                      <td>%</td>
+                      <td>Modulus (Remainder)</td>
+                      <td>let remainder = 17 % 5; // remainder is 2</td>
+                  </tr>
+                  <tr>
+                      <td>**</td>
+                      <td>Exponentiation</td>
+                      <td>let power = 2 ** 3; // power is 8</td>
+                  </tr>
+                  <tr>
+                      <td>++</td>
+                      <td>Increment</td>
+                      <td>let x = 5; x++; // x is now 6</td>
+                  </tr>
+                  <tr>
+                      <td>--</td>
+                      <td>Decrement</td>
+                      <td>let y = 5; y--; // y is now 4</td>
+                  </tr>
+              </tbody>
+          </table>
+
+          <div class="code-block">
+              <pre>// Practical example of arithmetic operators
+let a = 10;
+let b = 3;
+
+console.log(a + b);  // Addition: 13
+console.log(a - b);  // Subtraction: 7
+console.log(a * b);  // Multiplication: 30
+console.log(a / b);  // Division: 3.333
+console.log(a % b);  // Modulus: 1
+console.log(a ** b); // Exponentiation: 1000</pre>
+          </div>
+
+          <div class="practice-questions">
+              <h3>Understanding Arithmetic Operators</h3>
+              <ul>
+                  <li>Arithmetic operators work with numeric values</li>
+                  <li>The + operator can also concatenate strings</li>
+                  <li>Increment (++) and decrement (--) can be used as prefix or postfix</li>
+              </ul>
+          </div>
+      </section>
+      <section id="assignment-operators" class="section">
+        <h2>Assignment Operators in JavaScript</h2>
+        <p>Assignment operators allow you to assign values to variables and perform operations simultaneously. They provide a concise way to modify variable values.</p>
+
+        <table class="operator-table">
+            <thead>
+                <tr>
+                    <th>Operator</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                    <th>Equivalent To</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>=</td>
+                    <td>Basic Assignment</td>
+                    <td>let x = 5;</td>
+                    <td>x = 5</td>
+                </tr>
+                <tr>
+                    <td>+=</td>
+                    <td>Addition Assignment</td>
+                    <td>x += 3;</td>
+                    <td>x = x + 3;</td>
+                </tr>
+                <tr>
+                    <td>-=</td>
+                    <td>Subtraction Assignment</td>
+                    <td>x -= 3;</td>
+                    <td>x = x - 3;</td>
+                </tr>
+                <tr>
+                    <td>*=</td>
+                    <td>Multiplication Assignment</td>
+                    <td>x *= 3;</td>
+                    <td>x = x * 3;</td>
+                </tr>
+                <tr>
+                    <td>/=</td>
+                    <td>Division Assignment</td>
+                    <td>x /= 3;</td>
+                    <td>x = x / 3;</td>
+                </tr>
+                <tr>
+                    <td>%=</td>
+                    <td>Modulus Assignment</td>
+                    <td>x %= 3;</td>
+                    <td>x = x % 3;</td>
+                </tr>
+                <tr>
+                    <td>**=</td>
+                    <td>Exponentiation Assignment</td>
+                    <td>x **= 3;</td>
+                    <td>x = x ** 3;</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="code-block">
+            <pre>// Assignment Operator Examples
+let x = 10;
+
+// Basic assignment
+x = 20;  // x is now 20
+
+// Compound assignment operators
+x += 5;  // Equivalent to x = x + 5, x is now 25
+x -= 3;  // Equivalent to x = x - 3, x is now 22
+x *= 2;  // Equivalent to x = x * 2, x is now 44
+x /= 4;  // Equivalent to x = x / 4, x is now 11
+x %= 3;  // Equivalent to x = x % 3, x is now 2
+
+// Practical example in a real-world scenario
+let score = 100;
+let penalty = 20;
+
+score -= penalty;  // Deduct penalty from score
+console.log(score);  // 80</pre>
+        </div>
+
+        <div class="practice-questions">
+            <h3>Key Insights about Assignment Operators</h3>
+            <ul>
+                <li>Compound assignment operators provide a more concise way to modify variables</li>
+                <li>They combine an arithmetic operation with assignment in a single step</li>
+                <li>They can make code more readable and reduce redundancy</li>
+                <li>They work with all basic arithmetic operations</li>
+            </ul>
+        </div>
+
+        
+    </section>
+    <section id="relational-logical-operators" class="section">
+        <h2>Relational and Logical Operators</h2>
+        <p>Relational and logical operators are essential for comparing values and creating conditional logic in JavaScript.</p>
+
+        <h3>Relational Operators</h3>
+        <table class="operator-table">
+            <thead>
+                <tr>
+                    <th>Operator</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>==</td>
+                    <td>Equal to (loose comparison)</td>
+                    <td>5 == "5"</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td>===</td>
+                    <td>Strict equal to (checks value and type)</td>
+                    <td>5 === "5"</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <td>!=</td>
+                    <td>Not equal to (loose comparison)</td>
+                    <td>5 != "6"</td>
+                    <td>true</td>
+                </tr>
+                
+                <tr>
+                    <td>&gt;</td>
+                    <td>Greater than</td>
+                    <td>10 > 5</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td>&lt;</td>
+                    <td>Less than</td>
+                    <td>5 < 10</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td>&gt;=</td>
+                    <td>Greater than or equal to</td>
+                    <td>10 >= 10</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td>&lt;=</td>
+                    <td>Less than or equal to</td>
+                    <td>5 <= 5</td>
+                    <td>true</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Logical Operators</h3>
+        <table class="operator-table">
+            <thead>
+                <tr>
+                    <th>Operator</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>&&</td>
+                    <td>Logical AND</td>
+                    <td>true && false</td>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <td>||</td>
+                    <td>Logical OR</td>
+                    <td>true || false</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td>!</td>
+                    <td>Logical NOT</td>
+                    <td>!true</td>
+                    <td>false</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="code-block">
+            <pre>// Relational Operators Examples
+let x = 10;
+let y = 5;
+
+console.log(x > y);     // true
+console.log(x == "10"); // true (loose comparison)
+console.log(x === 10);  // true
+console.log(x !== "10"); // true
+
+// Logical Operators Examples
+let isAdult = true;
+let hasLicense = false;
+
+console.log(isAdult && hasLicense);  // false
+console.log(isAdult || hasLicense);  // true
+console.log(!isAdult);               // false</pre>
+        </div>
+
+        <div class="practice-questions">
+            <h3>Key Insights</h3>
+            <ul>
+                <li>Use === for strict equality comparison</li>
+                <li>Logical AND (&&) requires all conditions to be true</li>
+                <li>Logical OR (||) requires at least one condition to be true</li>
+                <li>Logical NOT (!) reverses the boolean value</li>
+            </ul>
+        </div>
+
+       
+    </section>
+    <section id="conditional-operator" class="section">
+        <h2>Conditional (Ternary) Operator in JavaScript</h2>
+        <p>The conditional operator, also known as the ternary operator, is a compact way to write conditional statements in a single line.</p>
+
+        <div class="code-block">
+            <pre>// Syntax of Conditional Operator
+condition ? expressionIfTrue : expressionIfFalse;</pre>
+        </div>
+
+        <h3>Basic Structure and Usage</h3>
+        <table class="operator-table">
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Condition</td>
+                    <td>A boolean expression that is evaluated</td>
+                    <td>age >= 18</td>
+                </tr>
+                <tr>
+                    <td>Expression If True</td>
+                    <td>Value or expression returned if condition is true</td>
+                    <td>"Adult"</td>
+                </tr>
+                <tr>
+                    <td>Expression If False</td>
+                    <td>Value or expression returned if condition is false</td>
+                    <td>"Minor"</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="code-block">
+            <pre>// Simple Conditional Operator Examples
+let age = 20;
+
+// Basic usage
+let status = age >= 18 ? "Adult" : "Minor";
+console.log(status);  // "Adult"
+
+// More complex example
+let canVote = age >= 18 ? true : false;
+console.log(canVote);  // true
+
+// Nested conditional operator
+let message = age < 13 ? "Child" 
+          : age < 20 ? "Teenager" 
+          : "Adult";
+console.log(message);  // "Adult"
+
+// Using with functions or expressions
+function checkDiscount(age) {
+  return age >= 65 ? 0.2 : 
+         age >= 18 ? 0.1 : 0;
+}
+
+let discount = checkDiscount(70);
+console.log(discount);  // 0.2 (20% senior discount)</pre>
+        </div>
+
+        <h3>Practical Use Cases</h3>
+        <div class="code-block">
+            <pre>// Real-world examples
+let username = "";
+let displayName = username ? username : "Anonymous";
+console.log(displayName);  // "Anonymous"
+
+// Simple conditional rendering in React-like logic
+let isLoggedIn = true;
+let greeting = isLoggedIn 
+  ? `Welcome back, ${username}!`
+  : "Please log in";
+console.log(greeting);  // "Please log in"
+
+// Conditional assignment
+let score = 85;
+let grade = score >= 90 ? "A" 
+        : score >= 80 ? "B"
+        : score >= 70 ? "C"
+        : score >= 60 ? "D"
+        : "F";
+console.log(grade);  // "B"</pre>
+        </div>
+
+        <div class="practice-questions">
+            <h3>Key Insights about Conditional Operator</h3>
+            <ul>
+                <li>Provides a shorthand way to write simple if-else statements</li>
+                <li>Can be nested, but excessive nesting can reduce readability</li>
+                <li>Useful for quick, simple conditional assignments</li>
+                <li>Can return any type of value (strings, numbers, booleans, etc.)</li>
+            </ul>
+        </div>
+
+        <div class="practice-questions">
+            <h3>Practice Exercises</h3>
+            <ol>
+                <li>Write a ternary operator to check if a number is even or odd</li>
+                <li>Create a ternary operator that returns a discount rate based on a customer's total purchase</li>
+                <li>Use a nested ternary operator to categorize a temperature reading</li>
+            </ol>
+        </div>
+    </section>
+    <section id="data-types" class="section">
+        <h2>JavaScript Data Types</h2>
+        <p>JavaScript has two main categories of data types: Primitive and Reference types. Understanding these types is crucial for effective programming.</p>
+
+        <h3>Primitive Data Types</h3>
+        <table class="operator-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                    <th>Typeof Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Number</td>
+                    <td>Represents numeric values</td>
+                    <td>42, 3.14, -10</td>
+                    <td>"number"</td>
+                </tr>
+                <tr>
+                    <td>String</td>
+                    <td>Textual data</td>
+                    <td>"Hello", 'JavaScript'</td>
+                    <td>"string"</td>
+                </tr>
+                <tr>
+                    <td>Boolean</td>
+                    <td>Logical entity</td>
+                    <td>true, false</td>
+                    <td>"boolean"</td>
+                </tr>
+                
+            </tbody>
+        </table>
+
+        <div class="code-block">
+            <pre>// Primitive Data Types Examples
+// Number
+let age = 25;
+let price = 19.99;
+
+// String
+let name = "John Doe";
+let greeting = 'Hello, World!';
+
+// Boolean
+let isStudent = true;
+let hasLicense = false;
+
+
+// Typeof demonstration
+console.log(typeof age);          // "number"
+console.log(typeof name);          // "string"
+console.log(typeof isStudent);     // "boolean"
+</pre>
+        </div>
+
+      
+    </section>
+    <section id="write-methods" class="section">
+        <h2>JavaScript Write and WriteLn Methods</h2>
+        <p>JavaScript provides methods to write output to the document or browser window.</p>
+
+        <div class="code-block">
+            <pre>// document.write() method
+document.write("Hello, World!");  // Writes directly to the HTML document
+
+// document.writeln() method
+document.writeln("This is a line of text");  // Writes a line with an automatic line break</pre>
+        </div>
+
+        <h3>Important Considerations</h3>
+        <ul>
+            <li><strong>document.write():</strong> 
+                <ul>
+                    <li>Writes content directly to the HTML document</li>
+                    <li>If used after the page has finished loading, it will overwrite the entire page</li>
+                    <li>Primarily used for testing and debugging</li>
+                </ul>
+            </li>
+            <li><strong>document.writeln():</strong>
+                <ul>
+                    <li>Similar to write(), but adds a newline character after the content</li>
+                    <li>Rarely used in modern web development</li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="practice-questions">
+            <h3>Best Practices</h3>
+            <ul>
+                <li>Avoid using document.write() in production websites</li>
+                <li>Prefer modern methods like innerHTML, textContent, or DOM manipulation</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="comments" class="section">
+        <h2>JavaScript Comments</h2>
+        <p>Comments are used to explain code and make it more readable. JavaScript supports two types of comments:</p>
+
+        <div class="code-block">
+            <pre>// Single-line comment
+// This is a single-line comment explaining the code
+
+/* Multi-line comment
+This comment can span
+multiple lines */
+
+// Example with actual code
+let x = 5;  // Declaring a variable
+/* 
+Complex calculation
+Multiplying x by 2 
+*/
+let result = x * 2;</pre>
+        </div>
+
+        <h3>Comment Types</h3>
+        <ul>
+            <li><strong>Single-line Comments:</strong>
+                <ul>
+                    <li>Start with //</li>
+                    <li>Extend to the end of the line</li>
+                </ul>
+            </li>
+            <li><strong>Multi-line Comments:</strong>
+                <ul>
+                    <li>Enclosed between /* and */</li>
+                    <li>Can span multiple lines</li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="practice-questions">
+            <h3>Comment Best Practices</h3>
+            <ul>
+                <li>Use comments to explain complex logic</li>
+                <li>Keep comments concise and meaningful</li>
+                <li>Update comments when code changes</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="popup-boxes" class="section">
+        <h2>JavaScript Popup Boxes</h2>
+        <p>JavaScript provides three types of popup boxes for interaction with users:</p>
+
+        <div class="code-block">
+            <pre>// Alert Box
+alert("This is an alert message!");
+
+// Confirm Box
+let result = confirm("Are you sure you want to continue?");
+if (result) {
+console.log("User clicked OK");
+} else {
+console.log("User clicked Cancel");
+}
+
+// Prompt Box
+let name = prompt("Please enter your name:", "John Doe");
+if (name != null) {
+console.log("Hello, " + name + "!");
+}</pre>
+        </div>
+
+        <h3>Popup Box Types</h3>
+        <table class="operator-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Usage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Alert Box</td>
+                    <td>Displays a message and an OK button</td>
+                    <td>Showing important information to the user</td>
+                </tr>
+                <tr>
+                    <td>Confirm Box</td>
+                    <td>Displays a message with OK and Cancel buttons</td>
+                    <td>Getting user confirmation before an action</td>
+                </tr>
+                <tr>
+                    <td>Prompt Box</td>
+                    <td>Displays a message with an input field and OK/Cancel buttons</td>
+                    <td>Collecting user input</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="practice-questions">
+            <h3>Important Considerations</h3>
+            <ul>
+                <li>Popup boxes block code execution until dismissed</li>
+                <li>Use sparingly in modern web applications</li>
+                <li>Consider using modal dialogs or custom UI elements for better user experience</li>
+            </ul>
+        </div>
+    </section>
+    <section id="conditional-statements" class="section">
+    <h2>JavaScript Conditional Statements</h2>
+    <p>Conditional statements are used to perform different actions based on different conditions. They allow your code to make decisions and execute different code blocks based on those decisions.</p>
+
+    <h3>Types of Conditional Statements</h3>
+    <ul>
+        <li>if statement</li>
+        <li>if...else statement</li>
+        <li>else if statement</li>
+        <li>nested if statement</li>
+    </ul>
+
+    <div class="code-block">
+        <pre>// Basic structure of conditional statements
+if (condition) {
+    // code to be executed if condition is true
+}</pre>
+    </div>
+</section>
+
+<section id="if-statement" class="section">
+    <h2>If Statement</h2>
+    <p>The if statement is the most basic type of conditional statement. It executes a block of code if a specified condition is true.</p>
+
+    <div class="code-block">
+        <pre>// Simple if statement
+let age = 18;
+
+if (age >= 18) {
+    console.log("You are eligible to vote!");
+}
+
+// If statement with multiple conditions
+let score = 85;
+let attendance = 90;
+
+if (score >= 80 && attendance >= 85) {
+    console.log("You qualify for honors!");
+}</pre>
+    </div>
+
+    <div class="practice-questions">
+        <h3>Questions</h3>
+        <ul>
+            <li>Write a program that checks if a number is positive and prints "The number is positive."
+
+</li>
+            <li>Create a program that checks if a number is greater than 100 and prints "Large number!" if it is.</li>
+            
+        </ul>
+    </div>
+</section>
+
+<section id="if-else-statement" class="section">
+    <h2>If...Else Statement</h2>
+    <p>The if...else statement allows you to execute one block of code if the condition is true and another if it's false.</p>
+
+    <div class="code-block">
+        <pre>// Basic if...else structure
+let age = 15;
+
+if (age >= 18) {
+    console.log("You can vote!");
+} else {
+    console.log("You are too young to vote.");
+}
+
+// Practical example
+let onlineStatus = true;
+
+if (onlineStatus) {
+    console.log("User is online");
+} else {
+    console.log("User is offline");
+}</pre>
+    </div>
+
+    <div class="practice-questions">
+        <h3>When to Use If...Else</h3>
+        <ul>
+            <li>Write a program to check if a number is positive or negative.Print "Positive number" or "Negative number" accordingly. 
+</li>
+            <li>
+Create a program to check if a person’s age is 18 or older. If true, print "Eligible to vote"; otherwise, print "Not eligible to vote."
+
+
+"</li>
+            <li>Create a program to check if a number is even or odd. Print "Even number" or "Odd number" accordingly.</li>
+            <li>Write a program to check if the temperature is above 25. If true, print "It's warm"; otherwise, print "It's cold.</li>
+        </ul>
+    </div>
+</section>
+
+<section id="else-if-statement" class="section">
+    <h2>Else If Statement</h2>
+    <p>The else if statement allows you to test multiple conditions in sequence.</p>
+
+    <div class="code-block">
+        <pre>// Multiple conditions with else if
+let score = 85;
+
+if (score >= 90) {
+    console.log("Grade: A");
+} else if (score >= 80) {
+    console.log("Grade: B");
+} else if (score >= 70) {
+    console.log("Grade: C");
+} else {
+    console.log("Grade: F");
+}
+
+// Practical example
+let time = 14;
+
+if (time < 12) {
+    console.log("Good morning!");
+} else if (time < 18) {
+    console.log("Good afternoon!");
+} else {
+    console.log("Good evening!");
+}</pre>
+    </div>
+
+    <div class="practice-questions">
+        <h3>Best Practices</h3>
+        <ul>
+            <li>Write a program to simulate a traffic light system:<br>
+
+If the light is "Red", print "Stop".<br>
+If the light is "Yellow", print "Get Ready".<br>
+If the light is "Green", print "Go".<br>
+For any other input, print "Invalid input"</li>
+           
+        </ul>
+    </div>
+</section>
+
+<section id="nested-if-statement" class="section">
+    <h2>Nested If Statements</h2>
+    <p>Nested if statements are if statements inside other if statements, allowing for more complex condition testing.</p>
+
+    <div class="code-block">
+        <pre>// Nested if statement example
+let age = 25;
+let hasLicense = true;
+
+if (age >= 18) {
+    if (hasLicense) {
+        console.log("You can drive a car");
+    } else {
+        console.log("You need to get a license first");
+    }
+} else {
+    console.log("You are too young to drive");
+}
+
+// Complex nested example
+let username = "admin";
+let password = "12345";
+let isActive = true;
+
+if (username === "admin") {
+    if (password === "12345") {
+        if (isActive) {
+            console.log("Login successful");
+        } else {
+            console.log("Account is inactive");
+        }
+    } else {
+        console.log("Incorrect password");
+    }
+} else {
+    console.log("Invalid username");
+}</pre>
+    </div>
+
+    <div class="practice-questions">
+        <h3>Important Considerations</h3>
+        <ul>
+            <li>Avoid deeply nested if statements (more than 3 levels) for better readability</li>
+            <li>Consider using logical operators (&&, ||) instead of nesting when possible</li>
+            <li>Use proper indentation to maintain code clarity</li>
+        </ul>
+    </div>
+</section>
+<section id="complex-conditions" class="section">
+    <h2>Complex Logical Conditions</h2>
+    <p>In JavaScript, you can combine multiple conditions using logical operators (AND &&, OR ||) to create complex conditional statements. Understanding how to combine these operators is crucial for writing sophisticated programming logic.</p>
+
+    <h3>Complex AND (&&) Conditions</h3>
+    <div class="code-block">
+        <pre>// AND operator examples
+let age = 25;
+let hasLicense = true;
+let hasClearRecord = true;
+
+// All conditions must be true
+if (age >= 21 && hasLicense && hasClearRecord) {
+    console.log("You can rent a car");
+}
+
+// Complex AND condition with comparisons
+let score = 85;
+let attendance = 95;
+if (score >= 80 && attendance >= 90) {
+    console.log("Student qualifies for honors");
+}</pre>
+    </div>
+
+    <h3>Complex OR (||) Conditions</h3>
+    <div class="code-block">
+        <pre>// OR operator examples
+let isEmployee = false;
+let isMember = true;
+let isVIP = false;
+
+// Any condition can be true
+if (isEmployee || isMember || isVIP) {
+    console.log("Access granted");
+}
+
+// Complex OR condition with comparisons
+let creditScore = 650;
+let income = 50000;
+if (creditScore > 700 || income > 60000) {
+    console.log("Loan pre-approved");
+}</pre>
+    </div>
+
+    <h3>Combining AND and OR Operators</h3>
+    <div class="code-block">
+        <pre>// Complex combinations
+let age = 25;
+let hasID = true;
+let isWeekend = true;
+let isMember = false;
+
+// Complex condition with both && and ||
+if ((age >= 21 && hasID) && (isWeekend || isMember)) {
+    console.log("Welcome to the club");
+}
+
+// Using parentheses for proper grouping
+let temperature = 75;
+let isRaining = false;
+let isHoliday = true;
+if ((temperature > 70 && !isRaining) || isHoliday) {
+    console.log("Let's go to the park");
+}</pre>
+    </div>
+
+    <div class="practice-questions">
+        <h3>Practice Questions</h3>
+        <ol>
+            <li>What will be the output of the following condition?
+                <pre>let x = 10;
+let y = 5;
+let z = 15;
+console.log((x > y && y < z) || (z < x));</pre>
+            </li>
+            <li>Write a condition that checks if:
+                <ul>
+                    <li>A person is eligible for a premium credit card</li>
+                    <li>Requirements: Credit score > 750 AND (Annual income > 50000 OR existing customer for > 5 years)</li>
+                </ul>
+            </li>
+           
+            <li> Write a program that takes three sides of a triangle as input and checks if the triangle is valid. A triangle is valid if:<br>
+                
+                    The sum of any two sides is greater than the third side and<br>
+                    All sides are greater than zero.<br>
+                
+            </li>
+            <li>
+           Write a program to check if a number is:<br>
+
+Greater than 50 and divisible by 7 or<br>
+Less than 20 and an even number.<br></li>
+        </ol>
+    </div>
+
+    <div class="practice-questions">
+        <h3>Key Points to Remember</h3>
+        <ul>
+            <li>Use parentheses to clearly group conditions and control operator precedence</li>
+            <li>AND (&&) has higher precedence than OR (||)</li>
+            <li>When combining multiple conditions, test each part separately first</li>
+            <li>Consider readability when writing complex conditions</li>
+            <li>Use meaningful variable names to make conditions more understandable</li>
+        </ul>
+    </div>
+</section>
+<section id="while-loops" class="section">
+    <h2>While Loops in JavaScript</h2>
+    <p>While loops execute a block of code as long as a specified condition is true. They are useful when you don't know in advance how many times you need to execute the code.</p>
+
+    <h3>Basic While Loop Syntax</h3>
+    <div class="code-block">
+        <pre>// Basic while loop structure
+let count = 0;
+while (count < 5) {
+    console.log("Count is: " + count);
+    count++;
+}
+
+// While loop with conditional break
+let number = 1;
+while (true) {
+    console.log(number);
+    if (number >= 5) break;
+    number++;
+}</pre>
+    </div>
+
+    <h3>Practical Examples</h3>
+    <div class="code-block">
+        <pre>// Example 1: Password attempt checker
+let correctPassword = "secret123";
+let attempt = prompt("Enter password:");
+let attempts = 1;
+
+while (attempt !== correctPassword && attempts < 3) {
+    attempt = prompt("Wrong password. Try again:");
+    attempts++;
+}
+
+// Example 2: Number guessing game
+let targetNumber = Math.floor(Math.random() * 100) + 1;
+let guess;
+let tries = 0;
+
+while (guess !== targetNumber) {
+    guess = Number(prompt("Guess a number between 1 and 100:"));
+    tries++;
+    
+    if (guess > targetNumber) {
+        console.log("Too high!");
+    } else if (guess < targetNumber) {
+        console.log("Too low!");
+    }
+}
+
+// Example 3: Processing array elements
+let fruits = ["apple", "banana", "orange", "grape"];
+let i = 0;
+
+while (i < fruits.length) {
+    console.log("Processing fruit: " + fruits[i]);
+    i++;
+}</pre>
+    </div>
+
+   
+    <div class="practice-questions">
+        <h3>Practice Exercises</h3>
+        <ol>
+
+
+
+            <li>Write a program using a while loop to print numbers from 1 to 10.</li>
+            <li>Write a program to print numbers from 10 to 1 in reverse order using a while loop.</li>
+            <li>Write a program to print all even numbers between 1 and 20 using a while loop.
+            </li>
+            <li>Write a program to print the multiplication table of a number (e.g., 5) using a while loop.
+            </li>
+            <li>Write a while loop that prints all odd numbers between 1 and 20.</li>
+        </ol>
+    </div>
+
+    <div class="practice-questions">
+        <h3>Key Points to Remember</h3>
+        <ul>
+            <li>Always ensure there's a way to exit the loop</li>
+            <li>Use while loops when the number of iterations is unknown</li>
+            <li>Use do...while when the code block should execute at least once</li>
+            <li>Be careful with the loop condition to avoid infinite loops</li>
+            <li>Consider using for loops instead if you know the number of iterations</li>
+        </ul>
+    </div>
+</section>
+<section id="switch-statements" class="section">
+    <h2>Switch Statements in JavaScript</h2>
+    <p>A switch statement is a control structure that performs different actions based on different conditions. It's an alternative to multiple if...else statements.</p>
+
+    <div class="code-block">
+        <pre>// Basic Switch Statement Structure
+switch(expression) {
+    case value1:
+        // code block
+        break;
+    case value2:
+        // code block
+        break;
+    default:
+        // code block
+}</pre>
+    </div>
+
+    <h3>Example with document.write()</h3>
+    <div class="code-block">
+        <pre>let day = new Date().getDay();
+document.write("&lt;h3&gt;Today is: &lt;/h3&gt;");
+
+switch(day) {
+    case 0:
+        document.write("Sunday");
+        break;
+    case 1:
+        document.write("Monday");
+        break;
+    case 2:
+        document.write("Tuesday");
+        break;
+    case 3:
+        document.write("Wednesday");
+        break;
+    case 4:
+        document.write("Thursday");
+        break;
+    case 5:
+        document.write("Friday");
+        break;
+    case 6:
+        document.write("Saturday");
+        break;
+    default:
+        document.write("Invalid day");
+}</pre>
+    </div>
+
+    <h3>Key Points</h3>
+    <ul>
+        <li>The switch expression is evaluated once</li>
+        <li>Each case value is compared with the expression</li>
+        <li>The break statement stops execution of the switch block</li>
+        <li>The default case runs if no match is found</li>
+    </ul>
+
+    <div class="practice-questions">
+        <h3>Practice Questions</h3>
+        <ol>
+            <li>What will be the output of this switch statement if the value of grade is 'B'?
+                <div class="code-block">
+                    <pre>switch(grade) {
+    case 'A': document.write("Excellent!");
+        break;
+    case 'B': document.write("Good job!");
+        break;
+    default: document.write("Keep trying!");
+}</pre>
+                </div>
+            </li>
+            <li>What happens if you forget to include a break statement in a case?</li>
+            <li>Write a switch statement that converts number grades (1-5) to letter grades (A-F)</li>
+            <li>How does a switch statement differ from if...else statements?</li>
+        </ol>
+
+        <h3>Solutions</h3>
+        <ol>
+            <li>Output will be: "Good job!"</li>
+            <li>The code will continue executing into the next case (fall-through behavior)</li>
+            <li>Example solution:
+                <div class="code-block">
+                    <pre>switch(grade) {
+    case 5: document.write("A"); break;
+    case 4: document.write("B"); break;
+    case 3: document.write("C"); break;
+    case 2: document.write("D"); break;
+    case 1: document.write("F"); break;
+    default: document.write("Invalid grade");
+}</pre>
+                </div>
+            </li>
+            <li>Switch statements are often cleaner for multiple conditions that check a single value, while if...else is better for complex conditions</li>
+        </ol>
+    </div>
+    
+</section>
+<section id="functions" class="section">
+    <h2>JavaScript Functions</h2>
+    <p>A function is a block of code designed to perform a specific task. Functions are fundamental building blocks in JavaScript.</p>
+
+    <div class="code-block">
+        <pre>// Function Declaration
+function functionName(parameters) {
+    // code to be executed
+    return value;
+}
+
+// Function Expression
+const functionName = function(parameters) {
+    // code to be executed
+    return value;
+}
+
+// Arrow Function (ES6)
+const functionName = (parameters) => {
+    // code to be executed
+    return value;
+}</pre>
+    </div>
+
+    <h3>Function Example</h3>
+    <div class="code-block">
+        <pre>function calculateArea(length, width) {
+    return length * width;
+}
+
+document.write("Area of rectangle: " + calculateArea(5, 3));</pre>
+    </div>
+
+    <h3>Built-in Math Functions</h3>
+    <table class="operator-table">
+        <thead>
+            <tr>
+                <th>Function</th>
+                <th>Description</th>
+                <th>Example</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Math.abs()</td>
+                <td>Returns absolute value</td>
+                <td>Math.abs(-5)</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>Math.exp()</td>
+                <td>Returns e^x</td>
+                <td>Math.exp(1)</td>
+                <td>2.718</td>
+            </tr>
+            <tr>
+                <td>Math.floor()</td>
+                <td>Rounds down to nearest integer</td>
+                <td>Math.floor(5.7)</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>Math.ceil()</td>
+                <td>Rounds up to nearest integer</td>
+                <td>Math.ceil(5.1)</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>Math.sin()</td>
+                <td>Returns sine of angle (radians)</td>
+                <td>Math.sin(Math.PI/2)</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>Math.cos()</td>
+                <td>Returns cosine of angle (radians)</td>
+                <td>Math.cos(0)</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>Math.sqrt()</td>
+                <td>Returns square root</td>
+                <td>Math.sqrt(16)</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td>Math.pow()</td>
+                <td>Returns base to the exponent power</td>
+                <td>Math.pow(2, 3)</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>Math.max()</td>
+                <td>Returns largest number</td>
+                <td>Math.max(1, 5, 3)</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>Math.min()</td>
+                <td>Returns smallest number</td>
+                <td>Math.min(1, 5, 3)</td>
+                <td>1</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="code-block">
+        <pre>// Math Functions Examples
+document.write("&lt;h3&gt;Math Function Examples:&lt;/h3&gt;");
+document.write("Absolute value of -5: " + Math.abs(-5) + "&lt;br&gt;");
+document.write("e raised to power 2: " + Math.exp(2) + "&lt;br&gt;");
+document.write("Floor of 5.7: " + Math.floor(5.7) + "&lt;br&gt;");
+document.write("Ceiling of 5.1: " + Math.ceil(5.1) + "&lt;br&gt;");
+document.write("Sine of 90 degrees: " + Math.sin(Math.PI/2) + "&lt;br&gt;");
+document.write("Square root of 16: " + Math.sqrt(16) + "&lt;br&gt;");
+document.write("2 raised to power 3: " + Math.pow(2,3) + "&lt;br&gt;");
+document.write("Maximum of (2,5,1): " + Math.max(2,5,1) + "&lt;br&gt;");
+document.write("Minimum of (2,5,1): " + Math.min(2,5,1) + "&lt;br&gt;");</pre>
+    </div>
+
+    <div class="practice-questions">
+        <h3>Practice Questions</h3>
+        <ol>
+            <li>Write a function that calculates the area of a circle using Math.PI and Math.pow()</li>
+            <li>Create a function that finds the hypotenuse of a right triangle using Math.sqrt()</li>
+            <li>What's the difference between Math.floor() and Math.ceil() for the number 7.3?</li>
+            <li>Write a function that converts degrees to radians using Math functions</li>
+        </ol>
+
+        <h3>Sample Solutions</h3>
+        <div class="code-block">
+            <pre>// Circle Area
+function circleArea(radius) {
+    return Math.PI * Math.pow(radius, 2);
+}
+
+// Hypotenuse
+function hypotenuse(a, b) {
+    return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+}
+
+// Degrees to Radians
+function degreesToRadians(degrees) {
+    return degrees * (Math.PI / 180);
+}</pre>
+        </div>
+    </div>
+</section>
+<section id="string-functions" class="section">
+    <h2>JavaScript String Functions</h2>
+    <p>String functions allow you to manipulate and transform text data. Here are the essential string functions:</p>
+
+    <div class="code-block">
+        <pre>let str = "Hello, World!";</pre>
+    </div>
+
+    <table class="operator-table">
+        <thead>
+            <tr>
+                <th>Function</th>
+                <th>Description</th>
+                <th>Example</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>length</td>
+                <td>Returns string length</td>
+                <td>str.length</td>
+                <td>13</td>
+            </tr>
+            <tr>
+                <td>toUpperCase()</td>
+                <td>Converts to uppercase</td>
+                <td>str.toUpperCase()</td>
+                <td>"HELLO, WORLD!"</td>
+            </tr>
+            <tr>
+                <td>toLowerCase()</td>
+                <td>Converts to lowercase</td>
+                <td>str.toLowerCase()</td>
+                <td>"hello, world!"</td>
+            </tr>
+            <tr>
+                <td>charAt()</td>
+                <td>Returns character at index</td>
+                <td>str.charAt(0)</td>
+                <td>"H"</td>
+            </tr>
+            <tr>
+                <td>concat()</td>
+                <td>Joins strings together</td>
+                <td>str.concat(" Welcome!")</td>
+                <td>"Hello, World! Welcome!"</td>
+            </tr>
+            <tr>
+                <td>indexOf()</td>
+                <td>Returns first occurrence index</td>
+                <td>str.indexOf("o")</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td>lastIndexOf()</td>
+                <td>Returns last occurrence index</td>
+                <td>str.lastIndexOf("o")</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td>substring()</td>
+                <td>Extracts part of string</td>
+                <td>str.substring(0,5)</td>
+                <td>"Hello"</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>HTML Formatting Methods (Deprecated but still supported)</h3>
+    <table class="operator-table">
+        <thead>
+            <tr>
+                <th>Function</th>
+                <th>Description</th>
+                <th>Example</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>big()</td>
+                <td>Makes text bigger</td>
+                <td>str.big()</td>
+                <td>&lt;big&gt;Hello, World!&lt;/big&gt;</td>
+            </tr>
+            <tr>
+                <td>bold()</td>
+                <td>Makes text bold</td>
+                <td>str.bold()</td>
+                <td>&lt;b&gt;Hello, World!&lt;/b&gt;</td>
+            </tr>
+            <tr>
+                <td>fontcolor()</td>
+                <td>Sets text color</td>
+                <td>str.fontcolor("red")</td>
+                <td>&lt;font color="red"&gt;Hello, World!&lt;/font&gt;</td>
+            </tr>
+            <tr>
+                <td>fontsize()</td>
+                <td>Sets font size</td>
+                <td>str.fontsize(5)</td>
+                <td>&lt;font size="5"&gt;Hello, World!&lt;/font&gt;</td>
+            </tr>
+            <tr>
+                <td>italics()</td>
+                <td>Makes text italic</td>
+                <td>str.italics()</td>
+                <td>&lt;i&gt;Hello, World!&lt;/i&gt;</td>
+            </tr>
+            <tr>
+                <td>strike()</td>
+                <td>Adds strikethrough</td>
+                <td>str.strike()</td>
+                <td>&lt;strike&gt;Hello, World!&lt;/strike&gt;</td>
+            </tr>
+            <tr>
+                <td>sub()</td>
+                <td>Makes text subscript</td>
+                <td>str.sub()</td>
+                <td>&lt;sub&gt;Hello, World!&lt;/sub&gt;</td>
+            </tr>
+            <tr>
+                <td>sup()</td>
+                <td>Makes text superscript</td>
+                <td>str.sup()</td>
+                <td>&lt;sup&gt;Hello, World!&lt;/sup&gt;</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="code-block">
+        <pre>// String Function Examples using document.write()
+let text = "JavaScript";
+document.write("&lt;h3&gt;String Function Examples:&lt;/h3&gt;");
+document.write("Original text: " + text + "&lt;br&gt;");
+document.write("Length: " + text.length + "&lt;br&gt;");
+document.write("Uppercase: " + text.toUpperCase() + "&lt;br&gt;");
+document.write("Lowercase: " + text.toLowerCase() + "&lt;br&gt;");
+document.write("Character at index 0: " + text.charAt(0) + "&lt;br&gt;");
+document.write("Index of 'a': " + text.indexOf('a') + "&lt;br&gt;");
+document.write("Last index of 'a': " + text.lastIndexOf('a') + "&lt;br&gt;");
+document.write("Substring (0,4): " + text.substring(0,4) + "&lt;br&gt;");
+
+// HTML Formatting Examples
+document.write(text.bold() + "&lt;br&gt;");
+document.write(text.italics() + "&lt;br&gt;");
+document.write(text.fontcolor("blue") + "&lt;br&gt;");
+document.write("Normal text with " + text.sup() + " superscript&lt;br&gt;");
+document.write("Normal text with " + text.sub() + " subscript&lt;br&gt;");</pre>
+    </div>
+
+    <div class="practice-questions">
+        <h3>Practice Questions</h3>
+        <ol>
+            <li>Write a function that counts the number of vowels in a string</li>
+            <li>Create a function that capitalizes the first letter of each word in a sentence</li>
+            <li>Write a program that checks if a string is a palindrome using string functions</li>
+            <li>How would you extract the domain from an email address using string functions?</li>
+        </ol>
+
+        <h3>Sample Solutions</h3>
+        <div class="code-block">
+            <pre>// Count vowels
+function countVowels(str) {
+    return str.toLowerCase().match(/[aeiou]/g).length;
+}
+
+// Capitalize words
+function capitalizeWords(str) {
+    return str.split(' ')
+              .map(word => word.charAt(0).toUpperCase() + 
+                   word.substring(1).toLowerCase())
+              .join(' ');
+}
+
+// Check palindrome
+function isPalindrome(str) {
+    str = str.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return str === str.split('').reverse().join('');
+}
+
+// Extract domain
+function getDomain(email) {
+    return email.substring(email.indexOf('@') + 1);
+}</pre>
+        </div>
+    </div>
+</section>
+<section id="user-functions" class="section">
+    <h2>User-Defined Functions</h2>
+    <p>Functions are reusable blocks of code that perform specific tasks. You can create your own functions to organize and simplify your code.</p>
+
+    <h3>Basic Function Syntax</h3>
+    <div class="code-block">
+        <pre>
+           function name(parameter1, parameter2, parameter3) {
+  // code to be executed
+}  
+            
+            // Basic function declaration
+function sayHello() {
+    console.log("Hello!");
+}
+
+// Function with parameters
+function add(a, b) {
+    return a + b;
+}
+
+// Calling functions
+sayHello();           // Output: Hello!
+let sum = add(5, 3);  // sum = 8</pre>
+    </div>
+
+   
+
+    <div class="practice-questions">
+        <h3>Practice Examples</h3>
+        <div class="code-block">
+            <pre>
+               
+                
+                
+                // Calculate area of rectangle
+function calculateArea(length, width) {
+    return length * width;
+}
+
+// Check if number is even
+const isEven = (number) => {
+    return number % 2 === 0;
+}
+
+// Greet user with custom message
+function greetUser(name = "Guest") {
+    return `Welcome, ${name}!`;
+}</pre>
+        </div>
+    </div>
+</section>
+<section id="javascript-events" class="section">
+    <h2>JavaScript Events</h2>
+    <p>Events are actions that happen on a webpage, like clicking a button or loading a page. JavaScript can detect these events and respond to them.</p>
+
+    <h3>Common JavaScript Events</h3>
+    <table class="operator-table">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>onclick</td>
+                <td>When user clicks an element</td>
+                <td>&lt;button onclick="alert('Hello!')"&gt;Click Me&lt;/button&gt;</td>
+            </tr>
+            <tr>
+                <td>onfocus</td>
+                <td>When user clicks inside a form field</td>
+                <td>&lt;input onfocus="this.style.background='yellow'"&gt;</td>
+            </tr>
+            <tr>
+                <td>onblur</td>
+                <td>When user leaves a form field</td>
+                <td>&lt;input onblur="checkValue()"&gt;</td>
+            </tr>
+            <tr>
+                <td>onchange</td>
+                <td>When value of an input changes</td>
+                <td>&lt;select onchange="updatePrice()"&gt;</td>
+            </tr>
+            <tr>
+                <td>onmouseover</td>
+                <td>When mouse moves over an element</td>
+                <td>&lt;div onmouseover="showTooltip()"&gt;</td>
+            </tr>
+            <tr>
+                <td>onmouseout</td>
+                <td>When mouse leaves an element</td>
+                <td>&lt;div onmouseout="hideTooltip()"&gt;</td>
+            </tr>
+            <tr>
+                <td>onload</td>
+                <td>When a page or image finishes loading</td>
+                <td>&lt;body onload="startApp()"&gt;</td>
+            </tr>
+           
+            <tr>
+                <td>onselect</td>
+                <td>When text is selected</td>
+                <td>&lt;input onselect="copyText()"&gt;</td>
+            </tr>
+            <tr>
+                <td>onsubmit</td>
+                <td>When a form is submitted</td>
+                <td>&lt;form onsubmit="validateForm()"&gt;</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Simple Examples</h3>
+    <div class="code-block">
+        <pre>// Click Event Example
+&lt;button onclick="changeColor()"&gt;Change Color&lt;/button&gt;
+
+function changeColor() {
+    document.body.style.backgroundColor = 'lightblue';
+}
+
+// Focus and Blur Example
+&lt;input type="text" 
+    onfocus="this.style.backgroundColor='yellow'"
+    onblur="this.style.backgroundColor='white'"
+    placeholder="Type here..."&gt;
+
+// Mouse Over/Out Example
+&lt;div onmouseover="this.style.color='red'"
+     onmouseout="this.style.color='black'"&gt;
+    Hover over me!
+&lt;/div&gt;
+
+// Form Submit Example
+&lt;form onsubmit="return validateForm()"&gt;
+    &lt;input type="text" id="username"&gt;
+    &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+
+function validateForm() {
+    let username = document.getElementById("username").value;
+    if (username === "") {
+        alert("Please enter a username");
+        return false;
+    }
+    return true;
+}</pre>
+    </div>
+
+    <div class="practice-questions">
+        <h3>Key Points to Remember</h3>
+        <ul>
+            <li>Events make web pages interactive</li>
+            <li>You can respond to user actions (clicks, typing, etc.)</li>
+            <li>Each event can trigger a JavaScript function</li>
+            <li>Events can be added directly in HTML or through JavaScript</li>
+        </ul>
+    </div>
+</section>
+<section id="this-keyword" class="section">
+    <h2>The 'this' Keyword in JavaScript</h2>
+    <p>The 'this' keyword refers to the current object or context. Its value changes depending on how and where it's used.</p>
+
+    
+
+    <div class="code-block">
+        <pre>// &lt; button onclick="this.style.backgroundColor='yellow'" &gt; onclick &lt; /button &gt;</pre>
+    </div>
+
+  
+</section>
+
+    </div>
+
+    <!-- <script>
+          function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menuToggle');
+            sidebar.classList.toggle('active');
+            menuToggle.classList.toggle('close');
+            menuToggle.textContent = sidebar.classList.contains('active') ? '✖' : '☰';
+        }
+        // Smooth scrolling for navigation
+        document.querySelectorAll('.nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+
+                // Scroll to section
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Highlight active section on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.section');
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+
+                if (window.scrollY >= sectionTop - 100 && 
+                    window.scrollY < sectionTop + sectionHeight) {
+                    
+                    // Remove active from all links
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+
+                    // Add active to corresponding link
+                    const activeLink = document.querySelector(`.nav-link[href="#${section.id}"]`);
+                    if (activeLink) {
+                        activeLink.classList.add('active');
+                    }
+                }
+            });
+        });
+    </script> -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded and parsed');
+
+    // Enhanced sidebar toggle functionality
+    function toggleSidebar() {
+        console.log('Sidebar toggle clicked');
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menuToggle');
+        
+        if (!sidebar || !menuToggle) {
+            console.error('Sidebar or menu toggle element not found');
+            return;
+        }
+        
+        // Toggle sidebar and menu button states
+        sidebar.classList.toggle('active');
+        menuToggle.classList.toggle('close');
+        
+        // Update menu toggle text
+        menuToggle.textContent = sidebar.classList.contains('active') ? '✖' : '☰';
+    }
+
+    // Smooth scrolling and navigation
+    function setupNavigation() {
+        const navLinks = document.querySelectorAll('.nav-link');
+        console.log(`Found ${navLinks.length} navigation links`);
+
+        navLinks.forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                console.log(`Clicked nav link: ${this.getAttribute('href')}`);
+                
+                // Remove active class from all links
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+
+                // Scroll to section
+                const targetSection = document.querySelector(this.getAttribute('href'));
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                } else {
+                    console.error(`Section not found: ${this.getAttribute('href')}`);
+                }
+
+                // Close sidebar on mobile after selecting a section
+                const sidebar = document.getElementById('sidebar');
+                const menuToggle = document.getElementById('menuToggle');
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                    menuToggle.classList.remove('close');
+                    menuToggle.textContent = '☰';
+                }
+            });
+        });
+    }
+
+    // Close sidebar on outside click
+    function closeSidebarOnOutsideClick(event) {
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menuToggle');
+        
+        if (
+            sidebar.classList.contains('active') && 
+            !sidebar.contains(event.target) && 
+            !menuToggle.contains(event.target)
+        ) {
+            sidebar.classList.remove('active');
+            menuToggle.classList.remove('close');
+            menuToggle.textContent = '☰';
+        }
+    }
+
+    // Section highlight on scroll
+    function highlightActiveSection() {
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+
+            if (window.scrollY >= sectionTop - 100 && 
+                window.scrollY < sectionTop + sectionHeight) {
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+
+                const activeLink = document.querySelector(`.nav-link[href="#${section.id}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+        });
+    }
+
+    // Setup event listeners
+    const menuToggle = document.getElementById('menuToggle');
+    if (menuToggle) {
+        menuToggle.addEventListener('click', toggleSidebar);
+    } else {
+        console.error('Menu toggle element not found');
+    }
+
+    // Setup navigation and other event listeners
+    setupNavigation();
+    window.addEventListener('scroll', highlightActiveSection);
+    document.addEventListener('click', closeSidebarOnOutsideClick);
+    document.addEventListener('touchstart', closeSidebarOnOutsideClick);
+});
+        </script>
+</body>
+</html>

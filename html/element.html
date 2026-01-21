@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Understanding HTML Elements, Tags, and the Body Tag">
+    <meta name="keywords" content="HTML, Elements, Tags, Attributes, Body, Tutorial">
+    <meta name="author" content="olevelcccexam">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Elements, Tags, and Body Explained</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #ffffff, #e0f7fa);
+            color: #333;
+            line-height: 1.8;
+            display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    width:100%;
+           
+        }
+        
+        header {
+            background-color: #1e90ff;
+            color: #fff;
+            width: 100%;
+            text-align: center;
+            /* padding-left: 350px; */
+             padding: 40px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: bold;
+        }
+        .container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    
+    
+    
+    padding: 8px;
+}
+        section {
+            max-width: 1000px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+            padding: 30px;
+            width: 90%;
+        }
+        h2 {
+            color: #005a9c;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 1.1rem;
+            margin: 15px 0;
+        }
+        .example {
+            background-color: #e7f3fe;
+            border-left: 8px solid #1e90ff;
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        ul {
+            margin: 10px 0;
+            padding: 0 20px;
+        }
+        li {
+            margin: 5px 0;
+        }
+        footer {
+            background-color: #1e90ff;
+            color: #fff;
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+            margin-top: auto;
+            width:100%;
+        }
+        .content-block {
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        .content-block:last-child {
+            border: none;
+        }
+        .html-compiler-button {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.html-compiler-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+}
+
+.html-compiler-button:active {
+    background-color: #004494;
+    transform: translateY(0);
+}
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .example {
+                font-size: 0.9rem;
+            }
+            header {
+            background-color: #1e90ff;
+            color: #fff;
+            width: 100%;
+            text-align: center;
+            /* padding-left: 350px; */
+            /* padding: 40px; */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        section {
+            max-width: 1000px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            margin: 20px -10px;
+            padding: 30px;
+            width: 90%;
+        }
+        }
+        
+        /* Circle Button for Compiler */
+        .compiler-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #ffbf00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-size: 24px;
+            color: #fff;
+            border: none;
+        }
+
+        /* Compiler Overlay */
+        .compiler-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        /* Visible State for Animation */
+        .compiler-overlay.show {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .compiler-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ffbf00;
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 17%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* Compiler Specific Styles */
+        .compiler-container {
+            background-color: #1e1e1e;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+        .compiler-container h1 {
+            color: #ffbf00;
+        }
+        .compiler-container textarea {
+            width: 95%;
+            height: 150px;
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 16px;
+            outline: none;
+            resize: vertical;
+        }
+        .compiler-container button {
+            background-color: #ffbf00;
+            color: #1e1e1e;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        .compiler-container button:hover {
+            background-color: #e6a700;
+            transform: scale(1.05);
+        }
+        .compiler-container iframe {
+            width: 100%;
+            height: 300px;
+            background-color: #fff;
+            border: none;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        /* Mobile Key Buttons */
+        .mobile-keys {
+            display: none;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .mobile-keys button {
+            background-color: #ffbf00;
+            color: #1e1e1e;
+            padding: 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        .mobile-keys button:hover {
+            background-color: #e6a700;
+        }
+
+        @media (max-width: 600px) {
+            .compiler-container h1 {
+                font-size: 2em;
+            }
+            .compiler-container textarea {
+                font-size: 14px;
+            }
+            .compiler-container button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .mobile-keys {
+                display: flex;
+            }
+        }
+    
+    </style>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Customize the scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: #666565;
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background-color: #555;
+        }
+
+        .container {
+            transition: margin-left 0.3s ease;
+            padding: 20px;
+        }
+
+        /* Desktop styles */
+        @media (min-width: 1024px) {
+            .container {
+                margin-left: 300px;
+                width: calc(100% - 300px);
+            }
+            
+            .sidebar {
+                left: 0 !important;
+                width: 300px;
+            }
+            
+            .menu-toggle {
+                display: none;
+            }
+
+            .close-sidebar {
+                display: none !important;
+            }
+
+            .overlay {
+                display: none !important;
+            }
+
+            .sidebar {
+                animation: none !important;
+            }
+
+            .sidebar.active {
+                animation: none !important;
+            }
+        }
+
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, #1e90ff 0%, #4facfe 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 5px;
+            display: none;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-nav li {
+            border-bottom: 1px solid rgba(238, 238, 238, 0.5);
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 15px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* New styles for active state */
+        .sidebar-nav a.active {
+            background-color: #f8f9fa;
+            color: #1e90ff;
+            padding-left: 25px;
+        }
+
+        .sidebar-nav a.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(135deg, #1e90ff 0%, #4facfe 100%);
+            opacity: 1;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: #f8f9fa;
+            color: #1e90ff;
+            padding-left: 25px;
+        }
+
+        .sidebar-nav a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(135deg, #1e90ff 0%, #4facfe 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-nav a:hover::before {
+            opacity: 1;
+        }
+
+        .menu-toggle {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1e90ff 0%, #4facfe 100%);
+            border: none;
+            border-radius: 0 50% 50% 0;
+            cursor: pointer;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            width: 55px;
+            box-shadow: 4px 2px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .menu-toggle svg {
+            stroke: white;
+            /*transform: rotate(180deg);*/
+            transition: transform 0.3s ease;
+        }
+
+        .menu-toggle:hover svg {
+            transform: rotate(0deg) translateX(3px);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+            backdrop-filter: blur(3px);
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Mobile styles */
+        @media (max-width: 1023px) {
+            .container {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .sidebar {
+                width: 280px;
+                left: -280px;
+            }
+            
+            .close-sidebar {
+                display: block;
+            }
+            
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .sidebar.active + .menu-toggle {
+                left: 280px;
+            }
+            
+            .sidebar.active + .menu-toggle svg {
+                transform: rotate(0deg);
+            }
+
+            @keyframes slideIn {
+                from {
+                    left: -280px;
+                    opacity: 0;
+                }
+                to {
+                    left: 0;
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOut {
+                from {
+                    left: 0;
+                    opacity: 1;
+                }
+                to {
+                    left: -280px;
+                    opacity: 0;
+                }
+            }
+
+            .sidebar.active {
+                animation: slideIn 0.3s forwards;
+            }
+
+            .sidebar:not(.active) {
+                animation: slideOut 0.3s forwards;
+            }
+        }
+    </style>
+</head>
+<body>
+      <!-- Compiler Button -->
+      <button class="compiler-btn" onclick="openCompiler()">&lt&sol;&gt </button>
+
+      <!-- Compiler Overlay -->
+      <div class="compiler-overlay" id="compilerOverlay">
+          <button class="compiler-close" onclick="closeCompiler()">X</button>
+          <div class="compiler-container">
+              <h1>HTML Compiler</h1>
+              <textarea id="html-code" placeholder="Write your HTML code here..."></textarea><br>
+  
+              <!-- Mobile Keys -->
+              <div class="mobile-keys">
+                  <button onclick="insertKey('<')">&lt;</button>
+                  <button onclick="insertKey('>')">&gt;</button>
+                  <button onclick="insertKey('/')">/</button>
+                  <button onclick="insertKey('&quot;')">"</button>
+                  <button onclick="insertKey('=')">=</button>
+              </div>
+  
+              <button onclick="compileHTML()">Compile & Run</button><br>
+              <iframe id="output-frame"></iframe>
+          </div>
+      </div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>HTML All Tags</h3>
+            <button class="close-sidebar" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#elements-tags" onclick="scrollToSection('elements-tags')">1. HTML Elements, Tags, and Attributes</a></li>
+                <li><a href="#empty-tags" onclick="scrollToSection('empty-tags')">2. Empty Tags and Container Tags</a></li>
+                <li><a href="#body-tag" onclick="scrollToSection('body-tag')">3. Body Tag and Attributes</a></li>
+                <li><a href="#p-tag" onclick="scrollToSection('p-tag')">4. &lt;p&gt; Tag and Its Attributes</a></li>
+                <li><a href="#pre-tag" onclick="scrollToSection('pre-tag')">5. &lt;pre&gt; Tag</a></li>
+                <li><a href="#br-tag" onclick="scrollToSection('br-tag')">6. &lt;br&gt; Tag</a></li>
+                <li><a href="#html-formatting" onclick="scrollToSection('html-formatting')">7. HTML Formatting Elements</a></li>
+                <li><a href="#center-tag" onclick="scrollToSection('center-tag')">8. &lt;center&gt; Tag</a></li>
+                <li><a href="#hr-tag" onclick="scrollToSection('hr-tag')">9. &lt;hr&gt; Tag and Its Attributes</a></li>
+                <li><a href="#div-tag" onclick="scrollToSection('div-tag')">10. &lt;div&gt; Tag and Its Attributes</a></li>
+                <li><a href="#font-tag" onclick="scrollToSection('font-tag')">11. &lt;font&gt; Tag and Its Attributes</a></li>
+                <li><a href="#img-tag" onclick="scrollToSection('img-tag')">12. &lt;img&gt; Tag and Its Attributes</a></li>
+                <li><a href="#heading-tags" onclick="scrollToSection('heading-tags')">13. Heading Tags and Their Attributes</a></li>
+                <li><a href="#marquee-tag" onclick="scrollToSection('marquee-tag')">14. &lt;marquee&gt; Tag and Its Attributes</a></li>
+                <li><a href="#comment-tag" onclick="scrollToSection('comment-tag')">15. &lt;!-- Comment --&gt; Tag</a></li>
+                <li><a href="#html-lists" onclick="scrollToSection('html-lists')">16. Lists in HTML</a></li>
+                <li><a href="#table-tag" onclick="scrollToSection('table-tag')">17. &lt;table&gt; Tag and Its Attributes</a></li>
+                <li><a href="#frameset-tag" onclick="scrollToSection('frameset-tag')">18. &lt;frameset&gt; and &lt;frame&gt; Tags</a></li>
+                <li><a href="#a-tag" onclick="scrollToSection('a-tag')">19. &lt;a&gt; Tag (Anchor Tag) and Its Types</a></li>
+                <li><a href="#form-tag" onclick="scrollToSection('a-tag')">20. &lt;form&gt; Tag and Its Attributes</a></li>
+            
+                
+                <!-- Add more links as needed -->
+            </ul>
+        </nav>
+    </div>
+
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6"/>
+        </svg>
+    </button>
+    <header>
+        <h1>Elements, Tags, and Attributes</h1>
+    </header>
+    <div class="container">
+        <!-- Your main content goes here -->
+        <section>
+            <div class="content-block">
+                <h2>1. HTML Elements, Tags, and Attributes</h2>
+                <p>An HTML element is a building block of a webpage that consists of a start tag, content, and an end tag. Elements form the structure of the content on the page.</p>
+                <p>Tags are the keywords that define the start and end of an element. Attributes provide additional information about the elements and are included within the opening tag.</p>
+                <div class="example">
+                    Example: <code>&lt;a href="https://olevelcccexam.link"&gt;<br>Visit our site&lt;/a&gt;</code><br>
+                    Here, <code>&lt;a&gt;</code> is the tag, <code>href</code> is an attribute, and "Visit our site" is the content.
+                </div>
+            </div>
+    
+            <div class="content-block" id="empty-tags">
+                <h2>2. Empty Tags and Container Tags</h2>
+                <p>Tags in HTML can be divided into two types: empty tags and container tags.</p>
+                <p><strong>Empty Tags:</strong> These tags do not have any content or closing tags. They are self-closing.</p>
+                <div class="example">
+                    Example: <code>&lt;br&gt;</code>, <code>&lt;img src="image.jpg" alt="Sample Image"&gt;</code>
+                </div>
+                <p><strong>Container Tags:</strong> These tags come in pairs (an opening and a closing tag) and enclose content between them.</p>
+                <div class="example">
+                    Example: <code>&lt;p&gt;This is a paragraph.&lt;/p&gt;</code>, <code>&lt;div&gt;Content here&lt;/div&gt;</code>
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>3. &lt;body&gt; Tag and Its Attributes</h2>
+                <p>The &lt;body&gt; tag contains all the main visible content of an HTML document. Every text, image, and multimedia content is enclosed within this tag.</p>
+                <p>Important attributes of the &lt;body&gt; tag:</p>
+                <ul>
+                    <li><strong>bgcolor:</strong> Defines the background color of the webpage. (Example: <code>&lt;body bgcolor="#e0f7fa"&gt;</code>)</li>
+                    <li><strong>background:</strong> Sets a background image for the page. (Example: <code>&lt;body background="background.jpg"&gt;</code>)</li>
+                    <li><strong>text:</strong> Changes the default color of the text on the page. (Example: <code>&lt;body text="#333"&gt;</code>)</li>
+                   
+                    <li><strong>margin:</strong> Adjusts the default spacing around the page content. (Example: <code>&lt;body margin="0"&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;body bgcolor="#f0f0f0" text="#000"&gt;</code><br>
+                    This sets the background color to a light gray and the text color to black.
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>4. &lt;p&gt; Tag and Its Attributes</h2>
+                <p>The &lt;p&gt; tag is used to define paragraphs in HTML. It automatically adds space above and below the content.</p>
+                <p><strong>Attribute:</strong> The <code>align</code> attribute aligns the paragraph content. (Example: <code>&lt;p align="center"&gt;Centered text&lt;/p&gt;</code>)</p>
+            </div>
+    
+            <div class="content-block">
+                <h2>5. &lt;pre&gt; Tag</h2>
+                <p>The &lt;pre&gt; tag is used to define preformatted text. It preserves spaces and line breaks exactly as they appear in the code.</p>
+                <div class="example">
+                    Example: <br><code>&lt;pre&gt;Line 1&#10;   Line 2&#10;Line 3&lt;/pre&gt;</code>
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>6. &lt;br&gt; Tag</h2>
+                <p>The &lt;br&gt; tag is an empty tag that inserts a line break. It is often used within paragraphs to separate lines of text.</p>
+                <div class="example">
+                    Example: <code>First Line&lt;br&gt;Second Line</code><br>
+                    Output: <br>First Line<br>Second Line
+                </div>
+                <br>
+                 <a href="task1" class="html-compiler-button">Student Task-1</a> <br> <br> 
+             <BR>
+            </div>
+             <div class="content-block">
+                <h2>7. HTML Formatting Elements</h2>
+                <p>Formatting elements were designed to display special types of text:</p>
+                <ul>
+                    <li><code>&lt;b&gt;</code> - Bold text</li>
+                    <li><code>&lt;strong&gt;</code> - Important text</li>
+                    <li><code>&lt;i&gt;</code> - Italic text</li>
+                    <li><code>&lt;em&gt;</code> - Emphasized text</li>
+                    <li><code>&lt;mark&gt;</code> - Marked text</li>
+                    <li><code>&lt;small&gt;</code> - Smaller text</li>
+                    <li><code>&lt;del&gt; or &lt;strike&gt;</code> - Deleted text</li>
+                    <li><code>&lt;big&gt;</code> - Big text</li>
+                    <li><code>&lt;sub&gt;</code> - Subscript text</li>
+                    <li><code>&lt;sup&gt;</code> - Superscript text</li>
+                </ul>
+                <div class="example">
+                    <p><b>This text is bold.</b></p>
+                    <p><strong>This text is important.</strong></p>
+                    <p><i>This text is italic.</i></p>
+                    <p><em>This text is emphasized.</em></p>
+                    <p><mark>This text is highlighted (marked).</mark></p>
+                    <p><small>This is smaller text.</small></p>
+                    <p><del>This text is deleted.</del></p>
+                    <p><big>This text is big.</big></p>
+                    <p>H<sub>2</sub>O (subscript)</p>
+                    <p>x<sup>2</sup> + y<sup>2</sup> = z<sup>2</sup> (superscript)</p>
+                </div>
+            </div>
+             <div class="content-block">
+                <h2>8. &lt;center&gt; Tag</h2>
+                <p>The &lt;center&gt; tag is used to align the content to the center of its containing element. It is deprecated in HTML5, and CSS should be used for centering instead.</p>
+                <div class="example">
+                    Example: <code>&lt;center&gt;This text is centered&lt;/center&gt;</code>
+                    <br>
+                    Output: <center>This text is centered</center>
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>9. &lt;hr&gt; Tag and Its Attributes</h2>
+                <p>The &lt;hr&gt; tag is used to create a horizontal rule (a line) across the page, usually for separating content.</p>
+                <p>Important attributes of the &lt;hr&gt; tag:</p>
+                <ul>
+                    <li><strong>width:</strong> Sets the width of the line. (Example: <code>&lt;hr width="50%"&gt;</code>)</li>
+                    <li><strong>size:</strong> Defines the thickness of the line. (Example: <code>&lt;hr size="3"&gt;</code>)</li>
+                    <li><strong>noshade:</strong> Removes the shadow effect, displaying a solid line. (Example: <code>&lt;hr noshade&gt;</code>)</li>
+                    <li><strong>align:</strong> Aligns the line to the left, center, or right. (Example: <code>&lt;hr align="left"&gt;</code>)</li>
+                    <li><strong>color:</strong> Sets the color of the line. (Example: <code>&lt;hr color="red"&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;hr width="70%" size="5" noshade align="center" color="blue"&gt;</code>
+                    <br>
+                    Output: <hr width="70%" size="5" noshade align="center" color="blue">
+                </div>
+                <br>
+            <a href="task2" class="html-compiler-button">Student Task-2</a><br><br>
+            
+            <br>
+            </div>
+              <div class="content-block">
+                <h2>10. &lt;div&gt; Tag and Its Attributes</h2>
+                <p>The &lt;div&gt; tag is a block-level element used to group content together. It is often styled using CSS.</p>
+                <p>Important attribute of the &lt;div&gt; tag:</p>
+                <ul>
+                    <li><strong>align:</strong> Sets the alignment of the content inside the &lt;div&gt;. (Example: <code>&lt;div align="center"&gt;Centered content&lt;/div&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;div align="center"&gt;This content is centered&lt;/div&gt;</code>
+                    <br>
+                    Output: <div align="center">This content is centered</div>
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>11. &lt;font&gt; Tag and Its Attributes</h2>
+                <p>The &lt;font&gt; tag is used to change the font style of text. It is deprecated in HTML5, and CSS should be used instead for styling fonts.</p>
+                <p>Important attributes of the &lt;font&gt; tag:</p>
+                <ul>
+                    <li><strong>color:</strong> Sets the color of the text. (Example: <code>&lt;font color="blue"&gt;Blue text&lt;/font&gt;</code>)</li>
+                    <li><strong>size:</strong> Defines the size of the text. (Example: <code>&lt;font size="5"&gt;Larger text&lt;/font&gt;</code>)</li>
+                    <li><strong>face:</strong> Sets the font type. (Example: <code>&lt;font face="Arial"&gt;Text in Arial&lt;/font&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;font color="red" size="4" face="Verdana"&gt;Stylized text&lt;/font&gt;</code>
+                    <br>
+                    Output: <font color="red" size="4" face="Verdana">Stylized text</font>
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>12. &lt;img&gt; Tag and Its Attributes</h2>
+                <p>The &lt;img&gt; tag is used to insert images into a webpage. It is an inline element.</p>
+                <p>Important attributes of the &lt;img&gt; tag:</p>
+                <ul>
+                    <li><strong>src:</strong> Specifies the path to the image file. (Example: <code>&lt;img src="image.jpg"&gt;</code>)</li>
+                    <li><strong>alt:</strong> Provides alternative text for the image if it cannot be displayed. (Example: <code>&lt;img src="image.jpg" alt="Description of image"&gt;</code>)</li>
+                    <li><strong>height:</strong> Sets the height of the image. (Example: <code>&lt;img src="image.jpg" height="100"&gt;</code>)</li>
+                    <li><strong>width:</strong> Sets the width of the image. (Example: <code>&lt;img src="image.jpg" width="200"&gt;</code>)</li>
+                    <li><strong>border:</strong> Defines the border width around the image. (Example: <code>&lt;img src="image.jpg" border="2"&gt;</code>)</li>
+                    <li><strong>hspace:</strong> Sets horizontal space around the image. (Example: <code>&lt;img src="image.jpg" hspace="10"&gt;</code>)</li>
+                    <li><strong>vspace:</strong> Sets vertical space around the image. (Example: <code>&lt;img src="image.jpg" vspace="10"&gt;</code>)</li>
+                    <li><strong>align:</strong> Aligns the image relative to surrounding text. (Example: <code>&lt;img src="image.jpg" align="left"&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;img src="example.jpg" alt="Example Image" width="200" height="100" border="1" hspace="5" vspace="5" align="right"&gt;</code>
+                    <br>
+                    Output: <img src="../img/htmlintro.jpeg" alt="Example Image" width="200" height="100" border="1" hspace="5" vspace="5" align="right">
+                </div>
+            </div>
+         <div class="content-block">
+                <h2>13. Heading Tags and Their Attributes</h2>
+                <p>The &lt;h1&gt; to &lt;h6&gt; tags are used to define HTML headings. &lt;h1&gt; is the highest level heading and &lt;h6&gt; is the lowest.</p>
+                <p>Important attribute for these heading tags:</p>
+                <ul>
+                    <li><strong>align:</strong> Sets the alignment of the heading. Can be "left", "right", "center", or "justify". (Example: <code>&lt;h2 align="right"&gt;Right Aligned Heading&lt;/h2&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: 
+                    <br><code>&lt;h1 align="center"&gt;Centered Heading&lt;/h1&gt;</code><br>
+                    <code>&lt;h2 align="left"&gt;Left Aligned Heading&lt;/h2&gt;</code><br>
+                    <code>&lt;h3 align="right"&gt;Right Aligned Heading&lt;/h3&gt;</code><br>
+                    <code>&lt;h4 align="justify"&gt;Justified Heading&lt;/h4&gt;</code><br>
+                    Output: 
+                    <h1 align="center">Centered Heading</h1>
+                    <h2 align="left">Left Aligned Heading</h2>
+                    <h3 align="right">Right Aligned Heading</h3>
+                    <h4 align="justify">Justified Heading</h4>
+                </div>
+                 <br>
+            <a href="task3" class="html-compiler-button">Student Task-3</a><br><br>
+            <br>
+            </div>
+    
+            <div class="content-block">
+                <h2>14. &lt;marquee&gt; Tag and Its Attributes</h2>
+                <p>The &lt;marquee&gt; tag is used to create scrolling text or images. It is a non-standard HTML element and is not recommended for modern web design.</p>
+                <p>Important attributes of the &lt;marquee&gt; tag:</p>
+                <ul>
+                    <li><strong>width:</strong> Sets the width of the marquee. (Example: <code>&lt;marquee width="300"&gt;</code>)</li>
+                    <li><strong>height:</strong> Sets the height of the marquee. (Example: <code>&lt;marquee height="100"&gt;</code>)</li>
+                    <li><strong>direction:</strong> Determines the direction of scrolling. Values can be "left", "right", "up", or "down". (Example: <code>&lt;marquee direction="left"&gt;</code>)</li>
+                    <li><strong>scrollamount:</strong> Sets the speed of the scrolling. (Example: <code>&lt;marquee scrollamount="10"&gt;</code>)</li>
+                    <li><strong>loop:</strong> Determines how many times the marquee will loop. (Example: <code>&lt;marquee loop="5"&gt;</code>)</li>
+                    <li><strong>vspace:</strong> Adds vertical space around the marquee. (Example: <code>&lt;marquee vspace="10"&gt;</code>)</li>
+                    <li><strong>hspace:</strong> Adds horizontal space around the marquee. (Example: <code>&lt;marquee hspace="10"&gt;</code>)</li>
+                    <li><strong>behavior:</strong> Sets the behavior of the marquee. Values can be "scroll", "slide", or "alternate". (Example: <code>&lt;marquee behavior="alternate"&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;marquee width="300" height="50" direction="right" scrollamount="5" loop="10" vspace="10" hspace="10" behavior="alternate"&gt;Scrolling Text&lt;/marquee&gt;</code>
+                    <br>
+                    Output: <marquee width="300" height="50" direction="right" scrollamount="5" loop="10" vspace="10" hspace="10" behavior="alternate">Scrolling Text</marquee>
+                </div>
+                 <br>
+            <a href="task4(1)" class="html-compiler-button">Student Task-4</a><br><br>
+            <br>
+            </div>
+    
+             <div class="content-block">
+                <h2>15. &lt;!-- Comment --&gt; Tag</h2>
+                <p>Comments in HTML are not displayed in the browser but can help you explain your code or leave notes for others. To add a comment, use:</p>
+                <div class="example">
+                    Example: <code>&lt;!-- This is a comment --&gt;</code>
+                </div>
+            </div>
+    
+             List Tags Explanation 
+            <div class="content-block">
+                <h2>16. Lists in HTML</h2>
+                <p>Lists are used to group related items together. There are four main types of lists in HTML:</p>
+    
+                 Ordered List 
+                <h3>1. Ordered List (&lt;ol&gt;)</h3>
+                <p>An ordered list displays items in a numbered format.</p>
+                <p>Attributes:</p>
+                <ul>
+                    <li><strong>type:</strong> Specifies the type of numbering (e.g., "1", "a", "A", "i", "I").</li>
+                    <li><strong>start:</strong> Sets the starting number of the list.</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;ol type="A" start="3"&gt;&lt;li&gt;Item 1&lt;/li&gt;&lt;/ol&gt;</code>
+                    <br>
+                    Output:
+                    <ol type="A" start="3">
+                        <li>Item 1</li>
+                        <li>Item 2</li>
+                    </ol>
+                </div>
+    
+                 Unordered List 
+                <h3>2. Unordered List (&lt;ul&gt;)</h3>
+                <p>An unordered list displays items with bullets.</p>
+                <p>Attributes:</p>
+                <ul>
+                    <li><strong>type:</strong> Specifies the bullet style (e.g., "disc", "circle", "square").</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;ul type="circle"&gt;&lt;li&gt;Item 1&lt;/li&gt;&lt;/ul&gt;</code>
+                    <br>
+                    Output:
+                    <ul type="circle">
+                        <li>Item 1</li>
+                        <li>Item 2</li>
+                    </ul>
+                </div>
+    
+                 Definition List 
+                <h3>3. Definition List (&lt;dl&gt;)</h3>
+                <p>A definition list is used to display items in a glossary format.</p>
+                <div class="example">
+                    Example: <code>&lt;dl&gt;&lt;dt&gt;HTML&lt;/dt&gt;&lt;dd&gt;A markup language for creating web pages.&lt;/dd&gt;&lt;/dl&gt;</code>
+                    <br>
+                    Output:
+                    <dl>
+                        <dt>HTML</dt>
+                        <dd>A markup language for creating web pages.</dd>
+                        <dt>CSS</dt>
+                        <dd>A stylesheet language used for describing the look and formatting of a document written in HTML.</dd>
+                    </dl>
+                </div>
+    
+                 Nested List 
+                <h3>4. Nested List</h3>
+                <p>Nesting lists allows you to create sub-lists within a list item.</p>
+                <div class="example">
+                    Example:
+                    <code>
+                        &lt;ul&gt;
+                            &lt;li&gt;Item 1&lt;ul&gt;
+                                &lt;li&gt;Subitem 1&lt;/li&gt;
+                            &lt;/ul&gt;&lt;/li&gt;
+                        &lt;/ul&gt;
+                    </code>
+                    <br>
+                    Output:
+                    <ul>
+                        <li>Item 1
+                            <ul>
+                                <li>Subitem 1</li>
+                                <li>Subitem 2</li>
+                            </ul>
+                        </li>
+                        <li>Item 2</li>
+                    </ul>
+                </div>
+                <h2>HTML List Tags</h2>
+        
+        <p>HTML provides different tags to create various types of lists:</p>
+        
+        <ul>
+            <li><strong>&lt;ul&gt;</strong> - Defines an unordered list.</li>
+            <li><strong>&lt;ol&gt;</strong> - Defines an ordered list.</li>
+            <li><strong>&lt;li&gt;</strong> - Defines a list item.</li>
+            <li><strong>&lt;dl&gt;</strong> - Defines a description (definition) list.</li>
+            <li><strong>&lt;dt&gt;</strong> - Defines a term in a description list.</li>
+            <li><strong>&lt;dd&gt;</strong> - Describes the term in a description list.</li>
+        </ul>
+            </div>
+    
+             <br>
+            <a href="task5" class="html-compiler-button">Student Task-5</a><br><br>
+            <div class="content-block">
+                <h2>17. &lt;table&gt; Tag and Its Attributes</h2>
+                <p>The &lt;table&gt; tag is used to create a table in HTML. It can contain several child elements like &lt;tr&gt;, &lt;th&gt;, and &lt;td&gt; to define the structure and content of the table.</p>
+                <h3>Subtags</h3>
+                <ul>
+                    <li><strong>&lt;caption&gt;:</strong> Adds a title to the table. (Example: <code>&lt;caption&gt;Table Title&lt;/caption&gt;</code>)</li>
+                    <li><strong>&lt;tr&gt;:</strong> Defines a row in the table.</li>
+                    <li><strong>&lt;th&gt;:</strong> Defines a header cell. Header cells are bold and centered by default.</li>
+                    <li><strong>&lt;td&gt;:</strong> Defines a standard cell.</li>
+                     </ul>
+                <p>Important attributes of the &lt;table&gt; tag:</p>
+                <ul>
+                    <li><strong>border:</strong> Defines the border width around the table. (Example: <code>&lt;table border="1"&gt;</code>)</li>
+                    <li><strong>bordercolor:</strong> Sets the color of the border. (Example: <code>&lt;table bordercolor="blue"&gt;</code>)</li>
+                    <li><strong>bgcolor:</strong> Sets the background color of the table. (Example: <code>&lt;table bgcolor="#f0f0f0"&gt;</code>)</li>
+                    <li><strong>background:</strong> Adds an image as the background of the table. (Example: <code>&lt;table background="image.jpg"&gt;</code>)</li>
+                    <li><strong>align:</strong> Aligns the table on the page (left, right, or center). (Example: <code>&lt;table align="center"&gt;</code>)</li>
+                    <li><strong>width and height:</strong> Set the width and height of the table. (Example: <code>&lt;table width="80%" height="200"&gt;</code>)</li>
+                    <li><strong>cellspacing:</strong> Sets the space between table cells. (Example: <code>&lt;table cellspacing="5"&gt;</code>)</li>
+                    <li><strong>cellpadding:</strong> Sets the padding inside each table cell. (Example: <code>&lt;table cellpadding="10"&gt;</code>)</li>
+                    <li><strong>colspan:</strong> Allows a cell to span multiple columns. (Example: <code>&lt;td colspan="2"&gt;</code>)</li>
+                    <li><strong>rowspan:</strong> Allows a cell to span multiple rows. (Example: <code>&lt;td rowspan="2"&gt;</code>)</li>
+               
+                   
+                </ul>
+    
+               
+                <div class="example">
+                    Example:
+                    <pre><code>
+    &lt;table border="1" bordercolor=<br>"black" bgcolor="#f9f9f9" align="<br>center" width="60%" cellspacing=<br>"2" cellpadding="5"&gt;
+        &lt;caption&gt;Monthly Sales<br>&lt;/caption&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Product&lt;/th&gt;
+            &lt;th&gt;Price&lt;/th&gt;
+            &lt;th&gt;Quantity&lt;/th&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Laptop&lt;/td&gt;
+            &lt;td&gt;$1200&lt;/td&gt;
+            &lt;td&gt;5&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Tablet&lt;/td&gt;
+            &lt;td colspan="2"&gt;$400<br> (Special Offer)&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/table&gt;
+                    </code></pre>
+                    Output:
+                    <table border="1" bordercolor="black" bgcolor="#f9f9f9" align="center" width="60%" cellspacing="2" cellpadding="5">
+                        <caption>Monthly Sales</caption>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                        </tr>
+                        <tr>
+                            <td>Laptop</td>
+                            <td>$1200</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>Tablet</td>
+                            <td colspan="2">$400 (Special Offer)</td>
+                        </tr>
+                    </table>
+                </div>
+             <br>
+            <a href="task5.1.html" class="html-compiler-button">Student Task-5.1</a><br><br>
+            <a href="task5.2.html" class="html-compiler-button">Student Task-5.2</a><br><br>
+            <a href="task5.3.html" class="html-compiler-button">Student Task-5.3</a><br><br>
+            <a href="task5.4.html" class="html-compiler-button">Student Task-5.4</a><br><br>
+            </div>
+             <div class="content-block">
+                <h2>18. &lt;frameset&gt; and &lt;frame&gt; Tags with Attributes</h2>
+                <p>The &lt;frameset&gt; and &lt;frame&gt; tags were used to divide a web page into multiple sections or frames, which can load different HTML documents.</p>
+                <p>Important attributes of the &lt;frameset&gt; and &lt;frame&gt; tags:</p>
+                <ul>
+                    <li><strong>rows:</strong> Specifies the height of rows in a frameset. (Example: <code>&lt;frameset rows="50%,50%"&gt;</code>)</li>
+                    <li><strong>cols:</strong> Specifies the width of columns in a frameset. (Example: <code>&lt;frameset cols="30%,70%"&gt;</code>)</li>
+                    <li><strong>border:</strong> Defines the border width between frames. (Example: <code>&lt;frameset border="2"&gt;</code>)</li>
+                    <li><strong>noresize:</strong> Prevents the frame from being resized by the user.</li>
+                    <li><strong>scrolling:</strong> Controls scrolling within a frame. Values can be <code>yes</code>, <code>no</code>, or <code>auto</code>.</li>
+                </ul>
+                <div class="example">
+                    Example:
+                    <code>
+                        &lt;frameset rows="50%,50%" cols="50%,50%"&gt;
+                        &lt;frame src="top.html" scrolling="yes" noresize&gt;
+                        &lt;frame src="bottom.html" border="2"&gt;
+                        &lt;/frameset&gt;
+                    </code>
+                </div>
+                <h2>Nested &lt;frameset&gt; Example</h2>
+                <p>Using nested &lt;frameset&gt; tags allows you to create more complex layouts by placing one frameset inside another.</p>
+                
+                <div class="example">
+                    Example of Nested Frameset:
+                    <code>
+                        &lt;frameset rows="50%,50%" border="1"&gt;<br>
+                        &nbsp;&nbsp;&lt;frame src="top.html" scrolling="yes" noresize&gt;<br>
+                        &nbsp;&nbsp;&lt;frameset cols="50%,50%"&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;frame src="left.html" &gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;frame src="right.html" scrolling="auto" &gt;<br>
+                        &nbsp;&nbsp;&lt;/frameset&gt;<br>
+                        &lt;/frameset&gt;
+                    </code>
+                </div>
+            </div>
+            <br>
+        <a href="task6" class="html-compiler-button">Student Task-6</a>
+        
+        <br>
+             
+            <div class="content-block">
+            <h2>19. &lt;a&gt; Tag (Anchor Tag) and Its Types</h2>
+            <p>The anchor tag (&lt;a&gt;) is used to create hyperlinks in HTML. There are three main types of links you can create:</p>
+            
+            <h3>Internal Links</h3>
+            <p>Links to sections within the same webpage using Name Attribute.</p>
+            <div class="example">
+                Example: <code>&lt;a href="#section1"&gt;Go to Section 1&lt;/a&gt;</code>
+                <br>
+                Target: <code>&lt;h2 name="section1"&gt;Section 1&lt;/h2&gt;</code>
+            </div>
+
+            <h3>External Links</h3>
+            <p>Links to another webpage.</p>
+            <div class="example">
+                Example: <code>&lt;a href="name.html"&gt;Visit Example.com&lt;/a&gt;</code>
+            </div>
+
+            <h3>Global Links</h3>
+            <p>Links that use complete URLs (including protocol and domain) to ensure they work from any location.</p>
+            <div class="example">
+                Example: <code>&lt;a href="https://www.example.com/<br>page.html" <br>&gt;Global Link&lt;/a&gt;</code>
+            </div>
+
+            <h3>Important Attributes of the &lt;a&gt; Tag:</h3>
+            <ul>
+                <li><strong>href:</strong> Specifies the URL or destination of the link
+                    <br>Example: <code>&lt;a href="https://www.example.com"&gt;Visit Example&lt;/a&gt;</code>
+                </li>
+                <li><strong>name:</strong> Defines a named anchor (deprecated in HTML5, use id instead)
+                    <br>Example: <code>&lt;a name="top"&gt;Top of page&lt;/a&gt;</code>
+                </li>
+                <li><strong>target:</strong> Specifies where to open the linked document
+                    <ul>
+                        <li>_blank: Opens in new window/tab</li>
+                        <li>_self: Opens in same window (default)</li>
+                        <!--<li>_parent: Opens in parent frame</li>-->
+                        <!--<li>_top: Opens in full body of window</li>-->
+                    </ul>
+                    Example: <code>&lt;a href="page.html" target="_blank"&gt;Open in new tab&lt;/a&gt;</code>
+                </li>
+                <li><strong>title:</strong> Provides tooltip text when hovering over the link
+                    <br>Example: <code>&lt;a href="page.html" title="Click to learn more"&gt;Learn More&lt;/a&gt;</code>
+                </li>
+                <li><strong>download:</strong> Specifies that the target will be downloaded when clicked
+                    <br>Example: <code>&lt;a href="file.pdf" download&gt;Download PDF&lt;/a&gt;</code>
+                </li>
+            </ul>
+
+            <div class="example">
+                Complete Example:
+                <code>&lt;a href="https://www.example.com/<br>document.pdf" 
+                   target="_blank" 
+                   title="Download our brochure" 
+                   download="brochure.pdf"&gt;
+                   Download Brochure
+                &lt;/a&gt;</code>
+            </div>
+     <a href="task7" class="html-compiler-button">Student Task-7</a>
+        </div>
+        <!-- Previous content blocks remain the same -->
+         <div class="content-block">
+            <h2>20. &lt;form&gt; Tag and Its Attributes</h2>
+            <p>The &lt;form&gt; tag is used to create an HTML form for user input. It is a block-level element.</p>
+            <p>Important attributes of the &lt;form&gt; tag:</p>
+            <ul>
+                <li><strong>name:</strong> Specifies a name for the form.</li>
+                <li><strong>action:</strong> Defines the server-side script that will handle the form data.</li>
+                <li><strong>method:</strong> Determines the HTTP method used to send the form data (GET or POST).</li>
+            </ul>
+            <div class="example">
+                Example: <code>&lt;form name="myForm" action="/submit.php" method="post"&gt;&lt;/form&gt;</code>
+            </div>
+
+            <h2>1. &lt;input&gt; Tag and Its Attributes</h2>
+            <p>The &lt;input&gt; tag is used to create form input fields. It is an inline element.</p>
+            <p>Important attributes of the &lt;input&gt; tag:</p>
+            <ul>
+                <li><strong>type:</strong> Specifies the type of input field. Common values are:
+                
+                    <ul>
+                        <li><strong>text:</strong> A single-line text input field.</li>
+                        <li><strong>password:</strong> A text input field that hides the characters as they are typed.</li>
+                        <li><strong>email:</strong> An email address input field.</li>
+                        <li><strong>date:</strong> A date input field.</li>
+                        <li><strong>time:</strong> A time input field.</li>
+                        <li><strong>tel:</strong> A telephone number input field.</li>
+                        <li><strong>checkbox:</strong> A checkbox that can be selected/deselected.</li>
+                        <li><strong>radio:</strong> A radio button that can be selected from a group.</li>
+                        
+                        <li><strong>range:</strong> A slider control for selecting a value within a range.</li>
+                        <li><strong>submit:</strong> A button that submits the form.</li>
+                        <li><strong>reset:</strong> A button that resets the form to its initial state.</li>
+                        
+                        
+                    </ul>
+                </li>
+                
+                <li><strong>size:</strong> Specifies the visible width of the input field (in characters).</li>
+                <li><strong>maxlength:</strong> Limits the maximum number of characters that can be entered.</li>
+                <li><strong>name:</strong> Specifies the name of the input field, which is used to identify the field when the form is submitted.</li>
+                <li><strong>placeholder:</strong> Provides a hint about the expected content of the input field.</li>
+                
+            </ul>
+             <h2> 2. &lt;button&gt; Tag</h2>
+            <strong>button:</strong> A standard button that can be clicked.Button Tag allows developers to add clickable elements for various actions like submitting forms, executing scripts, or controlling page behaviour.
+             <h2>3. &lt;textarea&gt; Tag </h2>
+             <p><strong>The &lt;textarea&gt;</strong> tag is used to create a multi-line text input field, allowing users to enter longer pieces of text. It has the following important attributes:</p>
+            <ul>
+                <li><strong>rows:</strong> Specifies the visible number of lines in the text area.</li>
+                <li><strong>cols:</strong> Specifies the visible width of the text area in average character widths.</li>
+                <li><strong>name:</strong> Specifies the name of the text area, which is used to identify the field when the form is submitted.</li>
+                <li><strong>placeholder:</strong> Provides a hint about the expected content of the text area.</li>
+            </ul>
+            <div class="example">
+                Example:
+                <code>
+                &lt;form name="myForm" action="/submit.php" method="post"&gt;<br>
+                    &lt;label for="name"&gt;Name:&lt;/label&gt;<br>
+                    &lt;input type="text" id="name" name="name" value="John Doe" size="20" maxlength="50"&gt;&lt;br&gt;<br>
+                    
+                    &lt;label for="email"&gt;Email:&lt;/label&gt;<br>
+                    &lt;input type="email" id="email" name="email"&gt;&lt;br&gt;<br>
+                    
+                    &lt;input type="checkbox" id="agree" name="agree" value="yes"&gt;<br>
+                    &lt;label for="agree"&gt;I agree to the terms&lt;/label&gt;&lt;br&gt;<br>
+                    
+                    &lt;input type="submit" value="Submit"&gt;<br>
+                &lt;/form&gt;<br>
+                </code>
+            </div>
+        
+
+        <!-- Previous content blocks remain the same -->
+        <h2>4. &lt;fieldset&gt; Tag and &lt;legend&gt; Tag</h2>
+            <p>The &lt;fieldset&gt; tag is used to group related form controls together, such as a set of radio buttons or checkboxes.</p>
+            <p>The &lt;legend&gt; tag provides a caption for the &lt;fieldset&gt; element.</p>
+            <div class="example">
+                Example:
+                <code>
+                &lt;form name="myForm" action="/submit.php" method="post"&gt;<br>
+                    &lt;fieldset&gt;<br>
+                        &lt;legend&gt;Personal Information&lt;/legend&gt;<br>
+                        &lt;label for="name"&gt;Name:&lt;/label&gt;<br>
+                        &lt;input type="text" id="name" name="name" value="John Doe" size="20" maxlength="50"&gt;&lt;br&gt;<br>
+                        
+                        &lt;label for="email"&gt;Email:&lt;/label&gt;<br>
+                        &lt;input type="email" id="email" name="email"&gt;&lt;br&gt;<br>
+                    &lt;/fieldset&gt;<br>
+                    
+                    &lt;fieldset&gt;<br>
+                        &lt;legend&gt;Preferences&lt;/legend&gt;<br>
+                        &lt;input type="checkbox" id="agree" name="agree" value="yes"&gt;<br>
+                        &lt;label for="agree"&gt;I agree to the terms&lt;/label&gt;&lt;br&gt;<br>
+                        
+                        &lt;input type="submit" value="Submit"&gt;<br>
+                    &lt;/fieldset&gt;<br>
+                &lt;/form&gt;<br>
+                </code>
+            </div>
+            
+            <p>The &lt;fieldset&gt; tag groups the form controls, and the &lt;legend&gt; tag provides a caption for each fieldset, making the form more organized and easier to understand.</p>
+        <h2>5. &lt;select&gt; Tag and &lt;option&gt; Tag</h2>
+<p>The &lt;select&gt; tag is used to create a dropdown list or a combo box. It is a block-level element.</p>
+
+<p>Important attributes of the &lt;select&gt; tag:</p>
+<ul>
+    <li><strong>name:</strong> Specifies the name of the select element, used to identify the field when the form is submitted.</li>
+    <li><strong>size:</strong> Specifies the number of visible options in the dropdown list.</li>
+   
+</ul>
+<p>The &lt;option&gt; tag is used to create individual options within the &lt;select&gt; dropdown list.</p>
+<p>Important attributes of the &lt;option&gt; tag:</p>
+<ul>
+    <li><strong>value:</strong> Specifies the value that will be submitted when the form is submitted.</li>
+    <li><strong>selected:</strong> Specifies that the option should be pre-selected when the page loads.</li>
+</ul>
+<div class="example">
+    Example:
+    <code>
+    &lt;form name="myForm" action="/submit.php" method="post"&gt;
+        &lt;label for="country"&gt;Select a country:&lt;/label&gt;
+        &lt;select id="country" name="country"&gt;
+            &lt;option value=""&gt;-- Select a country --&lt;/option&gt;
+            &lt;option value="usa"&gt;United States&lt;/option&gt;
+            &lt;option value="can"&gt;Canada&lt;/option&gt;
+            &lt;option value="mex"&gt;Mexico&lt;/option&gt;
+        &lt;/select&gt;
+        <br>
+        &lt;input type="submit" value="Submit"&gt;
+    &lt;/form&gt;
+    
+</div>
+    </code><a href="task8" class="html-compiler-button">Student Task-8</a>
+    <br>
+</div>
+<div class="content-block">
+    <h2>Introduction to HTML5</h2>
+    <p>HTML5 is the latest version of HyperText Markup Language, the standard language used to create web pages. It was designed to simplify web development, improve user experience, and support the latest multimedia formats. HTML5 introduces new tags, attributes, and APIs that enhance the functionality and structure of web pages.</p>
+
+    <h2>Features of HTML5</h2>
+    <ul>
+        <li><strong>Semantics:</strong> New tags like &lt;header&gt;, &lt;footer&gt;, &lt;section&gt;, &lt;article&gt;, etc., add meaning to the structure of a webpage, making it easier to understand and style.</li>
+<li><strong>Multimedia:</strong> HTML5 natively supports audio and video elements, allowing for easy media integration without plugins.</li>
+<li><strong>Graphics and 2D/3D Effects:</strong> HTML5 includes the `&lt;canvas&gt;` element for rendering graphics and 2D/3D shapes directly in the browser.</li>
+        <li><strong>Form Enhancements:</strong> New input types (like `email`, `date`, and `number`) and attributes simplify form validation and input.</li>
+        <li><strong>APIs:</strong> HTML5 introduces several new APIs, such as the Geolocation API, Web Storage API, and WebSocket API, to enable richer web applications.</li>
+        <li><strong>Offline Support:</strong> The Application Cache and IndexedDB features allow web applications to function without an internet connection.</li>
+    </ul>
+
+    i>
+    </ul><h2>New HTML5 Tags</h2>
+<ul>
+    <li><strong>&lt;nav&gt;:</strong> Defines a section of navigation links.</li>
+    <li><strong>&lt;article&gt;:</strong> Represents self-contained content, like a blog post or news article.</li>
+    <li><strong>&lt;aside&gt;:</strong> Used for content that is tangentially related to the main content, such as sidebars.</li>
+    
+    <li><strong>&lt;audio&gt;:</strong> Embeds audio content on the page. Important attributes:
+        <ul>
+            <li><strong>controls:</strong> Displays audio playback controls for users.</li>
+            <li><strong>autoplay:</strong> Starts the audio automatically when the page loads.</li>
+            <li><strong>loop:</strong> Replays the audio continuously when it reaches the end.</li>
+            <li><strong>src:</strong> Specifies the URL of the audio file.</li>
+            <li><strong>type:</strong> Defines the MIME type of the audio file (e.g., "audio/mpeg" or "audio/ogg").</li>
+        </ul>
+        <div class="example">
+            Example: 
+            <code>
+                &lt;audio src="audio-file.mp3" type="audio/mpeg" controls autoplay loop&gt;&lt;/audio&gt;
+            </code>
+        </div>
+    </li>
+
+    <li><strong>&lt;video&gt;:</strong> Embeds video content on the page. Important attributes:
+        <ul>
+            <li><strong>controls:</strong> Displays video playback controls for users.</li>
+            <li><strong>autoplay:</strong> Starts the video automatically when the page loads.</li>
+            <li><strong>loop:</strong> Replays the video continuously when it reaches the end.</li>
+            <li><strong>src:</strong> Specifies the URL of the video file.</li>
+            <li><strong>type:</strong> Defines the MIME type of the video file (e.g., "video/mp4" or "video/webm").</li>
+            <li><strong>width:</strong> Specifies the width of the video player (in pixels).</li>
+            <li><strong>height:</strong> Specifies the height of the video player (in pixels).</li>
+        </ul>
+        <div class="example">
+            Example: 
+            <code>
+                &lt;video src="video-file.mp4" type="video/mp4" controls autoplay loop width="640" height="360"&gt;&lt;/video&gt;
+            </code>
+        </div>
+    </li>
+</ul>
+        <a href="task9" class="html-compiler-button">Student Task-9</a><br><br>
+        <a href="task10" class="html-compiler-button">Student Task-10</a>
+         <h1>HTML Form Validations</h1>
+
+        <!-- 1. HTML5 Form Validations Section -->
+        <div class="content-block">
+            <h2> Form Validations in HTML5</h2>
+            <p>HTML5 introduced built-in form validations to ensure users provide valid input before submitting forms. These validations prevent form submission until fields meet specified criteria, like being filled in or matching a required format.</p>
+            <p>Example form with validation:</p>
+            <div class="example">
+                <form>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <br><br>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <br><br>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" pattern=".{6,}" required>
+                    <br><br>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+            <p>HTML Code:</p>
+            <pre class="code-example">
+<code>&lt;form&gt;
+    &lt;label for="name"&gt;Name:&lt;/label&gt;
+    &lt;input type="text" id="name"<br> name="name" required&gt;
+    &lt;br&gt;&lt;br&gt;
+    &lt;label for="email"&gt;Email:&lt;/label&gt;
+    &lt;input type="email" id="email"<br> name="email" required&gt;
+    &lt;br&gt;&lt;br&gt;
+    &lt;label for="password"&gt;Password:&lt;/label&gt;
+    &lt;input type="password" id="password"<br> name="password" pattern=".{6,}" required&gt;
+    &lt;br&gt;&lt;br&gt;
+    &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+</code>
+            </pre>
+        </div>
+
+        <!-- 2. The Required Attribute Section -->
+        <div class="content-block">
+            <h2>1. The <code>required</code> Attribute</h2>
+            <p>The <code>required</code> attribute ensures that a form field must be filled out before submitting the form. If a field with <code>required</code> is empty, the form won’t submit and displays a warning to the user.</p>
+            <p>Example:</p>
+            <div class="example">
+                <form>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                    <br><br>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+            <p>HTML Code:</p>
+            <pre class="code-example">
+<code>&lt;form&gt;
+    &lt;label for="username"&gt;Username:&lt;/label&gt;
+    &lt;input type="text" id="username" <br>name="username" required&gt;
+    &lt;br&gt;&lt;br&gt;
+    &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+</code>
+            </pre>
+        </div>
+
+        <!-- 3. The Pattern Attribute Section -->
+        <div class="content-block">
+            <h2>2. The <code>pattern</code> Attribute</h2>
+            <p>The <code>pattern</code> attribute allows you to specify a regular expression that the input must match. If the input doesn’t match the pattern, the form won’t submit, and a validation message is displayed.</p>
+            <p>Example:</p>
+            <div class="example">
+                <form>
+    <!-- Basic Pattern: Alphabetic characters only -->
+    <label for="name">Name (Alphabet only):</label>
+    <input type="text" id="name" name="name" pattern="[A-Za-z]+" required>
+    <small>Only letters are allowed. Pattern: <code>[A-Za-z]+</code></small><br><br>
+
+    <!-- Pattern: Alphanumeric characters with spaces -->
+    <label for="username">Username (Alphanumeric):</label>
+    <input type="text" id="username" name="username" pattern="[A-Za-z0-9]+" required>
+    <small>Letters and numbers only, no spaces. Pattern: <code>[A-Za-z0-9]+</code></small><br><br>
+
+    <!-- Pattern: Email address -->
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <small>Must be a valid email format. Pattern is built-in for email.</small><br><br>
+
+    <!-- Pattern: Phone number (10-digit) -->
+    <label for="phone">Phone Number (10 digits):</label>
+    <input type="tel" id="phone" name="phone" pattern="\d{10}" required>
+    <small>10-digit number only. Pattern: <code>\d{10}</code></small><br><br>
+
+    <!-- Pattern: Password (At least 8 characters, one uppercase, one lowercase, one number) -->
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}" required>
+    <small>Minimum 8 characters, with at least one uppercase, one lowercase, and one digit. Pattern: <code>(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}</code></small><br><br>
+
+    <!-- Pattern: Date (YYYY-MM-DD) -->
+    <label for="birthdate">Birthdate (YYYY-MM-DD):</label>
+    <input type="text" id="birthdate" name="birthdate" pattern="\d{4}-\d{2}-\d{2}" required>
+    <small>Format: YYYY-MM-DD. Pattern: <code>\d{4}-\d{2}-\d{2}</code></small><br><br>
+
+    <!-- Pattern: URL -->
+    <label for="website">Website:</label>
+    <input type="url" id="website" name="website" required>
+    <small>Must be a valid URL. Pattern is built-in for URLs.</small><br><br>
+
+    <!-- Pattern: IP Address -->
+    <label for="ip">IP Address (IPv4):</label>
+    <input type="text" id="ip" name="ip" pattern="(?:\d{1,3}\.){3}\d{1,3}" required>
+    <small>Format: 123.123.123.123. Pattern: <code>(?:\d{1,3}\.){3}\d{1,3}</code></small><br><br>
+
+    <!-- Pattern: Hexadecimal Color -->
+    <label for="color">Hex Color:</label>
+    <input type="text" id="color" name="color" pattern="#[A-Fa-f0-9]{6}" required>
+    <small>Format: #FFFFFF. Pattern: <code>#[A-Fa-f0-9]{6}</code></small><br><br>
+
+    <!-- Pattern: Postal Code (5 or 6 digits) -->
+    <label for="postalcode">Postal Code:</label>
+    <input type="text" id="postalcode" name="postalcode" pattern="\d{5,6}" required>
+    <small>5 or 6-digit postal code. Pattern: <code>\d{5,6}</code></small><br><br>
+
+    <!-- Pattern: Custom alphanumeric with special characters -->
+    <label for="custom">Custom Input (Alphanumeric and !@#):</label>
+    <input type="text" id="custom" name="custom" pattern="[A-Za-z0-9!@#]+" required>
+    <small>Allows letters, numbers, and !@#. Pattern: <code>[A-Za-z0-9!@#]+</code></small><br><br>
+
+    <button type="submit">Submit</button>
+</form>
+    
+        </div>
+        <h1>Fill Out the Form!</h1>
+
+<!-- Autofocus Attribute Section -->
+<h2>3. Autofocus: Start Typing Right Away!</h2>
+<p>The autofocus attribute makes it easy to start typing. When the page opens, the cursor will already be in this box!</p>
+
+<form>
+    <label for="name">Your Name:</label>
+    <input type="text" id="name" name="name" pattern="[A-Za-z]+"  required>
+    <small>Type only letters. No numbers or spaces!</small><br><br>
+
+    <!-- Number Input Section -->
+    <h2>5. Number: Pick a Number in the Box</h2>
+    <p>The number box only lets you type numbers. You can set the smallest and biggest numbers allowed.</p>
+
+    <label for="age">Your Age:</label>
+    <input type="number" id="age" name="age" min="1" max="100" required>
+    <small>Pick a number between 1 and 100.</small><br><br>
+
+    <button type="submit">Submit</button>
+</form>
+<h1>Iframe: See Another Website in a Box!</h1>
+<p>The iframe tag lets you see another webpage inside this webpage! Here’s a sample webpage inside a box:</p>
+<p>&lt;iframe src="https://www.olevelcccexam.link" width="600" height="400" title="Example Website"&gt;
+    Your browser doesn’t support iframes.
+&lt;/iframe&gt;
+</p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto; ">
+    <iframe src="https://www.olevelcccexam.unaux.com" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" title="Example Website">
+        Your browser doesn’t support iframes.
+    </iframe>
+</div>
+<br>
+<br>
+<a href="task11" class="html-compiler-button">Student Task-11</a>
+        </div>
+        </section>
+        <!-- Add more content blocks as needed -->
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.overlay') || document.createElement('div');
+            overlay.className = 'overlay';
+            
+            if (window.innerWidth < 1024) {
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                    setTimeout(() => {
+                        if (overlay.parentNode) {
+                            overlay.parentNode.removeChild(overlay);
+                        }
+                    }, 300);
+                } else {
+                    sidebar.classList.add('active');
+                    document.body.appendChild(overlay);
+                    setTimeout(() => {
+                        overlay.classList.add('active');
+                    }, 10);
+                    overlay.addEventListener('click', toggleSidebar);
+                }
+            }
+        }
+
+        function handleNavClick(event, id) {
+            // Remove active class from all links
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Add active class to clicked link
+            event.currentTarget.classList.add('active');
+            
+            // Scroll to section
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                if (window.innerWidth < 1024) {
+                    toggleSidebar();
+                }
+            }
+        }
+
+        // Check window size on resize
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('active');
+                const overlay = document.querySelector('.overlay');
+                if (overlay) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+            }
+        });
+         function scrollToSection(id) {
+            const element = document.querySelector(`[id="${id}"]`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                if (window.innerWidth < 1024) {  // Only close sidebar on mobile
+                    toggleSidebar();
+                }
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentBlocks = document.querySelectorAll('.content-block');
+            
+            const ids = [
+  'elements-tags',
+  'empty-tags',
+  'body-tag',
+  'p-tag',
+  'pre-tag',
+  'br-tag',
+  'html-formatting',
+  'center-tag',
+  'hr-tag',
+  'div-tag',
+  'font-tag',
+  'img-tag',
+  'heading-tags',
+  'marquee-tag',
+  'comment-tag',
+  'html-lists',
+  'table-tag',
+  'frameset-tag',
+  'a-tag',
+  'form-tag'
+  
+];
+            contentBlocks.forEach((block, index) => {
+                if (ids[index]) {
+                    block.id = ids[index];
+                }
+            });
+        });
+        // Set active link based on scroll position
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.content-block');
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= sectionTop - 60) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').slice(1) === currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+     <script>
+        // Open Compiler Overlay with Animation
+        function openCompiler() {
+            const overlay = document.getElementById("compilerOverlay");
+            overlay.style.display = "flex";
+            setTimeout(() => overlay.classList.add("show"), 10);
+        }
+
+        // Close Compiler Overlay with Animation
+        function closeCompiler() {
+            const overlay = document.getElementById("compilerOverlay");
+            overlay.classList.remove("show");
+            setTimeout(() => overlay.style.display = "none", 400);
+        }
+
+        // Compile and Run HTML
+        function compileHTML() {
+            const code = document.getElementById("html-code").value;
+            const outputFrame = document.getElementById("output-frame");
+
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+
+            outputFrame.src = url;
+
+            outputFrame.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Insert Key to Textarea
+        function insertKey(key) {
+            const textarea = document.getElementById("html-code");
+            const startPos = textarea.selectionStart;
+            const endPos = textarea.selectionEnd;
+            const text = textarea.value;
+
+            textarea.value = text.substring(0, startPos) + key + text.substring(endPos);
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = startPos + key.length;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knobly | IT Tools & Network Basics</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700;800;900&display=swap" rel="stylesheet" />
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.35.0/dist/tabler-icons.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Outfit", "sans-serif"],
+                        gaming: ["Rajdhani", "sans-serif"],
+                    },
+                    colors: {
+                        deep: "#050505",
+                        primary: "#22d3ee",
+                    },
+                    animation: {
+                        "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                        "float": "float 6s ease-in-out infinite",
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            cursor: default;
+            user-select: none;
+        }
+
+        button,
+        a,
+        .glass-card {
+            cursor: pointer;
+        }
+
+        ::selection {
+            background: #22d3ee;
+            color: #000;
+        }
+
+        .custom-scroll {
+            overflow-x: hidden !important;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            display: none;
+        }
+
+        body {
+            background-color: #01030f;
+            color: white;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        body {
+            background-image:
+                radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.22) 0, transparent 55%),
+                radial-gradient(circle at 90% 100%, rgba(139, 92, 246, 0.25) 0, transparent 60%),
+                linear-gradient(120deg, rgba(56, 189, 248, 0.16) 0, transparent 22%, transparent 78%, rgba(236, 72, 153, 0.16) 100%),
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.95) 0, #020617 60%);
+        }
+
+        .glass-panel {
+            background: radial-gradient(circle at 0% 0%, rgba(30, 41, 59, 0.7), rgba(2, 6, 23, 0.85));
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: border 0.2s, box-shadow 0.2s, transform 0.2s;
+            box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.28);
+            padding: 1rem;
+        }
+
+        .glass-card:hover {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            transform: translateY(-4px);
+        }
+
+        .app-icon-tile {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 9999px;
+            background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.25), rgba(15, 23, 42, 0.9));
+            border: 2px solid rgba(148, 163, 184, 0.6);
+            box-shadow: 0 8px 18px -8px rgba(15, 23, 42, 0.9);
+        }
+
+        .border-emerald {
+            border-color: #34d399 !important;
+        }
+
+        .border-blue {
+            border-color: #60a5fa !important;
+        }
+
+        .border-sky {
+            border-color: #38bdf8 !important;
+        }
+
+        .border-yellow {
+            border-color: #facc15 !important;
+        }
+
+        .border-orange {
+            border-color: #fb923c !important;
+        }
+
+        .border-purple {
+            border-color: #a855f7 !important;
+        }
+
+        .border-pink {
+            border-color: #fb7185 !important;
+        }
+
+        .border-red {
+            border-color: #f97373 !important;
+        }
+
+        .border-slate {
+            border-color: #cbd5e1 !important;
+        }
+
+        .border-cyan {
+            border-color: #22d3ee !important;
+        }
+
+        .devicon-fix {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.55));
+        }
+
+        .knobly-header-style {
+            font-family: "Rajdhani", sans-serif;
+            font-weight: 900;
+            color: white;
+            letter-spacing: 0.16em;
+            text-shadow: 0 0 18px rgba(34, 211, 238, 0.5);
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(34, 211, 238, 0.5);
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
+            color: #000;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+        }
+
+        .unit-badge {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #38bdf8;
+        }
+    </style>
+</head>
+
+<body class="font-sans">
+    <div id="app" v-cloak class="h-screen w-screen flex flex-col p-4 md:p-6 lg:p-8 gap-4">
+
+        <!-- Header -->
+        <header class="glass-panel rounded-2xl px-4 py-3 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-4">
+                <a href="olevelnotes.html"
+                    class="back-btn px-3 py-2 rounded-xl flex items-center gap-2 text-sm text-gray-300 hover:text-white">
+                    <i class="ph-bold ph-arrow-left"></i>
+                    <span class="hidden sm:inline">Back to O-Level</span>
+                </a>
+                <div class="h-6 w-px bg-white/10 hidden sm:block"></div>
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-white font-bold text-lg">
+                        <i class="ph-bold ph-desktop"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold text-white knobly-header-style">IT TOOLS & NETWORK</h1>
+                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Module 1 (M1-R5)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-right hidden md:block">
+                <div class="text-xs text-cyan-400 font-bold uppercase tracking-wider">NIELIT O-Level</div>
+                <div class="text-[10px] text-gray-500">{{ units.length }} Units</div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="glass-panel flex-1 rounded-2xl p-4 md:p-6 overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                    <i class="ph-bold ph-books text-cyan-400"></i>
+                    <h2 class="text-sm md:text-base font-bold text-white">Course Units</h2>
+                </div>
+                <span class="text-[10px] text-gray-400 uppercase tracking-wider">Complete Syllabus</span>
+            </div>
+
+            <!-- Units Grid -->
+            <div class="flex-1 overflow-y-auto custom-scroll pr-2">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    <div v-for="unit in units" :key="unit.id"
+                        class="glass-card rounded-2xl flex flex-col items-center text-center p-4 gap-3 cursor-pointer group"
+                        @click="openUnit(unit)">
+
+                        <!-- Unit Badge -->
+                        <div class="unit-badge px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">
+                            {{ unit.unitNo }}
+                        </div>
+
+                        <!-- Icon -->
+                        <div class="app-icon-tile flex items-center justify-center" :class="unit.borderClass">
+                            <i :class="[unit.icon, 'devicon-fix', unit.color]"></i>
+                        </div>
+
+                        <!-- Title -->
+                        <div class="flex-1 min-w-0">
+                            <h3
+                                class="font-semibold text-gray-200 text-sm group-hover:text-cyan-300 transition-colors leading-tight">
+                                {{ unit.name }}
+                            </h3>
+                        </div>
+
+                        <!-- Download Badge -->
+                        <div class="w-full mt-auto">
+                            <button
+                                class="download-btn w-full py-2 rounded-lg text-xs flex items-center justify-center gap-2">
+                                <i class="ph-bold ph-download-simple"></i>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="glass-panel rounded-2xl px-4 py-3 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-2 text-[11px] text-gray-400">
+                <i class="ph-bold ph-info"></i>
+                <span>Click any unit to download the PDF notes</span>
+            </div>
+            <a href="index.html"
+                class="text-[11px] text-cyan-400 hover:text-cyan-300 font-bold uppercase tracking-wider flex items-center gap-1">
+                <i class="ph-bold ph-house"></i>
+                Home
+            </a>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    units: [
+                        {
+                            id: "u1",
+                            name: "Introduction to Computer",
+                            unitNo: "Unit 1",
+                            icon: "ph-bold ph-desktop",
+                            color: "text-sky-400",
+                            borderClass: "border-sky",
+                            downloadLink: "https://drive.google.com/file/d/1kKUUXdWvX_Rw7Hiz62bp_KHr4rsjhBDF/view?usp=sharing"
+                        },
+                        {
+                            id: "u2",
+                            name: "Introduction to Operating System",
+                            unitNo: "Unit 2",
+                            icon: "ph-bold ph-windows-logo",
+                            color: "text-blue-400",
+                            borderClass: "border-blue",
+                            downloadLink: "https://drive.google.com/file/d/1kLph3f4LtGF_wyQdWvm8_w20HoxMelyN/view?usp=sharing"
+                        },
+                        {
+                            id: "u3",
+                            name: "Word Processing",
+                            unitNo: "Unit 3",
+                            icon: "ph-bold ph-file-doc",
+                            color: "text-blue-500",
+                            borderClass: "border-blue",
+                            downloadLink: "#"
+                        },
+                        {
+                            id: "u4",
+                            name: "Spreadsheet",
+                            unitNo: "Unit 4",
+                            icon: "ph-bold ph-table",
+                            color: "text-emerald-400",
+                            borderClass: "border-emerald",
+                            downloadLink: "#"
+                        },
+                        {
+                            id: "u5",
+                            name: "Presentation",
+                            unitNo: "Unit 5",
+                            icon: "ph-bold ph-presentation-chart",
+                            color: "text-orange-400",
+                            borderClass: "border-orange",
+                            downloadLink: "#"
+                        },
+                        {
+                            id: "u6",
+                            name: "Introduction to Internet & WWW",
+                            unitNo: "Unit 6",
+                            icon: "ph-bold ph-globe",
+                            color: "text-cyan-400",
+                            borderClass: "border-cyan",
+                            downloadLink: "https://drive.google.com/file/d/1mM7_p9LtwwFSY2kiFqxRJEWVPzLJi1ys/view?usp=sharing"
+                        },
+                        {
+                            id: "u7",
+                            name: "E-mail, Social Networking & e-Governance",
+                            unitNo: "Unit 7",
+                            icon: "ph-bold ph-envelope",
+                            color: "text-purple-400",
+                            borderClass: "border-purple",
+                            downloadLink: "https://drive.google.com/file/d/1pIr3Unp0672QEE2J-zs_c7QwENRUIAKP/view?usp=drive_link"
+                        },
+                        {
+                            id: "u8",
+                            name: "Digital Financial Tools & Applications",
+                            unitNo: "Unit 8",
+                            icon: "ph-bold ph-credit-card",
+                            color: "text-yellow-400",
+                            borderClass: "border-yellow",
+                            downloadLink: "https://drive.google.com/file/d/1s8dIIFAnY6wXg2_wH6_z19tiisAretJZ/view?usp=sharing"
+                        },
+                        {
+                            id: "u9",
+                            name: "Overview of Future Skills & Cyber Security",
+                            unitNo: "Unit 9",
+                            icon: "ph-bold ph-shield-check",
+                            color: "text-red-400",
+                            borderClass: "border-red",
+                            downloadLink: "https://drive.google.com/file/d/1sDaeMQoStXVmQ5rkM8Zk23eiIBnRq62q/view?usp=sharing"
+                        }
+                    ]
+                };
+            },
+            methods: {
+                openUnit(unit) {
+                    if (unit.downloadLink && unit.downloadLink !== '#') {
+                        window.open(unit.downloadLink, '_blank');
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

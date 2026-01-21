@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NumPy Tutorial - Chapter 12</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --accent-color: #e74c3c;
+            --text-color: #333;
+            --light-text: #666;
+            --code-bg: #2d2d2d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='0,100 100,0 100,100' fill='rgba(255,255,255,0.05)'/%3E%3C/svg%3E");
+            background-size: cover;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .header-content p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        main {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+            gap: 2rem;
+        }
+        
+        .sidebar {
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+        
+        .content {
+            flex: 3;
+            min-width: 300px;
+        }
+        
+        .nav-list {
+            list-style: none;
+        }
+        
+        .nav-list li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-list a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-list a:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+        
+        .nav-list .sub-item {
+            margin-left: 1rem;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+        
+        .section {
+            background: white;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        h2 {
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-color);
+            font-weight: 600;
+        }
+        
+        h3 {
+            color: var(--primary-color);
+            margin: 1.5rem 0 1rem;
+            font-weight: 500;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        pre {
+            background-color: #9ed3f7;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+        
+        .code-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            background: #1e1e1e;
+            padding: 0.5rem;
+            border-radius: 8px 8px 0 0;
+            margin-top: 1rem;
+        }
+        
+        .run-button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .run-button:hover {
+            background-color: #27ae60;
+        }
+        
+        .output {
+            background-color: #f1f1f1;
+            padding: 1rem;
+            border-radius: 0 0 8px 8px;
+            border-top: 3px solid var(--secondary-color);
+            font-family: monospace;
+            display: none;
+        }
+        
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .example-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .example-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .example-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .note {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .warning {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .numpy-visual {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .numpy-visual svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .interactive-demo {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            background-color: #f8f9fa;
+        }
+        
+        .interactive-demo input,
+        .interactive-demo select {
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .interactive-demo button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .interactive-demo button:hover {
+            background-color: #2980b9;
+        }
+        
+        .demo-output {
+            background-color: #f1f1f1;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-family: monospace;
+        }
+        
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background-color: var(--secondary-color);
+            width: 0;
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .top-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 999;
+        }
+        
+        .top-button.visible {
+            opacity: 1;
+        }
+        
+        .matrix-visual {
+            margin: 1rem 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 2px;
+        }
+        
+        .matrix-cell {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            main {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                max-width: 100%;
+                position: static;
+                margin-bottom: 2rem;
+            }
+            
+            .header-content h1 {
+                font-size: 2rem;
+            }
+            
+            .header-content p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress"></div>
+    <header>
+        <div class="header-content">
+            <h1>NumPy Tutorial</h1>
+            <p>Chapter 12: Working with NumPy Arrays</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <main>
+            <aside class="sidebar">
+                <h2>Chapter Contents</h2>
+                <ul class="nav-list">
+                    <li><a href="#introduction">12.1 Introduction</a></li>
+                    <li><a href="#creating-arrays">12.2 Creating NumPy Array</a></li>
+                    <li class="sub-item"><a href="#array-function">12.2.1 array() Function</a></li>
+                    <li class="sub-item"><a href="#arange-function">12.2.2 arange() Function</a></li>
+                    <li class="sub-item"><a href="#linspace-function">12.2.3 linspace() Function</a></li>
+                    <li><a href="#dimensions">12.3 Dimensions of Array</a></li>
+                    <li class="sub-item"><a href="#zero-dimensional">12.3.1 Zero-Dimensional Array</a></li>
+                    <li class="sub-item"><a href="#single-dimensional">12.3.2 Single-dimensional Array</a></li>
+                    <li class="sub-item"><a href="#multi-dimensional">12.3.3 Multi-dimensional Array</a></li>
+                    <li><a href="#shape">12.4 Shape of Array</a></li>
+                    <li><a href="#indexes">12.5 Array Indexes</a></li>
+                    <li><a href="#slicing">12.6 Array Slicing</a></li>
+                    <li><a href="#functions">12.7 Array Functions</a></li>
+                    <li class="sub-item"><a href="#reshape">12.7.1 reshape()</a></li>
+                    <li class="sub-item"><a href="#may-share-memory">12.7.2 may_share_memory()</a></li>
+                    <li class="sub-item"><a href="#ones">12.7.3 ones()</a></li>
+                    <li class="sub-item"><a href="#zeros">12.7.4 zeros()</a></li>
+                    <li class="sub-item"><a href="#ones-like">12.7.5 ones_like()</a></li>
+                    <li class="sub-item"><a href="#zeros-like">12.7.6 zeros_like()</a></li>
+                    <li class="sub-item"><a href="#empty">12.7.7 empty()</a></li>
+                    <li class="sub-item"><a href="#copy">12.7.8 copy()</a></li>
+                    <li><a href="#identity">12.8 Identity Array</a></li>
+                    <li class="sub-item"><a href="#identity-function">12.8.1 identity()</a></li>
+                    <li class="sub-item"><a href="#eye">12.8.2 eye()</a></li>
+                </ul>
+            </aside>
+            
+            <div class="content">
+                <section class="section" id="introduction">
+                    <h2>12.1 Introduction</h2>
+                    <p>NumPy (Numerical Python) is a powerful Python library for numerical computation. It provides an efficient interface to store and operate on dense data buffers in the form of arrays. NumPy is the fundamental package for scientific computing in Python, and it's essential for data analysis, machine learning, and many other domains.</p>
+                    
+                    <p>In this chapter, we'll explore NumPy arrays in detail - from creating arrays to manipulating them with various functions. NumPy arrays are the building blocks of nearly all numerical computing in Python.</p>
+                    
+                    <div class="note">
+                        <p><strong>Note:</strong> Before you begin, make sure you have NumPy installed. You can install it using pip:</p>
+                        <pre><code class="language-bash">pip install numpy</code></pre>
+                    </div>
+                    
+                    <p>To use NumPy, you need to import it in your Python script:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('import-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+print("NumPy version:", np.__version__)
+print("NumPy is ready to use!")</code></pre>
+                    <div class="output" id="import-output">
+                        NumPy version: 1.24.3
+                        NumPy is ready to use!
+                    </div>
+                    
+                    <div class="numpy-visual">
+                        <svg width="400" height="200" viewBox="0 0 400 200">
+                            <rect x="50" y="50" width="300" height="100" rx="10" ry="10" fill="#3498db" opacity="0.7"/>
+                            <text x="200" y="100" font-size="24" text-anchor="middle" fill="white" font-weight="bold">NumPy</text>
+                            <text x="200" y="130" font-size="14" text-anchor="middle" fill="white">Numerical Python</text>
+                        </svg>
+                    </div>
+                </section>
+                
+                <section class="section" id="creating-arrays">
+                    <h2>12.2 Creating NumPy Array</h2>
+                    <p>There are multiple ways to create NumPy arrays. In this section, we'll explore three common methods: using the <code>array()</code> function, <code>arange()</code> function, and <code>linspace()</code> function.</p>
+                    
+                    <div class="interactive-demo">
+                        <h3>Interactive Array Creation</h3>
+                        <p>Select a method to create a NumPy array:</p>
+                        <select id="array-method">
+                            <option value="array">array()</option>
+                            <option value="arange">arange()</option>
+                            <option value="linspace">linspace()</option>
+                        </select>
+                        <input type="text" id="array-input" placeholder="e.g., 1,2,3,4,5" value="1,2,3,4,5">
+                        <button onclick="createArray()">Create Array</button>
+                        <div class="demo-output" id="array-output"></div>
+                    </div>
+                    
+                    <h3 id="array-function">12.2.1 Creating array using 'array()' function</h3>
+                    <p>The <code>array()</code> function creates an array from a sequence such as a list or tuple:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('array-output-1')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Creating a 1D array
+arr1 = np.array([1, 2, 3, 4, 5])
+print("1D Array:", arr1)
+
+# Creating a 2D array
+arr2 = np.array([[1, 2, 3], [4, 5, 6]])
+print("\n2D Array:")
+print(arr2)
+
+# Creating an array with a specific data type
+arr3 = np.array([1.1, 2.2, 3.3], dtype='float32')
+print("\nArray with float32 dtype:", arr3)
+print("Data type:", arr3.dtype)</code></pre>
+                    <div class="output" id="array-output-1">
+1D Array: [1 2 3 4 5]
+
+2D Array:
+[[1 2 3]
+ [4 5 6]]
+
+Array with float32 dtype: [1.1 2.2 3.3]
+Data type: float32
+                    </div>
+                    
+                    <h3 id="arange-function">12.2.2 Creating array using 'arange()' function</h3>
+                    <p>The <code>arange()</code> function creates an array with regularly spaced values within a given interval. It's similar to Python's <code>range()</code> function but returns an array:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('arange-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create an array from 0 to 9
+arr1 = np.arange(10)
+print("np.arange(10):", arr1)
+
+# Create an array from 5 to 14
+arr2 = np.arange(5, 15)
+print("\nnp.arange(5, 15):", arr2)
+
+# Create an array from 1 to 20 with step 2
+arr3 = np.arange(1, 20, 2)
+print("\nnp.arange(1, 20, 2):", arr3)
+
+# Create an array with float step
+arr4 = np.arange(0, 5, 0.5)
+print("\nnp.arange(0, 5, 0.5):", arr4)</code></pre>
+                    <div class="output" id="arange-output">
+np.arange(10): [0 1 2 3 4 5 6 7 8 9]
+
+np.arange(5, 15): [ 5  6  7  8  9 10 11 12 13 14]
+
+np.arange(1, 20, 2): [ 1  3  5  7  9 11 13 15 17 19]
+
+np.arange(0, 5, 0.5): [0.  0.5 1.  1.5 2.  2.5 3.  3.5 4.  4.5]
+                    </div>
+                    
+                    <h3 id="linspace-function">12.2.3 Creating array using linspace() function</h3>
+                    <p>The <code>linspace()</code> function creates an array with a specified number of elements, evenly spaced between specified start and end values:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('linspace-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create an array with 5 values evenly spaced between 0 and 1
+arr1 = np.linspace(0, 1, 5)
+print("np.linspace(0, 1, 5):", arr1)
+
+# Create an array with 10 values between 0 and 2π
+arr2 = np.linspace(0, 2 * np.pi, 10)
+print("\nnp.linspace(0, 2π, 10):", arr2)
+
+# Create an array with 5 values between 0 and 100 (exclusive)
+arr3 = np.linspace(0, 100, 5, endpoint=False)
+print("\nnp.linspace(0, 100, 5, endpoint=False):", arr3)
+
+# Get step size information
+arr4, step = np.linspace(0, 10, 5, retstep=True)
+print("\nnp.linspace(0, 10, 5):", arr4)
+print("Step size:", step)</code></pre>
+                    <div class="output" id="linspace-output">
+np.linspace(0, 1, 5): [0.   0.25 0.5  0.75 1.  ]
+
+np.linspace(0, 2π, 10): [0.         0.6981317  1.3962634  2.0943951  2.7925268  3.4906585
+ 4.1887902  4.88692191 5.58505361 6.28318531]
+
+np.linspace(0, 100, 5, endpoint=False): [ 0. 20. 40. 60. 80.]
+
+np.linspace(0, 10, 5): [ 0.   2.5  5.   7.5 10. ]
+Step size: 2.5
+                    </div>
+                </section>
+                
+                <section class="section" id="dimensions">
+                    <h2>12.3 Dimensions of Array</h2>
+                    <p>NumPy arrays can have different dimensions. Let's explore zero-dimensional, one-dimensional, and multidimensional arrays.</p>
+                    
+                    <h3 id="zero-dimensional">12.3.1 Zero-Dimensional Array</h3>
+                    <p>A zero-dimensional array (or scalar) contains only one value:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('zero-dim-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create a 0D array (scalar)
+arr = np.array(42)
+print("0D Array:", arr)
+print("Dimensions:", arr.ndim)
+print("Shape:", arr.shape)</code></pre>
+                    <div class="output" id="zero-dim-output">
+0D Array: 42
+Dimensions: 0
+Shape: ()
+                    </div>
+                    
+                    <h3 id="single-dimensional">12.3.2 Single-dimensional Array</h3>
+                    <p>A one-dimensional array is like a list with a sequence of values:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('one-dim-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create a 1D array
+arr = np.array([1, 2, 3, 4, 5])
+print("1D Array:", arr)
+print("Dimensions:", arr.ndim)
+print("Shape:", arr.shape)
+print("Size:", arr.size)</code></pre>
+                    <div class="output" id="one-dim-output">
+1D Array: [1 2 3 4 5]
+Dimensions: 1
+Shape: (5,)
+Size: 5
+                    </div>
+                    
+                    <div class="matrix-visual">
+                        <div class="matrix-cell">1</div>
+                        <div class="matrix-cell">2</div>
+                        <div class="matrix-cell">3</div>
+                        <div class="matrix-cell">4</div>
+                        <div class="matrix-cell">5</div>
+                    </div>
+                    
+                    <h3 id="multi-dimensional">12.3.3 Multi-dimensional Array</h3>
+                    <p>A multi-dimensional array contains elements organized in multiple dimensions. The most common is a 2D array (matrix), but NumPy supports arrays of any dimensionality:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('multi-dim-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create a 2D array (matrix)
+arr_2d = np.array([[1, 2, 3], [4, 5, 6]])
+print("2D Array (Matrix):")
+print(arr_2d)
+print("Dimensions:", arr_2d.ndim)
+print("Shape:", arr_2d.shape)
+print("Size:", arr_2d.size)
+
+# Create a 3D array
+arr_3d = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
+print("\n3D Array:")
+print(arr_3d)
+print("Dimensions:", arr_3d.ndim)
+print("Shape:", arr_3d.shape)
+print("Size:", arr_3d.size)</code></pre>
+                    <div class="output" id="multi-dim-output">
+2D Array (Matrix):
+[[1 2 3]
+ [4 5 6]]
+Dimensions: 2
+Shape: (2, 3)
+Size: 6
+
+3D Array:
+[[[1 2]
+  [3 4]]
+
+ [[5 6]
+  [7 8]]]
+Dimensions: 3
+Shape: (2, 2, 2)
+Size: 8
+                    </div>
+                    
+                    <div class="numpy-visual">
+                        <svg width="300" height="200" viewBox="0 0 300 200">
+                            <rect x="50" y="50" width="200" height="100" rx="5" ry="5" fill="#3498db" opacity="0.7" stroke="#2980b9" stroke-width="2"/>
+                            <line x1="50" y1="83" x2="250" y2="83" stroke="#2980b9" stroke-width="1"/>
+                            <line x1="116" y1="50" x2="116" y2="150" stroke="#2980b9" stroke-width="1"/>
+                            <line x1="183" y1="50" x2="183" y2="150" stroke="#2980b9" stroke-width="1"/>
+                            <text x="83" y="70" text-anchor="middle" fill="white" font-weight="bold">1</text>
+                            <text x="150" y="70" text-anchor="middle" fill="white" font-weight="bold">2</text>
+                            <text x="216" y="70" text-anchor="middle" fill="white" font-weight="bold">3</text>
+                            <text x="83" y="120" text-anchor="middle" fill="white" font-weight="bold">4</text>
+                            <text x="150" y="120" text-anchor="middle" fill="white" font-weight="bold">5</text>
+                            <text x="216" y="120" text-anchor="middle" fill="white" font-weight="bold">6</text>
+                            <text x="150" y="180" text-anchor="middle" fill="#2c3e50" font-weight="bold">2D Array (Matrix)</text>
+                        </svg>
+                    </div>
+                </section>
+                
+                <section class="section" id="shape">
+                    <h2>12.4 Shape of Array</h2>
+                    <p>The shape of an array is a tuple that indicates the size of each dimension. It tells us how many elements are in each dimension:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('shape-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Different arrays with different shapes
+arr_1d = np.array([1, 2, 3, 4])
+arr_2d = np.array([[1, 2, 3], [4, 5, 6]])
+arr_3d = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
+
+print("1D Array shape:", arr_1d.shape)  # (4,)
+print("2D Array shape:", arr_2d.shape)  # (2, 3)
+print("3D Array shape:", arr_3d.shape)  # (2, 2, 2)
+
+# Get the number of elements in an array
+print("\nNumber of elements in 1D array:", arr_1d.size)  # 4
+print("Number of elements in 2D array:", arr_2d.size)   # 6
+print("Number of elements in 3D array:", arr_3d.size)   # 8</code></pre>
+                    <div class="output" id="shape-output">
+1D Array shape: (4,)
+2D Array shape: (2, 3)
+3D Array shape: (2, 2, 2)
+
+Number of elements in 1D array: 4
+Number of elements in 2D array: 6
+Number of elements in 3D array: 8
+                    </div>
+                </section>
+                
+                <section class="section" id="indexes">
+                    <h2>12.5 Array Indexes</h2>
+                    <p>Array indexing refers to accessing specific elements in an array. NumPy arrays are zero-indexed, meaning the first element has index 0.</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('index-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# 1D array indexing
+arr = np.array([1, 2, 3, 4, 5])
+print("1D Array:", arr)
+print("First element:", arr[0])
+print("Last element:", arr[-1])
+
+# 2D array indexing
+arr_2d = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+print("\n2D Array:")
+print(arr_2d)
+print("Element at row 1, column 2:", arr_2d[1, 2])  # Same as arr_2d[1][2]
+print("Last row:", arr_2d[-1])
+
+# 3D array indexing
+arr_3d = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
+print("\n3D Array:")
+print(arr_3d)
+print("Element at position [1,1,0]:", arr_3d[1, 1, 0])  # 7</code></pre>
+                    <div class="output" id="index-output">
+1D Array: [1 2 3 4 5]
+First element: 1
+Last element: 5
+
+2D Array:
+[[1 2 3]
+ [4 5 6]
+ [7 8 9]]
+Element at row 1, column 2: 6
+Last row: [7 8 9]
+
+3D Array:
+[[[1 2]
+  [3 4]]
+
+ [[5 6]
+  [7 8]]]
+Element at position [1,1,0]: 7
+                    </div>
+                </section>
+                
+                <section class="section" id="slicing">
+                    <h2>12.6 Array Slicing</h2>
+                    <p>Slicing in NumPy is similar to slicing in Python lists, but it can be applied to multiple dimensions. The basic syntax for slicing is <code>start:stop:step</code>.</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('slice-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# 1D array slicing
+arr = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+print("Original array:", arr)
+print("First 3 elements:", arr[:3])
+print("Last 3 elements:", arr[-3:])
+print("Elements from 2nd to 5th:", arr[2:6])
+print("Every other element:", arr[::2])
+print("Reversed array:", arr[::-1])
+
+# 2D array slicing
+arr_2d = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
+print("\n2D array:")
+print(arr_2d)
+print("\nFirst two rows, all columns:")
+print(arr_2d[:2, :])
+print("\nAll rows, last two columns:")
+print(arr_2d[:, -2:])
+print("\n2x2 slice from the middle:")
+print(arr_2d[1:3, 1:3])</code></pre>
+                    <div class="output" id="slice-output">
+Original array: [0 1 2 3 4 5 6 7 8 9]
+First 3 elements: [0 1 2]
+Last 3 elements: [7 8 9]
+Elements from 2nd to 5th: [2 3 4 5]
+Every other element: [0 2 4 6 8]
+Reversed array: [9 8 7 6 5 4 3 2 1 0]
+
+2D array:
+[[ 1  2  3  4]
+ [ 5  6  7  8]
+ [ 9 10 11 12]]
+
+First two rows, all columns:
+[[1 2 3 4]
+ [5 6 7 8]]
+
+All rows, last two columns:
+[[ 3  4]
+ [ 7  8]
+ [11 12]]
+
+2x2 slice from the middle:
+[[ 6  7]
+ [10 11]]
+                    </div>
+                </section>
+                
+                <section class="section" id="functions">
+                    <h2>12.7 Array Functions</h2>
+                    <p>NumPy provides a variety of functions to create, manipulate, and operate on arrays. Let's explore some of the most useful ones.</p>
+                    
+                    <h3 id="reshape">12.7.1 reshape()</h3>
+                    <p>The <code>reshape()</code> function changes the shape of an array without changing its data:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('reshape-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create a 1D array
+arr = np.arange(12)
+print("Original array:", arr)
+print("Shape:", arr.shape)
+
+# Reshape to 2D array with 3 rows and 4 columns
+reshaped = arr.reshape(3, 4)
+print("\nReshaped to 3x4:")
+print(reshaped)
+print("New shape:", reshaped.shape)
+
+# Reshape to 2D array with 4 rows and 3 columns
+reshaped2 = arr.reshape(4, 3)
+print("\nReshaped to 4x3:")
+print(reshaped2)
+print("New shape:", reshaped2.shape)
+
+# Using -1 to automatically determine dimension size
+# Here, we specify 2 rows and let NumPy figure out the number of columns
+auto_reshaped = arr.reshape(2, -1)
+print("\nReshaped to 2 rows with automatic column count:")
+print(auto_reshaped)
+print("Automatic shape:", auto_reshaped.shape)
+
+# 3D reshape
+reshaped3d = arr.reshape(2, 2, 3)
+print("\nReshaped to 3D array (2x2x3):")
+print(reshaped3d)
+print("3D shape:", reshaped3d.shape)</code></pre>
+                    <div class="output" id="reshape-output">
+Original array: [ 0  1  2  3  4  5  6  7  8  9 10 11]
+Shape: (12,)
+
+Reshaped to 3x4:
+[[ 0  1  2  3]
+ [ 4  5  6  7]
+ [ 8  9 10 11]]
+New shape: (3, 4)
+
+Reshaped to 4x3:
+[[ 0  1  2]
+ [ 3  4  5]
+ [ 6  7  8]
+ [ 9 10 11]]
+New shape: (4, 3)
+
+Reshaped to 2 rows with automatic column count:
+[[ 0  1  2  3  4  5]
+ [ 6  7  8  9 10 11]]
+Automatic shape: (2, 6)
+
+Reshaped to 3D array (2x2x3):
+[[[ 0  1  2]
+  [ 3  4  5]]
+
+ [[ 6  7  8]
+  [ 9 10 11]]]
+3D shape: (2, 2, 3)
+                    </div>
+                    
+                    <h3 id="may-share-memory">12.7.2 may_share_memory()</h3>
+                    <p>The <code>may_share_memory()</code> function checks if two arrays might share memory:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('share-memory-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create an array and reshape it
+original = np.arange(12)
+reshaped = original.reshape(3, 4)
+
+# Create a new array with the same values
+new_array = np.array(original)
+
+print("Original array:", original)
+print("Reshaped array:")
+print(reshaped)
+print("New array:", new_array)
+
+# Check if arrays share memory
+print("\nDo original and reshaped share memory?", np.may_share_memory(original, reshaped))
+print("Do original and new_array share memory?", np.may_share_memory(original, new_array))
+
+# Modify the original array
+original[0] = 99
+print("\nAfter modifying original array[0] to 99:")
+print("Original array:", original)
+print("Reshaped array (first element):")
+print(reshaped)
+print("New array:", new_array)</code></pre>
+                    <div class="output" id="share-memory-output">
+Original array: [ 0  1  2  3  4  5  6  7  8  9 10 11]
+Reshaped array:
+[[ 0  1  2  3]
+ [ 4  5  6  7]
+ [ 8  9 10 11]]
+New array: [ 0  1  2  3  4  5  6  7  8  9 10 11]
+
+Do original and reshaped share memory? True
+Do original and new_array share memory? False
+
+After modifying original array[0] to 99:
+Original array: [99  1  2  3  4  5  6  7  8  9 10 11]
+Reshaped array (first element):
+[[99  1  2  3]
+ [ 4  5  6  7]
+ [ 8  9 10 11]]
+New array: [ 0  1  2  3  4  5  6  7  8  9 10 11]
+                    </div>
+                    
+                    <h3 id="ones">12.7.3 ones()</h3>
+                    <p>The <code>ones()</code> function creates an array filled with ones:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('ones-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create 1D array of ones
+ones_1d = np.ones(5)
+print("1D array of ones:", ones_1d)
+
+# Create 2D array of ones
+ones_2d = np.ones((3, 4))
+print("\n2D array of ones:")
+print(ones_2d)
+
+# Create array of ones with specific data type
+ones_int = np.ones(5, dtype=int)
+print("\nArray of ones (int type):", ones_int)
+
+# Create 3D array of ones
+ones_3d = np.ones((2, 3, 4))
+print("\n3D array of ones (shape 2x3x4):")
+print(ones_3d)</code></pre>
+                    <div class="output" id="ones-output">
+1D array of ones: [1. 1. 1. 1. 1.]
+
+2D array of ones:
+[[1. 1. 1. 1.]
+ [1. 1. 1. 1.]
+ [1. 1. 1. 1.]]
+
+Array of ones (int type): [1 1 1 1 1]
+
+3D array of ones (shape 2x3x4):
+[[[1. 1. 1. 1.]
+  [1. 1. 1. 1.]
+  [1. 1. 1. 1.]]
+
+ [[1. 1. 1. 1.]
+  [1. 1. 1. 1.]
+  [1. 1. 1. 1.]]]
+                    </div>
+                    
+                    <h3 id="zeros">12.7.4 zeros()</h3>
+                    <p>The <code>zeros()</code> function creates an array filled with zeros:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('zeros-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create 1D array of zeros
+zeros_1d = np.zeros(5)
+print("1D array of zeros:", zeros_1d)
+
+# Create 2D array of zeros
+zeros_2d = np.zeros((3, 4))
+print("\n2D array of zeros:")
+print(zeros_2d)
+
+# Create array of zeros with specific data type
+zeros_int = np.zeros(5, dtype=int)
+print("\nArray of zeros (int type):", zeros_int)
+
+# Create 3D array of zeros
+zeros_3d = np.zeros((2, 2, 3))
+print("\n3D array of zeros (shape 2x2x3):")
+print(zeros_3d)</code></pre>
+                    <div class="output" id="zeros-output">
+1D array of zeros: [0. 0. 0. 0. 0.]
+
+2D array of zeros:
+[[0. 0. 0. 0.]
+ [0. 0. 0. 0.]
+ [0. 0. 0. 0.]]
+
+Array of zeros (int type): [0 0 0 0 0]
+
+3D array of zeros (shape 2x2x3):
+[[[0. 0. 0.]
+  [0. 0. 0.]]
+
+ [[0. 0. 0.]
+  [0. 0. 0.]]]
+                    </div>
+                    
+                    <h3 id="ones-like">12.7.5 ones_like()</h3>
+                    <p>The <code>ones_like()</code> function creates an array of ones with the same shape and type as a given array:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('ones-like-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create sample arrays
+arr1 = np.array([1, 2, 3, 4, 5])
+arr2 = np.array([[1, 2, 3], [4, 5, 6]])
+arr3 = np.array([1.1, 2.2, 3.3])
+
+# Create ones_like arrays
+ones_like1 = np.ones_like(arr1)
+ones_like2 = np.ones_like(arr2)
+ones_like3 = np.ones_like(arr3)
+
+print("Original 1D array:", arr1)
+print("ones_like:", ones_like1)
+print("Data type:", ones_like1.dtype)
+
+print("\nOriginal 2D array:")
+print(arr2)
+print("\nones_like:")
+print(ones_like2)
+print("Data type:", ones_like2.dtype)
+
+print("\nOriginal float array:", arr3)
+print("ones_like:", ones_like3)
+print("Data type:", ones_like3.dtype)</code></pre>
+                    <div class="output" id="ones-like-output">
+Original 1D array: [1 2 3 4 5]
+ones_like: [1 1 1 1 1]
+Data type: int64
+
+Original 2D array:
+[[1 2 3]
+ [4 5 6]]
+
+ones_like:
+[[1 1 1]
+ [1 1 1]]
+Data type: int64
+
+Original float array: [1.1 2.2 3.3]
+ones_like: [1. 1. 1.]
+Data type: float64
+                    </div>
+                    
+                    <h3 id="zeros-like">12.7.6 zeros_like()</h3>
+                    <p>The <code>zeros_like()</code> function creates an array of zeros with the same shape and type as a given array:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('zeros-like-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create sample arrays
+arr1 = np.array([1, 2, 3, 4, 5])
+arr2 = np.array([[1, 2, 3], [4, 5, 6]])
+arr3 = np.array([1.1, 2.2, 3.3])
+
+# Create zeros_like arrays
+zeros_like1 = np.zeros_like(arr1)
+zeros_like2 = np.zeros_like(arr2)
+zeros_like3 = np.zeros_like(arr3)
+
+print("Original 1D array:", arr1)
+print("zeros_like:", zeros_like1)
+print("Data type:", zeros_like1.dtype)
+
+print("\nOriginal 2D array:")
+print(arr2)
+print("\nzeros_like:")
+print(zeros_like2)
+print("Data type:", zeros_like2.dtype)
+
+print("\nOriginal float array:", arr3)
+print("zeros_like:", zeros_like3)
+print("Data type:", zeros_like3.dtype)</code></pre>
+                    <div class="output" id="zeros-like-output">
+Original 1D array: [1 2 3 4 5]
+zeros_like: [0 0 0 0 0]
+Data type: int64
+
+Original 2D array:
+[[1 2 3]
+ [4 5 6]]
+
+zeros_like:
+[[0 0 0]
+ [0 0 0]]
+Data type: int64
+
+Original float array: [1.1 2.2 3.3]
+zeros_like: [0. 0. 0.]
+Data type: float64
+                    </div>
+                    
+                    <h3 id="empty">12.7.7 empty()</h3>
+                    <p>The <code>empty()</code> function creates an array without initializing its values:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('empty-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create empty arrays
+empty_1d = np.empty(5)
+empty_2d = np.empty((2, 3))
+empty_int = np.empty(4, dtype=int)
+
+print("Empty 1D array (values are unpredictable):", empty_1d)
+print("\nEmpty 2D array:")
+print(empty_2d)
+print("\nEmpty array with int type:", empty_int)
+
+# Compare performance between zeros and empty
+import time
+
+start = time.time()
+large_zeros = np.zeros((1000, 1000))
+end = time.time()
+print("\nTime to create large zeros array:", (end - start) * 1000, "ms")
+
+start = time.time()
+large_empty = np.empty((1000, 1000))
+end = time.time()
+print("Time to create large empty array:", (end - start) * 1000, "ms")
+print("Empty is faster because it doesn't initialize values.")</code></pre>
+                    <div class="output" id="empty-output">
+Empty 1D array (values are unpredictable): [4.9e-324 9.9e-324 1.5e-323 2.0e-323 2.5e-323]
+
+Empty 2D array:
+[[6.9e-310 4.7e-307 2.2e-314]
+ [6.9e-310 6.9e-310 6.9e-310]]
+
+Empty array with int type: [8791408 8257536 8060928 7798784]
+
+Time to create large zeros array: 2.342224121093750 ms
+Time to create large empty array: 0.47063827514648438 ms
+Empty is faster because it doesn't initialize values.
+                    </div>
+                    
+                    <div class="note">
+                        <p><strong>Note:</strong> Since <code>empty()</code> doesn't initialize array values, the content is unpredictable and depends on the state of memory. Use <code>empty()</code> when you plan to immediately fill the array with other values.</p>
+                    </div>
+                    
+                    <h3 id="copy">12.7.8 copy()</h3>
+                    <p>The <code>copy()</code> function creates a complete copy of an array and its data:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('copy-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create an array
+original = np.array([1, 2, 3, 4, 5])
+print("Original array:", original)
+
+# Create different types of copies
+view = original.view()  # Creates a view
+shallow = original  # Reference to the same array
+deep = original.copy()  # Creates a deep copy
+
+print("View:", view)
+print("Shallow copy (reference):", shallow)
+print("Deep copy:", deep)
+
+# Modify the original array
+original[0] = 99
+print("\nAfter modifying original[0] to 99:")
+print("Original array:", original)
+print("View:", view)  # View changes with original
+print("Shallow copy:", shallow)  # Shallow changes with original
+print("Deep copy:", deep)  # Deep copy is unchanged
+
+# Modify the shape of the view
+view.shape = (5, 1)
+print("\nAfter changing view shape to (5, 1):")
+print("Original array shape:", original.shape)  # Shape is unchanged
+print("View shape:", view.shape)
+print("View data:")
+print(view)</code></pre>
+                    <div class="output" id="copy-output">
+Original array: [1 2 3 4 5]
+View: [1 2 3 4 5]
+Shallow copy (reference): [1 2 3 4 5]
+Deep copy: [1 2 3 4 5]
+
+After modifying original[0] to 99:
+Original array: [99  2  3  4  5]
+View: [99  2  3  4  5]
+Shallow copy: [99  2  3  4  5]
+Deep copy: [1 2 3 4 5]
+
+After changing view shape to (5, 1):
+Original array shape: (5,)
+View shape: (5, 1)
+View data:
+[[99]
+ [ 2]
+ [ 3]
+ [ 4]
+ [ 5]]
+                    </div>
+                </section>
+                
+                <section class="section" id="identity">
+                    <h2>12.8 Identity Array</h2>
+                    <p>An identity array is a square array with ones on the main diagonal and zeros elsewhere. NumPy provides two functions to create identity arrays: <code>identity()</code> and <code>eye()</code>.</p>
+                    
+                    <h3 id="identity-function">12.8.1 identity()</h3>
+                    <p>The <code>identity()</code> function creates a square identity matrix:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('identity-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create identity matrices of different sizes
+id_2 = np.identity(2)
+id_3 = np.identity(3)
+id_4 = np.identity(4)
+
+print("2x2 Identity matrix:")
+print(id_2)
+
+print("\n3x3 Identity matrix:")
+print(id_3)
+
+print("\n4x4 Identity matrix:")
+print(id_4)
+
+# Create identity matrix with specific data type
+id_int = np.identity(3, dtype=int)
+print("\n3x3 Identity matrix (int type):")
+print(id_int)</code></pre>
+                    <div class="output" id="identity-output">
+2x2 Identity matrix:
+[[1. 0.]
+ [0. 1.]]
+
+3x3 Identity matrix:
+[[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]
+
+4x4 Identity matrix:
+[[1. 0. 0. 0.]
+ [0. 1. 0. 0.]
+ [0. 0. 1. 0.]
+ [0. 0. 0. 1.]]
+
+3x3 Identity matrix (int type):
+[[1 0 0]
+ [0 1 0]
+ [0 0 1]]
+                    </div>
+                    
+                    <div class="numpy-visual">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <rect x="25" y="25" width="150" height="150" fill="#f1f1f1" stroke="#333" stroke-width="1"/>
+                            <line x1="25" y1="75" x2="175" y2="75" stroke="#333" stroke-width="1"/>
+                            <line x1="25" y1="125" x2="175" y2="125" stroke="#333" stroke-width="1"/>
+                            <line x1="75" y1="25" x2="75" y2="175" stroke="#333" stroke-width="1"/>
+                            <line x1="125" y1="25" x2="125" y2="175" stroke="#333" stroke-width="1"/>
+                            <circle cx="50" cy="50" r="15" fill="#3498db"/>
+                            <circle cx="100" cy="100" r="15" fill="#3498db"/>
+                            <circle cx="150" cy="150" r="15" fill="#3498db"/>
+                            <text x="50" y="55" text-anchor="middle" fill="white" font-weight="bold">1</text>
+                            <text x="100" y="105" text-anchor="middle" fill="white" font-weight="bold">1</text>
+                            <text x="150" y="155" text-anchor="middle" fill="white" font-weight="bold">1</text>
+                        </svg>
+                    </div>
+                    
+                    <h3 id="eye">12.8.2 eye()</h3>
+                    <p>The <code>eye()</code> function is more flexible than <code>identity()</code>. It creates an array with ones on the specified diagonal and zeros elsewhere:</p>
+                    
+                    <div class="code-toolbar">
+                        <button class="run-button" onclick="toggleOutput('eye-output')">Run Code</button>
+                    </div>
+                    <pre><code class="language-python">import numpy as np
+
+# Create basic eye matrix (same as identity)
+eye_basic = np.eye(3)
+print("Basic 3x3 eye matrix:")
+print(eye_basic)
+
+# Create non-square eye matrix
+eye_rect = np.eye(3, 5)
+print("\nNon-square eye matrix (3x5):")
+print(eye_rect)
+
+# Create eye matrix with offset (k parameter)
+eye_upper = np.eye(4, k=1)  # Upper diagonal
+print("\nUpper diagonal (k=1):")
+print(eye_upper)
+
+eye_lower = np.eye(4, k=-1)  # Lower diagonal
+print("\nLower diagonal (k=-1):")
+print(eye_lower)
+
+# Create eye matrix with specific data type
+eye_int = np.eye(3, dtype=int)
+print("\nEye matrix with int dtype:")
+print(eye_int)</code></pre>
+                    <div class="output" id="eye-output">
+Basic 3x3 eye matrix:
+[[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]
+
+Non-square eye matrix (3x5):
+[[1. 0. 0. 0. 0.]
+ [0. 1. 0. 0. 0.]
+ [0. 0. 1. 0. 0.]]
+
+Upper diagonal (k=1):
+[[0. 1. 0. 0.]
+ [0. 0. 1. 0.]
+ [0. 0. 0. 1.]
+ [0. 0. 0. 0.]]
+
+Lower diagonal (k=-1):
+[[0. 0. 0. 0.]
+ [1. 0. 0. 0.]
+ [0. 1. 0. 0.]
+ [0. 0. 1. 0.]]
+
+Eye matrix with int dtype:
+[[1 0 0]
+ [0 1 0]
+ [0 0 1]]
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <footer>
+        <p>© 2025 NumPy Tutorial | Chapter 12: Working with NumPy Arrays</p>
+    </footer>
+    
+    <div class="top-button" id="topBtn">↑</div>
+    
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+    hljs.highlightAll();
+    updateProgressBar();
+    
+    window.addEventListener('scroll', function() {
+        updateProgressBar();
+        toggleTopButton();
+    });
+});
+
+// Toggle code output visibility
+function toggleOutput(outputId) {
+    const output = document.getElementById(outputId);
+    if (output.style.display === 'block') {
+        output.style.display = 'none';
+    } else {
+        output.style.display = 'block';
+    }
+}
+
+// Scroll to top button
+const topButton = document.getElementById('topBtn');
+
+function toggleTopButton() {
+    if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
+        topButton.classList.add('visible');
+    } else {
+        topButton.classList.remove('visible');
+    }
+}
+
+topButton.addEventListener('click', function() {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+});
+
+// Update progress bar based on scroll position
+function updateProgressBar() {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    document.querySelector('.progress').style.width = scrolled + '%';
+}
+
+// Interactive array creation demo
+function createArray() {
+    const method = document.getElementById('array-method').value;
+    const input = document.getElementById('array-input').value;
+    const outputElement = document.getElementById('array-output');
+    
+    let result = '';
+    
+    try {
+        if (method === 'array') {
+            // Parse input as array
+            const values = input.split(',').map(item => parseFloat(item.trim()));
+            result = `np.array([${values}])\nOutput: [${values}]`;
+        } else if (method === 'arange') {
+            // Parse input as start,stop,step
+            const values = input.split(',').map(item => parseFloat(item.trim()));
+            if (values.length === 1) {
+                // Just stop value
+                const stop = values[0];
+                const arr = Array.from({length: stop}, (_, i) => i);
+                result = `np.arange(${stop})\nOutput: [${arr}]`;
+            } else if (values.length === 2) {
+                // Start and stop
+                const [start, stop] = values;
+                const arr = Array.from({length: stop - start}, (_, i) => start + i);
+                result = `np.arange(${start}, ${stop})\nOutput: [${arr}]`;
+            } else if (values.length === 3) {
+                // Start, stop, and step
+                const [start, stop, step] = values;
+                const arr = [];
+                for (let i = start; i < stop; i += step) {
+                    arr.push(i);
+                }
+                result = `np.arange(${start}, ${stop}, ${step})\nOutput: [${arr}]`;
+            }
+        } else if (method === 'linspace') {
+            // Parse input as start,stop,num
+            const values = input.split(',').map(item => parseFloat(item.trim()));
+            if (values.length >= 2) {
+                const start = values[0];
+                const stop = values[1];
+                const num = values.length > 2 ? values[2] : 50;
+                
+                const step = (stop - start) / (num - 1);
+                const arr = Array.from({length: num}, (_, i) => (start + step * i).toFixed(2));
+                
+                result = `np.linspace(${start}, ${stop}, ${num})\nOutput: [${arr}]`;
+            }
+        }
+    } catch (e) {
+        result = `Error: ${e.message}`;
+    }
+    
+    outputElement.textContent = result;
+    outputElement.style.display = 'block';
+}

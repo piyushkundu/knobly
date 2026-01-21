@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Python Control Statements - Complete Guide</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #3b82f6;
+            --background: #f8fafc;
+            --text: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 60px;
+            height: 60px;
+            opacity: 0.1;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h3 {
+            color: var(--secondary);
+            margin: 1.5rem 0 1rem;
+            font-size: 1.4rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .code-block {
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .code-block:hover {
+            transform: translateY(-2px);
+        }
+
+        .code-block:hover::after {
+            content: 'Click to run';
+            position: absolute;
+            right: 1rem;
+            top: 0.5rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .output {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+            border-left: 4px solid var(--accent);
+        }
+
+        .example-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            background: #fafafa;
+        }
+
+        .tip {
+            background: #dbeafe;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .icon {
+            width: 40px;
+            height: 40px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body ng-app="pythonApp" ng-controller="MainController">
+    <header>
+        <div class="header-bg">
+            <svg viewBox="0 0 100 100" width="100%" height="100%">
+                <defs>
+                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)"/>
+            </svg>
+        </div>
+        <div class="container header-content">
+            <svg class="icon" viewBox="0 0 100 100">
+                <path d="M50 0 L100 25 L100 75 L50 100 L0 75 L0 25 Z" fill="white" opacity="0.8"/>
+                <path d="M50 20 L80 35 L80 65 L50 80 L20 65 L20 35 Z" fill="white"/>
+            </svg>
+            <h1>Python Control Statements</h1>
+            <p>A comprehensive guide to mastering program flow control in Python</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="section">
+            <svg class="section-icon" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M30 50 L70 50 M50 30 L50 70" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <h2>Introduction to Control Statements</h2>
+            <p>Control statements are fundamental building blocks that determine how your program executes. They allow you to:</p>
+            <ul>
+                <li>Make decisions based on conditions</li>
+                <li>Execute code repeatedly</li>
+                <li>Control program flow</li>
+                <li>Handle different scenarios effectively</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <svg class="section-icon" viewBox="0 0 100 100">
+                <path d="M20 50 L50 20 L80 50 L50 80 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <h2>Conditional Statements</h2>
+            
+            <h3>Simple if Statement</h3>
+            <p>Used when you need to execute code only if a specific condition is True.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('if_example_1')">
+                    <pre>
+# Check if a number is positive
+number = 10
+if number > 0:
+    print(f"{number} is positive")</pre>
+                </div>
+                <div id="if_example_1" class="output"></div>
+            </div>
+
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('if_example_2')">
+                    <pre>
+# Check if a string is empty
+text = ""
+if not text:
+    print("The string is empty")</pre>
+                </div>
+                <div id="if_example_2" class="output"></div>
+            </div>
+
+            <h3>if-else Statement</h3>
+            <p>Used when you need to handle two alternative scenarios.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('if_else_example_1')">
+                    <pre>
+# Check if a number is even or odd
+number = 15
+if number % 2 == 0:
+    print(f"{number} is even")
+else:
+    print(f"{number} is odd")</pre>
+                </div>
+                <div id="if_else_example_1" class="output"></div>
+            </div>
+
+            <h3>if-elif-else Statement</h3>
+            <p>Used when you need to handle multiple conditions.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('if_elif_example_1')">
+                    <pre>
+# Grade calculator
+score = 85
+if score >= 90:
+    print("Grade: A")
+elif score >= 80:
+    print("Grade: B")
+elif score >= 70:
+    print("Grade: C")
+elif score >= 60:
+    print("Grade: D")
+else:
+    print("Grade: F")</pre>
+                </div>
+                <div id="if_elif_example_1" class="output"></div>
+            </div>
+
+            <h3>Nested if Statements</h3>
+            <p>Used when you need to check conditions within conditions.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('nested_if_example')">
+                    <pre>
+# Online purchase eligibility checker
+age = 25
+has_id = True
+has_funds = True
+
+if age >= 18:
+    if has_id:
+        if has_funds:
+            print("Purchase approved!")
+        else:
+            print("Insufficient funds")
+    else:
+        print("ID verification required")
+else:
+    print("Age restriction: Must be 18 or older")</pre>
+                </div>
+                <div id="nested_if_example" class="output"></div>
+            </div>
+
+            <div class="tip">
+                <strong>💡 Pro Tip:</strong> While nested if statements are powerful, consider using logical operators (and/or) when possible to make your code more readable.
+            </div>
+    <h3>Complex Condition</h3>
+            <h3>Logical Operators (and, or)</h3>
+            <p>Logical operators allow you to combine multiple conditions in a single statement, often making your code more concise and readable than nested if statements.</p>
+            
+            <h4>Logical AND (and)</h4>
+            <p>The <code>and</code> operator returns <code>True</code> only if both conditions are <code>True</code>.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('logical_and_example')">
+                    <pre>
+# Online purchase eligibility checker (using logical AND)
+age = 25
+has_id = True
+has_funds = True
+
+if age >= 18 and has_id and has_funds:
+    print("Purchase approved!")
+elif age >= 18 and has_id and not has_funds:
+    print("Insufficient funds")
+elif age >= 18 and not has_id:
+    print("ID verification required")
+else:
+    print("Age restriction: Must be 18 or older")</pre>
+                </div>
+                <div id="logical_and_example" class="output"></div>
+            </div>
+            
+            <h4>Logical OR (or)</h4>
+            <p>The <code>or</code> operator returns <code>True</code> if at least one condition is <code>True</code>.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('logical_or_example')">
+                    <pre>
+# Discount eligibility checker
+is_student = False
+is_senior = True
+is_member = False
+
+if is_student or is_senior or is_member:
+    print("Discount applied!")
+else:
+    print("No discount available")</pre>
+                </div>
+                <div id="logical_or_example" class="output"></div>
+            </div>
+            <a href="https://drive.google.com/file/d/1oabLlgig0-zgY_dtcdD-0d8k1ZNk5dEp/view?usp=sharing">Practice Questions</a>
+            <h4>Combining AND and OR</h4>
+            <p>You can combine different logical operators to create complex conditions.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('complex_logical_example')">
+                    <pre>
+# Ticket pricing system
+age = 65
+is_weekend = True
+has_discount_code = False
+
+# Regular price: $12
+# Discounted price: $8
+# Free entry for children under 5
+
+if age < 5:
+    price = 0
+elif (age < 18 or age >= 60) and not is_weekend:
+    # Discount for youth and seniors on weekdays
+    price = 8
+elif has_discount_code:
+    # Discount for anyone with a code
+    price = 8
+else:
+    # Regular price for everyone else
+    price = 12
+
+print(f"Ticket price: ${price}")</pre>
+                </div>
+                <div id="complex_logical_example" class="output"></div>
+            </div>
+            
+            <div class="tip">
+                <strong>💡 Pro Tip:</strong> Use parentheses to make complex logical expressions clearer and to control the order of evaluation. For example: <code>(condition1 and condition2) or condition3</code> is different from <code>condition1 and (condition2 or condition3)</code>.
+            </div>
+            
+            <h4>Short-Circuit Evaluation</h4>
+            <p>Python uses short-circuit evaluation with logical operators, which means it stops evaluating as soon as the result is determined.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('short_circuit_example')">
+                    <pre>
+# Short-circuit evaluation demonstration
+def check_a():
+    print("Checking condition A")
+    return False
+
+def check_b():
+    print("Checking condition B")
+    return True
+
+# With AND operator
+print("\nUsing AND operator:")
+result = check_a() and check_b()  # check_b() won't be called
+print(f"Result: {result}")
+
+# With OR operator
+print("\nUsing OR operator:")
+result = check_b() or check_a()  # check_a() won't be called
+print(f"Result: {result}")</pre>
+                </div>
+                <div id="short_circuit_example" class="output"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <svg class="section-icon" viewBox="0 0 100 100">
+                <path d="M20 50 A30 30 0 1 1 80 50" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M75 50 L80 45 L85 50" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <h2>Looping Statements</h2>
+            
+            <h3>while Loop</h3>
+            <p>Used when you need to repeat code while a condition is True.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('while_example_1')">
+                    <pre>
+# Countdown timer
+countdown = 5
+while countdown > 0:
+    print(f"Time remaining: {countdown}")
+    countdown -= 1
+print("Blast off! 🚀")</pre>
+                </div>
+                <div id="while_example_1" class="output"></div>
+            </div>
+    <a href="https://drive.google.com/file/d/1kEDXXt0gpKMEaGHKJUxp7MXUzgtX_x7_/view?usp=sharing">Practice Questions</a>
+            <h3>for Loop</h3>
+            <p>Used when you need to iterate over a sequence.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('for_example_1')">
+                    <pre>
+# Calculate total from a list
+prices = [10, 20, 30, 40]
+total = 0
+for price in prices:
+    total += price
+print(f"Total: ${total}")</pre>
+                </div>
+                <div id="for_example_1" class="output"></div>
+            </div>
+
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('for_example_2')">
+                    <pre>
+# Print multiplication table
+number = 5
+for i in range(1, 6):
+    print(f"{number} x {i} = {number * i}")</pre>
+                </div>
+                <div id="for_example_2" class="output"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <svg class="section-icon" viewBox="0 0 100 100">
+                <path d="M20 50 H60 L40 30 M60 50 L40 70" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <h2>Jump Statements</h2>
+            
+            <h3>break Statement</h3>
+            <p>Used to exit a loop prematurely.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('break_example_1')">
+                    <pre>
+# Find first even number
+numbers = [1, 3, 5, 6, 7, 8]
+for num in numbers:
+    if num % 2 == 0:
+        print(f"First even number found: {num}")
+        break</pre>
+                </div>
+                <div id="break_example_1" class="output"></div>
+            </div>
+
+            <h3>continue Statement</h3>
+            <p>Used to skip the rest of the current iteration.</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('continue_example_1')">
+                    <pre>
+# Print only odd numbers
+for i in range(5):
+    if i % 2 == 0:
+        continue
+    print(f"Odd number: {i}")</pre>
+                </div>
+                <div id="continue_example_1" class="output"></div>
+            </div>
+
+            <h3>Loop with else</h3>
+            <p>The else block executes when the loop completes normally (without break).</p>
+            <div class="example-card">
+                <div class="code-block" ng-click="runCode('loop_else_example')">
+                    <pre>
+# Check for prime number
+number = 13
+for i in range(2, number):
+    if number % i == 0:
+        print(f"{number} is not prime")
+        break
+else:
+    print(f"{number} is prime")</pre>
+                </div>
+                <div id="loop_else_example" class="output"></div>
+            </div>
+        </div>
+    </div>
+
+   <a href="https://drive.google.com/file/d/12SbyovioK_dhr_CHK7XmX8FdjEs7ErVH/view?usp=sharing">practice questions</a>
+   <a href="https://drive.google.com/file/d/1KjIDFp4zXaKrw6nDQOQ5QrSFsVRdPKdx/view?usp=sharing">practice questions</a>
+
+    <script>
+        angular.module('pythonApp', [])
+        .controller('MainController', function($scope) {
+            $scope.runCode = function(id) {
+                const output = document.getElementById(id);
+                output.style.display = 'block';
+                
+                switch(id) {
+                    case 'if_example_1':
+                        output.textContent = "10 is positive";
+                        break;
+                    case 'if_example_2':
+                        output.textContent = "The string is empty";
+                        break;
+                    case 'if_else_example_1':
+                        output.textContent = "15 is odd";
+                        break;
+                    case 'if_elif_example_1':
+                        output.textContent = "Grade: B";
+                        break;
+                    case 'nested_if_example':
+                        output.textContent = "Purchase approved!";
+                        break;
+                    case 'logical_and_example':
+                        output.textContent = "Purchase approved!";
+                        break;
+                    case 'logical_or_example':
+                        output.textContent = "Discount applied!";
+                        break;
+                    case 'complex_logical_example':
+                        output.textContent = "Ticket price: $8";
+                        break;
+                    case 'short_circuit_example':
+                        output.textContent = "Using AND operator:\nChecking condition A\nResult: False\n\nUsing OR operator:\nChecking condition B\nResult: True";
+                        break;
+                    case 'while_example_1':
+                        output.textContent = "Time remaining: 5\nTime remaining: 4\nTime remaining: 3\nTime remaining: 2\nTime remaining: 1\nBlast off! 🚀";
+                        break;
+                    case 'for_example_1':
+                        output.textContent = "Total: $100";
+                        break;
+                    case 'for_example_2':
+                        output.textContent = "5 x 1 = 5\n5 x 2 = 10\n5 x 3 = 15\n5 x 4 = 20\n5 x 5 = 25";
+                        break;
+                    case 'break_example_1':
+                        output.textContent = "First even number found: 6";
+                        break;
+                    case 'continue_example_1':
+                        output.textContent = "Odd number: 1\nOdd number: 3";
+                        break;
+                    case 'loop_else_example':
+                        output.textContent = "13 is prime";
+                        break;
+                }
+
+                // Add highlight effect
+                output.style.backgroundColor = '#dbeafe';
+                setTimeout(() => {
+                    output.style.backgroundColor = '#f1f5f9';
+                }, 200);
+            };
+
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const outputs = document.getElementsByClassName('output');
+                    for (let output of outputs) {
+                        output.style.display = 'none';
+                    }
+                }
+            });
+
+            // Add smooth scrolling for section navigation
+            document.querySelectorAll('h2').forEach(header => {
+                header.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.closest('.section');
+                    section.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Initialize tooltips
+            const codeBlocks = document.querySelectorAll('.code-block');
+            codeBlocks.forEach(block => {
+                block.setAttribute('title', 'Click to run the code');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn web designing fundamentals with comprehensive downloadable notes for HTML, CSS, JavaScript, and more. Explore modern web development techniques and best practices." />
+    <meta name="keywords" content="Web Designing, HTML Notes, CSS Notes, JavaScript Notes, Downloadable Notes, Web Development, Learn Web Designing, Responsive Web Design, CSS Frameworks, Online Learning" />
+    <meta name="author" content="Piyush Kundu" />
+    <meta property="og:title" content="Web Designing Notes - Learn and Download" />
+    <meta property="og:description" content="Comprehensive notes for web designing covering HTML, CSS, JavaScript, and more. Perfect for students and professionals." />
+    <meta property="og:image" content="https://yourwebsite.com/images/thumbnail.jpg" />
+    <meta property="og:url" content="https://olevelcccexam.link/web-design-notes" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --gold: #ffd700;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 3rem;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .decorative-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--gold));
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        h1 {
+            font-family: 'Caveat', cursive;
+            color: var(--text-primary);
+            font-size: 4.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            font-weight: 300;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .chapter-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.05);
+            min-height: 320px;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .chapter-card:hover .card-illustration {
+            transform: scale(1.1) translateY(-5px);
+            opacity: 0.15;
+        }
+
+        .chapter-number {
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .chapter-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+            position: relative;
+        }
+
+        .chapter-content {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .card-illustration {
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            width: 180px;
+            height: 180px;
+            opacity: 0.1;
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: auto;
+            position: relative;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .download-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--primary);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+        }
+
+        .new-year-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .new-year-overlay.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .celebration-content {
+            text-align: center;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .celebration-text {
+            font-family: 'Caveat', cursive;
+            font-size: 6rem;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF69B4, #00CED1);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 5s ease infinite, scale 2s ease infinite;
+            text-shadow: 0 0 20px rgba(255,215,0,0.5);
+            margin-bottom: 2rem;
+        }
+
+        .sub-text {
+            color: white;
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            opacity: 0;
+            animation: fadeIn 1s ease 1s forwards;
+        }
+
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes firework {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(30); opacity: 0; }
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 3rem;
+            }
+
+            .chapters-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .chapter-card {
+                padding: 1.5rem;
+            }
+
+            .back-btn {
+                position: relative;
+                top: 0;
+                left: 0;
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            .celebration-text {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body ng-app="notesApp" ng-controller="NotesController">
+    <div class="new-year-overlay" ng-if="showNewYear" ng-class="{'fade-out': fadeOutNewYear}">
+        <div class="celebration-content">
+            <h1 class="celebration-text">Happy New Year 2025! 🎉</h1>
+            <p class="sub-text">Welcome to a Year of Learning and Growth!</p>
+            <div id="fireworks-container"></div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" ng-class="{'show': isLoading}">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="notification" ng-class="{'show': showNotification}">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="var(--primary)">
+            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 110-12 6 6 0 010 12zm-1-5h2v2H9v-2zm0-6h2v4H9V5z"/>
+        </svg>
+        {{notificationMessage}}
+    </div>
+
+    <div class="container">
+       <button class="back-btn" onclick="window.location.href='https://www.olevelcccexam.link/WebDesigning/webdesigning';">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                <path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Back
+        </button>
+
+        <header>
+            <div class="decorative-line"></div>
+            <div class="header-background">
+                <svg width="100%" height="100%" viewBox="0 0 100 100">
+                    <pattern id="pattern-circles" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                        <circle cx="5" cy="5" r="2" fill="var(--primary)"/>
+                    </pattern>
+                    <rect width="100%" height="100%" fill="url(#pattern-circles)"/>
+                </svg>
+            </div>
+            <div class="header-content">
+                <h1>Web Designing Hand Written Notes</h1>
+                <p class="subtitle">Master the art of modern web development with our comprehensive, handcrafted notes and resources. Designed for both beginners and advanced developers.</p>
+                <div class="progress-bar" ng-style="{'width': progress + '%'}"></div>
+            </div>
+        </header>
+
+        <div class="chapters-grid">
+            <div class="chapter-card glass-effect" ng-repeat="chapter in chapters" ng-class="{'completed': chapter.completed}">
+                <div class="chapter-number">Chapter {{chapter.number}}</div>
+                <h2 class="chapter-title">{{chapter.title}}</h2>
+                <p class="chapter-content">{{chapter.content}}</p>
+                
+                <div class="card-illustration" ng-bind-html="chapter.illustration"></div>
+                
+                <div class="action-buttons">
+                    <a href="{{chapter.downloadLink}}" class="download-btn" ng-click="downloadChapter(chapter, $event)" target="_blank">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                        </svg>
+                        Download Notes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        angular.module('notesApp', [])
+        .controller('NotesController', function($scope, $timeout, $sce) {
+            $scope.isLoading = true;
+            $scope.progress = 0;
+            $scope.showNotification = false;
+            $scope.notificationMessage = '';
+            $scope.showNewYear = false;
+            $scope.fadeOutNewYear = false;
+
+            const illustrations = {
+                intro: `<svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M30 50l15 15 25-25" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>`,
+                editor: `<svg viewBox="0 0 100 100">
+                    <rect x="20" y="20" width="60" height="60" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <line x1="30" y1="40" x2="70" y2="40" stroke="currentColor" stroke-width="2"/>
+                    <line x1="30" y1="50" x2="60" y2="50" stroke="currentColor" stroke-width="2"/>
+                </svg>`,
+                html: `<svg viewBox="0 0 100 100">
+                    <path d="M30 40l20 20 20-20" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M20 30h60v40H20z" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>`,
+                css: `<svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <rect x="35" y="35" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>`,
+                framework: `<svg viewBox="0 0 100 100">
+                    <rect x="20" y="20" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <rect x="55" y="20" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <rect x="20" y="55" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <rect x="55" y="55" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>`,
+                javascript: `<svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <text x="50" y="60" text-anchor="middle" fill="currentColor" style="font-size: 40px;">JS</text>
+                </svg>`,
+                  photoEditor: `<svg viewBox="0 0 100 100">
+                    <rect x="20" y="20" width="60" height="45" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="40" cy="40" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M20 50l15 15 45-45" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>`,
+                webPublishing: `<svg viewBox="0 0 100 100">
+                    <path d="M20 30h60v40H20z" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M30 20l40 60M70 20l-40 60" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>`
+            };
+
+            $scope.chapters = [
+                {
+                    number: 1,
+                    title: 'Introduction to Web Designing',
+                    content: 'Learn the fundamentals of web design, including basic concepts, principles, and best practices for creating effective websites.',
+                    downloadLink: 'https://drive.google.com/file/d/1Bx-Zhnsgy3A0QhmCqlfhcsJeNi8UnqYB/view?usp=sharing',
+                    completed: false,
+                    illustration: $sce.trustAsHtml(illustrations.intro)
+                },
+                {
+                    number: 2,
+                    title: 'Text Editor',
+                    content: 'Master essential text editors and IDEs used in web development to write efficient and clean code.',
+                    downloadLink: 'https://drive.google.com/file/d/1C4i8eqw3Qt-3DBI9VJohGbvQ85baTWnT/view?usp=sharing',
+                    completed: false,
+                    illustration: $sce.trustAsHtml(illustrations.editor)
+                },
+                {
+                    number: 3,
+                    title: 'HTML',
+                    content: 'Learn HTML fundamentals and advanced concepts for structuring web content effectively.',
+                    downloadLink: 'https://drive.google.com/file/d/1CBAaLJrIFwn90In1qzLzr7EMCOhQiKkf/view?usp=sharing',
+                    completed: false,
+                    illustration: $sce.trustAsHtml(illustrations.html)
+                },
+                {
+                    number: 4,
+                    title: 'CSS',
+                    content: 'Master CSS styling techniques to create beautiful and responsive web designs.',
+                    downloadLink: 'https://drive.google.com/file/d/1CVoM8VfnFLxc5tuTDcpjHWZAKUKaaDLA/view?usp=sharing',
+                    completed: false,
+                    illustration: $sce.trustAsHtml(illustrations.css)
+                },
+                {
+                    number: 5,
+                    title: 'CSS Framework',
+                    content: 'Explore popular CSS frameworks to streamline your development process and create modern websites.',
+                    downloadLink: 'https://drive.google.com/file/d/1CWZRb_lQCn65zLUSEbRnihxyebsOZ-NK/view?usp=sharing',
+                    completed: false,
+                    illustration: $sce.trustAsHtml(illustrations.framework)
+                },
+                {
+                    number: 6,
+                    title: 'JavaScript',
+                    content: 'Learn JavaScript programming to add interactivity and dynamic features to your websites.',
+                    downloadLink: 'https://drive.google.com/file/d/1CXOqjrcrU15OQAlt1vDOyCt4ntcuSxmU/view?usp=sharing',
+                    completed: false,
+                    illustration: $sce.trustAsHtml(illustrations.javascript)
+                },
+                {
+                    number: 7,
+                    title: 'Photo Editor',
+                    content: 'Master essential photo editing techniques for web design, including image optimization, manipulation, and creating engaging visual content.',
+                    downloadLink: 'https://drive.google.com/file/d/1KrIJO2g7TVvfCM5SMznqxG6KmpCaFubu/view?usp=sharing',
+                    completed: false,
+                    illustration: $sce.trustAsHtml(illustrations.photoEditor)
+                },
+                {
+                    number: 8,
+                    title: 'Web Publishing',
+                    content: 'Learn how to publish and deploy websites, including domain management, hosting services, and maintaining live web applications.',
+                    downloadLink: 'https://drive.google.com/file/d/1L1V0KyByBI-Xf79KORo4GTQ_kTRglrtV/view?usp=sharing',
+                    completed: false,
+                    illustration: $sce.trustAsHtml(illustrations.webPublishing)
+                }
+                
+            ];
+
+            function createFirework(x, y, color) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = x + 'px';
+                firework.style.top = y + 'px';
+                firework.style.backgroundColor = color;
+                firework.style.animation = 'firework 1s ease-out forwards';
+                
+                document.getElementById('fireworks-container').appendChild(firework);
+                
+                setTimeout(() => {
+                    firework.remove();
+                }, 1000);
+            }
+
+            function generateFireworks() {
+                const colors = ['#FFD700', '#FF69B4', '#00CED1', '#FFA500', '#FF1493'];
+                const container = document.getElementById('fireworks-container');
+                
+                if (container) {
+                    const interval = setInterval(() => {
+                        const x = Math.random() * window.innerWidth;
+                        const y = Math.random() * window.innerHeight;
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        createFirework(x, y, color);
+                    }, 300);
+
+                    // Clear interval after 5 seconds
+                    setTimeout(() => {
+                        clearInterval(interval);
+                    }, 5000);
+                }
+            }
+
+            function checkNewYear() {
+                const today = new Date();
+                return today.getFullYear() === 2025 && 
+                       today.getMonth() === 0 && 
+                       today.getDate() === 1;
+            }
+
+            function initNewYear() {
+                if (checkNewYear()) {
+                    $scope.showNewYear = true;
+                    
+                    $timeout(() => {
+                        generateFireworks();
+                    }, 100);
+
+                    $timeout(() => {
+                        $scope.fadeOutNewYear = true;
+                    }, 5000);
+
+                    $timeout(() => {
+                        $scope.showNewYear = false;
+                        $scope.fadeOutNewYear = false;
+                    }, 5500);
+                }
+            }
+
+            function calculateProgress() {
+                const completedChapters = $scope.chapters.filter(ch => ch.completed).length;
+                $scope.progress = (completedChapters / $scope.chapters.length) * 100;
+            }
+
+            function showNotification(message) {
+                $scope.notificationMessage = message;
+                $scope.showNotification = true;
+                $timeout(() => {
+                    $scope.showNotification = false;
+                }, 3000);
+            }
+
+            $scope.downloadChapter = function(chapter, event) {
+                event.preventDefault();
+                $scope.isLoading = true;
+                
+                $timeout(() => {
+                    chapter.completed = true;
+                    calculateProgress();
+                    $scope.isLoading = false;
+                    showNotification('Chapter ' + chapter.number + ' notes downloaded successfully!');
+                    window.open(chapter.downloadLink, '_blank');
+                }, 1000);
+            };
+
+            $scope.goBack = function() {
+                window.history.back();
+            };
+
+            function saveProgress() {
+                localStorage.setItem('webDesignProgress', JSON.stringify(
+                    $scope.chapters.map(ch => ch.completed)
+                ));
+            }
+
+            function loadProgress() {
+                try {
+                    const savedProgress = JSON.parse(localStorage.getItem('webDesignProgress'));
+                    if (savedProgress) {
+                        savedProgress.forEach((completed, index) => {
+                            if (index < $scope.chapters.length) {
+                                $scope.chapters[index].completed = completed;
+                            }
+                        });
+                        calculateProgress();
+                    }
+                } catch (e) {
+                    console.error('Error loading progress:', e);
+                }
+            }
+
+            // Initialize
+            $timeout(() => {
+                $scope.isLoading = false;
+                loadProgress();
+                calculateProgress();
+                initNewYear();
+            }, 1500);
+
+            // Watch for changes and save progress
+            $scope.$watch('chapters', () => {
+                saveProgress();
+            }, true);
+        });
+    </script>
+</body>
+</html>

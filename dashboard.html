@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knobly | Test Game Dashboard</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            knobly: {
+              bg: '#020617',
+              panel: 'rgba(15,23,42,0.92)',
+              border: 'rgba(148,163,184,0.45)',
+              neon: '#22c55e',
+              neonSoft: 'rgba(34,197,94,0.18)',
+              blue: '#38bdf8',
+            },
+          },
+          boxShadow: {
+            'k-glow': '0 0 40px rgba(56,189,248,0.35)',
+            'k-neon': '0 0 40px rgba(34,197,94,0.40)',
+          },
+          backgroundImage: {
+            'k-grid':
+              'radial-gradient(circle at 1px 1px, rgba(148,163,184,0.20) 1px, transparent 0)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <!-- Lenis smooth scroll -->
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/bundled/lenis.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont,
+        'Segoe UI', sans-serif;
+      background-color: #020617;
+    }
+
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
+    }
+
+    *::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.5);
+      border-radius: 999px;
+    }
+
+    html.lenis {
+      height: auto;
+    }
+
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+
+    .lenis.lenis-smooth iframe {
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-slate-100">
+
+  <!-- Wallpaper / Background -->
+  <div class="fixed inset-0 -z-10">
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"></div>
+    <div class="absolute inset-0 bg-k-grid bg-[size:42px_42px] opacity-[0.30] mix-blend-soft-light"></div>
+    <div class="absolute -top-32 -left-10 h-72 w-72 bg-sky-500/25 blur-3xl rounded-full"></div>
+    <div class="absolute -bottom-40 -right-10 h-80 w-80 bg-emerald-500/25 blur-3xl rounded-full"></div>
+  </div>
+
+  <!-- App Root -->
+  <div id="app" class="min-h-screen flex flex-col">
+
+    <!-- Top Bar / Window Shell -->
+    <header class="sticky top-0 z-20 border-b border-white/10 bg-slate-950/85 backdrop-blur-2xl" data-lenis-prevent>
+      <div class="max-w-6xl mx-auto px-3 sm:px-4 lg:px-5 py-2.5 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- Window controls -->
+          <div class="flex items-center gap-1.5">
+            <span class="h-2.5 w-2.5 rounded-full bg-rose-500/80"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-amber-400/80"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-emerald-400/80"></span>
+          </div>
+          <div class="h-7 w-px bg-slate-700/70 mx-1 hidden sm:block"></div>
+
+          <!-- App logo + title -->
+          <div class="flex items-center gap-2">
+            <div
+              class="h-8 w-8 rounded-2xl bg-gradient-to-br from-sky-400 to-emerald-400 flex items-center justify-center text-slate-950 font-semibold text-lg shadow-k-neon">
+              K
+            </div>
+            <div class="leading-tight">
+              <div class="flex items-center gap-1.5">
+                <h1 class="text-sm sm:text-base font-semibold tracking-tight">
+                  Test Game Dashboard
+                </h1>
+                <span v-if="profile && profile.exam_track"
+                  class="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] uppercase tracking-[0.16em] bg-slate-900/90 border border-sky-400/40 text-sky-300">
+                  {{ profile.exam_track === 'OLEVEL' ? 'O-LEVEL' : 'CCC' }}
+                </span>
+              </div>
+              <p class="text-[10px] sm:text-[11px] text-slate-400">
+                Level-based tests · Points · live exams · leaderboard
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: profile + back to Knobly -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- Back to Knobly -->
+          <button type="button" @click="goBackToKnobly"
+            class="hidden xs:inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-600/80 bg-slate-900/90 text-[10px] sm:text-[11px] text-slate-200 hover:bg-slate-800 active:scale-95 transition">
+            <i class="ph ph-arrow-left text-xs"></i>
+            <span>Back to Knobly OS</span>
+          </button>
+
+          <div v-if="isLoadingUser" class="text-[11px] text-slate-400">
+            Connecting…
+          </div>
+
+          <div v-else-if="!user" class="flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-300">
+            <i class="ph ph-warning-circle text-xs text-amber-400"></i>
+            <span>Login from main Knobly to see your dashboard</span>
+          </div>
+          <div v-else class="flex items-center gap-2 sm:gap-3">
+            <div class="hidden sm:block text-right leading-tight">
+              <div class="text-[11px] font-medium truncate max-w-[150px]">
+                {{ profile?.full_name || 'Student' }}
+              </div>
+              <div class="text-[10px] text-slate-400">
+                {{ profile?.exam_track === 'OLEVEL' ? 'O-Level' : 'CCC' }} ·
+                {{ userState?.total_points || 0 }} Points ·
+                <span v-if="currentBadge" :class="currentBadge.color">{{ currentBadge.name }}</span>
+              </div>
+            </div>
+            <div
+              class="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-slate-900 border border-white/15 flex items-center justify-center text-[11px] sm:text-xs font-semibold uppercase text-slate-100 shadow-md shadow-slate-950">
+              {{ avatarInitials }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1">
+      <div class="max-w-6xl mx-auto px-3 sm:px-4 lg:px-5 py-3 sm:py-4 lg:py-5 space-y-3 sm:space-y-4 lg:space-y-5">
+
+        <!-- TOP: Points + Categories -->
+        <section
+          class="rounded-[24px] border border-white/12 bg-slate-900/90 backdrop-blur-2xl shadow-2xl shadow-sky-500/20 px-3.5 sm:px-5 py-3.5 sm:py-4 lg:py-5 space-y-3 sm:space-y-4">
+          <div class="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-5">
+            <!-- Left: Points & Badge -->
+            <div class="w-full lg:w-[56%] flex gap-3 sm:gap-4">
+              <!-- Badge Icon -->
+              <div class="flex flex-col items-center pt-1">
+                <div v-if="currentBadge"
+                  class="relative h-20 w-20 sm:h-24 sm:w-24 rounded-full border-2 bg-slate-950/80 flex items-center justify-center shadow-k-glow"
+                  :class="currentBadge.border">
+                  <div
+                    class="h-16 w-16 sm:h-18 sm:w-18 rounded-full bg-slate-900 flex flex-col items-center justify-center">
+                    <i class="ph text-2xl sm:text-3xl" :class="[currentBadge.icon, currentBadge.color]"></i>
+                    <span class="text-[9px] sm:text-[10px] uppercase font-bold mt-1" :class="currentBadge.color">
+                      {{ currentBadge.name }}
+                    </span>
+                  </div>
+                </div>
+                <!-- Fallback if no badge -->
+                <div v-else
+                  class="relative h-20 w-20 sm:h-24 sm:w-24 rounded-full border-2 border-slate-700 bg-slate-950/80 flex items-center justify-center">
+                  <div class="h-16 w-16 sm:h-18 sm:w-18 rounded-full bg-slate-900 flex items-center justify-center">
+                    <span class="text-xs text-slate-500">No Badge</span>
+                  </div>
+                </div>
+
+                <div
+                  class="mt-2 px-2 py-0.5 rounded-full bg-slate-900/95 border border-slate-700/80 text-[9px] text-slate-300">
+                  {{ profile?.exam_track === 'OLEVEL' ? 'O-Level Track' : 'CCC Track' }}
+                </div>
+              </div>
+
+              <!-- Points + Text -->
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-col gap-1">
+                  <h2 class="text-sm sm:text-base font-semibold tracking-tight">
+                    {{ profile?.exam_track === 'OLEVEL'
+                    ? 'O-Level Test Journey'
+                    : 'CCC Test Journey'
+                    }}
+                  </h2>
+                  <p class="text-[11px] sm:text-[12px] text-slate-400">
+                    Earn points by scoring well in tests. Higher points unlock better badges!
+                  </p>
+                </div>
+
+                <!-- Points Display -->
+                <div class="mt-3 sm:mt-4">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-2xl sm:text-3xl font-bold text-white">{{ userState?.total_points || 0 }}</span>
+                    <span class="text-xs text-slate-400 uppercase tracking-widest">Points</span>
+                  </div>
+                  <div class="h-1.5 rounded-full bg-slate-800/80 border border-slate-700/80 overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-sky-400 to-emerald-400" style="width: 100%"></div>
+                  </div>
+                </div>
+
+                <!-- Next Tier Info -->
+                <div v-if="nextBadgeTier" class="mt-2 text-[10px] text-slate-400 flex items-center gap-1.5">
+                  <span>Next Tier:</span>
+                  <span :class="nextBadgeTier.color" class="font-bold">{{ nextBadgeTier.name }}</span>
+                  <span>at {{ nextBadgeTier.minPoints }} Points</span>
+                  <span v-if="pointsToNextBadge > 0">({{ pointsToNextBadge }} more needed)</span>
+                </div>
+                <div v-else class="mt-2 text-[10px] text-emerald-400 font-bold">
+                  Top Tier Reached! 💎
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Right: Small stats cards -->
+            <div class="w-full lg:w-[44%] grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+              <div
+                class="rounded-2xl bg-slate-950/90 border border-slate-700/80 px-3 py-2.5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[10px] text-slate-400">
+                    Tests completed
+                  </span>
+                  <i class="ph ph-check-circle text-xs text-emerald-300"></i>
+                </div>
+                <div class="text-sm sm:text-base font-semibold">
+                  {{ stats.testsCompleted }}
+                </div>
+                <div class="text-[9px] text-slate-500">
+                  Total attempts
+                </div>
+              </div>
+              <div
+                class="rounded-2xl bg-slate-950/90 border border-slate-700/80 px-3 py-2.5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[10px] text-slate-400">
+                    Avg score
+                  </span>
+                  <i class="ph ph-target text-xs text-sky-300"></i>
+                </div>
+                <div class="text-sm sm:text-base font-semibold">
+                  {{ stats.avgScore.toFixed(1) }}%
+                </div>
+                <div class="text-[9px] text-slate-500">
+                  Average performance
+                </div>
+              </div>
+              <div
+                class="rounded-2xl bg-slate-950/90 border border-slate-700/80 px-3 py-2.5 flex flex-col justify-between col-span-2 sm:col-span-1">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[10px] text-slate-400">
+                    Accuracy
+                  </span>
+                  <i class="ph ph-compass text-xs text-emerald-300"></i>
+                </div>
+                <div class="text-sm sm:text-base font-semibold">
+                  {{ stats.avgAccuracy.toFixed(0) }}%
+                </div>
+                <div class="text-[9px] text-slate-500">
+                  {{ stats.totalCorrect }}✔ · {{ stats.totalWrong }}✖
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Tabs -->
+          <div class="pt-1 border-t border-slate-800/80 mt-2">
+            <div class="flex items-center gap-2 mb-2">
+              <i class="ph ph-squares-four text-lg text-emerald-300"></i>
+              <h3 class="text-xs sm:text-sm font-semibold tracking-tight">Game Categories</h3>
+            </div>
+
+            <div class="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
+              <button @click="activeCategory = 'IT_TOOLS'"
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all border shrink-0"
+                :class="activeCategory === 'IT_TOOLS' ? 'bg-sky-500/20 text-sky-300 border-sky-400/50 shadow-k-glow' : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900'">
+                <i class="ph ph-desktop mr-1"></i> IT Tools
+              </button>
+              <button @click="activeCategory = 'WEB_DESIGNING'"
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all border shrink-0"
+                :class="activeCategory === 'WEB_DESIGNING' ? 'bg-purple-500/20 text-purple-300 border-purple-400/50 shadow-k-glow' : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900'">
+                <i class="ph ph-paint-brush mr-1"></i> Web Designing
+              </button>
+              <button @click="activeCategory = 'PYTHON'"
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all border shrink-0"
+                :class="activeCategory === 'PYTHON' ? 'bg-yellow-500/20 text-yellow-300 border-yellow-400/50 shadow-k-glow' : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900'">
+                <i class="ph ph-code mr-1"></i> Python
+              </button>
+              <button @click="activeCategory = 'IOT'"
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all border shrink-0"
+                :class="activeCategory === 'IOT' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50 shadow-k-glow' : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900'">
+                <i class="ph ph-wifi-high mr-1"></i> IoT
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- MIDDLE: Tests + Live + Leaderboard -->
+        <section class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1.1fr)] gap-3 sm:gap-4 lg:gap-5">
+          <!-- Left: Tests -->
+          <div
+            class="rounded-[24px] border border-white/12 bg-slate-950/90 backdrop-blur-2xl shadow-xl shadow-slate-950 flex flex-col px-3.5 sm:px-4 lg:px-5 py-3.5 sm:py-4">
+            <div class="flex items-center justify-between gap-2 mb-2.5">
+              <div class="flex items-center gap-2">
+                <i class="ph ph-game-controller-2 text-lg text-sky-300"></i>
+                <div>
+                  <h2 class="text-sm font-semibold tracking-tight">
+                    {{ getCategoryName(activeCategory) }} Tests
+                  </h2>
+                  <p class="text-[10px] text-slate-400">
+                    Select a test to play and earn points.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 text-[9px] text-slate-400">
+              <span
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-600/80 bg-slate-900/80">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                Unlocked
+              </span>
+              <span
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-slate-600/80 bg-slate-900/80">
+                <span class="h-1.5 w-1.5 rounded-full bg-slate-500"></span>
+                Locked
+              </span>
+            </div>
+
+            <div v-if="isLoadingMain" class="flex-1 flex items-center justify-center text-[11px] text-slate-400">
+              Loading tests…
+            </div>
+
+            <div v-else-if="!user"
+              class="flex-1 flex items-center justify-center text-[11px] text-slate-400 text-center px-4">
+              Login from Knobly main screen to load
+              your track and tests.
+            </div>
+
+            <div v-else class="flex-1 flex flex-col gap-3">
+              <div v-if="unlockedTestsForLevel.length === 0 && lockedTestsForLevel.length === 0"
+                class="flex-1 flex items-center justify-center text-[11px] text-slate-400 text-center px-4">
+                No tests configured for this level yet.
+                <br />
+                Ask your teacher/admin to create tests.
+              </div>
+
+              <div v-else class="space-y-2 flex-1 overflow-y-auto pr-1">
+                <!-- Unlocked -->
+                <div v-if="unlockedTestsForLevel.length > 0" class="space-y-1.5">
+                  <h3 class="text-[10px] uppercase tracking-[0.16em] text-slate-400/90 mb-1">
+                    {{ getCategoryName(activeCategory) }} TESTS
+                  </h3>
+                  <article v-for="test in unlockedTestsForLevel" :key="test.id"
+                    class="group rounded-xl border border-slate-700/80 bg-slate-900/90 hover:border-sky-400/70 hover:shadow-k-glow transition overflow-hidden">
+                    <div class="p-3 flex items-start gap-3">
+                      <div
+                        class="mt-0.5 h-9 w-9 flex items-center justify-center rounded-xl bg-sky-500/15 border border-sky-400/60 text-sky-200 text-xs font-semibold">
+                        <i class="ph"
+                          :class="{'ph-desktop': (!test.category || test.category=='IT_TOOLS'), 'ph-paint-brush': test.category=='WEB_DESIGNING', 'ph-code': test.category=='PYTHON'}"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2">
+                          <h4 class="text-xs sm:text-sm font-medium truncate">
+                            {{ test.title }}
+                          </h4>
+                          <span v-if="test.mode === 'PRACTICE'"
+                            class="px-2 py-0.5 rounded-full text-[9px] bg-slate-950/90 border border-slate-600 text-slate-200">
+                            Practice
+                          </span>
+                          <span v-else
+                            class="px-2 py-0.5 rounded-full text-[9px] bg-rose-500/10 border-rose-400/70 text-rose-200 flex items-center gap-1">
+                            <span class="h-1.5 w-1.5 rounded-full bg-rose-400 animate-pulse"></span>
+                            Live
+                          </span>
+                        </div>
+                        <div class="mt-1 flex flex-wrap items-center gap-2 text-[10px] text-slate-400">
+                          <span class="inline-flex items-center gap-1">
+                            <i class="ph ph-timer text-[11px]"></i>
+                            {{ test.duration_minutes }} min
+                          </span>
+                          <span class="inline-flex items-center gap-1">
+                            <i class="ph ph-target text-[11px]"></i>
+                            {{ test.total_marks }} marks
+                          </span>
+                        </div>
+                        <div v-if="test.mode === 'LIVE' && test.live_start"
+                          class="mt-1 text-[10px] text-amber-300 flex items-center gap-1.5">
+                          <i class="ph ph-broadcast text-[11px]"></i>
+                          {{ formatDateTime(test.live_start) }}
+                          –
+                          {{ formatDateTime(test.live_end) }}
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="px-3 pb-3 flex items-center justify-between gap-3 border-t border-slate-800/80 bg-slate-950/90">
+                      <div class="text-[10px] text-slate-400 truncate max-w-[160px] sm:max-w-[220px]">
+                        <span class="text-emerald-400 font-medium">Points: {{ test.total_marks }}</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <button type="button" @click="openTest(test)"
+                          class="px-3 py-1.5 rounded-lg text-[10px] border active:scale-[0.97] transition inline-flex items-center gap-1.5"
+                          :class="hasAttemptedTest(test.id) ? 'border-amber-400/80 bg-amber-500/20 text-amber-50 hover:bg-amber-500/30' : 'border-sky-400/80 bg-sky-500/15 text-sky-50 hover:bg-sky-500/25'">
+                          <i class="ph text-xs"
+                            :class="hasAttemptedTest(test.id) ? 'ph-arrow-clockwise' : 'ph-play'"></i>
+                          {{ hasAttemptedTest(test.id) ? 'Start Again' : 'Start' }}
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Live + Leaderboard + Badges -->
+          <div class="flex flex-col gap-3 sm:gap-4">
+            <!-- Live tests card -->
+            <div
+              class="rounded-[22px] border border-emerald-400/40 bg-slate-950/90 px-3.5 sm:px-4 py-3.5 sm:py-4 shadow-lg shadow-emerald-500/30">
+              <div class="flex items-center justify-between gap-2 mb-2.5">
+                <div class="flex items-center gap-2">
+                  <div class="relative">
+                    <span class="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span class="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-k-neon block"></span>
+                  </div>
+                  <div>
+                    <h2 class="text-sm font-semibold tracking-tight">
+                      Live & upcoming
+                    </h2>
+                    <p class="text-[10px] text-emerald-100/90">
+                      Join live tests in the given time window for extra Points.
+                    </p>
+                  </div>
+                </div>
+                <span class="text-[10px] text-emerald-200 flex items-center gap-1">
+                  <i class="ph ph-broadcast text-xs"></i>
+                  Real-time
+                </span>
+              </div>
+
+              <div v-if="isLoadingMain" class="text-[11px] text-slate-300">
+                Checking live tests…
+              </div>
+
+              <div v-else-if="liveTests.length === 0" class="text-[11px] text-slate-400">
+                No live tests scheduled right now.
+                <br />
+                When your teacher creates one, it will appear here.
+              </div>
+
+              <div v-else class="space-y-2 max-h-44 sm:max-h-52 overflow-y-auto pr-1">
+                <article v-for="test in liveTests" :key="test.id"
+                  class="rounded-xl border border-emerald-400/50 bg-slate-900/95 px-3 py-2.5 flex flex-col gap-1.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <h3 class="text-xs sm:text-[13px] font-medium">
+                      {{ test.title }}
+                    </h3>
+                    <span
+                      class="px-2 py-0.5 rounded-full text-[9px] bg-emerald-500/15 border border-emerald-400/70 text-emerald-100 flex items-center gap-1">
+                      <i class="ph ph-lightning text-[11px]"></i>
+                      {{ test.live_bonus_xp || 150 }} bonus Pts
+                    </span>
+                  </div>
+                  <div class="flex flex-wrap items-center justify-between gap-2 text-[10px] text-slate-200">
+                    <div class="flex items-center gap-1.5">
+                      <i class="ph ph-calendar-blank text-[11px]"></i>
+                      <span>{{ formatDateTime(test.live_start) }}</span>
+                      <span>–</span>
+                      <span>{{ formatDateTime(test.live_end) }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center gap-1 text-slate-200">
+                        <i class="ph ph-timer text-[11px]"></i>
+                        {{ test.duration_minutes }} min
+                      </span>
+                      <button type="button" @click="openTest(test)"
+                        class="px-2.5 py-1 rounded-lg text-[10px] border border-emerald-300/80 bg-emerald-500/20 text-emerald-50 hover:bg-emerald-500/30 active:scale-[0.97] transition inline-flex items-center gap-1.5">
+                        <i class="ph ph-play text-xs"></i>
+                        Join
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <!-- Leaderboard + badges -->
+            <div
+              class="rounded-[22px] border border-white/12 bg-slate-950/90 px-3.5 sm:px-4 py-3.5 sm:py-4 flex flex-col gap-3">
+              <!-- Leaderboard -->
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <i class="ph ph-trophy text-lg text-yellow-300"></i>
+                    <div>
+                      <h2 class="text-sm font-semibold tracking-tight">
+                        Leaderboard
+                      </h2>
+                      <p class="text-[10px] text-slate-400">
+                        Top students in your track (Points based).
+                      </p>
+                    </div>
+                  </div>
+                  <span class="text-[10px] text-slate-400">
+                    Track:
+                    {{ profile?.exam_track === 'OLEVEL' ? 'O-Level' : 'CCC' }}
+                  </span>
+                </div>
+
+                <div v-if="isLoadingMain" class="flex items-center justify-center text-[11px] text-slate-400 py-3">
+                  Loading ranks…
+                </div>
+
+                <div v-else-if="leaderboard.length === 0"
+                  class="flex items-center justify-center text-[11px] text-slate-400 text-center py-3 px-2">
+                  Once students start playing, top ranks will appear here.
+                </div>
+
+                <div v-else class="max-h-36 overflow-y-auto pr-1">
+                  <ol class="space-y-1.5 text-xs">
+                    <li v-for="(row, index) in leaderboard" :key="row.user_id"
+                      class="flex items-center justify-between gap-3 rounded-xl px-2.5 py-1.5 border" :class="[
+                        index === 0
+                          ? 'bg-yellow-500/15 border-yellow-400/70 shadow-k-neon'
+                          : index === 1
+                          ? 'bg-slate-700/35 border-slate-300/80'
+                          : index === 2
+                          ? 'bg-amber-500/15 border-amber-300/70'
+                          : 'bg-slate-900/90 border-slate-700/80'
+                      ]">
+                      <div class="flex items-center gap-2.5">
+                        <div class="h-6 w-6 rounded-full flex items-center justify-center text-[11px] font-semibold"
+                          :class="[
+                            index === 0
+                              ? 'bg-yellow-300 text-slate-900'
+                              : index === 1
+                              ? 'bg-slate-200 text-slate-900'
+                              : index === 2
+                              ? 'bg-amber-300 text-slate-900'
+                              : 'bg-slate-800 text-slate-100'
+                          ]">
+                          {{ index + 1 }}
+                        </div>
+                        <div class="flex flex-col">
+                          <span class="font-medium truncate max-w-[120px] sm:max-w-[160px]">
+                            {{ row.full_name || 'Player' }}
+                          </span>
+                          <span class="text-[10px] text-slate-300">
+                            {{ row.total_points || 0 }} Points
+                          </span>
+                        </div>
+                      </div>
+                      <div class="text-right text-[10px] text-slate-300">
+                        <div>Track #{{ row.track_rank }}</div>
+                      </div>
+                    </li>
+                  </ol>
+                </div>
+              </div>
+
+              <!-- Badges -->
+              <div class="pt-2 border-t border-slate-800/80 mt-1">
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                  <div class="flex items-center gap-2">
+                    <i class="ph ph-seal-check text-lg text-emerald-300"></i>
+                    <div>
+                      <h3 class="text-xs font-semibold text-slate-50">
+                        Badges
+                      </h3>
+                      <p class="text-[10px] text-slate-400">
+                        Simple gamification: more badges = more consistency.
+                      </p>
+                    </div>
+                  </div>
+                  <span class="text-[10px] text-slate-400">
+                    {{ badges.length }} earned
+                  </span>
+                </div>
+
+                <div v-if="badges.length === 0" class="text-[10px] text-slate-500">
+                  Play more tests to start unlocking badges.
+                </div>
+
+                <div v-else class="grid grid-cols-2 gap-2 text-[10px]">
+                  <div v-for="badge in badges" :key="badge.id"
+                    class="rounded-xl border border-emerald-400/60 bg-emerald-500/10 px-2.5 py-1.5 flex flex-col gap-0.5">
+                    <span class="font-semibold text-emerald-100 flex items-center gap-1">
+                      <i class="ph" :class="badge.badge_icon || 'ph-medal'"></i>
+                      {{ badge.badge_name }}
+                    </span>
+                    <span class="text-emerald-200">
+                      {{ badge.description || 'Points bonus badge' }}
+                    </span>
+                    <span class="text-[9px] text-emerald-100 mt-0.5">
+                      +{{ badge.xp_reward || 0 }} Pts
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HISTORY SECTION -->
+        <section
+          class="rounded-[24px] border border-white/12 bg-slate-950/90 backdrop-blur-2xl shadow-xl shadow-slate-950 px-3.5 sm:px-4 lg:px-5 py-3.5 sm:py-4 mb-4">
+          <div class="flex items-center justify-between gap-2 mb-2.5">
+            <div class="flex items-center gap-2">
+              <i class="ph ph-clock-counter-clockwise text-lg text-sky-300"></i>
+              <div>
+                <h2 class="text-sm font-semibold tracking-tight">
+                  Recent attempts
+                </h2>
+                <p class="text-[10px] text-slate-400">
+                  See your latest submitted tests and performance.
+                </p>
+              </div>
+            </div>
+            <button type="button" @click="reloadAll"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-600/80 bg-slate-900/90 text-[10px] text-slate-200 hover:bg-slate-800 active:scale-95 transition">
+              <i class="ph ph-arrow-clockwise text-xs"></i>
+              Refresh
+            </button>
+          </div>
+
+          <div v-if="attemptHistory.length === 0" class="text-[11px] text-slate-400 text-center py-4">
+            No attempts yet.
+            <span class="block text-[10px] text-slate-500 mt-1">
+              When you complete tests, they will appear here.
+            </span>
+          </div>
+
+          <div v-else class="space-y-2 max-h-56 overflow-y-auto pr-1">
+            <div v-for="row in attemptHistory" :key="row.id"
+              class="rounded-2xl border border-slate-700/80 bg-slate-950/95 px-3 py-2 flex items-start justify-between gap-2">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <h3 class="text-[11px] font-medium text-slate-50 truncate max-w-[180px]">
+                    {{ row.test_title }}
+                  </h3>
+                  <span class="px-1.5 py-0.5 rounded-full text-[9px] border" :class="row.status === 'SUBMITTED'
+                      ? 'border-emerald-400/80 bg-emerald-500/10 text-emerald-100'
+                      : row.status === 'AUTO_SUBMITTED'
+                      ? 'border-amber-400/80 bg-amber-500/10 text-amber-100'
+                      : 'border-slate-500/80 bg-slate-800/80 text-slate-200'">
+                    {{ row.status }}
+                  </span>
+                </div>
+                <div class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[9px] text-slate-400">
+                  <span>Score: {{ row.score }}/{{ row.total_marks }}</span>
+                  <span>Acc: {{ (row.accuracy || 0).toFixed(0) }}%</span>
+                  <span>Time: {{ row.durationLabel }}</span>
+                </div>
+                <div class="mt-0.5 text-[9px] text-slate-500">
+                  {{ formatDateTime(row.submitted_at || row.started_at) }}
+                </div>
+              </div>
+              <div class="flex flex-col items-end gap-1">
+                <button type="button" @click="goToReview(row)"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] border border-slate-600/80 bg-slate-900 hover:bg-slate-800 active:scale-[0.98] transition">
+                  <i class="ph ph-eye text-[11px]"></i>
+                  Review
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-white/10 bg-slate-950/90 text-[10px] sm:text-[11px] text-slate-400">
+      <div class="max-w-6xl mx-auto px-3 sm:px-4 lg:px-5 py-2 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-1.5">
+          <i class="ph ph-info text-xs"></i>
+          <span>
+            Points, levels & ranks are powered by your Supabase exam tables.
+          </span>
+        </div>
+        <button type="button" @click="goBackToKnobly"
+          class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-600/80 bg-slate-900/90 text-[10px] text-slate-200 hover:bg-slate-800 active:scale-95 transition">
+          <i class="ph ph-arrow-left text-xs"></i>
+          <span>Back to Knobly OS</span>
+        </button>
+      </div>
+    </footer>
+
+    <!-- Active test modal -->
+    <div v-if="activeTest" class="fixed inset-0 z-30 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm">
+      <div
+        class="w-full max-w-md mx-3 rounded-2xl border border-white/15 bg-slate-950/95 p-4 sm:p-5 shadow-2xl shadow-sky-500/40">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <i class="ph ph-play-circle text-lg text-sky-300"></i>
+              <h3 class="text-sm sm:text-base font-semibold">
+                {{ activeTest.title }}
+              </h3>
+            </div>
+            <p class="mt-1 text-[11px] text-slate-400">
+              The test will open in a full screen exam mode with timer and questions.
+            </p>
+          </div>
+          <button type="button" @click="activeTest = null"
+            class="h-8 w-8 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-300 hover:bg-slate-800 active:scale-95 transition">
+            <i class="ph ph-x text-sm"></i>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-[11px] text-slate-200 mb-4">
+          <div class="rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 flex items-center justify-between">
+            <span>Duration</span>
+            <span class="font-semibold">{{ activeTest.duration_minutes }} min</span>
+          </div>
+          <div class="rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 flex items-center justify-between">
+            <span>Marks</span>
+            <span class="font-semibold">{{ activeTest.total_marks }}</span>
+          </div>
+          <div class="rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 flex items-center justify-between">
+            <span>Points</span>
+            <span class="font-semibold text-emerald-400">{{ activeTest.total_marks }}</span>
+          </div>
+          <div class="rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 flex items-center justify-between">
+            <span>Mode</span>
+            <span class="font-semibold capitalize">
+              {{ activeTest.mode.toLowerCase() }}
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-[10px] text-slate-400 mb-3">
+          <span>
+            Test play page: <code>test-play.html?test_id=...</code>
+          </span>
+        </div>
+
+        <div class="flex items-center justify-end gap-2">
+          <button type="button" @click="activeTest = null"
+            class="px-3.5 py-1.5 rounded-xl border border-slate-600 bg-slate-900 text-[11px] text-slate-300 hover:bg-slate-800 active:scale-95 transition">
+            Close
+          </button>
+          <button type="button" @click="goToPlayPage(activeTest)"
+            class="px-4 py-1.5 rounded-xl border border-sky-400/80 bg-sky-500/25 text-[11px] text-sky-50 hover:bg-sky-500/35 active:scale-95 transition inline-flex items-center gap-1.5">
+            <i class="ph ph-arrow-right text-xs"></i>
+            Start test
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Track choose overlay -->
+    <div v-if="user && (!profile || !profile.exam_track)"
+      class="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
+      <div
+        class="w-full max-w-sm mx-4 rounded-2xl border border-white/15 bg-slate-950/95 p-5 shadow-2xl shadow-emerald-500/30">
+        <h2 class="text-base font-semibold mb-1">
+          Which course are you preparing for?
+        </h2>
+        <p class="text-[11px] text-slate-400 mb-4">
+          This setting will decide your exam track. If you choose the wrong one,
+          your teacher/admin can change it later.
+        </p>
+
+        <div class="space-y-2.5 mb-2">
+          <button type="button" @click="setTrack('OLEVEL')" :disabled="trackSaving"
+            class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-sky-400/70 bg-sky-500/15 hover:bg-sky-500/25 text-left text-[12px] text-sky-50 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed transition">
+            <div>
+              <div class="font-semibold text-[13px]">
+                O-Level Student
+              </div>
+              <div class="text-[10px] text-sky-100/90">
+                Full gamified test track for O-Level computer course.
+              </div>
+            </div>
+            <i class="ph ph-arrow-right text-sm"></i>
+          </button>
+
+          <button type="button" @click="setTrack('CCC')" :disabled="trackSaving"
+            class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-emerald-400/70 bg-emerald-500/15 hover:bg-emerald-500/25 text-left text-[12px] text-emerald-50 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed transition">
+            <div>
+              <div class="font-semibold text-[13px]">
+                CCC Student
+              </div>
+              <div class="text-[10px] text-emerald-100/90">
+                Focused practice and tests for NIELIT CCC course.
+              </div>
+            </div>
+            <i class="ph ph-arrow-right text-sm"></i>
+          </button>
+        </div>
+
+        <p v-if="trackSaving" class="text-[10px] text-sky-300 mt-1 flex items-center gap-1">
+          <i class="ph ph-spinner-gap text-xs animate-spin"></i>
+          Saving your track, please wait…
+        </p>
+
+        <p v-if="trackError" class="text-[10px] text-rose-300 mt-2">
+          Error: {{ trackError }}
+        </p>
+
+        <p v-else class="text-[10px] text-slate-500 mt-2">
+          If you are not sure, ask your teacher before selecting a track.
+        </p>
+      </div>
+    </div>
+  </div>
+  <!-- JS: Supabase + Vue + Lenis -->
+  <script type="module">
+    import { createApp, ref, reactive, computed, onMounted } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+    import { auth, db } from './firebase-config.js';
+    import {
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import {
+      collection,
+      getDocs,
+      getDoc,
+      doc,
+      setDoc,
+      updateDoc,
+      query,
+      where,
+      orderBy,
+      limit,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const app = createApp({
+      setup() {
+        const user = ref(null);
+        const profile = ref(null);
+        const userState = ref(null);
+
+
+
+        const availableTests = ref([]);
+        const lockedTests = ref([]);
+        const liveTests = ref([]);
+        const leaderboard = ref([]);
+        const badges = ref([]);
+        const attemptHistory = ref([]);
+        const attemptedTestIds = ref(new Set());
+
+        const isLoadingUser = ref(true);
+        const isLoadingMain = ref(true);
+
+        const activeTest = ref(null);
+
+        const trackSaving = ref(false);
+        const trackError = ref("");
+
+        const stats = reactive({
+          testsCompleted: 0,
+          avgScore: 0,
+          avgAccuracy: 0,
+          totalCorrect: 0,
+          totalWrong: 0,
+        });
+
+        // Avatar initials
+        const avatarInitials = computed(() => {
+          if (!profile.value || !profile.value.full_name) return "ST";
+          const parts = profile.value.full_name.trim().split(/\s+/);
+          const first = parts[0]?.[0] || "";
+          const second = parts[1]?.[0] || "";
+          return (first + second).toUpperCase();
+        });
+
+
+
+
+
+        const activeCategory = ref('IT_TOOLS');
+
+        // REVISED BADGE SYSTEM: RANK BASED (Gold for Rank 1, Silver for Rank 2, Bronze for Rank 3)
+        const currentBadge = computed(() => {
+          if (!user.value || leaderboard.value.length === 0) return null;
+
+          const myRankIndex = leaderboard.value.findIndex(u => u.user_id === user.value.uid);
+          if (myRankIndex === -1) return null; // Not in top 20 or not visible
+
+          const rank = myRankIndex + 1;
+          if (rank === 1) return { name: 'Gold', icon: 'ph-medal', color: 'text-yellow-400', border: 'border-yellow-400/50', bg: 'bg-yellow-500/10' };
+          if (rank === 2) return { name: 'Silver', icon: 'ph-medal', color: 'text-slate-300', border: 'border-slate-400/50', bg: 'bg-slate-400/10' };
+          if (rank === 3) return { name: 'Bronze', icon: 'ph-medal', color: 'text-amber-600', border: 'border-amber-600/50', bg: 'bg-amber-600/10' };
+
+          return null; // No badge for Rank 4+
+        });
+
+        // Deprecated helpers for compatibility
+        const nextBadgeTier = computed(() => null);
+        const pointsToNextBadge = computed(() => 0);
+
+        // Category Name Helper
+        function getCategoryName(cat) {
+          const map = {
+            'IT_TOOLS': 'IT Tools & Network',
+            'WEB_DESIGNING': 'Web Designing',
+            'PYTHON': 'Python Programming',
+            'IOT': 'IoT (Internet of Things)'
+          };
+          return map[cat] || cat;
+        }
+
+        // Filter tests by Category - Unlocked (Active and NOT Locked)
+        const unlockedTestsForLevel = computed(() =>
+          availableTests.value.filter(t => (t.category || 'IT_TOOLS') === activeCategory.value && !t.is_locked)
+        );
+
+        // Locked Tests (Active but Locked by Admin)
+        const lockedTestsForLevel = computed(() =>
+          availableTests.value.filter(t => (t.category || 'IT_TOOLS') === activeCategory.value && t.is_locked)
+        );
+
+        // Format date
+        function formatDateTime(value) {
+          if (!value) return "-";
+          return new Date(value).toLocaleString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        }
+
+        // Check if user has already attempted a test
+        function hasAttemptedTest(testId) {
+          return attemptedTestIds.value.has(testId);
+        }
+
+        // Modal open
+        function openTest(test) {
+          activeTest.value = test;
+          goToPlayPage(test);
+        }
+
+        // Go to test play page
+        function goToPlayPage(test) {
+          if (!test) return;
+          const url = new URL(window.location.href);
+          url.pathname = url.pathname.replace(/[^/]+$/, "test-play.html");
+          url.searchParams.set("test_id", test.id);
+          window.location.href = url.toString();
+        }
+
+        // Go to review page
+        function goToReview(row) {
+          if (!row) return;
+          const url = new URL(window.location.href);
+          url.pathname = url.pathname.replace(/[^/]+$/, "review.html");
+          url.searchParams.set("attempt_id", row.id);
+          window.location.href = url.toString();
+        }
+
+        // Back to Knobly
+        function goBackToKnobly() {
+          window.location.href = "index.html";
+        }
+
+        // --------------------------------------------------
+        // LOAD USER + WHOLE DASHBOARD
+        // --------------------------------------------------
+        async function loadUser() {
+          isLoadingUser.value = true;
+          isLoadingMain.value = true;
+
+          // Handled via onAuthStateChanged in onMounted
+        }
+
+        async function initData() {
+          if (!user.value) return;
+          try {
+            await loadProfile();
+            await loadUserState();
+            // await loadLevels(); // Removed
+            await loadTests();
+            await loadLiveTests();
+            await loadLeaderboard();
+            await loadBadges();
+            await loadAttempts();
+            calculateStats();
+          } catch (e) { console.error(e); }
+          isLoadingMain.value = false;
+        }
+
+        // --------------------------------------------------
+        // PROFILE
+        // --------------------------------------------------
+        async function loadProfile() {
+          if (!user.value) return;
+          try {
+            const snap = await getDoc(doc(db, 'profiles', user.value.uid));
+            if (snap.exists()) {
+              profile.value = { id: snap.id, ...snap.data() };
+            }
+          } catch (e) { console.error("Profile error:", e); }
+        }
+
+        // --------------------------------------------------
+        // SET TRACK (FIRST TIME)
+        // --------------------------------------------------
+        async function setTrack(trackId) {
+          if (!user.value) {
+            trackError.value = "User not logged in.";
+            return;
+          }
+          trackSaving.value = true;
+          trackError.value = "";
+
+          try {
+            await updateDoc(doc(db, 'profiles', user.value.uid), { exam_track: trackId });
+            await loadProfile();
+            await loadUserState(); // Ensure state exists or update it
+            // await loadLevels(); // Removed as levels are deprecated
+            await loadTests();
+            await loadLiveTests();
+            await loadLeaderboard();
+          } catch (e) {
+            console.error("setTrack error:", e);
+            trackError.value = e.message ?? "Unknown error";
+          } finally {
+            trackSaving.value = false;
+          }
+        }
+
+        // --------------------------------------------------
+        // USER STATE (Points, LEVEL, STREAK)
+        // --------------------------------------------------
+        async function loadUserState() {
+          if (!user.value) return;
+
+          try {
+            const q = query(collection(db, 'exam_user_state'), where('user_id', '==', user.value.uid));
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+              // Creating initial state if missing
+              const trackId = profile.value?.exam_track ?? null;
+              const newState = {
+                user_id: user.value.uid,
+                track_id: trackId,
+                total_points: 0,
+                streak_days: 0,
+                created_at: new Date().toISOString()
+              };
+              await setDoc(doc(collection(db, 'exam_user_state')), newState); // Auto ID
+              userState.value = newState;
+            } else {
+              const stDoc = snap.docs[0];
+              userState.value = stDoc.data();
+
+              // FIX: Update track_id if it's missing but profile has it
+              if (!userState.value.track_id && profile.value?.exam_track) {
+                await updateDoc(stDoc.ref, { track_id: profile.value.exam_track });
+                userState.value.track_id = profile.value.exam_track;
+              }
+            }
+          } catch (e) {
+            console.error("loadUserState error:", e);
+          }
+        }
+
+
+
+        // --------------------------------------------------
+        // TESTS (UNLOCKED + LOCKED)
+        // --------------------------------------------------
+        async function loadTests() {
+          if (!profile.value?.exam_track) return;
+          try {
+            const q = query(collection(db, 'exam_tests'), where('track_id', '==', profile.value.exam_track), where('is_active', '==', true));
+            const snap = await getDocs(q);
+            let tests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+            // With new system, all active tests are "available".
+            // We can add logic here if we eventually want to lock tests based on points, but for now open all.
+
+            availableTests.value = tests.sort((a, b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0));
+            lockedTests.value = [];
+
+          } catch (e) {
+            console.error("loadTests error:", e);
+          }
+        }
+
+        // --------------------------------------------------
+        // LIVE TESTS
+        // --------------------------------------------------
+        async function loadLiveTests() {
+          if (!profile.value?.exam_track) return;
+
+          try {
+            // mode = LIVE. Firestore can handle date comparison but string format matters.
+            // Storing checks in client side for simplicity.
+            const q = query(collection(db, 'exam_tests'),
+              where('track_id', '==', profile.value.exam_track),
+              where('mode', '==', 'LIVE'),
+              where('is_active', '==', true)
+            );
+            const snap = await getDocs(q);
+            const allLive = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+            const now = new Date();
+            liveTests.value = allLive.filter((t) => {
+              if (!t.live_end) return false;
+              return new Date(t.live_end) > now;
+            }).sort((a, b) => new Date(a.live_start) - new Date(b.live_start));
+
+          } catch (e) {
+            console.error("loadLiveTests error:", e);
+          }
+        }
+
+        // --------------------------------------------------
+        // LEADERBOARD (reads from exam_user_state where points are saved)
+        // --------------------------------------------------
+        async function loadLeaderboard() {
+          if (!profile.value?.exam_track) return;
+
+          try {
+            // Query exam_user_state for users with the same track
+            const q = query(collection(db, 'exam_user_state'), where('track_id', '==', profile.value.exam_track));
+            const snap = await getDocs(q);
+            const users = snap.docs.map(d => ({ id: d.id, user_id: d.data().user_id, total_points: d.data().total_points || 0 }));
+
+            // Sort by total_points descending and assign rank
+            users.sort((a, b) => b.total_points - a.total_points);
+
+            // Fetch profile names for top 20
+            const topUsers = users.slice(0, 20);
+            const profilePromises = topUsers.map(async (u, idx) => {
+              try {
+                const pSnap = await getDoc(doc(db, 'profiles', u.user_id));
+                return {
+                  ...u,
+                  full_name: pSnap.exists() ? pSnap.data().full_name : 'Unknown',
+                  track_rank: idx + 1
+                };
+              } catch (e) {
+                return { ...u, full_name: 'Unknown', track_rank: idx + 1 };
+              }
+            });
+
+            leaderboard.value = await Promise.all(profilePromises);
+          } catch (e) {
+            console.error("loadLeaderboard error:", e);
+          }
+        }
+
+        // --------------------------------------------------
+        // BADGES
+        // --------------------------------------------------
+        async function loadBadges() {
+          if (!user.value) return;
+
+          try {
+            const q = query(collection(db, 'exam_user_badges'), where('user_id', '==', user.value.uid));
+            const snap = await getDocs(q);
+            const userBadges = snap.docs.map(d => d.data());
+
+            if (userBadges.length === 0) { badges.value = []; return; }
+
+            // fetch badge details
+            const badgeIds = userBadges.map(ub => ub.badge_id);
+            // Firestore 'in' limitation 10. if > 10, batch or fetch all badges.
+            // Fetching all badges is safer/easier if total badges count is small (<100).
+            const bSnap = await getDocs(collection(db, 'exam_badges'));
+            const allBadges = bSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+            badges.value = allBadges.filter(b => badgeIds.includes(b.id));
+
+          } catch (e) {
+            console.error("loadBadges error:", e);
+          }
+        }
+
+        // --------------------------------------------------
+        // ATTEMPT HISTORY
+        // --------------------------------------------------
+        async function loadAttempts() {
+          if (!user.value) return;
+
+          try {
+            // Removed orderBy to avoid composite index requirement - sort client-side
+            const q = query(collection(db, 'exam_attempts'), where('user_id', '==', user.value.uid));
+            const snap = await getDocs(q);
+            const attempts = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+              .sort((a, b) => (b.submitted_at?.seconds || 0) - (a.submitted_at?.seconds || 0))
+              .slice(0, 20);
+
+            // Store all attempted test IDs for quick lookup
+            attemptedTestIds.value = new Set(snap.docs.map(d => d.data().test_id));
+
+            // Need test titles. Collect test IDs.
+            const tIds = [...new Set(attempts.map(a => a.test_id))];
+
+            // We likely have tests loaded in availableTests/lockedTests.
+            // If not, fetch.
+            // Let's use available info locally + fetch if missing.
+            let testMap = {};
+            [...availableTests.value, ...lockedTests.value].forEach(t => testMap[t.id] = t);
+
+            // For any missing, fetch doc?
+            // Optimization: just display ID if missing or fetch.
+            // Let's rely on cache or fetch individual if needed (rare if dashboard loads tests).
+            // Actually, attempts logic might include old tests or deleted tests?
+
+            attemptHistory.value = attempts.map(row => {
+              const t = testMap[row.test_id] || { title: `Test #${row.test_id.substring(0, 6)}...` };
+              return {
+                id: row.id,
+                test_title: t.title,
+                total_marks: t.total_marks || row.score || 0,
+                durationLabel: t.duration_minutes
+                  ? `${t.duration_minutes} min`
+                  : "-",
+                status: row.status,
+                score: row.score,
+                accuracy: row.accuracy || 0,
+                submitted_at: row.submitted_at,
+                started_at: row.started_at,
+              };
+            });
+          } catch (e) {
+            console.error("loadAttempts error:", e);
+          }
+        }
+
+        // --------------------------------------------------
+        // STATS CALCULATION
+        // --------------------------------------------------
+        function calculateStats() {
+          if (!attemptHistory.value.length) {
+            stats.testsCompleted = 0; stats.avgScore = 0; stats.avgAccuracy = 0; stats.totalCorrect = 0; stats.totalWrong = 0;
+            return;
+          }
+
+          let totalScore = 0;
+          let totalAcc = 0;
+          let correct = 0;
+          let wrong = 0;
+
+          attemptHistory.value.forEach((row) => {
+            totalScore += row.score || 0;
+            totalAcc += row.accuracy || 0;
+            const marks = row.total_marks || 0;
+            const correctForTest = Math.round((row.accuracy / 100) * marks);
+            correct += correctForTest;
+            wrong += Math.max(0, marks - correctForTest);
+          });
+
+          const n = attemptHistory.value.length;
+          stats.testsCompleted = n;
+          stats.avgScore = n ? totalScore / n : 0;
+          stats.avgAccuracy = n ? totalAcc / n : 0;
+          stats.totalCorrect = correct;
+          stats.totalWrong = wrong;
+        }
+
+        // --------------------------------------------------
+        // RELOAD ALL
+        // --------------------------------------------------
+        async function reloadAll() {
+          if (!user.value) return;
+          isLoadingMain.value = true;
+          try {
+            await initData();
+          } catch (e) {
+            console.error("reloadAll error:", e);
+          } finally {
+            isLoadingMain.value = false;
+          }
+        }
+
+        // --------------------------------------------------
+        // ON MOUNT – Lenis + initial load
+        // --------------------------------------------------
+        onMounted(async () => {
+          try {
+            const L = window.Lenis || (typeof Lenis !== "undefined" ? Lenis : null);
+            if (L) {
+              const lenis = new L({ smooth: true });
+              const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+              requestAnimationFrame(raf);
+            }
+          } catch (e) { console.warn("Lenis init failed (ignored):", e); }
+
+          onAuthStateChanged(auth, async (u) => {
+            user.value = u;
+            isLoadingUser.value = false;
+            if (u) { await initData(); }
+          });
+        });
+
+        // Expose to template
+        return {
+          user, profile, userState, availableTests, lockedTests, liveTests, leaderboard, badges, attemptHistory, activeTest,
+          isLoadingUser, isLoadingMain, stats, avatarInitials,
+          activeCategory, currentBadge, nextBadgeTier, pointsToNextBadge, getCategoryName,
+          unlockedTestsForLevel, lockedTestsForLevel, openTest, goToPlayPage, goToReview, goBackToKnobly,
+          reloadAll, setTrack, trackSaving, trackError, formatDateTime, hasAttemptedTest,
+        };
+      },
+    });
+
+    app.mount("#app");
+  </script>
+
+</body>
+
+</html>

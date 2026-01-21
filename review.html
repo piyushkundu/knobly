@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Knobly | Exam Analysis</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Outfit", "system-ui", "sans-serif"],
+          },
+          colors: {
+            knobly: {
+              bg: "#020617",
+              panel: "rgba(15,23,42,0.96)",
+              neon: "#22c55e",
+              blue: "#38bdf8",
+            },
+          },
+          boxShadow: {
+            "k-soft": "0 24px 80px rgba(15,23,42,0.95)",
+            "k-card": "0 18px 40px rgba(15,23,42,0.85)",
+            "k-glow-green": "0 0 35px rgba(16,185,129,0.45)",
+            "k-glow-red": "0 0 35px rgba(248,113,113,0.45)",
+            "k-glow-sky": "0 0 35px rgba(56,189,248,0.4)",
+          },
+          backgroundImage: {
+            "k-grid":
+              "radial-gradient(circle at 1px 1px, rgba(148,163,184,0.16) 1px, transparent 0)",
+            "k-radial":
+              "radial-gradient(circle at top, rgba(56,189,248,0.2), transparent 60%)",
+          },
+        },
+      },
+    };
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: "Outfit", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: #020617;
+      -webkit-font-smoothing: antialiased;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+    }
+
+    *::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.6);
+      border-radius: 999px;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-slate-100 overflow-x-hidden">
+
+  <div class="fixed inset-0 -z-10">
+    <div class="absolute inset-0 bg-slate-950"></div>
+    <div class="absolute inset-0 bg-k-grid bg-[size:40px_40px] opacity-40 mix-blend-soft-light"></div>
+    <div class="absolute inset-x-0 top-0 h-80 bg-gradient-to-b from-sky-500/15 via-slate-900/40 to-transparent"></div>
+    <div class="absolute -right-24 bottom-0 h-72 w-72 bg-emerald-500/10 blur-3xl rounded-full"></div>
+    <div class="absolute -left-24 top-32 h-72 w-72 bg-rose-500/12 blur-3xl rounded-full"></div>
+  </div>
+
+  <div id="loadingScreen" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-950">
+    <div class="flex flex-col items-center gap-3">
+      <div class="relative">
+        <div class="h-12 w-12 border-4 border-sky-500/25 border-t-sky-400 rounded-full animate-spin"></div>
+        <div class="absolute inset-2 rounded-full bg-gradient-to-tr from-sky-500/20 to-emerald-400/10 blur-sm"></div>
+      </div>
+      <p class="text-xs text-sky-300 font-medium tracking-[0.25em] uppercase animate-pulse">
+        Analyzing result
+      </p>
+    </div>
+  </div>
+
+  <header class="fixed top-0 left-0 right-0 z-30 border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-2xl">
+    <div class="max-w-6xl mx-auto px-3 sm:px-5 py-3 sm:py-3.5 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <button onclick="window.location.href='dashboard.html'"
+          class="h-9 w-9 sm:h-10 sm:w-10 rounded-2xl border border-slate-700 bg-slate-900 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition">
+          <i class="ph ph-arrow-left text-lg"></i>
+        </button>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm sm:text-base font-semibold text-white truncate">
+              Performance Analysis
+            </h1>
+            <span id="statusChip"
+              class="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest bg-emerald-500/10 border border-emerald-400/60 text-emerald-300 flex items-center gap-1">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+              Completed
+            </span>
+          </div>
+          <p id="examTitle" class="text-[10px] sm:text-[11px] text-slate-400 truncate max-w-xs sm:max-w-lg">
+            Loading exam details...
+          </p>
+        </div>
+      </div>
+
+      <div class="hidden sm:flex items-center gap-3 text-[10px] text-slate-400">
+        <div class="flex items-center gap-1">
+          <i class="ph ph-clock text-xs text-sky-300"></i>
+          <span id="examMetaTime">-- min paper</span>
+        </div>
+        <span class="h-4 w-px bg-slate-700/70"></span>
+        <div class="flex items-center gap-1">
+          <i class="ph ph-lightning text-xs text-emerald-300"></i>
+          <span id="examMetaFinish">Finished in --</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="mainContent" class="max-w-6xl mx-auto px-3 sm:px-5 pt-24 sm:pt-28 pb-10 space-y-6 opacity-0 translate-y-4">
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      <div
+        class="relative rounded-3xl bg-gradient-to-br from-slate-900/95 to-slate-950/95 border border-slate-700/70 shadow-k-card overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-tr from-sky-500/20 via-transparent to-transparent opacity-70"></div>
+        <div class="relative p-4 sm:p-5 flex flex-col justify-between gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[10px] font-semibold tracking-[0.22em] text-slate-400 uppercase">
+              Score
+            </span>
+            <i class="ph ph-chart-bar text-lg text-sky-300/90"></i>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span id="statScore" class="text-2xl sm:text-3xl font-bold text-white">0</span>
+            <span class="text-xs sm:text-sm text-slate-400">/ <span id="statTotalMarks">0</span></span>
+          </div>
+          <p class="text-[10px] text-slate-500">
+            <span id="statRankLabel">Evaluating...</span>
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="relative rounded-3xl bg-gradient-to-br from-slate-900/95 to-slate-950/95 border border-slate-700/70 shadow-k-card overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500/25 via-transparent to-transparent opacity-70">
+        </div>
+        <div class="relative p-4 sm:p-5 flex flex-col justify-between gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[10px] font-semibold tracking-[0.22em] text-slate-400 uppercase">
+              Accuracy
+            </span>
+            <i class="ph ph-target text-lg text-emerald-300/90"></i>
+          </div>
+          <div id="statAccuracy" class="text-2xl sm:text-3xl font-bold text-emerald-400">
+            0%
+          </div>
+          <p class="text-[10px] text-slate-500">
+            Correct answers vs total attempted.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="relative rounded-3xl bg-gradient-to-br from-slate-900/95 to-slate-950/95 border border-emerald-500/40 shadow-k-card overflow-hidden">
+        <div class="absolute inset-0 bg-k-radial opacity-70"></div>
+        <div class="relative p-4 sm:p-5 flex flex-col justify-between gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[10px] font-semibold tracking-[0.22em] text-slate-400 uppercase">
+              Correct
+            </span>
+            <div
+              class="h-7 w-7 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-300">
+              <i class="ph ph-check-bold text-xs"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-3xl font-bold text-emerald-300">
+            <span id="statCorrect">0</span>
+          </div>
+          <p class="text-[10px] text-slate-500">
+            Fully correct objective questions.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="relative rounded-3xl bg-gradient-to-br from-slate-900/95 to-slate-950/95 border border-rose-500/40 shadow-k-card overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-tr from-rose-500/25 via-transparent to-transparent opacity-80">
+        </div>
+        <div class="relative p-4 sm:p-5 flex flex-col justify-between gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[10px] font-semibold tracking-[0.22em] text-slate-400 uppercase">
+              Wrong / Skipped
+            </span>
+            <div
+              class="h-7 w-7 rounded-full bg-rose-500/20 border border-rose-400 flex items-center justify-center text-rose-300">
+              <i class="ph ph-x-bold text-xs"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-3xl font-bold text-rose-300">
+            <span id="statWrong">0</span>
+          </div>
+          <p class="text-[10px] text-slate-500">
+            Includes skipped + subjective (short) questions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="flex flex-wrap items-center justify-between gap-3 px-1 pt-1">
+      <div class="flex flex-wrap items-center gap-3 text-[11px]">
+        <div class="flex items-center gap-1.5">
+          <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+          <span class="text-slate-300">Correct option</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="h-2.5 w-2.5 rounded-full bg-rose-400"></span>
+          <span class="text-slate-300">Your wrong selection</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="h-2.5 w-2.5 rounded-full bg-slate-500"></span>
+          <span class="text-slate-300">Not selected / others</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="h-2.5 w-2.5 rounded-full bg-sky-400"></span>
+          <span class="text-slate-300">Short answer / manual review</span>
+        </div>
+      </div>
+
+      <p class="text-[10px] text-slate-500">
+        Scroll down to see detailed question-wise analysis.
+      </p>
+    </section>
+
+    <section class="space-y-4">
+      <div class="flex items-center justify-between px-1">
+        <h2 class="text-sm sm:text-base font-semibold text-slate-100 flex items-center gap-2">
+          <i class="ph ph-list-magnifying-glass text-sky-400"></i>
+          Detailed Question Review
+        </h2>
+      </div>
+
+      <div id="questionsContainer" class="space-y-4 sm:space-y-5"></div>
+    </section>
+
+    <div class="pt-4 flex justify-center">
+      <button onclick="window.location.href='dashboard.html'"
+        class="px-6 sm:px-7 py-3 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white text-xs sm:text-sm font-semibold tracking-wide shadow-k-glow-sky flex items-center gap-2 active:scale-95 transition">
+        <span>Back to Knobly Dashboard</span>
+        <i class="ph ph-house text-sm"></i>
+      </button>
+    </div>
+  </main>
+
+  <script type="module">
+    import { auth, db } from "./firebase-config.js";
+    import {
+      collection, doc, getDoc, getDocs, query, where, orderBy
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const attemptId = urlParams.get("attempt_id");
+
+    const loadingScreen = document.getElementById("loadingScreen");
+    const mainContent = document.getElementById("mainContent");
+    const questionsContainer = document.getElementById("questionsContainer");
+
+    const examTitleEl = document.getElementById("examTitle");
+    const statScoreEl = document.getElementById("statScore");
+    const statTotalMarksEl = document.getElementById("statTotalMarks");
+    const statAccuracyEl = document.getElementById("statAccuracy");
+    const statCorrectEl = document.getElementById("statCorrect");
+    const statWrongEl = document.getElementById("statWrong");
+    const statRankLabelEl = document.getElementById("statRankLabel");
+    const examMetaTimeEl = document.getElementById("examMetaTime");
+    const examMetaFinishEl = document.getElementById("examMetaFinish");
+
+    async function initReview() {
+      if (!attemptId) {
+        alert("Attempt is missing. Please open the test again from dashboard.");
+        window.location.href = "dashboard.html";
+        return;
+      }
+
+      try {
+        // 1) Fetch Attempt
+        const attemptRef = doc(db, "exam_attempts", attemptId);
+        const attemptSnap = await getDoc(attemptRef);
+
+        if (!attemptSnap.exists()) {
+          throw new Error("Attempt not found");
+        }
+
+        const attempt = { id: attemptSnap.id, ...attemptSnap.data() };
+
+        // 2) Fetch Test Details (manually join)
+        const testRef = doc(db, "exam_tests", attempt.test_id);
+        const testSnap = await getDoc(testRef);
+        if (testSnap.exists()) {
+          attempt.exam_tests = { id: testSnap.id, ...testSnap.data() };
+        } else {
+          attempt.exam_tests = {};
+        }
+
+        // 3) Responses for this attempt
+        const rQ = query(collection(db, "exam_responses"), where("attempt_id", "==", attemptId));
+        const rSnap = await getDocs(rQ);
+        const responses = rSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        // 4) Questions
+        // Fetch questions for this test
+        const qQ = query(collection(db, "exam_questions"), where("test_id", "==", attempt.test_id));
+        const qSnap = await getDocs(qQ);
+
+        // Fetch Options for each question
+        const questions = await Promise.all(qSnap.docs.map(async (d) => {
+          const quest = { id: d.id, ...d.data() };
+
+          // Fetch options
+          const oQ = query(collection(db, "exam_options"), where("question_id", "==", quest.id));
+          const oSnap = await getDocs(oQ);
+          quest.exam_options = oSnap.docs.map(op => ({ id: op.id, ...op.data() }));
+
+          return quest;
+        }));
+
+        // Sort questions by ID or created_at if possible?
+        // Firestore IDs are random unless set. 
+        // We can sort by 'created_at' if available, or just keeping the query order (random-ish).
+        // If sorting needed, do it client side if field exists.
+        if (questions.length > 0 && questions[0].created_at) {
+          questions.sort((a, b) => a.created_at - b.created_at);
+        }
+
+        renderHeaderStats(attempt, questions);
+        renderQuestions(questions, responses);
+
+        // Hide loading, show content with animation
+        gsap.to(loadingScreen, {
+          opacity: 0,
+          duration: 0.5,
+          onComplete: () => {
+            loadingScreen.style.display = "none";
+          },
+        });
+        gsap.to(mainContent, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      } catch (err) {
+        console.error(err);
+        alert("Error loading analysis: " + err.message);
+        loadingScreen.style.display = "none";
+      }
+    }
+
+    function renderHeaderStats(attempt, questions) {
+      examTitleEl.textContent = attempt.exam_tests?.title || "Exam";
+
+      let totalMarks = 0;
+      questions.forEach((q) => {
+        totalMarks += q.marks || 1;
+      });
+      statTotalMarksEl.textContent = totalMarks;
+
+      const score = attempt.score || 0;
+      statScoreEl.textContent = score;
+
+      const acc = typeof attempt.accuracy === "number"
+        ? Math.round(attempt.accuracy)
+        : 0;
+      statAccuracyEl.textContent = acc + "%";
+      if (acc >= 80) {
+        statAccuracyEl.className =
+          "text-2xl sm:text-3xl font-bold text-emerald-400";
+        statRankLabelEl.textContent = "Excellent performance.";
+      } else if (acc >= 50) {
+        statAccuracyEl.className =
+          "text-2xl sm:text-3xl font-bold text-amber-400";
+        statRankLabelEl.textContent = "Good, but can be improved.";
+      } else {
+        statAccuracyEl.className =
+          "text-2xl sm:text-3xl font-bold text-rose-400";
+        statRankLabelEl.textContent = "Keep practicing to improve your score.";
+      }
+
+      const duration = attempt.exam_tests?.duration_minutes || 0;
+      examMetaTimeEl.textContent =
+        (duration || "--") + (duration ? " min paper" : " min");
+
+      if (attempt.started_at && attempt.submitted_at) {
+        const started = new Date(attempt.started_at);
+        const submitted = new Date(attempt.submitted_at);
+        const diffMs = submitted - started;
+        const diffMin = Math.max(1, Math.round(diffMs / 60000));
+        examMetaFinishEl.textContent = `Finished in ~${diffMin} min`;
+      } else {
+        examMetaFinishEl.textContent = "Finished";
+      }
+    }
+
+    // Helper to clean up bad JSON strings in option text
+    function getCleanOptionText(text) {
+      if (!text) return "";
+      if (typeof text !== 'string') return text;
+
+      // If text looks like '{"text":"...","is_correct":true}'
+      if (text.trim().startsWith('{') && text.includes('"text"')) {
+        try {
+          const parsed = JSON.parse(text);
+          return parsed.text || text;
+        } catch (e) {
+          return text;
+        }
+      }
+      return text;
+    }
+
+    // NEW HELPER: Escape HTML characters to prevent <ol> being treated as tags
+    function escapeHtml(text) {
+      if (!text) return text;
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderQuestions(questions, responses) {
+      const respMap = {};
+      responses.forEach((r) => {
+        respMap[r.question_id] = r;
+      });
+
+      let correctCount = 0;
+      let wrongCount = 0;
+
+      questionsContainer.innerHTML = "";
+
+      questions.forEach((q, idx) => {
+        const userResp = respMap[q.id];
+        // Ensure robust type checking (case insensitive)
+        const type = (q.question_type || "").toUpperCase();
+        const isObjective = type === "MCQ" || type === "TF";
+
+        // Robustly get options, sort them by ID to prevent jumping
+        let opts = q.exam_options || [];
+        opts.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+
+        const correctOption = opts.find((o) => o.is_correct);
+
+        let statusLabel = "Skipped";
+        let statusColorClasses = "bg-slate-900 border-slate-700 text-slate-300";
+        let statusIcon = '<i class="ph ph-minus-circle text-xs sm:text-sm"></i>';
+
+        if (isObjective) {
+          if (userResp && userResp.option_id && correctOption) {
+            if (userResp.option_id === correctOption.id) {
+              statusLabel = "Correct";
+              statusColorClasses = "bg-emerald-500/10 border-emerald-400/60 text-emerald-300";
+              statusIcon = '<i class="ph ph-check-circle text-xs sm:text-sm"></i>';
+              correctCount++;
+            } else {
+              statusLabel = "Wrong";
+              statusColorClasses = "bg-rose-500/10 border-rose-400/60 text-rose-300";
+              statusIcon = '<i class="ph ph-x-circle text-xs sm:text-sm"></i>';
+              wrongCount++;
+            }
+          } else if (userResp) {
+            statusLabel = "Skipped";
+            wrongCount++;
+          } else {
+            statusLabel = "Skipped";
+            wrongCount++;
+          }
+        } else {
+          // SHORT answer
+          if (userResp && userResp.short_answer) {
+            statusLabel = "Review";
+            statusColorClasses = "bg-sky-500/10 border-sky-400/60 text-sky-300";
+            statusIcon = '<i class="ph ph-pencil-simple-line text-xs sm:text-sm"></i>';
+            wrongCount++;
+          } else {
+            statusLabel = "Skipped";
+            wrongCount++;
+          }
+        }
+
+        // OPTIONS HTML
+        let optionsHTML = "";
+        if (isObjective) {
+          if (opts.length === 0) {
+            // Fallback if options are missing from DB or RLS is blocking them
+            optionsHTML = `
+              <div class="mt-3 p-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-xs">
+                <i class="ph ph-warning-circle mr-1"></i>
+                Options failed to load. Please check database permissions (RLS) for 'exam_options'.
+              </div>
+            `;
+          } else {
+            optionsHTML += `<div class="mt-3 space-y-2">`;
+            opts.forEach((opt) => {
+              // 1. Get Clean Text (fix JSON issue)
+              const cleanText = getCleanOptionText(opt.option_text);
+              // 2. Escape HTML (fix Angular bracket issue)
+              const safeText = escapeHtml(cleanText);
+
+              let optClass = "p-3 rounded-2xl border bg-slate-900/40 text-xs sm:text-sm flex items-start gap-3 transition";
+              let icon = '<div class="mt-0.5 h-4 w-4 rounded-full border border-slate-600 flex-shrink-0"></div>';
+
+              const isSelected = userResp && userResp.option_id === opt.id;
+              const isCorrect = !!opt.is_correct;
+
+              if (isCorrect) {
+                optClass = "p-3 rounded-2xl border border-emerald-500/60 bg-emerald-500/10 text-emerald-100 flex items-start gap-3 shadow-[0_0_14px_rgba(16,185,129,0.3)]";
+                icon = '<div class="mt-0.5 h-4 w-4 rounded-full bg-emerald-500 border border-emerald-300 flex items-center justify-center text-slate-900 text-[10px]"><i class="ph-bold ph-check"></i></div>';
+              }
+
+              if (isSelected && !isCorrect) {
+                optClass = "p-3 rounded-2xl border border-rose-500/60 bg-rose-500/10 text-rose-100 flex items-start gap-3 shadow-[0_0_14px_rgba(248,113,113,0.25)]";
+                icon = '<div class="mt-0.5 h-4 w-4 rounded-full bg-rose-500 border border-rose-300 flex items-center justify-center text-white text-[10px]"><i class="ph-bold ph-x"></i></div>';
+              }
+
+              if (!isSelected && !isCorrect) {
+                optClass += " border-slate-700/60 text-slate-400/90 hover:bg-slate-900/70";
+              }
+
+              optionsHTML += `
+                <div class="${optClass}">
+                  ${icon}
+                  <span class="flex-1 leading-snug">${safeText}</span>
+                </div>
+              `;
+            });
+            optionsHTML += `</div>`;
+          }
+        } else {
+          // SHORT ANSWER
+          // Escape user answer too for security
+          const safeUserAnswer = userResp && userResp.short_answer
+            ? escapeHtml(userResp.short_answer)
+            : '<span class="text-slate-500 italic">No answer provided</span>';
+
+          optionsHTML = `
+            <div class="mt-3 grid gap-3 sm:grid-cols-2">
+              <div class="p-3 rounded-2xl border border-slate-700 bg-slate-900/70 text-xs sm:text-sm">
+                <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
+                  <i class="ph ph-user-pen text-xs text-sky-300"></i>
+                  Your answer
+                </p>
+                <p class="text-slate-200 whitespace-pre-wrap">${safeUserAnswer}</p>
+              </div>
+              <div class="p-3 rounded-2xl border border-slate-700 bg-slate-900/70 text-xs sm:text-sm">
+                <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
+                  <i class="ph ph-lightbulb-filament text-xs text-emerald-300"></i>
+                  Evaluation note
+                </p>
+                <p class="text-slate-300">
+                  Short answers are checked manually. Marks for this question may change after teacher review.
+                </p>
+              </div>
+            </div>
+          `;
+        }
+
+        const explanationHTML =
+          q.explanation && q.explanation.trim() !== ""
+            ? `
+          <div class="mt-4 pt-3 border-t border-slate-800/70">
+            <p class="text-[10px] uppercase tracking-widest text-sky-300 mb-1.5 flex items-center gap-1">
+              <i class="ph ph-info text-xs"></i>
+              Explanation
+            </p>
+            <p class="text-xs sm:text-[13px] text-slate-300 leading-relaxed">
+              ${escapeHtml(q.explanation)}
+            </p>
+          </div>
+        `
+            : "";
+
+        const difficultyLabel = q.difficulty || "EASY";
+        const difficultyColor =
+          difficultyLabel === "HARD"
+            ? "text-rose-300 bg-rose-500/10 border-rose-400/40"
+            : difficultyLabel === "MEDIUM"
+              ? "text-amber-300 bg-amber-500/10 border-amber-400/40"
+              : "text-emerald-300 bg-emerald-500/10 border-emerald-400/40";
+
+        const card = document.createElement("article");
+        card.className = "rounded-3xl border border-slate-800/80 bg-slate-950/80 backdrop-blur-xl shadow-k-card overflow-hidden relative";
+
+        card.innerHTML = `
+          <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-500/40 to-transparent"></div>
+
+          <div class="p-4 sm:p-5">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="h-6 px-2 rounded-full bg-slate-900 border border-slate-700 text-[10px] font-semibold text-slate-300 flex items-center gap-1">
+                    <span class="px-1.5 py-0.5 rounded-full bg-slate-800 text-[9px] font-mono">Q${idx + 1}</span>
+                    <span>Question</span>
+                  </div>
+
+                  <div class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] ${difficultyColor}">
+                    <i class="ph ph-chart-line-up text-[11px]"></i>
+                    <span>${difficultyLabel}</span>
+                  </div>
+
+                  <div class="inline-flex sm:hidden items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] ${difficultyColor}">
+                    <span>${difficultyLabel}</span>
+                  </div>
+                </div>
+
+                <h3 class="text-sm sm:text-[15px] font-medium text-slate-100 leading-snug">
+                  ${escapeHtml(q.question_text)}
+                </h3>
+
+                <p class="mt-1 text-[10px] text-slate-500">
+                  ${q.chapter
+            ? `<span class="uppercase tracking-[0.18em]">${escapeHtml(q.chapter)}</span> · `
+            : ""
+          }<span>${q.marks || 1} mark${(q.marks || 1) > 1 ? "s" : ""}</span>
+                </p>
+              </div>
+
+              <div class="flex flex-col items-end gap-2 flex-shrink-0">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-semibold uppercase tracking-wider ${statusColorClasses}">
+                  ${statusIcon}
+                  <span>${statusLabel}</span>
+                </div>
+              </div>
+            </div>
+
+            ${optionsHTML}
+            ${explanationHTML}
+          </div>
+        `;
+
+        questionsContainer.appendChild(card);
+      });
+
+      statCorrectEl.textContent = correctCount;
+      statWrongEl.textContent = wrongCount;
+    }
+
+    // Run
+    initReview();
+  </script>
+</body>
+
+</html>

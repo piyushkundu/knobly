@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="tupleTutorialApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Python Tuples Masterclass</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            padding: 30px;
+        }
+        .header {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 15px;
+        }
+        .section {
+            margin-top: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body ng-controller="TupleController">
+    <div class="container">
+        <div class="header">
+            <h1>Python Tuples: A Comprehensive Guide</h1>
+        </div>
+        
+        <div class="section">
+            <h2>What is a Tuple?</h2>
+            <p>A tuple is an immutable, ordered collection of elements in Python. Once created, its contents cannot be modified.</p>
+            
+            <h3>Types of Tuples</h3>
+            <pre>
+# Empty Tuple
+empty_tuple = ()
+
+# Tuple of Integers
+int_tuple = (1, 2, 3, 4)
+
+# Tuple of Floating Point Numbers
+float_tuple = (1.1, 2.2, 3.3)
+
+# Tuple of Characters
+char_tuple = ('a', 'b', 'c')
+
+# Tuple of Strings
+str_tuple = ('hello', 'world', 'python')
+
+# Mixed Value Tuple
+mixed_tuple = (1, 'hello', 3.14, True)
+            </pre>
+        </div>
+        
+        <div class="section">
+            <h2>Creating Tuples</h2>
+            <pre>
+# Method 1: Direct Assignment
+my_tuple = (1, 2, 3)
+
+# Method 2: From Another Sequence
+list_to_tuple = tuple([1, 2, 3])
+
+# Method 3: Dynamic Input
+dynamic_tuple = tuple(input("Enter tuple elements: ").split())
+            </pre>
+        </div>
+        
+        <div class="section">
+            <h2>Accessing Tuples</h2>
+            <pre>
+# Whole Tuple Access
+full_tuple = (1, 2, 3, 4, 5)
+print(full_tuple)  # Prints entire tuple
+
+# Individual Element Access
+first_element = full_tuple[0]  # First element
+last_element = full_tuple[-1]  # Last element
+            </pre>
+        </div>
+        
+        <div class="section">
+            <h2>Tuple Operations</h2>
+            <pre>
+# Combining Tuples
+tuple1 = (1, 2)
+tuple2 = (3, 4)
+combined_tuple = tuple1 + tuple2  # (1, 2, 3, 4)
+
+# Replicating Tuples
+repeated_tuple = tuple1 * 3  # (1, 2, 1, 2, 1, 2)
+
+# Slicing
+subset = full_tuple[1:4]  # Select elements from index 1 to 3
+            </pre>
+        </div>
+        
+        <div class="section">
+            <h2>Tuple Functions</h2>
+            <pre>
+tuple_example = (5, 2, 8, 1, 9)
+
+# Length of Tuple
+print(len(tuple_example))  # 5
+
+# Maximum Value
+print(max(tuple_example))  # 9
+
+# Minimum Value
+print(min(tuple_example))  # 1
+
+# Count Occurrences
+print(tuple_example.count(2))  # Count of 2
+
+# Index of First Occurrence
+print(tuple_example.index(8))  # Index of 8
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        angular.module('tupleTutorialApp', [])
+        .controller('TupleController', function($scope) {
+            $scope.message = "Welcome to Python Tuples Tutorial!";
+        });
+    </script>
+</body>
+</html>

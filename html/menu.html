@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+   
+    
+    <!-- Add this CSS to your existing <style> tag -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #ffffff, #e0f7fa);
+            color: #333;
+            line-height: 1.8;
+            display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    width:100%;
+           
+        }
+        
+        header {
+            background-color: #1e90ff;
+            color: #fff;
+            width: 100%;
+            text-align: center;
+            padding: 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: bold;
+        }
+        .container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    
+    
+    
+    padding: 8px;
+}
+        section {
+            max-width: 1000px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+            padding: 30px;
+            width: 90%;
+        }
+        h2 {
+            color: #005a9c;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 1.1rem;
+            margin: 15px 0;
+        }
+        .example {
+            background-color: #e7f3fe;
+            border-left: 8px solid #1e90ff;
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        ul {
+            margin: 10px 0;
+            padding: 0 20px;
+        }
+        li {
+            margin: 5px 0;
+        }
+        footer {
+            background-color: #1e90ff;
+            color: #fff;
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+            margin-top: auto;
+            width:100%;
+        }
+        .content-block {
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        .content-block:last-child {
+            border: none;
+        }
+        .html-compiler-button {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.html-compiler-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+}
+
+.html-compiler-button:active {
+    background-color: #004494;
+    transform: translateY(0);
+}
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .example {
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Circle Button for Compiler */
+        .compiler-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #ffbf00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-size: 24px;
+            color: #fff;
+            border: none;
+        }
+
+        /* Compiler Overlay */
+        .compiler-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        /* Visible State for Animation */
+        .compiler-overlay.show {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .compiler-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ffbf00;
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 17%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* Compiler Specific Styles */
+        .compiler-container {
+            background-color: #1e1e1e;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+        .compiler-container h1 {
+            color: #ffbf00;
+        }
+        .compiler-container textarea {
+            width: 95%;
+            height: 150px;
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 16px;
+            outline: none;
+            resize: vertical;
+        }
+        .compiler-container button {
+            background-color: #ffbf00;
+            color: #1e1e1e;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        .compiler-container button:hover {
+            background-color: #e6a700;
+            transform: scale(1.05);
+        }
+        .compiler-container iframe {
+            width: 100%;
+            height: 300px;
+            background-color: #fff;
+            border: none;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        /* Mobile Key Buttons */
+        .mobile-keys {
+            display: none;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .mobile-keys button {
+            background-color: #ffbf00;
+            color: #1e1e1e;
+            padding: 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        .mobile-keys button:hover {
+            background-color: #e6a700;
+        }
+
+        @media (max-width: 600px) {
+            .compiler-container h1 {
+                font-size: 2em;
+            }
+            .compiler-container textarea {
+                font-size: 14px;
+            }
+            .compiler-container button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .mobile-keys {
+                display: flex;
+            }
+        }
+    .sidebar {
+        position: fixed;
+        left: -300px;
+        top: 0;
+        width: 300px;
+        height: 100%;
+        background: #ffffff;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease;
+        z-index: 1000;
+        overflow-y: auto;
+    }
+    
+    .sidebar.active {
+        left: 0;
+    }
+    
+    .sidebar-header {
+        background: #1e90ff;
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .sidebar-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+    
+    .close-sidebar {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    
+    .sidebar-nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .sidebar-nav li {
+        border-bottom: 1px solid #eee;
+    }
+    
+    .sidebar-nav a {
+        display: block;
+        padding: 15px 20px;
+        color: #333;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+    
+    .sidebar-nav a:hover {
+        background-color: #f5f5f5;
+        color: #1e90ff;
+    }
+    
+    .menu-toggle {
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        width: 40px;
+        height: 40px;
+        background: #1e90ff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        padding: 8px;
+    }
+    
+    .menu-toggle span {
+        display: block;
+        width: 100%;
+        height: 3px;
+        background: white;
+        transition: 0.3s;
+    }
+    
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 999;
+    }
+    
+    .overlay.active {
+        display: block;
+    }
+    
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 260px;
+            left: -260px;
+        }
+    }
+    </style>
+     </head>
+   
+    <body>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>Contents</h3>
+                <button class="close-sidebar" onclick="toggleSidebar()">&times;</button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#elements-tags" onclick="scrollToSection('elements-tags')">1. HTML Elements, Tags, and Attributes</a></li>
+                    <li><a href="#empty-tags" onclick="scrollToSection('empty-tags')">2. Empty Tags and Container Tags</a></li>
+                    <li><a href="#body-tag" onclick="scrollToSection('body-tag')">3. Body Tag and Attributes</a></li>
+                    <li><a href="#p-tag" onclick="scrollToSection('p-tag')">4. P Tag and Attributes</a></li>
+                    <li><a href="#pre-tag" onclick="scrollToSection('pre-tag')">5. Pre Tag</a></li>
+                    <li><a href="#br-tag" onclick="scrollToSection('br-tag')">6. Br Tag</a></li>
+                    <li><a href="#formatting" onclick="scrollToSection('formatting')">HTML Formatting Elements</a></li>
+                    <li><a href="#center-tag" onclick="scrollToSection('center-tag')">7. Center Tag</a></li>
+                    <li><a href="#hr-tag" onclick="scrollToSection('hr-tag')">8. Hr Tag and Attributes</a></li>
+                    <li><a href="#div-tag" onclick="scrollToSection('div-tag')">9. Div Tag and Attributes</a></li>
+                    <li><a href="#font-tag" onclick="scrollToSection('font-tag')">10. Font Tag and Attributes</a></li>
+                </ul>
+            </nav>
+        </div>
+        
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <header>
+            <h1>Elements, Tags, and Attributes</h1>
+        </header>
+     <div class="container">
+        <section>
+            <div class="content-block">
+                <h2>1. HTML Elements, Tags, and Attributes</h2>
+                <p>An HTML element is a building block of a webpage that consists of a start tag, content, and an end tag. Elements form the structure of the content on the page.</p>
+                <p>Tags are the keywords that define the start and end of an element. Attributes provide additional information about the elements and are included within the opening tag.</p>
+                <div class="example">
+                    Example: <code>&lt;a href="https://olevelcccexam.link"&gt;<br>Visit our site&lt;/a&gt;</code><br>
+                    Here, <code>&lt;a&gt;</code> is the tag, <code>href</code> is an attribute, and "Visit our site" is the content.
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>2. Empty Tags and Container Tags</h2>
+                <p>Tags in HTML can be divided into two types: empty tags and container tags.</p>
+                <p><strong>Empty Tags:</strong> These tags do not have any content or closing tags. They are self-closing.</p>
+                <div class="example">
+                    Example: <code>&lt;br&gt;</code>, <code>&lt;img src="image.jpg" alt="Sample Image"&gt;</code>
+                </div>
+                <p><strong>Container Tags:</strong> These tags come in pairs (an opening and a closing tag) and enclose content between them.</p>
+                <div class="example">
+                    Example: <code>&lt;p&gt;This is a paragraph.&lt;/p&gt;</code>, <code>&lt;div&gt;Content here&lt;/div&gt;</code>
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>3. &lt;body&gt; Tag and Its Attributes</h2>
+                <p>The &lt;body&gt; tag contains all the main visible content of an HTML document. Every text, image, and multimedia content is enclosed within this tag.</p>
+                <p>Important attributes of the &lt;body&gt; tag:</p>
+                <ul>
+                    <li><strong>bgcolor:</strong> Defines the background color of the webpage. (Example: <code>&lt;body bgcolor="#e0f7fa"&gt;</code>)</li>
+                    <li><strong>background:</strong> Sets a background image for the page. (Example: <code>&lt;body background="background.jpg"&gt;</code>)</li>
+                    <li><strong>text:</strong> Changes the default color of the text on the page. (Example: <code>&lt;body text="#333"&gt;</code>)</li>
+                   
+                    <li><strong>margin:</strong> Adjusts the default spacing around the page content. (Example: <code>&lt;body margin="0"&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;body bgcolor="#f0f0f0" text="#000"&gt;</code><br>
+                    This sets the background color to a light gray and the text color to black.
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>4. &lt;p&gt; Tag and Its Attributes</h2>
+                <p>The &lt;p&gt; tag is used to define paragraphs in HTML. It automatically adds space above and below the content.</p>
+                <p><strong>Attribute:</strong> The <code>align</code> attribute aligns the paragraph content. (Example: <code>&lt;p align="center"&gt;Centered text&lt;/p&gt;</code>)</p>
+            </div>
+    
+            <div class="content-block">
+                <h2>5. &lt;pre&gt; Tag</h2>
+                <p>The &lt;pre&gt; tag is used to define preformatted text. It preserves spaces and line breaks exactly as they appear in the code.</p>
+                <div class="example">
+                    Example: <br><code>&lt;pre&gt;Line 1&#10;   Line 2&#10;Line 3&lt;/pre&gt;</code>
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>6. &lt;br&gt; Tag</h2>
+                <p>The &lt;br&gt; tag is an empty tag that inserts a line break. It is often used within paragraphs to separate lines of text.</p>
+                <div class="example">
+                    Example: <code>First Line&lt;br&gt;Second Line</code><br>
+                    Output: <br>First Line<br>Second Line
+                </div>
+                <br>
+                 <a href="task1" class="html-compiler-button">Student Task-1</a> <br> <br> 
+             <BR>
+            </div>
+             <div class="content-block">
+                <h2>HTML Formatting Elements</h2>
+                <p>Formatting elements were designed to display special types of text:</p>
+                <ul>
+                    <li><code>&lt;b&gt;</code> - Bold text</li>
+                    <li><code>&lt;strong&gt;</code> - Important text</li>
+                    <li><code>&lt;i&gt;</code> - Italic text</li>
+                    <li><code>&lt;em&gt;</code> - Emphasized text</li>
+                    <li><code>&lt;mark&gt;</code> - Marked text</li>
+                    <li><code>&lt;small&gt;</code> - Smaller text</li>
+                    <li><code>&lt;del&gt; or &lt;strike&gt;</code> - Deleted text</li>
+                    <li><code>&lt;big&gt;</code> - Big text</li>
+                    <li><code>&lt;sub&gt;</code> - Subscript text</li>
+                    <li><code>&lt;sup&gt;</code> - Superscript text</li>
+                </ul>
+                <div class="example">
+                    <p><b>This text is bold.</b></p>
+                    <p><strong>This text is important.</strong></p>
+                    <p><i>This text is italic.</i></p>
+                    <p><em>This text is emphasized.</em></p>
+                    <p><mark>This text is highlighted (marked).</mark></p>
+                    <p><small>This is smaller text.</small></p>
+                    <p><del>This text is deleted.</del></p>
+                    <p><big>This text is big.</big></p>
+                    <p>H<sub>2</sub>O (subscript)</p>
+                    <p>x<sup>2</sup> + y<sup>2</sup> = z<sup>2</sup> (superscript)</p>
+                </div>
+            </div>
+             <div class="content-block">
+                <h2>7. &lt;center&gt; Tag</h2>
+                <p>The &lt;center&gt; tag is used to align the content to the center of its containing element. It is deprecated in HTML5, and CSS should be used for centering instead.</p>
+                <div class="example">
+                    Example: <code>&lt;center&gt;This text is centered&lt;/center&gt;</code>
+                    <br>
+                    Output: <center>This text is centered</center>
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>8. &lt;hr&gt; Tag and Its Attributes</h2>
+                <p>The &lt;hr&gt; tag is used to create a horizontal rule (a line) across the page, usually for separating content.</p>
+                <p>Important attributes of the &lt;hr&gt; tag:</p>
+                <ul>
+                    <li><strong>width:</strong> Sets the width of the line. (Example: <code>&lt;hr width="50%"&gt;</code>)</li>
+                    <li><strong>size:</strong> Defines the thickness of the line. (Example: <code>&lt;hr size="3"&gt;</code>)</li>
+                    <li><strong>noshade:</strong> Removes the shadow effect, displaying a solid line. (Example: <code>&lt;hr noshade&gt;</code>)</li>
+                    <li><strong>align:</strong> Aligns the line to the left, center, or right. (Example: <code>&lt;hr align="left"&gt;</code>)</li>
+                    <li><strong>color:</strong> Sets the color of the line. (Example: <code>&lt;hr color="red"&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;hr width="70%" size="5" noshade align="center" color="blue"&gt;</code>
+                    <br>
+                    Output: <hr width="70%" size="5" noshade align="center" color="blue">
+                </div>
+                <br>
+            <a href="task2" class="html-compiler-button">Student Task-2</a><br><br>
+            
+            <br>
+            </div>
+              <div class="content-block">
+                <h2>9. &lt;div&gt; Tag and Its Attributes</h2>
+                <p>The &lt;div&gt; tag is a block-level element used to group content together. It is often styled using CSS.</p>
+                <p>Important attribute of the &lt;div&gt; tag:</p>
+                <ul>
+                    <li><strong>align:</strong> Sets the alignment of the content inside the &lt;div&gt;. (Example: <code>&lt;div align="center"&gt;Centered content&lt;/div&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;div align="center"&gt;This content is centered&lt;/div&gt;</code>
+                    <br>
+                    Output: <div align="center">This content is centered</div>
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>10. &lt;font&gt; Tag and Its Attributes</h2>
+                <p>The &lt;font&gt; tag is used to change the font style of text. It is deprecated in HTML5, and CSS should be used instead for styling fonts.</p>
+                <p>Important attributes of the &lt;font&gt; tag:</p>
+                <ul>
+                    <li><strong>color:</strong> Sets the color of the text. (Example: <code>&lt;font color="blue"&gt;Blue text&lt;/font&gt;</code>)</li>
+                    <li><strong>size:</strong> Defines the size of the text. (Example: <code>&lt;font size="5"&gt;Larger text&lt;/font&gt;</code>)</li>
+                    <li><strong>face:</strong> Sets the font type. (Example: <code>&lt;font face="Arial"&gt;Text in Arial&lt;/font&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;font color="red" size="4" face="Verdana"&gt;Stylized text&lt;/font&gt;</code>
+                    <br>
+                    Output: <font color="red" size="4" face="Verdana">Stylized text</font>
+                </div>
+            </div>
+    
+            <div class="content-block">
+                <h2>11. &lt;img&gt; Tag and Its Attributes</h2>
+                <p>The &lt;img&gt; tag is used to insert images into a webpage. It is an inline element.</p>
+                <p>Important attributes of the &lt;img&gt; tag:</p>
+                <ul>
+                    <li><strong>src:</strong> Specifies the path to the image file. (Example: <code>&lt;img src="image.jpg"&gt;</code>)</li>
+                    <li><strong>alt:</strong> Provides alternative text for the image if it cannot be displayed. (Example: <code>&lt;img src="image.jpg" alt="Description of image"&gt;</code>)</li>
+                    <li><strong>height:</strong> Sets the height of the image. (Example: <code>&lt;img src="image.jpg" height="100"&gt;</code>)</li>
+                    <li><strong>width:</strong> Sets the width of the image. (Example: <code>&lt;img src="image.jpg" width="200"&gt;</code>)</li>
+                    <li><strong>border:</strong> Defines the border width around the image. (Example: <code>&lt;img src="image.jpg" border="2"&gt;</code>)</li>
+                    <li><strong>hspace:</strong> Sets horizontal space around the image. (Example: <code>&lt;img src="image.jpg" hspace="10"&gt;</code>)</li>
+                    <li><strong>vspace:</strong> Sets vertical space around the image. (Example: <code>&lt;img src="image.jpg" vspace="10"&gt;</code>)</li>
+                    <li><strong>align:</strong> Aligns the image relative to surrounding text. (Example: <code>&lt;img src="image.jpg" align="left"&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: <code>&lt;img src="example.jpg" alt="Example Image" width="200" height="100" border="1" hspace="5" vspace="5" align="right"&gt;</code>
+                    <br>
+                    Output: <img src="../img/htmlintro.jpeg" alt="Example Image" width="200" height="100" border="1" hspace="5" vspace="5" align="right">
+                </div>
+            </div>
+         <div class="content-block">
+                <h2>12. Heading Tags and Their Attributes</h2>
+                <p>The &lt;h1&gt; to &lt;h6&gt; tags are used to define HTML headings. &lt;h1&gt; is the highest level heading and &lt;h6&gt; is the lowest.</p>
+                <p>Important attribute for these heading tags:</p>
+                <ul>
+                    <li><strong>align:</strong> Sets the alignment of the heading. Can be "left", "right", "center", or "justify". (Example: <code>&lt;h2 align="right"&gt;Right Aligned Heading&lt;/h2&gt;</code>)</li>
+                </ul>
+                <div class="example">
+                    Example: 
+                    <br><code>&lt;h1 align="center"&gt;Centered Heading&lt;/h1&gt;</code><br>
+                    <code>&lt;h2 align="left"&gt;Left Aligned Heading&lt;/h2&gt;</code><br>
+                    <code>&lt;h3 align="right"&gt;Right Aligned Heading&lt;/h3&gt;</code><br>
+                    <code>&lt;h4 align="justify"&gt;Justified Heading&lt;/h4&gt;</code><br>
+                    Output: 
+                    <h1 align="center">Centered Heading</h1>
+                    <h2 align="left">Left Aligned Heading</h2>
+                    <h3 align="right">Right Aligned Heading</h3>
+                    <h4 align="justify">Justified Heading</h4>
+                </div>
+                 <br>
+            <a href="task3" class="html-compiler-button">Student Task-3</a><br><br>
+            <br>
+            </div>
+   
+    
+    <!-- Add this JavaScript before the closing </body> tag -->
+    <script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        
+        if (sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+            document.querySelector('.overlay').remove();
+        } else {
+            sidebar.classList.add('active');
+            document.body.appendChild(overlay);
+            overlay.classList.add('active');
+            overlay.addEventListener('click', toggleSidebar);
+        }
+    }
+    
+    function scrollToSection(id) {
+        const element = document.querySelector(`[id="${id}"]`);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            toggleSidebar();
+        }
+    }
+    
+    // Add IDs to your content blocks
+    document.addEventListener('DOMContentLoaded', function() {
+        const contentBlocks = document.querySelectorAll('.content-block');
+        const ids = ['elements-tags', 'empty-tags', 'body-tag', 'p-tag', 'pre-tag', 'br-tag', 'formatting', 'center-tag', 'hr-tag', 'div-tag', 'font-tag'];
+        
+        contentBlocks.forEach((block, index) => {
+            if (ids[index]) {
+                block.id = ids[index];
+            }
+        });
+    });
+    </script>
+    </body>
+      </html>

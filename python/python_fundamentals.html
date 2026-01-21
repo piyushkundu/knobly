@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Programming Language - Comprehensive Guide</title>
+    <style>
+        :root {
+            --primary-color: #306998;
+            --secondary-color: #FFD43B;
+            --dark-color: #1A1A1A;
+            --light-color: #F5F5F5;
+            --accent-color: #4B8BBE;
+            --text-color: #333;
+            --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.2;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 2rem 0 1rem;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin: 1.5rem 0 1rem;
+        }
+        
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .intro-image {
+            float: right;
+            margin: 0 0 20px 20px;
+            max-width: 250px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+        
+        pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        
+        .code-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            border-bottom-left-radius: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .highlight {
+            background-color: rgba(255, 212, 59, 0.2);
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+        
+        .note-box {
+            background-color: rgba(75, 139, 190, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin: 1.5rem 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .question-section {
+            background-color: #f7f7f7;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        
+        .question {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .version-timeline {
+            display: flex;
+            overflow-x: auto;
+            margin: 2rem 0;
+            padding-bottom: 1rem;
+        }
+        
+        .version-item {
+            min-width: 150px;
+            text-align: center;
+            padding: 15px;
+            margin-right: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .version-item::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -10px;
+            width: 10px;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+        
+        .version-item:last-child::after {
+            display: none;
+        }
+        
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 2rem 0;
+        }
+        
+        .advantage-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .advantage-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .intro-image {
+                float: none;
+                display: block;
+                margin: 0 auto 20px auto;
+                max-width: 100%;
+            }
+            
+            .advantages-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
+</head>
+<body ng-app="pythonTutorialApp">
+    <div ng-controller="MainController">
+        <header>
+            <svg class="header-bg" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,100 Q300,150 600,100 T1200,100 V300 H0 Z" fill="#4B8BBE" opacity="0.2"/>
+                <path d="M100,50 Q400,120 700,80 T1300,60 V300 H100 Z" fill="#FFD43B" opacity="0.1"/>
+                <circle cx="1000" cy="70" r="40" fill="#FFD43B" opacity="0.2"/>
+                <circle cx="900" cy="170" r="20" fill="#FFD43B" opacity="0.2"/>
+                <circle cx="1100" cy="150" r="30" fill="#FFD43B" opacity="0.2"/>
+            </svg>
+            <div class="header-content container">
+                <h1>Python Programming Language</h1>
+                <p>A Comprehensive Guide to Python Programming</p>
+            </div>
+        </header>
+
+        <main class="container">
+            <section id="introduction" class="card">
+                <h2>Introduction to Python</h2>
+                <svg class="intro-image" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M314,36.38c-18.59-3.06-45.8-4.47-64.27-4.38a311.09,311.09,0,0,0-51.66,4.38c-45.74,8-54.07,24.7-54.07,55.54V128H256v16H107.62C66.06,144,32.33,193.67,32,256c-.33,62.5,15,98,48.73,126.27A136.7,136.7,0,0,0,140,416H168V368.66a65.78,65.78,0,0,1,15-43.7c10.42-13.34,25.46-21.9,34.33-24.95,9.11-3.05,20.1-3.89,29.41-4.82,9.48-.88,26.89-1.19,50.93-1.19h19.19c25.54,0,30-18.63,30-43.13V91.92C346.6,66.57,332.64,39.44,314,36.38Z" fill="#306998"/>
+                    <circle cx="203.5" cy="81.5" r="20.5" fill="white"/>
+                    <path d="M433.36,144H344v47.34A64.89,64.89,0,0,1,329,235a63.87,63.87,0,0,1-33.63,25.13c-8.48,3-19.1,3.8-28.65,4.71-9.49.78-19.12.76-38.1,1.16H170.42c-22.08,0-64.42,13.71-64.42,68v50.25c0,36.81,34.37,78.43,71.17,78.43H208V416c0-29.86,30.38-58,75.22-58H416c36.59,0,64-31.69,64-67.16V191.59C480,153.17,473.53,144,433.36,144Z" fill="#FFD43B"/>
+                    <circle cx="356.5" cy="213.5" r="20.5" fill="white"/>
+                </svg>
+                <p>Python is a high-level, interpreted programming language known for its readability and simplicity. Created by Guido van Rossum and first released in 1991, Python's design philosophy emphasizes code readability with its notable use of significant whitespace.</p>
+                
+                <h3>Development of Python</h3>
+                <p>Guido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language. He wanted to create a language that was extensible and had better exception handling than its predecessors. The name "Python" was inspired by the British comedy group Monty Python, as van Rossum was a fan of Monty Python's Flying Circus.</p>
+                
+                <p>Python was designed to be a highly readable language. Its formatting is visually uncluttered, and it frequently uses English keywords where other languages use punctuation. Python's syntax allows programmers to express concepts in fewer lines of code than possible in languages such as C++ or Java.</p>
+                
+                <h3>Python Versions</h3>
+                <div class="version-timeline">
+                    <div class="version-item">
+                        <h4>Python 1.0</h4>
+                        <p>Released in 1994</p>
+                        <small>First major release</small>
+                    </div>
+                    <div class="version-item">
+                        <h4>Python 2.0</h4>
+                        <p>Released in 2000</p>
+                        <small>Introduced list comprehensions</small>
+                    </div>
+                    <div class="version-item">
+                        <h4>Python 2.7</h4>
+                        <p>Released in 2010</p>
+                        <small>Final 2.x release</small>
+                    </div>
+                    <div class="version-item">
+                        <h4>Python 3.0</h4>
+                        <p>Released in 2008</p>
+                        <small>Major revision with breaking changes</small>
+                    </div>
+                    <div class="version-item">
+                        <h4>Python 3.11</h4>
+                        <p>Released in 2022</p>
+                        <small>Faster execution, improved error messages</small>
+                    </div>
+                    <div class="version-item">
+                        <h4>Python 3.12</h4>
+                        <p>Released in 2023</p>
+                        <small>Latest stable release</small>
+                    </div>
+                </div>
+                
+                <p>Python 2 and Python 3 are the two major versions. Python 2 reached end-of-life on January 1, 2020, and is no longer maintained. Python 3 introduced significant changes to the language, improving Unicode support, division operations, and fixing design flaws.</p>
+            </section>
+
+            <section id="advantages" class="card">
+                <h2>Advantages of Python</h2>
+                <div class="advantages-grid">
+                    <div class="advantage-card">
+                        <h4>Easy to Learn and Use</h4>
+                        <p>Python has a simple, easy-to-learn syntax that emphasizes readability, reducing program maintenance costs and making it accessible to beginners.</p>
+                    </div>
+                    <div class="advantage-card">
+                        <h4>Versatility</h4>
+                        <p>Python is used in various domains: web development, data analysis, AI, scientific computing, automation, and more.</p>
+                    </div>
+                    <div class="advantage-card">
+                        <h4>Large Standard Library</h4>
+                        <p>Python comes with a vast standard library that provides modules for various tasks, reducing the need for external libraries.</p>
+                    </div>
+                    <div class="advantage-card">
+                        <h4>Interpreted Language</h4>
+                        <p>Being an interpreted language, Python code is executed line by line, making debugging easier and more efficient.</p>
+                    </div>
+                    <div class="advantage-card">
+                        <h4>Open Source</h4>
+                        <p>Python is free to use and distribute, even for commercial purposes, under an OSI-approved open-source license.</p>
+                    </div>
+                    <div class="advantage-card">
+                        <h4>Strong Community Support</h4>
+                        <p>Python has a large and active community that contributes to libraries, provides support, and shares knowledge.</p>
+                    </div>
+                </div>
+                <p>These advantages make Python an excellent choice for both beginners and experienced developers. Its flexibility and ease of use have contributed significantly to its growing popularity in recent years.</p>
+            </section>
+
+            <section id="working-with-python" class="card">
+                <h2>Working with Python</h2>
+                <h3>Installing Python</h3>
+                <p>Before you can start programming in Python, you need to download and install it on your computer. Here's how:</p>
+                
+                <ol>
+                    <li>
+                        <p><strong>Download Python:</strong> Visit the official Python website at <a href="https://www.python.org/downloads/">python.org/downloads</a> and download the latest version for your operating system.</p>
+                    </li>
+                    <li>
+                        <p><strong>Run the Installer:</strong> Double-click the downloaded file to run the installer.</p>
+                        <ul>
+                            <li>On Windows: Make sure to check the box that says "Add Python to PATH" before clicking Install Now.</li>
+                            <li>On macOS: Follow the instructions in the installer.</li>
+                            <li>On Linux: Most distributions come with Python pre-installed. If not, use your package manager (e.g., <code>apt-get install python3</code> for Debian/Ubuntu).</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p><strong>Verify Installation:</strong> Open a command prompt or terminal and type:</p>
+                        <pre><code>python --version</code></pre>
+                        <p>You should see the Python version number displayed.</p>
+                    </li>
+                </ol>
+                
+                <h3>Python Interactive Mode</h3>
+                <p>Python offers an interactive mode where you can write and execute code line by line. This is great for testing small code snippets and learning Python.</p>
+                
+                <p>To start the interactive mode:</p>
+                <ol>
+                    <li>Open a command prompt or terminal</li>
+                    <li>Type <code>python</code> or <code>python3</code> and press Enter</li>
+                    <li>You should see the Python prompt <code>>>></code></li>
+                </ol>
+                
+                <pre><code class="python">>>> print("Hello, World!")
+Hello, World!
+>>> 2 + 3
+5
+>>> name = "Python"
+>>> print(f"I love {name} programming!")
+I love Python programming!</code></pre>
+                
+                <p>To exit the interactive mode, type <code>exit()</code> or press Ctrl+Z on Windows or Ctrl+D on Unix-like systems.</p>
+                
+                <h3>Python Program Mode</h3>
+                <p>For larger programs, you'll want to write your code in a file and execute it. This is called program mode or script mode.</p>
+                
+                <ol>
+                    <li>Create a new text file with a <code>.py</code> extension (e.g., <code>program.py</code>)</li>
+                    <li>Write your Python code in the file</li>
+                    <li>Save the file</li>
+                    <li>Run the program from the command line with: <code>python program.py</code></li>
+                </ol>
+                
+                <pre><code class="python"># This is program.py
+print("Running Python in program mode")
+
+for i in range(5):
+    print(f"Count: {i}")</code></pre>
+                
+                <p>When you run this program with <code>python program.py</code>, it will execute all the code at once and display the output.</p>
+            </section>
+
+            <section id="creating-modules" class="card">
+                <h2>Creating Modules and Program Files in Python</h2>
+                <h3>Creating a Python File</h3>
+                <p>A Python file is simply a text file with a <code>.py</code> extension. You can create one using any text editor or IDE:</p>
+                
+                <ol>
+                    <li>Open your preferred text editor (VSCode, PyCharm, Sublime Text, etc.)</li>
+                    <li>Create a new file</li>
+                    <li>Write your Python code</li>
+                    <li>Save the file with a <code>.py</code> extension (e.g., <code>my_program.py</code>)</li>
+                </ol>
+                
+                <h3>Running a Python File</h3>
+                <p>There are several ways to run a Python file:</p>
+                
+                <h4>Using Command Line:</h4>
+                <pre><code>python my_program.py</code></pre>
+                
+                <h4>From an IDE:</h4>
+                <p>Most IDEs have a "Run" button or keyboard shortcut (like F5 in VSCode).</p>
+                
+              
+            </section>
+
+            <section id="python-tokens" class="card">
+                <h2>Python Tokens</h2>
+                <p>In Python, a token is the smallest unit of a program. The Python interpreter breaks down a Python program into tokens before parsing it. There are five types of tokens in Python:</p>
+                
+                <h3>Identifiers</h3>
+                <p>An identifier is a name used to identify a variable, function, class, module, or other object. Python identifiers follow these rules:</p>
+                
+                <ul>
+                    <li>An identifier can only start with a letter (A-Z, a-z) or underscore (_)</li>
+                    <li>The rest of the identifier can consist of letters, underscores, and digits (0-9)</li>
+                    <li>Identifiers are case-sensitive (name, Name, and NAME are three different identifiers)</li>
+                    <li>Reserved keywords cannot be used as identifiers</li>
+                    <li>Special symbols like !, @, #, $, % cannot be used in identifiers</li>
+                    <li>There is no limit on the length of an identifier</li>
+                </ul>
+                
+                <p>Valid identifier examples:</p>
+                <pre><code>name
+student_1
+_private
+totalSum
+get_value
+UserAccount</code></pre>
+                
+                <p>Invalid identifier examples:</p>
+                <pre><code>123name  # Cannot start with a digit
+my-var   # Hyphen not allowed
+for      # Reserved keyword
+$amount  # Special symbol not allowed</code></pre>
+                
+                <h3>Keywords</h3>
+                <p>Keywords are reserved words that have special meanings in Python. They cannot be used as identifiers.</p>
+                
+                <p>Python 3 has the following keywords:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="5">Python Keywords</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>False</td>
+                            <td>None</td>
+                            <td>True</td>
+                            <td>and</td>
+                            <td>as</td>
+                        </tr>
+                        <tr>
+                            <td>assert</td>
+                            <td>async</td>
+                            <td>await</td>
+                            <td>break</td>
+                            <td>class</td>
+                        </tr>
+                        <tr>
+                            <td>continue</td>
+                            <td>def</td>
+                            <td>del</td>
+                            <td>elif</td>
+                            <td>else</td>
+                        </tr>
+                        <tr>
+                            <td>except</td>
+                            <td>finally</td>
+                            <td>for</td>
+                            <td>from</td>
+                            <td>global</td>
+                        </tr>
+                        <tr>
+                            <td>if</td>
+                            <td>import</td>
+                            <td>in</td>
+                            <td>is</td>
+                            <td>lambda</td>
+                        </tr>
+                        <tr>
+                            <td>nonlocal</td>
+                            <td>not</td>
+                            <td>or</td>
+                            <td>pass</td>
+                            <td>raise</td>
+                        </tr>
+                        <tr>
+                            <td>return</td>
+                            <td>try</td>
+                            <td>while</td>
+                            <td>with</td>
+                            <td>yield</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>You can check all the keywords in Python using the <code>keyword</code> module:</p>
+                <pre><code>>>> import keyword
+>>> print(keyword.kwlist)</code></pre>
+                
+                <h3>Literals</h3>
+                <p>Literals are data items that have a fixed value. Python supports different types of literals:</p>
+                
+                <h4>String Literals</h4>
+                <p>String literals are enclosed within single quotes (' '), double quotes (" "), or triple quotes (''' ''' or """ """).</p>
+                
+                <p><strong>Single-line String:</strong></p>
+                <pre><code>name = 'John'
+message = "Hello, World!"</code></pre>
+                
+                <p><strong>Multi-line String using Triple Quotes:</strong></p>
+                <pre><code>long_text = """This is a long text
+that spans over multiple lines.
+Triple quotes allow this."""</code></pre>
+                
+                <p><strong>Multi-line String using Backslash:</strong></p>
+                <pre><code>another_text = "This is another long text \
+that continues on the next line \
+using backslashes."</code></pre>
+                
+                <h4>Numeric Literals</h4>
+                <p>Numeric literals include integers, floating-point numbers, and complex numbers.</p>
+                
+                <p><strong>Integer Literals:</strong></p>
+                <pre><code>a = 10      # Decimal
+b = 0b1010  # Binary (starts with 0b)
+c = 0o12    # Octal (starts with 0o)
+d = 0xA     # Hexadecimal (starts with 0x)</code></pre>
+                
+                <p><strong>Float Literals:</strong></p>
+                <pre><code>x = 10.5
+y = 1.5e2    # Scientific notation (150.0)
+z = .5       # Same as 0.5</code></pre>
+                
+                <p><strong>Complex Literals:</strong></p>
+                <p>Complex numbers are written in the form of a + bj, where a is the real part and b is the imaginary part.</p>
+                <pre><code>complex_num = 3 + 5j</code></pre>
+                
+                <h4>Boolean Literals</h4>
+                <p>Boolean literals represent truth values. There are only two Boolean literals: <code>True</code> and <code>False</code>.</p>
+                <pre><code>is_active = True
+is_completed = False</code></pre>
+                
+                <h4>None Literal</h4>
+                <p>The <code>None</code> literal represents the absence of a value or a null value.</p>
+                <pre><code>result = None</code></pre>
+                
+                <p>It's often used as a placeholder for optional or missing values. It evaluates to <code>False</code> in boolean contexts.</p>
+            </section>
+
+            <section id="operators" class="card">
+                <h2>Python Operators</h2>
+                <p>Operators are special symbols that perform operations on variables and values. Python provides a wide range of operators.</p>
+                
+                <h3>Arithmetic Operators</h3>
+                <p>Arithmetic operators are used to perform mathematical operations.</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operator</th>
+                            <th>Name</th>
+                            <th>Example</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>+</td>
+                            <td>Addition</td>
+                            <td>5 + 3</td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td>-</td>
+                            <td>Subtraction</td>
+                            <td>5 - 3</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>*</td>
+                            
+                            <td>Multiplication</td>
+                            <td>5 * 3</td>
+                            <td>15</td>
+                        </tr>
+                        <tr>
+                            <td>/</td>
+                            <td>Division</td>
+                            <td>5 / 3</td>
+                            <td>1.6666...</td>
+                        </tr>
+                        <tr>
+                            <td>//</td>
+                            <td>Floor Division</td>
+                            <td>5 // 3</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>%</td>
+                            <td>Modulus</td>
+                            <td>5 % 3</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>**</td>
+                            <td>Exponentiation</td>
+                            <td>5 ** 3</td>
+                            <td>125</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Relational (Comparison) Operators</h3>
+                <p>Relational operators compare values and return Boolean results.</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operator</th>
+                            <th>Name</th>
+                            <th>Example</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>==</td>
+                            <td>Equal to</td>
+                            <td>5 == 3</td>
+                            <td>False</td>
+                        </tr>
+                        <tr>
+                            <td>!=</td>
+                            <td>Not equal to</td>
+                            <td>5 != 3</td>
+                            <td>True</td>
+                        </tr>
+                        <tr>
+                            <td>&gt;</td>
+                            <td>Greater than</td>
+                            <td>5 &gt; 3</td>
+                            <td>True</td>
+                        </tr>
+                        <tr>
+                            <td>&lt;</td>
+                            <td>Less than</td>
+                            <td>5 &lt; 3</td>
+                            <td>False</td>
+                        </tr>
+                        <tr>
+                            <td>&gt;=</td>
+                            <td>Greater than or equal to</td>
+                            <td>5 &gt;= 5</td>
+                            <td>True</td>
+                        </tr>
+                        <tr>
+                            <td>&lt;=</td>
+                            <td>Less than or equal to</td>
+                            <td>3 &lt;= 5</td>
+                            <td>True</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Assignment Operators</h3>
+                <p>Assignment operators are used to assign values to variables.</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operator</th>
+                            <th>Example</th>
+                            <th>Equivalent to</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>=</td>
+                            <td>x = 5</td>
+                            <td>x = 5</td>
+                        </tr>
+                        <tr>
+                            <td>+=</td>
+                            <td>x += 5</td>
+                            <td>x = x + 5</td>
+                        </tr>
+                        <tr>
+                            <td>-=</td>
+                            <td>x -= 5</td>
+                            <td>x = x - 5</td>
+                        </tr>
+                        <tr>
+                            <td>*=</td>
+                            <td>x *= 5</td>
+                            <td>x = x * 5</td>
+                        </tr>
+                        <tr>
+                            <td>/=</td>
+                            <td>x /= 5</td>
+                            <td>x = x / 5</td>
+                        </tr>
+                        <tr>
+                            <td>//=</td>
+                            <td>x //= 5</td>
+                            <td>x = x // 5</td>
+                        </tr>
+                        <tr>
+                            <td>%=</td>
+                            <td>x %= 5</td>
+                            <td>x = x % 5</td>
+                        </tr>
+                        <tr>
+                            <td>**=</td>
+                            <td>x **= 5</td>
+                            <td>x = x ** 5</td>
+                        </tr>
+                        <tr>
+                            <td>&=</td>
+                            <td>x &= 5</td>
+                            <td>x = x & 5</td>
+                        </tr>
+                        <tr>
+                            <td>|=</td>
+                            <td>x |= 5</td>
+                            <td>x = x | 5</td>
+                        </tr>
+                        <tr>
+                            <td>^=</td>
+                            <td>x ^= 5</td>
+                            <td>x = x ^ 5</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Identity Operators</h3>
+                <p>Identity operators are used to compare objects, not if they are equal, but if they are actually the same object with the same memory location.</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operator</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>is</td>
+                            <td>Returns True if both variables are the same object</td>
+                            <td>x is y</td>
+                        </tr>
+                        <tr>
+                            <td>is not</td>
+                            <td>Returns True if both variables are not the same object</td>
+                            <td>x is not y</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <pre><code>a = [1, 2, 3]
+b = [1, 2, 3]
+c = a
+
+print(a is b)    # False (different objects with the same value)
+print(a is c)    # True (same object)</code></pre>
+                
+                <h3>Membership Operators</h3>
+                <p>Membership operators are used to test if a sequence is presented in an object.</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operator</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>in</td>
+                            <td>Returns True if a sequence with the specified value is present in the object</td>
+                            <td>x in y</td>
+                        </tr>
+                        <tr>
+                            <td>not in</td>
+                            <td>Returns True if a sequence with the specified value is not present in the object</td>
+                            <td>x not in y</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <pre><code>fruits = ["apple", "banana", "cherry"]
+print("banana" in fruits)     # True
+print("pear" not in fruits)   # True</code></pre>
+            </section>
+
+            <section id="punctuation" class="card">
+                <h2>Python Punctuation</h2>
+                <p>Python uses various punctuation marks for different purposes:</p>
+                
+                <ul>
+                    <li><strong>Colon (:)</strong> - Used in statements like if, for, while, class, and function definitions.</li>
+                    <li><strong>Semicolon (;)</strong> - Can be used to separate multiple statements on a single line.</li>
+                    <li><strong>Comma (,)</strong> - Used to separate items in lists, tuples, and function arguments.</li>
+                    <li><strong>Period (.)</strong> - Used for attributes and methods access or for floating-point numbers.</li>
+                    <li><strong>Parentheses ()</strong> - Used in function calls, expressions, and tuples.</li>
+                    <li><strong>Square brackets []</strong> - Used for lists and indexing.</li>
+                    <li><strong>Curly braces {}</strong> - Used for dictionaries and sets.</li>
+                    <li><strong>Hash (#)</strong> - Used for comments.</li>
+                </ul>
+                
+                <pre><code># Example of Python punctuation usage
+def greet(name):  # Function definition with colon
+    print("Hello, " + name + "!")  # Period in function name
+    
+names = ["Alice", "Bob", "Charlie"]  # Square brackets for list, commas separate items
+person = {"name": "David", "age": 30}  # Curly braces for dictionary
+                
+result = (1 + 2) * 3  # Parentheses affect operator precedence</code></pre>
+            </section>
+
+            <section id="print-statement" class="card">
+                <h2>Print Statement in Python</h2>
+                <p>The <code>print()</code> function is used to output data to the standard output device (screen).</p>
+                
+                <h3>Basic Print Usage</h3>
+                <pre><code>print("Hello, World!")  # Outputs: Hello, World!
+print(10)             # Outputs: 10
+print(True)           # Outputs: True</code></pre>
+                
+                <h3>Printing Multiple Items</h3>
+                <pre><code>print("Name:", "Alice", "Age:", 25)  # Outputs: Name: Alice Age: 25</code></pre>
+                
+                <h3>Print with Separator and End Parameters</h3>
+                <pre><code># Custom separator
+print("apple", "banana", "cherry", sep="|")  # Outputs: apple|banana|cherry
+
+# Custom end character (default is newline)
+print("Hello", end=" ")
+print("World")  # Outputs: Hello World</code></pre>
+                
+                <h3>Formatted String Literals (f-strings)</h3>
+                <pre><code>name = "Alice"
+age = 25
+print(f"My name is {name} and I am {age} years old.")
+# Outputs: My name is Alice and I am 25 years old.</code></pre>
+                
+                <h3>Format Method</h3>
+                <pre><code>print("My name is {} and I am {} years old.".format(name, age))
+# Outputs: My name is Alice and I am 25 years old.
+
+# With position indexes
+print("My name is {0} and I am {1} years old.".format(name, age))
+
+# With named parameters
+print("My name is {n} and I am {a} years old.".format(n=name, a=age))</code></pre>
+                
+                <h3>Old-style String Formatting</h3>
+                <pre><code>print("My name is %s and I am %d years old." % (name, age))
+# Outputs: My name is Alice and I am 25 years old.</code></pre>
+            </section>
+
+            <section id="input-statement" class="card">
+                <h2>Input Statement in Python</h2>
+                <p>The <code>input()</code> function allows user input from the standard input device (keyboard).</p>
+                
+                <h3>Basic Input Usage</h3>
+                <pre><code>name = input("Enter your name: ")
+print("Hello, " + name + "!")</code></pre>
+                
+                <div class="note-box">
+                    <p><strong>Note:</strong> The <code>input()</code> function always returns a string, even if the user enters a number.</p>
+                </div>
+                
+                <h3>Converting Input to Other Types</h3>
+                <pre><code># Converting input to an integer
+age = int(input("Enter your age: "))
+next_year_age = age + 1
+print(f"Next year, you will be {next_year_age} years old.")
+
+# Converting input to a float
+height = float(input("Enter your height in meters: "))
+print(f"Your height is {height} meters.")</code></pre>
+                
+                <h3>Input Validation Example</h3>
+                <pre><code>while True:
+    try:
+        number = int(input("Enter a positive number: "))
+        if number <= 0:
+            print("That's not a positive number. Try again.")
+        else:
+            break
+    except ValueError:
+        print("That's not a valid number. Try again.")
+        
+print(f"You entered: {number}")</code></pre>
+                
+                <h3>Multiple Inputs</h3>
+                <pre><code># Getting multiple inputs on separate lines
+first_name = input("Enter your first name: ")
+last_name = input("Enter your last name: ")
+print(f"Hello, {first_name} {last_name}!")
+
+# Getting multiple inputs on a single line
+x, y = input("Enter two numbers separated by space: ").split()
+x, y = int(x), int(y)
+print(f"Sum: {x + y}")</code></pre>
+            </section>
+
+            <section id="practice-questions" class="card question-section">
+                <h2>Practice Questions</h2>
+                <p>Test your understanding of Python operators with these practice questions:</p>
+                
+                <div class="question">
+                    <h3>Question 1: Arithmetic Operators</h3>
+                    <p>What will be the output of the following code?</p>
+                    <pre><code>a = 10
+b = 3
+print(a // b)
+print(a % b)
+print(a ** b)</code></pre>
+                    <p><strong>Think:</strong> Calculate the floor division, modulus, and exponentiation.</p>
+                </div>
+                
+                <div class="question">
+                    <h3>Question 2: Comparison and Logical Operators</h3>
+                    <p>What will be the output of the following code?</p>
+                    <pre><code>x = 5
+y = 10
+z = 5
+print(x == z)
+print(x != y)
+print(x > y or x == z)
+print(x < y and y > z)</code></pre>
+                    <p><strong>Think:</strong> Evaluate each comparison and logical expression step by step.</p>
+                </div>
+                
+                <div class="question">
+                    <h3>Question 3: Identity vs Equality</h3>
+                    <p>What will be the output of the following code?</p>
+                    <pre><code>list1 = [1, 2, 3]
+list2 = [1, 2, 3]
+list3 = list1
+print(list1 == list2)
+print(list1 is list2)
+print(list1 is list3)</code></pre>
+                    <p><strong>Think:</strong> Understand the difference between equality (==) and identity (is).</p>
+                </div>
+                
+                <div class="question">
+                    <h3>Question 4: Membership Operators</h3>
+                    <p>What will be the output of the following code?</p>
+                    <pre><code>fruits = ["apple", "banana", "cherry"]
+print("apple" in fruits)
+print("grape" not in fruits)
+print("ban" in "banana")</code></pre>
+                    <p><strong>Think:</strong> Understand how membership operators work with different sequence types.</p>
+                </div>
+                
+                <div class="question">
+                    <h3>Question 5: Assignment Operators</h3>
+                    <p>What will be the final value of x after the following operations?</p>
+                    <pre><code>x = 10
+x += 5
+x *= 2
+x //= 3
+print(x)</code></pre>
+                    <p><strong>Think:</strong> Calculate each step of the compound assignments.</p>
+                </div>
+                <a href="https://drive.google.com/file/d/1Wj-NbtUPp5vreZQ9tzljMR4FzgT0Qiix/view?usp=sharing">Practice Questions</a>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p>&copy; 2025 Python Tutorial</p>
+                <p>A comprehensive guide to Python programming language</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Angular.js Application
+        angular.module('pythonTutorialApp', [])
+        .controller('MainController', ['$scope', function($scope) {
+            // You can add interactive functionality here
+            $scope.scrollToSection = function(sectionId) {
+                document.getElementById(sectionId).scrollIntoView({behavior: 'smooth'});
+            };
+            
+            // For a more interactive experience, you could add:
+            $scope.showAnswers = {};
+            
+            $scope.toggleAnswer = function(questionId) {
+                $scope.showAnswers[questionId] = !$scope.showAnswers[questionId];
+            };
+            
+            // Sample answers for practice questions
+            $scope.answers = {
+                q1: "Output: 3, 1, 1000",
+                q2: "Output: True, True, True, True",
+                q3: "Output: True, False, True",
+                q4: "Output: True, True, True",
+                q5: "Output: 10"
+            };
+        }]);
+    </script>
+</body>
+</html>

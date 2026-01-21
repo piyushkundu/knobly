@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="title" content="CSS Properties - Learn Property with Examples and Comparison">
+    <meta name="description" content="Understand CSS display properties including block, inline, and inline-block. Learn their behavior with width, height, margin, and padding through detailed examples and tables.">
+    <meta name="keywords" content="CSS properties, CSS display property, block vs inline, inline-block, width in CSS, margin and padding in CSS, CSS examples, CSS tutorials">
+    <meta name="author" content="Piyush Kundu">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta property="og:title" content="CSS Properties - Learn Display Property with Examples and Comparison">
+    <meta property="og:description" content="Discover how display properties work in CSS with examples and a detailed comparison of block, inline, and inline-block behavior.">
+    <meta property="og:image" content="https://yourwebsite.com/path-to-image.jpg">
+    <meta property="og:url" content="https://olevelcccexam.link/css-properties">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CSS Properties - Learn Display Property with Examples and Comparison">
+    <meta name="twitter:description" content="Explore the behavior of CSS display properties like block, inline, and inline-block. Learn their differences with width, height, margin, and padding examples.">
+    <meta name="twitter:image" content="https://yourwebsite.com/path-to-image.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #f4f8fb;
+            --card-background: #ffffff;
+            --code-background: #f1f1f1;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            background-color: var(--primary-color);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .header h1 {
+            color: transparent;
+            background-image: linear-gradient(to right, #ffffff, #e0e0e0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, var(--secondary-color), #6a11cb);
+            opacity: 0.8;
+            z-index: 0;
+        }
+        .header p {
+            color: rgba(255,255,255,0.8);
+            position: relative;
+            z-index: 1;
+        }
+        .introduction {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .section {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            padding: 30px;
+        }
+        .code-example {
+            background-color: var(--code-background);
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            border-radius: 5px;
+        }
+        .border-demo {
+            width: 100%;
+            max-width: 200px;
+            height: 120px;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        .border-demo:hover {
+            transform: scale(1.05);
+        }
+        h1, h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .section {
+                padding: 15px;
+            }
+            .header {
+                padding: 20px;
+            }
+            .border-demo {
+                max-width: 100%;
+            }
+        }
+        .property-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .code-snippet {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-bottom: 15px;
+        }
+        .visual-demo {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .demo-item {
+            padding: 10px;
+            border: 2px solid black;
+            text-align: center;
+        }
+        .block-demo {
+            display: block;
+            background-color: #3498db;
+            width: 200px;
+        }
+        .inline-demo {
+            display: inline;
+            background-color: #2ecc71;
+        }
+        .inline-block-demo {
+            display: inline-block;
+            background-color: #e74c3c;
+            width: 150px;
+        }
+        .property-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .flex-item {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            margin: 0 10px;
+        }
+        .shadow-demo {
+            width: 200px;
+            height: 100px;
+            background-color: #2ecc71;
+            margin: 20px 0;
+        }
+        .box-sizing-demo {
+            box-sizing: border-box;
+            width: 300px;
+            padding: 20px;
+            border: 10px solid #e74c3c;
+            background-color: #f1c40f;
+        }
+        .code-snippet {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+        .box-model-diagram {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            position: relative;
+            background-color: #e74c3c;
+            padding: 60px;
+            border: 20px solid #3498db;
+            box-sizing: border-box;
+        }
+        .box-model-content {
+            background-color: #2ecc71;
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        .layer-label {
+            position: absolute;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            /*padding: 5px;*/
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .content-label { top: 40%; left: 50%; transform: translate(-50%, -50%); }
+        .padding-label { top: 20%; left: 50%; transform: translate(-50%, -50%); }
+        .border-label { top: 10%; left: 50%; transform: translate(-50%, -50%); }
+        .margin-label { top: 0; left: 50%; transform: translateX(-50%); }
+        .property-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+    </style>
+    <style>
+    .button-container {
+     
+      width: 100%;
+      display: grid;
+      place-items: center;
+      
+    }
+    
+    .button-link {
+      text-decoration: none;
+    }
+
+    button {
+      position: relative;
+      width: 12rem;
+      height: 3.5rem;
+      background-color: white;
+      border: 4px solid white;
+      border-radius: 1rem;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: black;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    button .slide-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 3rem;
+      width: 25%;
+      background-color: #18465a;
+      border-radius: 0.75rem;
+      display: grid;
+      place-items: center;
+      transition: width 0.5s ease;
+      z-index: 10;
+    }
+
+    button:hover .slide-bg {
+      width: 100%;
+    }
+
+    button p {
+      position: absolute;
+      z-index: 20;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      margin: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    button:hover p {
+      opacity: 0;
+    }
+    .rotate-icon {
+  transform: rotate(180deg); /* Rotate 90 degrees */
+  transition: transform 0.3s ease; /* Optional smooth rotation effect */
+}
+
+.button-link:hover .rotate-icon {
+  transform: rotate(180deg); /* Rotate further on hover */
+}
+ .property-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .code-snippet {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+        .list-type-demo {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+                  list-style-position: inside;
+
+        }
+        .list-type-demo > div {
+            width: 30%;
+            margin-bottom: 20px;
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+          .example-text {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+        .font-demo {
+            margin: 15px 0;
+            padding: 10px;
+            border-left: 4px solid #3498db;
+        }
+        .property-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .background-demo {
+            height: 250px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        .background-item {
+            width: 30%;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+         .list-demo {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .list-demo ul {
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+          .property-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .code-snippet {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+         table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        /* Hoverable table */
+        .hoverable-table tr:hover {
+            background-color: #f5f5f5;
+            transition: background-color 0.3s ease;
+        }
+        /* Striped table */
+        .striped-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .table-demo {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .table-demo > div {
+            width: 48%;
+        }
+  </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CSS Properties</h1>
+            <p>Comprehensive Web Design Guide</p>
+        </div>
+
+        <div class="introduction">
+            <h1>1. Border Properties</h1>
+            <p>Border properties in CSS allow you to create and style borders around HTML elements. They are essential for defining the visual boundaries and enhancing the design of web pages. Borders can be customized in terms of style, width, color, and shape.</p>
+            <p>Key aspects of border properties include:</p>
+            <div class="code-example">
+                /* Border Property Syntax */
+                selector {
+                    border: width style color;
+                    border-radius: value;
+                }
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>(i) . Border Style Property</h2>
+            <p>The border-style property specifies the type of border to display. <br>
+            border-style: none | hidden | dotted | dashed | solid | double | groove | ridge | inset | outset |</p>
+            
+            <div class="example-grid">
+                <div>
+                    <div class="border-demo" style="border: 3px dotted blue;">dotted</div>
+                    <div class="code-example">border-style: dotted;</div>
+                </div>
+                <div>
+                    <div class="border-demo" style="border: 3px dashed green;">dashed</div>
+                    <div class="code-example">border-style: dashed;</div>
+                </div>
+                <div>
+                    <div class="border-demo" style="border: 3px solid red;">solid</div>
+                    <div class="code-example">border-style: solid;</div>
+                </div>
+                <div>
+                    <div class="border-demo" style="border: 3px double purple;">double</div>
+                    <div class="code-example">border-style: double;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>(ii) . Border Width Property</h2>
+            <p>The border-width defines the thickness of the border.</p>
+            
+            <div class="example-grid">
+                <div>
+                    <div class="border-demo" style="border: 1px solid black;">1px Width</div>
+                    <div class="code-example">border-width: 1px;</div>
+                </div>
+                <div>
+                    <div class="border-demo" style="border: 5px solid black;">5px Width</div>
+                    <div class="code-example">border-width: 5px;</div>
+                </div>
+                <div>
+                    <div class="border-demo" style="border: 10px solid black;">10px Width</div>
+                    <div class="code-example">border-width: 10px;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>(iii) . Border Color Property</h2>
+            <p>The border-color sets the color of the border.</p>
+            
+            <div class="example-grid">
+                <div>
+                    <div class="border-demo" style="border: 3px solid red;">Red Border</div>
+                    <div class="code-example">border-color: red;</div>
+                </div>
+                <div>
+                    <div class="border-demo" style="border: 3px solid blue;">Blue Border</div>
+                    <div class="code-example">border-color: blue;</div>
+                </div>
+                <div>
+                    <div class="border-demo" style="border: 3px solid green;">Green Border</div>
+                    <div class="code-example">border-color: green;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>(iv). Individual Border Properties</h2>
+            <p>Target specific sides of the border.</p>
+            
+            <div class="example-grid">
+                <div>
+                    <div class="border-demo" style="border-top: 5px dashed red; border-bottom: 5px dotted blue;">
+                        Different Sides
+                    </div>
+                    <div class="code-example">
+                        border-top: 5px dashed red;<br>
+                        border-bottom: 5px dotted blue;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>(v). Border Shorthand</h2>
+            <p>Combine width, style, and color in one declaration.</p>
+            
+            <div class="example-grid">
+                <div>
+                    <div class="border-demo" style="border: 3px dashed orange;">
+                        Shorthand Border
+                    </div>
+                    <div class="code-example">border: 3px dashed orange;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>(vi). Border Radius</h2>
+            <p>Create rounded corners for elements.</p>
+            
+            <div class="example-grid">
+                <div>
+                    <div class="border-demo" style="border: 3px solid black; border-radius: 10px;">
+                        Slight Rounding
+                    </div>
+                    <div class="code-example">border-radius: 10px;</div>
+                </div>
+                <div>
+                    <div class="border-demo" style="border: 3px solid black; border-radius: 50px;">
+                        More Rounding
+                    </div>
+                    <div class="code-example">border-radius: 50px;</div>
+                </div>
+                <div>
+                    <div class="border-demo" style="border: 3px solid black; border-radius: 50%;">
+                        Circular
+                    </div>
+                    <div class="code-example">border-radius: 50%;</div>
+                </div>
+            </div>
+        </div>
+  <div class="button-container">
+    <a href="task1.html" class="button-link">
+      <button type="button">
+        <div class="slide-bg">
+          <svg class="rotate-icon" width="25px" height="25px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#ffffff" d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"></path>
+            <path fill="#ffffff" d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"></path>
+          </svg>
+        </div>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Task - 1</p>
+      </button>
+    </a>
+  </div>
+    <div class="property-container">
+        <div class="section">
+            <h1>2. Display Property</h1>
+            <p>The `display` property in CSS determines how an element is displayed in the document. It influences the layout and interaction of an element with surrounding elements. Common values are:</p>
+            <ul>
+                <li><b>block</b>: The element takes up the entire width of its parent, creating a new line.</li>
+                <li><b>inline</b>: The element does not start on a new line, and its width/height cannot be manually adjusted.</li>
+                <li><b>inline-block</b>: Similar to inline, but allows setting width and height.</li>
+            </ul>
+        </div>
+        <div class="section">
+            <h2>Comparison of Display Properties</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Width</th>
+                        <th>Height</th>
+                        <th>Margin</th>
+                        <th>Padding</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>block</b></td>
+                        <td>Can be set</td>
+                        <td>Can be set</td>
+                        <td>All sides apply</td>
+                        <td>All sides apply</td>
+                    </tr>
+                    <tr>
+                        <td><b>inline</b></td>
+                        <td>Cannot be set</td>
+                        <td>Cannot be set</td>
+                        <td>Horizontal margins apply</td>
+                        <td>Horizontal padding applies</td>
+                    </tr>
+                    <tr>
+                        <td><b>inline-block</b></td>
+                        <td>Can be set</td>
+                        <td>Can be set</td>
+                        <td>All sides apply</td>
+                        <td>All sides apply</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h2>1. Display: Block</h2>
+        <table>
+            <tr>
+                <th>Characteristic</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>Width</td>
+                <td>Takes full width of parent container</td>
+            </tr>
+            <tr>
+                <td>Line Behavior</td>
+                <td>Always starts on a new line</td>
+            </tr>
+            <tr>
+                <td>Dimensions</td>
+                <td>Respects width and height properties</td>
+            </tr>
+        </table>
+        <div class="code-snippet">
+            .block-element {
+                display: block;
+                width: 100%;
+            }
+        </div>
+        <div class="visual-demo">
+            <div class="demo-item block-demo">Block Element 1</div>
+            <div class="demo-item block-demo">Block Element 2</div>
+        </div>
+    </div>
+
+    <div class="property-container">
+        <h2>2. Display: Inline</h2>
+        <table>
+            <tr>
+                <th>Characteristic</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>Width</td>
+                <td>Only takes necessary content width</td>
+            </tr>
+            <tr>
+                <td>Line Behavior</td>
+                <td>Flows within text, no line breaks</td>
+            </tr>
+            <tr>
+                <td>Dimensions</td>
+                <td>Ignores width and height settings</td>
+            </tr>
+        </table>
+        <div class="code-snippet">
+            .inline-element {
+                display: inline;
+            }
+        </div>
+        <div class="visual-demo">
+            <span class="demo-item inline-demo">Inline Element 1</span>
+            <span class="demo-item inline-demo">Inline Element 2</span>
+        </div>
+    </div>
+
+    <div class="property-container">
+        <h2>3. Display: Inline-Block</h2>
+        <table>
+            <tr>
+                <th>Characteristic</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>Width</td>
+                <td>Configurable content width</td>
+            </tr>
+            <tr>
+                <td>Line Behavior</td>
+                <td>Flows inline with other elements</td>
+            </tr>
+            <tr>
+                <td>Dimensions</td>
+                <td>Respects width and height properties</td>
+            </tr>
+        </table>
+        <div class="code-snippet">
+            .inline-block-element {
+                display: inline-block;
+                width: 150px;
+            }
+        </div>
+        <div class="visual-demo">
+            <div class="demo-item inline-block-demo">Inline-Block 1</div>
+            <div class="demo-item inline-block-demo">Inline-Block 2</div>
+        </div>
+    </div>
+
+    <div class="property-container">
+        <h2>Practical Use Cases</h2>
+        <table>
+            <tr>
+                <th>Display Type</th>
+                <th>Recommended Use</th>
+                <th>Example Scenarios</th>
+            </tr>
+            <tr>
+                <td>Block</td>
+                <td>Layout Structures</td>
+                <td>Paragraphs, Divs, Sections</td>
+            </tr>
+            <tr>
+                <td>Inline</td>
+                <td>Text-Based Elements</td>
+                <td>Spans, Links, Bold/Italic Text</td>
+            </tr>
+            <tr>
+                <td>Inline-Block</td>
+                <td>Interactive Components</td>
+                <td>Buttons, Navigation Items</td>
+            </tr>
+        </table>
+    </div>
+     <div class="button-container">
+    <a href="task2.html" class="button-link">
+      <button type="button">
+        <div class="slide-bg">
+          <svg class="rotate-icon" width="25px" height="25px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#ffffff" d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"></path>
+            <path fill="#ffffff" d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"></path>
+          </svg>
+        </div>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Task - 2</p>
+      </button>
+    </a>
+  </div>
+    <div class="property-container">
+        <h2>4. Display: Flex 🔧</h2>
+        <p><b>What It Does:</b> It creates a flexible layout system for arranging items in a container.<br>
+<b> Why It’s Useful:</b> It helps align and distribute items easily, even when their sizes vary.</p>
+        <div class="flex-container">
+            <div class="flex-item">Flex Item 1</div>
+            <div class="flex-item">Flex Item 2</div>
+            <div class="flex-item">Flex Item 3</div>
+        </div>
+        <div class="code-snippet">
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+        </div>
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Description</th>
+                <th>Common Values</th>
+            </tr>
+            <tr>
+                <td>display: flex</td>
+                <td>Creates a flex container</td>
+                <td>flex, inline-flex</td>
+            </tr>
+            <tr>
+                <td>justify-content</td>
+                <td>Aligns items horizontally</td>
+                <td>center, space-between, space-around</td>
+            </tr>
+            <tr>
+                <td>align-items</td>
+                <td>Aligns items vertically</td>
+                <td>center, stretch, flex-start</td>
+            </tr>
+        </table>
+    </div>
+ <div class="property-container">
+        <h1>3. CSS Box Model: Comprehensive Guide</h1>
+        
+        <div class="box-model-diagram">
+            <div class="layer-label margin-label">Margin</div>
+            <div class="layer-label border-label">Border</div>
+            <div class="layer-label padding-label">Padding</div>
+            <div class="layer-label content-label">Content</div>
+            <div class="box-model-content">
+                Content Area
+            </div>
+        </div>
+
+        <div class="code-snippet">
+/* Box Model CSS Example */
+.element {
+    width: 300px;          /* Content width */
+    padding: 20px;         /* Internal spacing */
+    border: 10px solid;    /* Element border */
+    margin: 15px;          /* External spacing */
+}
+        </div>
+    </div>
+
+    <div class="property-container">
+        <h2>1. Box Shadow 🌓</h2>
+        <p><b> What It Does:</b> It adds a shadow to an element, making it look like it's lifted off the page.<br>
+<b> Why It’s Useful:</b> It gives depth and a polished look to elements.</p>
+        <div class="shadow-demo" style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3);"></div>
+        <div class="code-snippet">
+.element {
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+}
+        </div>
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Description</th>
+                <th>Value Components</th>
+            </tr>
+            <tr>
+                <td>box-shadow</td>
+                <td>Adds shadow effect to element</td>
+                <td>x-offset, y-offset, blur-radius, color</td>
+            </tr>
+            <tr>
+                <td>Horizontal Offset</td>
+                <td>Shadow position on X-axis</td>
+                <td>Positive/Negative pixels</td>
+            </tr>
+            <tr>
+                <td>Vertical Offset</td>
+                <td>Shadow position on Y-axis</td>
+                <td>Positive/Negative pixels</td>
+            </tr>
+        </table>
+    </div>
+ 
+    <div class="property-container">
+        <h2>2. Box Sizing 📦</h2>
+        <p><b>What It Does:</b>  It decides how the size of an element is calculated (whether padding and border are included or excluded).
+<br><b> Why It’s Useful:</b> It simplifies layout and ensures consistent element sizes.</p>
+        <div class="box-sizing-demo">
+            Box Sizing: Border Box
+        </div>
+        <div class="code-snippet">
+.element {
+    box-sizing: border-box;
+    width: 300px;
+    padding: 20px;
+    border: 10px solid red;
+}
+        </div>
+        <table>
+            <tr>
+                <th>Value</th>
+                <th>Description</th>
+                <th>Calculation Method</th>
+            </tr>
+            <tr>
+                <td>content-box</td>
+                <td>Default browser behavior</td>
+                <td>Width = content width</td>
+            </tr>
+            <tr>
+                <td>border-box</td>
+                <td>Includes padding and border in total width</td>
+                <td>Width = content + padding + border</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="property-container">
+        <h2>3. Box Decoration Break 🎨</h2>
+        <p><b>What It Does:</b>  Controls how decorations like borders, backgrounds, and shadows behave when content breaks into multiple lines or boxes.
+<br><b> Why It’s Useful:</b> Ensures a smooth or continuous look for elements split across lines.</p>
+        <div class="code-snippet">
+.element {
+    -webkit-box-decoration-break: clone;
+}
+        </div>
+        <table>
+            <tr>
+                <th>Value</th>
+                <th>Description</th>
+                <th>Use Case</th>
+            </tr>
+            <tr>
+                <td>slice</td>
+                <td>Default behavior</td>
+                <td>Breaks background at element boundaries</td>
+            </tr>
+            <tr>
+                <td>clone</td>
+                <td>Repeats decoration across lines</td>
+                <td>Multi-line text with consistent styling</td>
+            </tr>
+        </table>
+    </div>
+    <div class="property-container">
+        <h1>4. List Styles </h1>
+         <p>Defines the appearance of list markers. Can change bullets to different shapes or numbers to various numbering systems.</p>
+        <h3>1. List-Style-Type </h3>
+         <h3>Unordered List Types </h3>
+        <div class="list-type-demo">
+            <div>
+                <h4>disc (Default)</h4>
+                <ul style="list-style-type: disc;">
+                    <li>Standard bullet point</li>
+                    <li>Solid circular marker</li>
+                </ul>
+            </div>
+            <div>
+                <h4>circle</h4>
+                <ul style="list-style-type: circle;">
+                    <li>Hollow circular marker</li>
+                    <li>Open circle style</li>
+                </ul>
+            </div>
+            <div>
+                <h4>square</h4>
+                <ul style="list-style-type: square;">
+                    <li>Solid square marker</li>
+                    <li>Block-style bullet</li>
+                </ul>
+            </div>
+            <div>
+                <h4>none</h4>
+                <ul style="list-style-type: none;">
+                    <li>No visible marker</li>
+                    <li>Clean, minimalist look</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="code-snippet">
+/* Unordered List Type Styles */
+ul { 
+    list-style-type: disc;     /* Default */
+    list-style-type: circle;   /* Hollow circles */
+    list-style-type: square;   /* Solid squares */
+    list-style-type: none;     /* No markers */
+}
+        </div>
+
+        <h3>Ordered List Types </h3>
+        <div class="list-type-demo">
+            <div>
+                <h4>decimal (Default)</h4>
+                <ol style="list-style-type: decimal;">
+                    <li>Standard numbering</li>
+                    <li>1, 2, 3, 4...</li>
+                </ol>
+            </div>
+            <div>
+                <h4>decimal-leading-zero</h4>
+                <ol style="list-style-type: decimal-leading-zero;">
+                    <li>Includes leading zero</li>
+                    <li>01, 02, 03...</li>
+                </ol>
+            </div>
+            <div>
+                <h4>lower-alpha</h4>
+                <ol style="list-style-type: lower-alpha;">
+                    <li>Lowercase letters</li>
+                    <li>a, b, c, d...</li>
+                </ol>
+            </div>
+            <div>
+                <h4>upper-alpha</h4>
+                <ol style="list-style-type: upper-alpha;">
+                    <li>Uppercase letters</li>
+                    <li>A, B, C, D...</li>
+                </ol>
+            </div>
+            <div>
+                <h4>lower-roman</h4>
+                <ol style="list-style-type: lower-roman;">
+                    <li>Lowercase Roman</li>
+                    <li>i, ii, iii, iv...</li>
+                </ol>
+            </div>
+            <div>
+                <h4>upper-roman</h4>
+                <ol style="list-style-type: upper-roman;">
+                    <li>Uppercase Roman</li>
+                    <li>I, II, III, IV...</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="code-snippet">
+/* Ordered List Type Styles */
+ol { 
+    list-style-type: decimal;               /* 1, 2, 3 */
+    list-style-type: decimal-leading-zero;  /* 01, 02, 03 */
+    list-style-type: lower-alpha;           /* a, b, c */
+    list-style-type: upper-alpha;           /* A, B, C */
+    list-style-type: lower-roman;           /* i, ii, iii */
+    list-style-type: upper-roman;           /* I, II, III */
+}
+        </div>
+    
+       
+
+        <h3>2. List-Style-Position </h3>
+        <div class="list-demo">
+            <ul style="list-style-position: outside;">
+                <li>Outside Position (Default)</li>
+                <li>Markers aligned to left</li>
+            </ul>
+            <ul style="list-style-position: inside;">
+                <li>Inside Position</li>
+                <li>Markers inside list content</li>
+            </ul>
+        </div>
+        <div class="code-snippet">
+/* List Style Position */
+ul { list-style-position: inside; }
+        </div>
+        <p>Controls whether list markers are inside or outside the list item's content box.</p>
+
+        <h3>3. List-Style-Image </h3>
+        <div class="code-snippet">
+/* Custom Image Marker */
+ul {
+    list-style-image: url('custom-marker.png');
+}
+        </div>
+        <p>Replaces standard markers with a custom image. Useful for unique or branded list styles.</p>
+
+        <h3>4. List-Style (Shorthand) </h3>
+        <div class="code-snippet">
+/* Shorthand Syntax */
+ul {
+    list-style: square inside url('marker.png');
+    /* Combines type, position, and image */
+}
+        </div>
+        <p>Combines list-style-type, list-style-position, and list-style-image in a single declaration.</p>
+    </div>
+       <div class="property-container">
+        <h2>Text Properties</h2>
+        
+        <h3>Text Properties Overview</h3>
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Values</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>text-align</td>
+                <td>left, right, center, justify</td>
+                <td>
+                    <div class="text-demo" style="text-align: center;">
+                        Centered Text
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>text-indent</td>
+                <td>pixels, ems, percentage</td>
+                <td>
+                    <div class="text-demo" style="text-indent: 30px;">
+                        Indented first line by 30 pixels
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>line-height</td>
+                <td>normal, number, pixels, percentage</td>
+                <td>
+                    <div class="text-demo" style="line-height: 2;">
+                        Double line height<br>
+                        Increased spacing between lines
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>letter-spacing</td>
+                <td>normal, pixels</td>
+                <td>
+                    <div class="text-demo" style="letter-spacing: 3px;">
+                        Increased space between characters
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>text-decoration</td>
+                <td>none, underline, overline, line-through</td>
+                <td>
+                    <div class="text-demo" style="text-decoration: underline;">
+                        Underlined Text
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="code-snippet">
+/* Text Property Examples */
+.text-styles {
+    text-align: center;
+    text-indent: 30px;
+    line-height: 1.5;
+    letter-spacing: 1px;
+    text-decoration: underline;
+}
+        </div>
+
+        <h3>Text Decoration Variations</h3>
+        <div class="text-demo">
+            <span style="text-decoration: underline;">Underline</span> | 
+            <span style="text-decoration: overline;">Overline</span> | 
+            <span style="text-decoration: line-through;">Line Through</span>
+        </div>
+
+        <div class="code-snippet">
+/* Text Decoration Combinations */
+.text-decoration-demo {
+    text-decoration: underline wavy red;  /* Wavy underline in red */
+}
+        </div>
+        
+    </div>
+    
+    <div class="property-container">
+        <h2>Font Properties</h2>
+        
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Values</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>font-family</td>
+                <td>
+                    - Generic families: serif, sans-serif, monospace<br>
+                    - Specific fonts: Arial, Times New Roman, Helvetica<br>
+                    - Web fonts: Google Fonts, Custom Fonts<br>
+                    - System fonts: system-ui
+                </td>
+                <td>
+                    <div class="font-demo" style="font-family: 'Times New Roman', serif;">
+                        Times New Roman Text
+                    </div>
+                    <div class="font-demo" style="font-family: Arial, sans-serif;">
+                        Arial Text
+                    </div>
+                    <div class="font-demo" style="font-family: monospace;">
+                        Monospace Text
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>font-style</td>
+                <td>
+                    - normal<br>
+                    - italic<br>
+                    - oblique
+                </td>
+                <td>
+                    <div class="font-demo" style="font-style: normal;">
+                        Normal text
+                    </div>
+                    <div class="font-demo" style="font-style: italic;">
+                        Italic text
+                    </div>
+                    <div class="font-demo" style="font-style: oblique;">
+                        Oblique text
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>font-weight</td>
+                <td>
+                    - normal (400)<br>
+                    - bold (700)<br>
+                    - lighter<br>
+                    - bolder<br>
+                    - 100 to 900
+                </td>
+                <td>
+                    <div class="font-demo" style="font-weight: normal;">
+                        Normal weight (400)
+                    </div>
+                    <div class="font-demo" style="font-weight: bold;">
+                        Bold weight (700)
+                    </div>
+                    <div class="font-demo" style="font-weight: 900;">
+                        Heavy weight (900)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>font-size</td>
+                <td>
+                    - Absolute: px, pt<br>
+                    - Relative: em, rem, %<br>
+                    - Keywords: small, medium, large<br>
+                    - Viewport: vw, vh
+                </td>
+                <td>
+                    <div class="font-demo" style="font-size: 12px;">
+                        12px text size
+                    </div>
+                    <div class="font-demo" style="font-size: 1.5em;">
+                        1.5em text size
+                    </div>
+                    <div class="font-demo" style="font-size: large;">
+                        Large text size
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>text-decoration</td>
+                <td>
+                    - none<br>
+                    - underline<br>
+                    - overline<br>
+                    - line-through<br>
+                    - Can combine with style and color
+                </td>
+                <td>
+                    <div class="font-demo" style="text-decoration: none;">
+                        No decoration
+                    </div>
+                    <div class="font-demo" style="text-decoration: underline;">
+                        Underlined text
+                    </div>
+                    <div class="font-demo" style="text-decoration: line-through;">
+                        Strikethrough text
+                    </div>
+                    <div class="font-demo" style="text-decoration: underline overline red wavy;">
+                        Fancy decoration
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="example-text">
+            <h4>Combined Example:</h4>
+            <div style="
+                font-family: 'Arial', sans-serif;
+                font-size: 18px;
+                font-weight: bold;
+                font-style: italic;
+                text-decoration: underline;
+            ">
+                This text combines multiple font properties
+            </div>
+        </div>
+    </div>
+     <div class="property-container">
+        <h2>Background Properties </h2>
+
+        <h3>Background Demonstrations</h3>
+        <div class="background-demo">
+            <div class="background-item" style="background-color: #3498db;">
+                Background Color
+            </div>
+            <div class="background-item" style="background-image: linear-gradient(45deg, #ff6b6b, #4ecdc4);">
+                Background Image
+            </div>
+            <div class="background-item" style="background-image: url('/api/placeholder/200/200'); background-position: center; background-repeat: no-repeat;">
+                Background Position
+            </div>
+        </div>
+
+        <h3>Background Properties Table</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Values</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>background-color</td>
+                    <td>color name, hex, rgb, rgba</td>
+                    <td>
+                        <div class="code-snippet">
+background-color: blue;
+background-color: #3498db;
+background-color: rgb(52, 152, 219);
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>background-image</td>
+                    <td>url(), linear-gradient(), radial-gradient()</td>
+                    <td>
+                        <div class="code-snippet">
+background-image: url('image.jpg');
+background-image: linear-gradient(to right, red, blue);
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>background-position</td>
+                    <td>top, bottom, left, right, center, px, %</td>
+                    <td>
+                        <div class="code-snippet">
+background-position: center;
+background-position: 25% 75%;
+background-position: 50px 100px;
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>background-size</td>
+                    <td>cover, contain, px, %</td>
+                    <td>
+                        <div class="code-snippet">
+background-size: cover;
+background-size: contain;
+background-size: 200px 150px;
+background-size: 50% 100%;
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Shorthand Background Property</h3>
+        <div class="code-snippet">
+/* Background Shorthand */
+background: 
+    #ff6b6b               /* color */
+    url('image.jpg')      /* image */
+    no-repeat             /* repeat */
+    center center         /* position */
+    / cover;              /* size */
+        </div>
+    </div>
+     <div class="property-container">
+        <h2>CSS Position Properties </h2>
+
+        <h3>Position Property Overview</h3>
+        <p>The CSS position property defines how an element is positioned in a document. It can change an element's layout behavior and its relationship to other elements.</p>
+
+        <h3>Position Demonstration</h3>
+        <div class="position-demo">
+            <div class="position-item static">Static</div>
+            <div class="position-item relative">Relative</div>
+            <div class="position-item absolute">Absolute</div>
+            <div class="position-item sticky">Sticky</div>
+            <div class="position-item fixed">Fixed</div>
+        </div>
+
+        <h3>Position Properties Table</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Property Value</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>static</td>
+                    <td>Default positioning. Element follows normal document flow.</td>
+                    <td>
+                        <div class="code-snippet">
+position: static;
+/* Default behavior, no special positioning */
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>relative</td>
+                    <td>Positioned relative to its normal position. Doesn't affect other elements.</td>
+                    <td>
+                        <div class="code-snippet">
+position: relative;
+top: 20px;    /* Moves 20px down */
+left: 30px;   /* Moves 30px right */
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>absolute</td>
+                    <td>Removed from normal document flow. Positioned relative to nearest positioned ancestor.</td>
+                    <td>
+                        <div class="code-snippet">
+position: absolute;
+top: 50px;
+right: 100px;
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>fixed</td>
+                    <td>Positioned relative to the browser window. Stays in the same place during scrolling.</td>
+                    <td>
+                        <div class="code-snippet">
+position: fixed;
+bottom: 20px;
+right: 20px;  /* Stays in bottom-right corner */
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>sticky</td>
+                    <td>Toggles between relative and fixed positioning based on scroll position.</td>
+                    <td>
+                        <div class="code-snippet">
+position: sticky;
+top: 0;  /* Sticks to top when scrolled */
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Positioning Context</h3>
+        <p>The positioning of elements depends on their context:</p>
+        <ul>
+            <li>Static and relative positioned elements remain within the normal document flow.</li>
+            <li>Absolute positioned elements are taken out of the flow and positioned relative to their nearest positioned ancestor.</li>
+            <li>Fixed and sticky elements are positioned relative to the browser viewport.</li>
+        </ul>
+    </div>
+     <div class="property-container">
+        <h2>CSS Table Properties </h2>
+
+        <h3>Table Properties Overview</h3>
+        <p>CSS provides powerful properties to style and control HTML tables, allowing for more dynamic and visually appealing table designs.</p>
+
+        <h3>Table Properties Breakdown</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>border</td>
+                    <td>Controls table and cell border appearance</td>
+                    <td>
+                        <div class="code-snippet">
+table {
+    border: 2px solid #333;
+}
+td {
+    border: 1px solid #ddd;
+}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>border-collapse</td>
+                    <td>Defines how table borders are rendered</td>
+                    <td>
+                        <div class="code-snippet">
+/* Combines adjacent cell borders */
+table {
+    border-collapse: collapse;
+    /* or */
+    border-collapse: separate;
+}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>width & height</td>
+                    <td>Set table and cell dimensions</td>
+                    <td>
+                        <div class="code-snippet">
+table { 
+    width: 100%; 
+    height: 400px; 
+}
+td {
+    width: 50%;
+    height: 50px;
+}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>text-align</td>
+                    <td>Horizontal alignment of cell content</td>
+                    <td>
+                        <div class="code-snippet">
+td {
+    text-align: left; /* left, center, right */
+}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>vertical-align</td>
+                    <td>Vertical alignment of cell content</td>
+                    <td>
+                        <div class="code-snippet">
+td {
+    vertical-align: middle; /* top, middle, bottom */
+}
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Table Style Demonstrations</h3>
+        <div class="table-demo">
+            <div>
+                <h4>Hoverable Table</h4>
+                <table class="hoverable-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Alice</td>
+                            <td>Developer</td>
+                        </tr>
+                        <tr>
+                            <td>Bob</td>
+                            <td>Designer</td>
+                        </tr>
+                        <tr>
+                            <td>Charlie</td>
+                            <td>Manager</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h4>Striped Table</h4>
+                <table class="striped-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Laptop</td>
+                            <td>$999</td>
+                        </tr>
+                        <tr>
+                            <td>Smartphone</td>
+                            <td>$599</td>
+                        </tr>
+                        <tr>
+                            <td>Tablet</td>
+                            <td>$399</td>
+                        </tr>
+                        <tr>
+                            <td>Headphones</td>
+                            <td>$199</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h3>Detailed Explanations</h3>
+        
+        <h4>1. Table Border</h4>
+        <p>Table borders define the visual boundaries of tables and cells. You can control:</p>
+        <ul>
+            <li>Border width: Thickness of the border</li>
+            <li>Border style: solid, dashed, dotted, etc.</li>
+            <li>Border color: Color of the border</li>
+        </ul>
+
+        <h4>2. Border Collapse</h4>
+        <p>This property determines how table borders are rendered:</p>
+        <ul>
+            <li><code>collapse</code>: Combines adjacent cell borders into a single border</li>
+            <li><code>separate</code>: Keeps cell borders distinct with spacing</li>
+        </ul>
+
+        <h4>3. Table Width and Height</h4>
+        <p>Control table and cell dimensions using percentage or pixel values:</p>
+        <ul>
+            <li>Table width can be set to fixed or responsive percentages</li>
+            <li>Individual cell heights and widths can be customized</li>
+        </ul>
+
+        <h4>4. Horizontal and Vertical Alignment</h4>
+        <p>Positioning content within table cells:</p>
+        <ul>
+            <li><code>text-align</code>: Aligns content horizontally (left, center, right)</li>
+            <li><code>vertical-align</code>: Aligns content vertically (top, middle, bottom)</li>
+        </ul>
+
+        <h4>5. Hoverable Tables</h4>
+        <p>Add interactivity by changing background on hover using <code>:hover</code> pseudo-class</p>
+
+        <h4>6. Striped Tables</h4>
+        <p>Improve readability by adding alternating background colors using <code>:nth-child()</code> selector</p>
+    </div>
+    <div class="button-container">
+    <a href="task3" class="button-link">
+      <button type="button">
+        <div class="slide-bg">
+          <svg class="rotate-icon" width="25px" height="25px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#ffffff" d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"></path>
+            <path fill="#ffffff" d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"></path>
+          </svg>
+        </div>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Task - 3</p>
+      </button>
+    </a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="quizApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Quiz | पायथन क्विज</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 30px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #a0a0a0;
+            font-weight: 400;
+        }
+
+        .lang-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #00d4ff;
+            color: #1a1a2e;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-toggle:hover {
+            background: #00b4d8;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .questions {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .question-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1rem;
+            color: #d0d0d0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #808080;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            .container {
+                padding: 20px;
+            }
+            .question-card {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            .title {
+                font-size: 1.5rem;
+            }
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            .lang-toggle {
+                padding: 6px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body ng-controller="QuizController">
+    <div class="container">
+        <header>
+            <h1 class="title">Python Programing Questions</h1>
+           
+            <button class="lang-toggle" ng-click="toggleLanguage()">
+                {{ language === 'english' ? 'हिंदी' : 'English' }}
+            </button>
+        </header>
+
+        <section class="questions">
+            <div class="question-card" ng-repeat="question in questions">
+                <h2 class="question-number">Question {{ $index + 1 }}</h2>
+                <p class="question-text" ng-show="language === 'english'">{{ question.english }}</p>
+                <p class="question-text" ng-show="language === 'hindi'">{{ question.hindi }}</p>
+            </div>
+        </section>
+
+        <footer>
+           
+        </footer>
+    </div>
+
+    <script>
+        var app = angular.module('quizApp', []);
+        app.controller('QuizController', function($scope) {
+            $scope.language = 'english';
+            
+            $scope.questions = [
+                {
+                    english: "Write a Python program that takes two integers as input from the user and calculates their integer division (//), remainder (%), and exponentiation (**). Print all three results in a single line.",
+                    hindi: "एक पायथन प्रोग्राम लिखें जो उपयोगकर्ता से दो पूर्णांक इनपुट लेता हो और उनकी पूर्णांक विभाजन (//), शेष (%), और घातांक (***) की गणना करता हो। सभी तीन परिणाम एक ही पंक्ति में प्रिंट करें।"
+                },
+                {
+                    english: "Write a Python function that takes a string as input and returns a new string where every second character is converted to uppercase. For example, if the input is 'hello', the output should be 'hElLo'.",
+                    hindi: "एक पायथन फंक्शन लिखें जो एक स्ट्रिंग को इनपुट के रूप में लेता हो और एक नई स्ट्रिंग लौटाता हो जिसमें हर दूसरा अक्षर बड़े अक्षर में परिवर्तित हो। उदाहरण के लिए, यदि इनपुट 'hello' है, तो आउटपुट 'hElLo' होना चाहिए।"
+                },
+                {
+                    english: "Write a Python program that takes a number as input and prints whether it is positive, negative, or zero. Additionally, if the number is positive, check if it is even or odd and print that as well.",
+                    hindi: "एक पायथन प्रोग्राम लिखें जो एक संख्या को इनपुट के रूप में लेता हो और प्रिंट करता हो कि वह धनात्मक, ऋणात्मक, या शून्य है। इसके अतिरिक्त, यदि संख्या धनात्मक है, तो जांचें कि यह सम या विषम है और उसे भी प्रिंट करें।"
+                },
+                {
+                    english: "Write a Python program that uses a for loop to print all even numbers between 1 and 20 (inclusive) in reverse order (i.e., 20, 18, 16, ..., 2).",
+                    hindi: "एक पायथन प्रोग्राम लिखें जो फॉर लूप का उपयोग करके 1 से 20 (समावेशी) के बीच सभी सम संख्याओं को उल्टे क्रम में प्रिंट करता हो (अर्थात, 20, 18, 16, ..., 2)।"
+                },
+                {
+                    english: "Write a Python function that takes a list of integers as input and returns a new list containing only the elements that are greater than the average of all elements in the original list.",
+                    hindi: "एक पायथन फंक्शन लिखें जो पूर्णांकों की एक सूची को इनपुट के रूप में लेता हो और एक नई सूची लौटाता हो जिसमें केवल वे तत्व हों जो मूल सूची के सभी तत्वों के औसत से बड़े हों।"
+                },
+                {
+                    english: "Write a Python program that creates a tuple of 5 numbers input by the user, then prints the tuple, its minimum value, and the number of times the minimum value appears in the tuple.",
+                    hindi: "एक पायथन प्रोग्राम लिखें जो उपयोगकर्ता द्वारा इनपुट किए गए 5 नंबरों का एक टपल बनाता हो, फिर टपल, उसका न्यूनतम मान, और न्यूनतम मान की आवृत्ति को प्रिंट करता हो।"
+                },
+                {
+                    english: "Write a Python program that creates a dictionary where the keys are names (strings) and the values are ages (integers). The program should take 3 name-age pairs as input from the user and then print the name of the oldest person.",
+                    hindi: "एक पायथन प्रोग्राम लिखें जो एक डिक्शनरी बनाता हो जिसमें कुंजियाँ नाम (स्ट्रिंग्स) और मान आयु (पूर्णांक) हों। प्रोग्राम को उपयोगकर्ता से 3 नाम-आयु जोड़े इनपुट लेना चाहिए और फिर सबसे उम्रदराज व्यक्ति का नाम प्रिंट करना चाहिए।"
+                },
+                {
+                    english: "Write a Python program that keeps asking the user to input a number until they enter a number divisible by both 3 and 5. Once such a number is entered, print 'Valid number entered' and stop the program.",
+                    hindi: "एक पायथन प्रोग्राम लिखें जो उपयोगकर्ता से तब तक संख्या इनपुट मांगता रहे जब तक कि वे 3 और 5 दोनों से विभाज्य संख्या दर्ज न करें। ऐसी संख्या दर्ज होने पर 'Valid number entered' प्रिंट करें और प्रोग्राम बंद करें।"
+                },
+                {
+                    english: "Write a Python function that takes a list of strings as input and returns a single string that is the concatenation of all strings in the list, with each string separated by a hyphen (-). For example, if the input is ['cat', 'dog', 'bird'], the output should be 'cat-dog-bird'.",
+                    hindi: "एक पायथन फंक्शन लिखें जो स्ट्रिंग्स की एक सूची को इनपुट के रूप में लेता हो और एक एकल स्ट्रिंग लौटाता हो जो सूची में सभी स्ट्रिंग्स का संयोजन हो, प्रत्येक स्ट्रिंग को हाइफन (-) से अलग किया जाए। उदाहरण के लिए, यदि इनपुट ['cat', 'dog', 'bird'] है, तो आउटपुट 'cat-dog-bird' होना चाहिए।"
+                },
+                {
+                    english: "Write a Python program that creates a dictionary with keys as integers from 1 to 5 and values as their squares. Then, use a loop to update each value by adding 3 times the key to it. Finally, print the updated dictionary.",
+                    hindi: "एक पायथन प्रोग्राम लिखें जो 1 से 5 तक की पूर्णांकों के साथ एक डिक्शनरी बनाता हो जिसमें मान उनके वर्ग हों। फिर, एक लूप का उपयोग करके प्रत्येक मान को कुंजी के 3 गुना से अपडेट करें। अंत में, अपडेटेड डिक्शनरी प्रिंट करें।"
+                }
+            ];
+
+            $scope.toggleLanguage = function() {
+                $scope.language = $scope.language === 'english' ? 'hindi' : 'english';
+            };
+        });
+    </script>
+</body>
+</html>

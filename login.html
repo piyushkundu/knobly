@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        /* General container styling */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f8f8;
+        }
+
+        /* Card box styling */
+        .card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 350px;
+            padding: 40px;
+            gap: 20px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Heading at the top of the card */
+        .card h2 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Input box styling */
+        .inputBox {
+            position: relative;
+            width: 100%;
+        }
+
+        /* Input fields */
+        .inputBox input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            color: #333;
+            font-size: 1em;
+            background: #f0f0f0;
+            transition: border 0.3s ease;
+        }
+
+        /* Input focus effect */
+        .inputBox input:focus {
+            border-color: #007bff;
+            background-color: #fff;
+        }
+
+        /* Labels */
+        .inputBox span {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0 5px;
+            background: #fff;
+            color: #666;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .inputBox input:focus ~ span,
+        .inputBox input:valid ~ span {
+            top: -8px;
+            font-size: 0.75em;
+            color: #007bff;
+            background: #f8f8f8;
+        }
+
+        /* Button styling */
+        .enter {
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        /* Button hover effect */
+        .enter:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 400px) {
+            .card {
+                width: 90%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>Log In</h2> <!-- Heading for Log In -->
+            <div class="inputBox">
+                <input type="text" id="username" required="required">
+                <span>Username</span>
+            </div>
+
+            <div class="inputBox">
+                <input type="password" id="password" required="required">
+                <span>Password</span>
+            </div>
+
+            <button class="enter" onclick="checkLogin()">Enter</button>
+        </div>
+    </div>
+
+    <script>
+        function checkLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Check for the correct credentials
+            if (username === 'olevel' && password === '1234') {
+                // Redirect to the main content page
+                window.location.href = "chapter7test.html"; 
+            } else {
+                alert('Invalid username or password.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete CSS Tutorial</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --accent-color: #60a5fa;
+            --text-color: #1e293b;
+            --background-color: #f8fafc;
+            --code-bg-color: #1e293b;
+            --code-text-color: #e2e8f0;
+            --success-color: #22c55e;
+            --warning-color: #eab308;
+            --error-color: #ef4444;
+            --timeline-color: #ddd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.7;
+        }
+
+        nav {
+            background-color: #fff;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .nav-links a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section h2 {
+            color: var(--primary-color);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: var(--timeline-color);
+        }
+
+        .timeline-item {
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary-color);
+        }
+
+        .example-box {
+            border: 2px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #f8fafc;
+        }
+
+        .example-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .priority-list {
+            list-style: none;
+            counter-reset: priority-counter;
+        }
+
+        .priority-item {
+            background: white;
+            margin: 1rem 0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            padding-left: 4rem;
+            counter-increment: priority-counter;
+        }
+
+        .priority-item::before {
+            content: counter(priority-counter);
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2rem;
+            height: 2rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .code-block {
+            background: var(--code-bg-color);
+            color: var(--code-text-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Roboto Mono', monospace;
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0.75rem;
+            left: 1rem;
+            width: 12px;
+            height: 12px;
+            background: var(--error-color);
+            border-radius: 50%;
+            box-shadow: 20px 0 0 var(--warning-color),
+                       40px 0 0 var(--success-color);
+        }
+
+        .css-demo {
+            display: flex;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .demo-item {
+            flex: 1;
+            min-width: 250px;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-item i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 1rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .css-demo {
+                flex-direction: column;
+            }
+
+            .timeline-item {
+                padding-left: 1.5rem;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="../index" class="logo">Olevelccc<span style="color: var(--accent-color);">exam</span></a>
+            <ul class="nav-links">
+                <li><a href="../index">Home</a></li>
+                <li><a href="https://www.olevelcccexam.link/html/basichtml">HTML</a></li>
+                <li><a href="#" class="active">CSS</a></li>
+                <li><a href="#">JavaScript</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Introduction to CSS</h1>
+        <p>Master the art of styling web pages with CSS</p>
+    </header>
+
+    <div class="content">
+        <!-- Introduction Section -->
+        <div class="section">
+            <h2>What is CSS?</h2>
+            <p>CSS (Cascading Style Sheets) is the language we use to style web pages. It's the artistic palette that brings HTML to life, controlling layout, colors, fonts, spacing, and more.</p>
+            
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="fas fa-paint-brush"></i>
+                    <h3>Styling</h3>
+                    <p>Define colors, fonts, and visual appearance of elements</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-layer-group"></i>
+                    <h3>Layout</h3>
+                    <p>Control positioning and arrangement of elements</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Responsive Design</h3>
+                    <p>Create layouts that adapt to different screen sizes</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-magic"></i>
+                    <h3>Animations</h3>
+                    <p>Add dynamic effects and transitions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="section">
+            <h2>Evolution of CSS</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>1994: The Beginning</h3>
+                    <p>Håkon Wium Lie proposes CSS while working at CERN alongside HTML creator Tim Berners-Lee</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>1996: CSS1</h3>
+                    <p>CSS Level 1 becomes a W3C Recommendation, introducing basic styling capabilities</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>1998: CSS2</h3>
+                    <p>CSS Level 2 adds positioning, z-index, media types, and bidirectional text</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>2011: CSS3</h3>
+                    <p>CSS Level 3 introduces modules with animations, flexbox, grid, and more</p>
+                </div>
+            </div>
+        </div>
+
+       <div class="section">
+            <h2>Characteristics of CSS</h2>
+            <ul>
+                <li><span class="highlight"><b>Time-saving</b></span>: CSS allows you to apply styles to multiple HTML elements at once, saving time and effort compared to inline styles.</li>
+                <li><span class="highlight"><b>Superior to HTML</b></span>: CSS provides more advanced styling options, such as layout control, typography, and animations, which are not easily achievable with HTML alone.</li>
+                <li><span class="highlight"><b>Offline browsing</b></span>: CSS files can be cached by the browser, allowing for faster page loading and offline browsing.</li>
+                <li><span class="highlight"><b>Separation of concerns</b></span>: CSS separates the presentation from the content, making it easier to maintain and update the website's appearance.</li>
+            </ul>
+        </div>
+
+        <!-- Ways to Include CSS -->
+        <div class="section">
+            <h2>Three Ways to Insert CSS</h2>
+            <div class="css-demo">
+                <div class="demo-item" style="background: #bfdbfe;">
+                    <h3>Inline CSS</h3>
+                    <p>Applied directly to HTML elements</p>
+                </div>
+                <div class="demo-item" style="background: #eaf54d;">
+                    <h3>Internal CSS</h3>
+                    <p>Written in the HTML file's head section</p>
+                </div>
+                <div class="demo-item" style="background: #fde68a;">
+                    <h3>External CSS</h3>
+                    <p>Stored in a separate .css file</p>
+                </div>
+            </div>
+    
+                <div class="example-box">
+                    <h3>1. Inline CSS Example</h3>
+                    <p>Applied directly to HTML elements using the style attribute</p>
+                    <div class="code-block">
+                        <code>&lt;p style="color: blue; font-size: 16px; margin: 10px;"&gt;This is styled text&lt;/p&gt;</code>
+                    </div>
+                </div>
+    
+                <div class="example-box">
+                    <h3>2. Internal CSS Example</h3>
+                    <p>Written in the HTML file's head section using style tags</p>
+                    <div class="code-block">
+                        <code>&lt;head&gt;
+        &lt;style&gt;
+            p {
+                color: blue;
+                font-size: 16px;
+                margin: 10px;
+            }
+            .highlight {
+                background-color: yellow;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;</code>
+                    </div>
+                </div>
+    
+                <div class="example-box">
+                    <h3>3. External CSS Example</h3>
+                    <p>Linked to HTML file using the link tag</p>
+                    <div class="code-block">
+                        <code>&lt;head&gt;
+        &lt;link rel="stylesheet" href="styles.css"&gt;
+    &lt;/head&gt;</code>
+                    </div>
+                    <p>Contents of styles.css:</p>
+                    <div class="code-block">
+                        <code>/* styles.css */
+    p {
+        color: blue;
+        font-size: 16px;
+        margin: 10px;
+    }
+    
+    .highlight {
+        background-color: yellow;
+    }</code>
+                    </div>
+                </div>
+            </div>
+     <!-- CSS Priority Section -->
+     <div class="section">
+        <h2>Priorities of CSS</h2>
+        <p>Understanding CSS specificity is crucial for managing styles effectively. Here's the complete hierarchy from highest to lowest priority:</p>
+
+        <ol class="priority-list">
+            <li class="priority-item">
+                <h3>!important Declaration</h3>
+                <p>Overrides all other styles</p>
+                <div class="code-block">
+                    <code>p { color: blue !important; }</code>
+                </div>
+            </li>
+            <li class="priority-item">
+                <h3>Inline Styles</h3>
+                <p>Styles applied directly to HTML elements</p>
+                <div class="code-block">
+                    <code>&lt;p style="color: blue;"&gt;Text&lt;/p&gt;</code>
+                </div>
+            </li>
+            <li class="priority-item">
+                <h3>ID Selectors</h3>
+                <p>Unique identifiers for elements</p>
+                <div class="code-block">
+                    <code>#uniqueElement { color: blue; }</code>
+                </div>
+            </li>
+            <li class="priority-item">
+                <h3>Class, Attribute, and Pseudo-class Selectors</h3>
+                <p>Reusable styles for multiple elements</p>
+                <div class="code-block">
+                    <code>.highlight { color: blue; }</code>
+                </div>
+            </li>
+            <li class="priority-item">
+                <h3>Element Selectors</h3>
+                <p>Styles applied to HTML tags</p>
+                <div class="code-block">
+                    <code>p { color: blue; }</code>
+                </div>
+            </li>
+        </ol>
+    </div>
+    <div class="section">
+        <h2>CSS Syntax</h2>
+        <p>The basic CSS syntax consists of three parts:</p>
+        <div class="code-block">
+            <code>Selector{ Property:Value; }</code>
+        </div>
+        <div class="example-box">
+            <h3>Selector</h3>
+            <p>The HTML element or elements you want to style.</p>
+            <div class="code-block">
+                <code>p, h1, div {</code>
+            </div>
+        </div>
+        <div class="example-box">
+            <h3>Property</h3>
+            <p>The specific style attribute you want to change.</p>
+            <div class="code-block">
+                <code>color: blue;</code>
+            </div>
+        </div>
+        <div class="example-box">
+            <h3>Value</h3>
+            <p>The new value you want to apply to the property.</p>
+            <div class="code-block">
+                <code>font-size: 16px;</code>
+            </div>
+        </div>
+        <div class="example-box">
+            <h3>Complete Example</h3>
+            <div class="code-block">
+                <code>p, h1, div {
+color: blue;
+font-size: 16px;
+margin: 10px;
+}</code>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <h2>CSS Selectors</h2>
+        <div class="example-box">
+            <h3>1. Universal Selector (*)</h3>
+            <p>Applies styles to all elements on the page.</p>
+            <div class="code-block">
+                <code>* {
+margin: 0;
+padding: 0;
+}</code>
+            </div>
+        </div>
+        <div class="example-box">
+            <h3>2. ID Selector (#)</h3>
+            <p>Targets a unique element based on its ID attribute.</p>
+            <div class="code-block">
+                <code>#my-element {
+color: red;
+}</code>
+            </div>
+        </div>
+        <div class="example-box">
+            <h3>3. Class Selector (.)</h3>
+            <p>Targets elements based on their class attribute.</p>
+            <div class="code-block">
+                <code>.my-class {
+font-size: 18px;
+}</code>
+            </div>
+        </div>
+        <div class="example-box">
+            <h3>4. Attribute Selector ([attr])</h3>
+            <p>Targets elements based on their attribute values.</p>
+            <div class="code-block">
+                <code>a[target="_blank"] {
+color: green;
+}</code>
+            </div>
+        </div>
+        <div class="example-box">
+            <h3>5. Attribute Equal Value Selector ([attr="value"])</h3>
+            <p>Targets elements with a specific attribute value.</p>
+            <div class="code-block">
+                <code>input[type="text"] {
+border: 1px solid #ccc;
+}</code>
+            </div>
+        </div>
+
+    <div class="example-box">
+        <h3>4. Group Selector (element, element)</h3>
+        <p>Applies the same style to multiple elements.</p>
+        <div class="code-block">
+            <code>h1, h2, h3 {<br>
+                font-weight: bold;<br>
+            }</code>
+        </div>
+    </div>
+
+    <div class="example-box">
+        <h3>5. Descendant Selector (element element)</h3>
+        <p>Targets elements that are descendants of a specified element.</p>
+        <div class="code-block">
+            <code>div p {<br>
+                color: blue;<br>
+            }</code>
+        </div>
+    </div>
+
+    <div class="example-box">
+        <h3>6. Child Selector (element > element)</h3>
+        <p>Targets direct children of a specified element.</p>
+        <div class="code-block">
+            <code>ul > li {<br>
+                list-style-type: square;<br>
+            }</code>
+        </div>
+    </div>
+
+    <div class="example-box">
+        <h3>7. Adjacent Sibling Selector (element + element)</h3>
+        <p>Targets an element that is immediately preceded by another element.</p>
+        <div class="code-block">
+            <code>h1 + p {<br>
+                font-style: italic;<br>
+            }</code>
+        </div>
+    </div>
+
+    <div class="example-box">
+        <h3>8. General Sibling Selector (element ~ element)</h3>
+        <p>Targets all siblings of an element that follow it.</p>
+        <div class="code-block">
+            <code>h1 ~ p {<br>
+                font-size: 14px;<br>
+            }</code>
+        </div>
+    </div>
+
+    <div class="example-box">
+        <h3>9. :nth-child() Pseudo-Class</h3>
+        <p>Targets elements based on their position in a parent element.</p>
+        <div class="code-block">
+            <code>li:nth-child(2) {<br>
+                background-color: lightgray;<br>
+            }</code>
+        </div>
+    </div>
+
+   
+    </div>
+    </div>
+        <footer style="background: var(--primary-color); color: white; text-align: center; padding: 2rem;">
+            <p>© 2024 Olevelcccexam.link</p>
+        </footer>
+    </body>
+    </html>

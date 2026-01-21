@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>olevelcccexam - Test</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card {
+      animation: fadeInUp 0.6s ease-out forwards;
+      animation-play-state: play;
+      margin-top: 100px; /* Margin from the top */
+    }
+    /*.card-container {*/
+    /*  display: flex;*/
+    /*  justify-content: center;*/
+    /*  gap: 20px;*/
+    /*}*/
+    /*.card {*/
+    /*  width: 300px;*/
+    /*  padding: 20px;*/
+    /*  background-color: #f1f1f1;*/
+    /*  border-radius: 8px;*/
+    /*  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+    /*  text-align: center;*/
+    /*}*/
+    /*.card h3 {*/
+    /*  font-size: 1.5rem;*/
+    /*  margin-bottom: 15px;*/
+    /*}*/
+    /*.card p {*/
+    /*  margin-bottom: 20px;*/
+    /*}*/
+    /*.card-button {*/
+    /*  display: inline-block;*/
+    /*  padding: 10px 20px;*/
+    /*  background-color: #007bff;*/
+    /*  color: #fff;*/
+    /*  border-radius: 5px;*/
+    /*  text-decoration: none;*/
+    /*}*/
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="index">olevelcccexam</a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index">Home</a></li>
+        <li><a href="notes">Notes</a></li>
+        <li><a href="test" class="active">Test</a></li>
+        <li><a href="syllabus">Syllabus</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+
+  <div class="overlay"></div>
+
+  <div class="card-section">
+    <div class="card-container">
+      <!-- Card 1: Chapter Wise Test -->
+      <div class="card" style="animation-delay: 0.1s;">
+        <h3>Chapter Wise Test</h3>
+        <p>Test your knowledge on specific chapters with targeted questions.</p>
+        <a href="allchaptertestccc" class="card-button">Start Chapter Test</a>
+      </div>
+
+      <!-- Card 2: Whole Book Test -->
+      <div class="card" style="animation-delay: 0.2s;">
+        <h3>Whole Book Test</h3>
+        <p>Evaluate your understanding of the entire course with a comprehensive test.</p>
+        <a href="#" class="card-button">Start Whole Book Test</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

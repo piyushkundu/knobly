@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to CSS</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+     <meta name="author" content="olevelcccexam">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Introduction to HTML">
+    <meta property="og:description" content="Master HTML, CSS, and JavaScript with our easy-to-follow tutorials and premium platform.">
+    <meta property="og:image" content="https://olevelcccexam.link/img/htmlintro.jpeg"> 
+    <meta property="og:url" content="https://olevelcccexam.link">
+    <meta property="og:type" content="website">
+    
+    <title>Introduction to HTML</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2980b9;
+            --secondary-color: #34495e;
+            --text-color: #333;
+            --background-color: #f5f6fa;
+            --code-bg-color: #2d3436;
+            --code-text-color: #dfe6e9;
+            --dot-color-red: #ff5f57;
+            --dot-color-yellow: #ffbd2e;
+            --dot-color-green: #28c941;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            color: var(--primary-color);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 1rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.7rem 1.2rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 0;
+            display: inline-block;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--nav-hover-color);
+            color: var(--primary-color);
+            z-index: 1;
+        }
+
+        .nav-links a.active {
+            background-color: var(--nav-active-color);
+            color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+    nav {
+            background-color: #fff;
+            padding: 0.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            color: #fff;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        .content {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .code-sample {
+            background-color: var(--code-bg-color);
+            color: var(--code-text-color);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Roboto Mono', monospace;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+            position: relative;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-sample h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #e06c75;
+        }
+
+        .code-sample .dots {
+            display: flex;
+            gap: 5px;
+            position: absolute;
+            top: 8px;
+            right: 12px;
+        }
+       
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background-color: var(--dot-color-red); }
+        .dot.yellow { background-color: var(--dot-color-yellow); }
+        .dot.green { background-color: var(--dot-color-green); }
+
+        .premium-box h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background-color: #fff;
+                padding: 1rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.show { display: flex; }
+            .hamburger { display: block; }
+
+            header h1 { font-size: 2.5rem; }
+            .section h2 { font-size: 1.8rem; }
+            .premium-box h2 { font-size: 1.8rem; }
+            .code-sample { font-size: 0.85rem; padding: 15px; }
+            .code-sample h3 { font-size: 1rem; }
+
+            /* Ensure code samples fit within mobile view */
+            .code-sample {
+                padding: 15px;
+                font-size: 0.85rem;
+                white-space: pre-wrap; /* Wrap long lines in code */
+                word-wrap: break-word;  /* Break words to fit container */
+            }
+            .content {
+            width: 90%;
+            max-width: 1200px;
+            margin: 10px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="../index" class="logo">olevelccc<span style="color: #00a1ff;">exam</span></a>
+            <ul class="nav-links">
+                <li><a href="../index">Home</a></li>
+
+                <li><a href="https://www.olevelcccexam.link/html/basichtml">HTML</a></li>
+                <li><a href="#"class="active">CSS</a></li>
+                <li><a href="#">JavaScript</a></li>
+            </ul>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Introduction to CSS</h1>
+    </header>
+    <div class="content">
+        <div class="section">
+            <h2>What is CSS?</h2>
+            <p><span class="highlight">CSS</span> (Cascading Style Sheets) is a style sheet language used to describe the presentation of a web page. It allows developers to control the layout, color, font, and other visual aspects of a web page.</p>
+            <p>CSS works in harmony with HTML, which provides the structure and content of a web page, while CSS handles the styling and visual design.</p>
+        </div>
+
+        <div class="section">
+            <h2>History of CSS</h2>
+            <p>CSS was first proposed in 1994 by <span class="highlight">Håkon Wium Lie</span>, who was working at the European Organization for Nuclear Research (CERN) at the time. The goal was to create a standard way to style web pages, as the early web pages were primarily text-based and lacked visual appeal.</p>
+            <p>The first CSS specification, CSS1, was published in 1996 by the <span class="highlight">World Wide Web Consortium (W3C)</span>. Over the years, CSS has evolved through several versions, with CSS2 being released in 1998 and CSS3 in 1999, which introduced many new features and capabilities.</p>
+        </div>
+
+        <div class="section">
+            <h2>Characteristics of CSS</h2>
+            <ul>
+                <li><span class="highlight"><b>Time-saving</b></span>: CSS allows you to apply styles to multiple HTML elements at once, saving time and effort compared to inline styles.</li>
+                <li><span class="highlight"><b>Superior to HTML</b></span>: CSS provides more advanced styling options, such as layout control, typography, and animations, which are not easily achievable with HTML alone.</li>
+                <li><span class="highlight"><b>Offline browsing</b></span>: CSS files can be cached by the browser, allowing for faster page loading and offline browsing.</li>
+                <li><span class="highlight"><b>Separation of concerns</b></span>: CSS separates the presentation from the content, making it easier to maintain and update the website's appearance.</li>
+            </ul>
+        </div>
+        </div>
+    <div class="content">
+        <div class="section premium-box">
+            <h2>Types of CSS</h2>
+            <p>There are three main ways to apply CSS to an HTML document:</p>
+
+            <div class="code-sample">
+                <div class="dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <h3>Inline CSS</h3>
+                <pre><code>&lt;p style="color: blue; font-size: 16px;"&gt;This is a paragraph with inline CSS.&lt;/p&gt;</code></pre>
+                <p>Inline CSS is applied directly to an HTML element using the <code>style</code> attribute.</p>
+            </div>
+
+            <div class="code-sample">
+                <div class="dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <h3>Internal CSS</h3>
+                <pre><code>&lt;style&gt;
+p { color: blue; font-size: 16px; }
+&lt;/style&gt;</code></pre>
+                <p>Internal CSS is placed within the <code>&lt;head&gt;</code> section of the HTML document.</p>
+            </div>
+
+            <div class="code-sample">
+                <div class="dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <h3>External CSS</h3>
+                <pre><code>&lt;link rel="stylesheet" href="styles.css"&gt;</code></pre>
+                <p>External CSS is applied by linking to a CSS file in the HTML document.</p>
+            </div>
+            
+        </div>
+            <div class="section">
+            <h2>Priorities of CSS</h2>
+            <p>When multiple CSS rules are applied to the same element, the browser determines which rule takes precedence based on the following order of priority:</p>
+            <ol>
+                <li><strong>Inline Styles:</strong> Inline CSS, applied directly to an element using the <code>style</code> attribute, has the highest priority. It overrides all other styles.</li>
+                
+                <div class="code-sample">
+                    <pre><code>&lt;p style="color: red;"&gt;This is red text.&lt;/p&gt;</code></pre>
+                </div>
+                <li><strong>Internal Styles:</strong> Internal CSS rules, defined within the <code>&lt;style&gt;</code> tag in the <code>&lt;head&gt;</code> section of the HTML document, take precedence over external CSS.</li>
+                <div class="code-sample">
+                    <pre><code>&lt;style&gt;
+p { color: green; }
+&lt;/style&gt;</code></pre>
+                </div>
+                <li><strong>External Styles:</strong> External CSS, linked through a separate stylesheet file using the <code>&lt;link&gt;</code> tag, is overridden by both inline and internal styles.</li>
+                <div class="code-sample">
+                    <pre><code>&lt;link rel="stylesheet" href="styles.css"&gt;</code></pre>
+                </div>
+                <li><strong>Browser Default Styles:</strong> If no CSS is applied, the browser's default styles are used.  These have the lowest priority.</li>
+            </ol>
+            <p>Additionally, <strong>specificity</strong> and <strong>importance</strong> further influence CSS priorities:</p>
+            <ul>
+                <li><strong>Specificity:</strong> A more specific selector (e.g., an ID) overrides a less specific one (e.g., a class or element selector).</li>
+                <li><strong>!important:</strong> The <code>!important</code> declaration forces a CSS rule to override all others, regardless of specificity or source.</li>
+                <div class="code-sample">
+                    <pre><code>p {
+  color: blue !important;
+}</code></pre>
+                </div>
+            </ul>
+        </div>
+
+
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+
+        // Close mobile menu when a link is clicked
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('show');
+            });
+        });
+
+        // Highlight active nav link
+        const navItems = document.querySelectorAll('.nav-links a');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                navItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

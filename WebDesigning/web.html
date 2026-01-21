@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Level Practice Tests</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: #34495e;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-height: 320px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
+        }
+
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            line-height: 1.4;
+        }
+
+        .card p {
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background: #f5f7fa;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .practice-sets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .practice-set {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .practice-set:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .practice-set h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .practice-set p {
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+        }
+
+        .practice-info {
+            display: flex;
+            justify-content: space-between;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #2c3e50;
+        }
+
+        .difficulty {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .difficulty.easy {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty.hard {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .start-test-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1rem;
+            background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .start-test-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body ng-app="OLevelApp" ng-controller="MainController">
+    <div class="container">
+        <header>
+            <h1>O Level Practice Tests</h1>
+            <p>Master your subjects with comprehensive practice sets</p>
+        </header>
+
+        <div class="cards-container">
+            <div class="card" ng-repeat="subject in subjects" ng-click="showPracticeSets(subject)">
+                <h2>{{subject.name}}</h2>
+                <p>{{subject.description}}</p>
+                <div class="practice-info">
+                    <span>{{subject.practiceSets.length}} Practice Sets</span>
+                    <span>{{subject.totalQuestions}} Questions</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="practiceModal">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+                <h2 id="modalSubjectTitle"></h2>
+                <div class="practice-sets-grid" id="practiceSetsContainer">
+                    <!-- Practice sets will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const app = angular.module('OLevelApp', []);
+
+        app.controller('MainController', function($scope) {
+            $scope.subjects = [
+                {
+                    name: 'Information Technology Tools and Network Basics',
+                    description: 'Master the fundamentals of IT tools and networking concepts with comprehensive practice sets.',
+                    totalQuestions: 100,
+                    practiceSets: [
+                        {
+                            name: 'Network Fundamentals',
+                            description: 'Test your knowledge of basic networking concepts, protocols, and architecture.',
+                            questions: 50,
+                            duration: 60,
+                            difficulty: 'medium'
+                        },
+                        {
+                            name: 'IT Tools Basics',
+                            description: 'Practice questions on computer fundamentals and basic software tools.',
+                            questions: 50,
+                            duration: 45,
+                            difficulty: 'easy'
+                        }
+                    ]
+                },
+                {
+                    name: 'Web Designing & Publishing',
+                    description: 'Practice web development concepts including HTML, CSS, and web publishing fundamentals.',
+                    totalQuestions: 100,
+                    practiceSets: [
+                        {
+                            name: 'HTML & CSS Fundamentals',
+                            description: 'Practice basic web design concepts and markup languages.',
+                            questions: 50,
+                            duration: 60,
+                            difficulty: 'easy'
+                        },
+                        {
+                            name: 'Advanced Web Design',
+                            description: 'Test your knowledge of advanced web design and publishing concepts.',
+                            questions: 50,
+                            duration: 75,
+                            difficulty: 'hard'
+                        }
+                    ]
+                },
+                {
+                    name: 'Programming and Problem Solving through Python',
+                    description: 'Enhance your Python programming skills with practical coding challenges.',
+                    totalQuestions: 100,
+                    practiceSets: [
+                        {
+                            name: 'Python Basics',
+                            description: 'Practice fundamental Python concepts and syntax.',
+                            questions: 50,
+                            duration: 60,
+                            difficulty: 'easy'
+                        },
+                        {
+                            name: 'Advanced Python',
+                            description: 'Challenge yourself with complex programming problems.',
+                            questions: 50,
+                            duration: 90,
+                            difficulty: 'hard'
+                        }
+                    ]
+                },
+                {
+                    name: 'Internet of Things and its Applications',
+                    description: 'Learn about IoT architecture, protocols, and real-world applications.',
+                    totalQuestions: 100,
+                    practiceSets: [
+                        {
+                            name: 'IoT Fundamentals',
+                            description: 'Practice basic IoT concepts and architectures.',
+                            questions: 50,
+                            duration: 45,
+                            difficulty: 'medium'
+                        },
+                        {
+                            name: 'IoT Applications',
+                            description: 'Test your knowledge of real-world IoT implementations.',
+                            questions: 50,
+                            duration: 60,
+                            difficulty: 'hard'
+                        }
+                    ]
+                }
+            ];
+
+            $scope.showPracticeSets = function(subject) {
+                const modal = document.getElementById('practiceModal');
+                const modalTitle = document.getElementById('modalSubjectTitle');
+                const container = document.getElementById('practiceSetsContainer');
+                
+                modalTitle.textContent = subject.name;
+                container.innerHTML = '';
+                
+                subject.practiceSets.forEach(set => {
+                    const setElement = document.createElement('div');
+                    setElement.className = 'practice-set';
+                    setElement.innerHTML = `
+                        <h3>${set.name}</h3>
+                        <p>${set.description}</p>
+                        <div class="practice-info">
+                            <span>${set.questions} Questions</span>
+                            <span>${set.duration} minutes</span>
+                        </div>
+                        <span class="difficulty ${set.difficulty}">${set.difficulty.toUpperCase()}</span>
+                        <button class="start-test-btn" onclick="startTest('${set.name}')">Start Test</button>
+                    `;
+                    container.appendChild(setElement);
+                });
+                
+                modal.classList.add('active');
+            };
+        });
+
+        function closeModal() {
+            const modal = document.getElementById('practiceModal');
+            modal.classList.remove('active');
+        }
+
+        function startTest(setName) {
+            alert(`Starting test: ${setName}`);
+            // Add your test start logic here
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('practiceModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>

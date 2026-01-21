@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #box{
+            display: none;
+        }
+    </style>
+    <script>
+        
+        function aoc(){
+           
+
+            
+
+            r=document.getElementById('r').value
+            area=3.14*r*r
+            document.getElementById('ans').value=area
+        
+        }
+    </script>
+</head>
+
+<body>
+    
+    Enter Radius :- <input type="text" id="r"> <br><br>
+    Area of circle :- <input type="text" id="ans"> <br><br>
+    
+   <button onmouseout="aoc()">Area of circle</button>
+
+   <button onclick="this.style.backgroundColor='red'">click</button>
+   <br><br><br>
+
+   <input type="text" onselect="this.style.backgroundColor='yellow'">
+
+</body>
+
+</html>

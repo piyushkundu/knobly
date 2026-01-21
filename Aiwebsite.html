@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="en" ng-app="aiToolsApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive AI Tools Hub (AngularJS)</title>
+    
+    <!-- Frameworks & Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-animate.min.js"></script>
+    
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- Custom Styles & Animations --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+        }
+        
+        .premium-gradient-text {
+            background: linear-gradient(to right, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* AngularJS Animations for ng-repeat */
+        .card.ng-enter {
+            transition: all 0.4s ease-out;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .card.ng-enter-stagger {
+            transition-delay: 0.05s;
+            transition-duration: 0s; /* Make the stagger happen immediately */
+        }
+        .card.ng-enter.ng-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .btn-premium {
+            background: linear-gradient(to right, #6366f1, #8b5cf6);
+            transition: all 0.3s ease;
+        }
+        .btn-premium:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.5);
+        }
+        
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active {
+            background: linear-gradient(to right, #6366f1, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transform: scale(1.05);
+        }
+        
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .card-content { flex-grow: 1; }
+        
+        .animate-fade-in-down { animation: fadeInDown 0.8s ease-out both; }
+        .animate-fade-in-up { animation: fadeInUp 0.8s 0.2s ease-out both; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body ng-controller="ToolsController as ctrl">
+
+    <!-- Header Section -->
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+             <h1 class="text-2xl md:text-3xl font-bold premium-gradient-text">AI Tools Hub</h1>
+             <p class="hidden md:block text-gray-500">Your Complete Student Toolkit</p>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <div class="w-full h-[350px] bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center text-white overflow-hidden relative">
+        <div class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-20"></div>
+        <div class="text-center px-4 z-10">
+            <h2 class="text-4xl md:text-6xl font-bold mb-4 animate-fade-in-down">Unlock Your Potential with AI</h2>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto opacity-90 animate-fade-in-up">A comprehensive, curated guide to AI tools for every student need.</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12 -mt-24">
+        
+        <!-- Filter Buttons -->
+        <div class="bg-white rounded-xl shadow-lg p-4 mb-10 flex flex-wrap justify-center items-center gap-3 sticky top-24 z-40">
+            <button 
+                ng-repeat="category in ctrl.categories"
+                ng-click="ctrl.setFilter(category.id)"
+                ng-class="{ 'active': ctrl.activeFilter === category.id }"
+                class="filter-btn py-2 px-5 rounded-full font-semibold bg-gray-200 text-gray-700 capitalize">
+                {{ category.name }}
+            </button>
+        </div>
+
+        <!-- Tools Grid -->
+        <div class="card-container">
+            <div ng-repeat="tool in ctrl.tools | filter:ctrl.filterQuery track by tool.name" class="card rounded-xl shadow-lg p-6 ng-enter-stagger">
+                <div class="card-content">
+                    <h3 class="text-2xl font-bold mb-2 text-gray-900">{{ tool.name }}</h3>
+                    <p class="text-gray-600 mb-4">{{ tool.description }}</p>
+                </div>
+                <a ng-href="{{ tool.link }}" target="_blank" class="mt-4 inline-block text-center btn-premium text-white font-bold py-3 px-4 rounded-lg">
+                  Visit {{ tool.name }} <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-12">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p class="font-semibold text-lg">&copy; 2024 AI Tools Hub for Students.</p>
+            <p class="text-sm text-gray-400 mt-2">Empowering the next generation of learners and creators.</p>
+        </div>
+    </footer>
+
+    <script>
+        const app = angular.module('aiToolsApp', ['ngAnimate']);
+
+        app.controller('ToolsController', function() {
+            const vm = this; // vm stands for ViewModel, a common practice
+
+            vm.activeFilter = 'all';
+            vm.filterQuery = '';
+
+            vm.setFilter = function(filter) {
+                vm.activeFilter = filter;
+                vm.filterQuery = (filter === 'all') ? '' : { category: filter };
+            };
+
+            vm.categories = [
+                { id: 'all', name: 'All Tools' },
+                { id: 'writing', name: 'Writing & Research' },
+                { id: 'productivity', name: 'Productivity & Planning' },
+                { id: 'creative', name: 'Creative & Media' },
+                { id: 'developer', name: 'Developer & ML' }
+            ];
+
+            vm.tools = [
+                // Writing & Research
+                { name: "Claude", description: "A powerful conversational AI for sophisticated dialogue, content creation, and complex reasoning.", link: "https://claude.ai/", category: 'writing' },
+                { name: "NotebookLM", description: "Google's research assistant that uses your own documents to answer questions and generate ideas.", link: "https://notebooklm.google.com/", category: 'writing' },
+                { name: "Perplexity AI", description: "An answer engine for research. Get straight answers from academic sources with citations included.", link: "https://www.perplexity.ai/", category: 'writing' },
+                { name: "Grammarly", description: "Your AI writing partner. Fixes grammar and style issues to make your essays clear and impressive.", link: "https://www.grammarly.com/", category: 'writing' },
+                { name: "QuillBot", description: "Paraphrase text, summarize articles, and generate citations effortlessly to avoid plagiarism.", link: "https://quillbot.com/", category: 'writing' },
+                { name: "Grok", description: "AI by xAI with real-time knowledge. Great for up-to-the-minute research and witty insights.", link: "https://grok.x.ai/", category: 'writing' },
+                { name: "DeepAI", description: "A versatile AI for writing essays, reports, creative content, and assisting with homework.", link: "https://deepai.org/", category: 'writing' },
+                { name: "TinyWow", description: "Free AI writing tools for stories, essays, blogs, and articles with no sign-up required.", link: "https://tinywow.com/", category: 'writing' },
+                { name: "Summarize.tech", description: "Creates a summary of any long YouTube video, like a lecture, live event or a government meeting.", link: "https://www.summarize.tech/", category: 'writing' },
+                // Productivity & Planning
+                { name: "Otter.ai", description: "Transcribes lectures and meetings in real time. Never miss an important detail from class again.", link: "https://otter.ai/", category: 'productivity' },
+                { name: "Notion AI", description: "Your all-in-one workspace. Organize notes, manage projects, and use AI to summarize and brainstorm.", link: "https://www.notion.so/product/ai", category: 'productivity' },
+                { name: "NoteGPT", description: "Summarize YouTube videos, PDFs, and articles. Create mind maps and notes from any content.", link: "https://notegpt.io/", category: 'productivity' },
+                { name: "SmartDraw", description: "An intelligent tool for creating professional flowcharts, diagrams, and mind maps with ease.", link: "https://app.smartdraw.com/", category: 'productivity' },
+                { name: "MyMap.ai", description: "An AI tool that automatically generates flowcharts and mind maps from your text prompts.", link: "https://www.mymap.ai/", category: 'productivity' },
+                { name: "JungleAI", description: "AI-powered tool to generate flashcards from your lecture notes to accelerate your learning.", link: "https://app.jungleai.com/", category: 'productivity' },
+                // Creative & Media
+                { name: "Gamma", description: "Create beautiful and engaging presentations, documents, and webpages from a simple text prompt.", link: "https://gamma.app/", category: 'creative' },
+                { name: "Tome", description: "An AI-powered storytelling and presentation tool that helps you craft compelling narratives effortlessly.", link: "https://tome.app/", category: 'creative' },
+                { name: "Magic Studio", description: "Create stunning art and images from text prompts. Perfect for presentations and creative projects.", link: "https://magicstudio.com/ai-art-generator/", category: 'creative' },
+                { name: "AutoDraw", description: "A smart drawing tool. Doodle anything, and the AI will guess and perfect your drawing for you.", link: "https://www.autodraw.com/", category: 'creative' },
+                { name: "Luma Labs", description: "Generate realistic 3D models and scenes from text descriptions or real-world images.", link: "https://lumalabs.ai/", category: 'creative' },
+                { name: "Supermeme.ai", description: "Instantly generate original memes from text prompts to add humor to your presentations.", link: "https://supermeme.ai/", category: 'creative' },
+                { name: "Mubert", description: "Generate high-quality, royalty-free background music for your video projects and presentations.", link: "https://mubert.com/", category: 'creative' },
+                { name: "Descript", description: "An all-in-one audio and video editor with an AI voice cloner to generate audio from text in your own voice.", link: "https://www.descript.com/", category: 'creative' },
+                { name: "Kaiber", description: "Transform your images and text into stunning, dynamic videos with this powerful AI generator.", link: "https://kaiber.ai/", category: 'creative' },
+                { name: "Ready Player Me", description: "Creates high-quality, personalized 3D avatars from a single real image for use in various platforms.", link: "https://readyplayer.me/", category: 'creative' },
+                // Developer & ML
+                { name: "Google AI Studio", description: "A developer-focused tool to prototype and build with the latest Gemini models from Google.", link: "https://aistudio.google.com/", category: 'developer' },
+                { name: "WolframAlpha", description: "A computational powerhouse for STEM subjects. Solves complex equations and provides expert knowledge.", link: "https://www.wolframalpha.com/", category: 'developer' },
+                { name: "Socratic", description: "Your homework helper from Google. Snap a photo of a problem to get instant explanations and tutorials.", link: "https://socratic.org/", category: 'developer' },
+                { name: "Teachable Machine", description: "A fast, easy way to create machine learning models for your projects, with no coding required.", link: "https://teachablemachine.withgoogle.com/", category: 'developer' },
+                { name: "Machine Learning for Kids", description: "A simple, guided environment for introducing children to machine learning and AI concepts.", link: "https://machinelearningforkids.co.uk/", category: 'developer' },
+                { name: "PimEyes", description: "An advanced face search engine that uses reverse image search to find images online.", link: "https://pimeyes.com/en", category: 'developer' }
+            ];
+        });
+    </script>
+
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
+

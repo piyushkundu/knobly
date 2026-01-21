@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>olevelcccexam - Syllabus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card {
+      animation: fadeInUp 0.6s ease-out forwards;
+      animation-play-state: play;
+      margin-top: 100px; /* Margin from the top */
+    }
+    .card-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .card {
+      width: 300px;
+      padding: 20px;
+      background-color: #f1f1f1;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+    .card p {
+      margin-bottom: 20px;
+    }
+    .card-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="index">olevelcccexam</a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index">Home</a></li>
+        <li><a href="notes">Notes</a></li>
+        <li><a href="test">Test</a></li>
+        <li><a href="syllabus" class="active">Syllabus</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+
+  <div class="overlay"></div>
+
+  <div class="card-section">
+    <div class="card-container">
+      <!-- Card 1: CCC Syllabus -->
+      <div class="card" style="animation-delay: 0.1s;">
+        <h3>CCC Syllabus</h3>
+        <p>Explore the detailed syllabus for the CCC exam.</p>
+        <a href="https://www.nielit.gov.in/sites/default/files/ccc_syllabus_0.pdf" class="card-button">View CCC Syllabus</a>
+      </div>
+
+      <!-- Card 2: O Level Syllabus -->
+      <div class="card" style="animation-delay: 0.2s;">
+        <h3>O Level Syllabus</h3>
+        <p>Explore the comprehensive syllabus for the O Level exam.</p>
+        <a href="https://www.nielit.gov.in/sites/default/files/191115_Revised_O_Level_R5.pdf" class="card-button">View O Level Syllabus</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

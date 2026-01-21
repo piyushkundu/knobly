@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>olevelcccexam - Test</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card {
+      animation: fadeInUp 0.6s ease-out forwards;
+      animation-play-state: play;
+      margin-top: 100px; /* Margin from the top */
+    }
+    /*.card-container {*/
+    /*  display: flex;*/
+    /*  justify-content: center;*/
+    /*  gap: 20px;*/
+    /*}*/
+    /*.card {*/
+    /*  width: 300px;*/
+    /*  padding: 20px;*/
+    /*  background-color: #f1f1f1;*/
+    /*  border-radius: 8px;*/
+    /*  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+    /*  text-align: center;*/
+    /*}*/
+    /*.card h3 {*/
+    /*  font-size: 1.5rem;*/
+    /*  margin-bottom: 15px;*/
+    /*}*/
+    /*.card p {*/
+    /*  margin-bottom: 20px;*/
+    /*}*/
+    /*.card-button {*/
+    /*  display: inline-block;*/
+    /*  padding: 10px 20px;*/
+    /*  background-color: #007bff;*/
+    /*  color: #fff;*/
+    /*  border-radius: 5px;*/
+    /*  text-decoration: none;*/
+    /*}*/
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="index">olevelcccexam</a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index">Home</a></li>
+        <li><a href="notes">Notes</a></li>
+        <li><a href="test" class="active">Test</a></li>
+        <li><a href="syllabus">Syllabus</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+
+  <div class="overlay"></div>
+
+  <div class="card-section">
+    <div class="card-container">
+      <!-- Card 1: CCC Test -->
+      <div class="card" style="animation-delay: 0.1s;">
+        <h3>CCC Test</h3>
+        <p>Take the CCC test to evaluate your preparation.</p>
+        <a href="ccctest" class="card-button">View CCC Test</a>
+      </div>
+
+      <!-- Card 2: O Level Test -->
+      <div class="card" style="animation-delay: 0.1s;">
+        <h3>O Level Test</h3>
+        <p>Take the O Level test to assess your knowledge.</p>
+        <a href="olbooktest" class="card-button">View OLevel Test</a>
+      </div>
+      <div class="card" style="animation-delay: 0.1s;">
+        <h3>M1R5</h3>
+        <p>Take the O Level test to assess your knowledge.</p>
+        <a href="m1r5test" class="card-button">Start Test</a>
+      </div>
+    
+    <div class="card" style="animation-delay: 0.1s;">
+  <h3>Practice Test</h3>
+  <p>Test your knowledge with our interactive practice tests.</p>
+  <a href="/practice_test/practice_test" class="card-button">Start Test</a>
+</div>
+  </div>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

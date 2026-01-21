@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Task - Basic HTML Tags</title>
+     <style>
+        /* Circle Button for Compiler */
+        .compiler-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #ffbf00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-size: 24px;
+            color: #fff;
+            border: none;
+        }
+
+        /* Compiler Overlay */
+        .compiler-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        /* Visible State for Animation */
+        .compiler-overlay.show {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .compiler-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ffbf00;
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 17%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* Compiler Specific Styles */
+        .compiler-container {
+            background-color: #1e1e1e;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+        .compiler-container h1 {
+            color: #ffbf00;
+        }
+        .compiler-container textarea {
+            width: 95%;
+            height: 150px;
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 16px;
+            outline: none;
+            resize: vertical;
+        }
+        .compiler-container button {
+            background-color: #ffbf00;
+            color: #1e1e1e;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        .compiler-container button:hover {
+            background-color: #e6a700;
+            transform: scale(1.05);
+        }
+        .compiler-container iframe {
+            width: 100%;
+            height: 300px;
+            background-color: #fff;
+            border: none;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        /* Mobile Key Buttons */
+        .mobile-keys {
+            display: none;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .mobile-keys button {
+            background-color: #ffbf00;
+            color: #1e1e1e;
+            padding: 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        .mobile-keys button:hover {
+            background-color: #e6a700;
+        }
+
+        @media (max-width: 600px) {
+            .compiler-container h1 {
+                font-size: 2em;
+            }
+            .compiler-container textarea {
+                font-size: 14px;
+            }
+            .compiler-container button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .mobile-keys {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body bgcolor="#f0f8ff">
+    <center>
+        <h1>Welcome to My Webpage</h1>
+        <hr>
+    </center>
+    
+    <p>Hello, my name is <b>Akash</b>. I am learning <i>HTML</i> and <u>web development</u>. This is a simple demonstration of basic HTML tags.</p>
+    <p>Here is a famous quote:</p>
+    <p><i>"The best way to predict the future is to create it."</i></p>
+    
+    <pre>
+    Line 1 of text
+        Indented Line 2
+    Line 3
+    </pre>
+
+    <p>This is a <b>bold</b> statement. <br>
+    This is an <i>italic</i> statement. <br>
+    This is an <u>underlined</u> statement.</p>
+    
+    <hr>
+
+    <center><h2>Thank you for visiting!</h2></center>
+     <!-- Compiler Button -->
+    <button class="compiler-btn" onclick="openCompiler()">&lt&sol;&gt </button>
+
+    <!-- Compiler Overlay -->
+    <div class="compiler-overlay" id="compilerOverlay">
+        <button class="compiler-close" onclick="closeCompiler()">X</button>
+        <div class="compiler-container">
+            <h1>HTML Compiler</h1>
+            <textarea id="html-code" placeholder="Write your HTML code here..."></textarea><br>
+
+            <!-- Mobile Keys -->
+            <div class="mobile-keys">
+                <button onclick="insertKey('<')">&lt;</button>
+                <button onclick="insertKey('>')">&gt;</button>
+                <button onclick="insertKey('/')">/</button>
+                <button onclick="insertKey('&quot;')">"</button>
+                <button onclick="insertKey('=')">=</button>
+            </div>
+
+            <button onclick="compileHTML()">Compile & Run</button><br>
+            <iframe id="output-frame"></iframe>
+        </div>
+    </div>
+     <script>
+        // Open Compiler Overlay with Animation
+        function openCompiler() {
+            const overlay = document.getElementById("compilerOverlay");
+            overlay.style.display = "flex";
+            setTimeout(() => overlay.classList.add("show"), 10);
+        }
+
+        // Close Compiler Overlay with Animation
+        function closeCompiler() {
+            const overlay = document.getElementById("compilerOverlay");
+            overlay.classList.remove("show");
+            setTimeout(() => overlay.style.display = "none", 400);
+        }
+
+        // Compile and Run HTML
+        function compileHTML() {
+            const code = document.getElementById("html-code").value;
+            const outputFrame = document.getElementById("output-frame");
+
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+
+            outputFrame.src = url;
+
+            outputFrame.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Insert Key to Textarea
+        function insertKey(key) {
+            const textarea = document.getElementById("html-code");
+            const startPos = textarea.selectionStart;
+            const endPos = textarea.selectionEnd;
+            const text = textarea.value;
+
+            textarea.value = text.substring(0, startPos) + key + text.substring(endPos);
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = startPos + key.length;
+        }
+    </script>
+</body>
+</html>

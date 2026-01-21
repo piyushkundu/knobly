@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O-Level Python Notes | Complete Study Material | olevelcccexam.link</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Comprehensive O-Level Python programming notes with downloadable PDFs for all chapters. Master programming concepts, algorithms, data types, and more.">
+    <meta name="keywords" content="O-Level Python, Python notes, programming, algorithms, flowcharts, NumPy, Python modules, Python functions, O-Level exam, CCC exam">
+    <meta name="author" content="olevelcccexam.link">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://olevelcccexam.link/">
+    <meta property="og:title" content="O-Level Python Programming Notes">
+    <meta property="og:description" content="Comprehensive study materials for O-Level Python programming examination with downloadable PDF notes.">
+    <meta property="og:image" content="https://olevelcccexam.link/og-image.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://olevelcccexam.link/">
+    <meta property="twitter:title" content="O-Level Python Programming Notes">
+    <meta property="twitter:description" content="Complete O-Level Python programming notes with chapter-wise PDFs. Perfect for exam preparation.">
+    <meta property="twitter:image" content="https://olevelcccexam.link/twitter-image.jpg">
+    
+    <!-- Canonical URL -->
+    <meta rel="canonical" href="https://olevelcccexam.link/python-notes">
+    
+    <!-- Robots Meta Tag -->
+    <meta name="robots" content="index, follow">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4fc1e3;
+            --light-color: #f5f9fc;
+            --dark-color: #1e3a5f;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --card-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f5fa;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(79, 193, 227, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(74, 111, 165, 0.05) 0%, transparent 50%);
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .search-bar {
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            background: white;
+            border-radius: 50px;
+            padding: 8px 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .search-icon {
+            display: flex;
+            align-items: center;
+            color: var(--primary-color);
+        }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .chapter-card {
+            background: white;
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            height: 140px;
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-size: 300px;
+            background-repeat: repeat;
+            /* background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4
+4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E"); */
+        }
+
+        .chapter-number {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary-color);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-size: 24px;
+            z-index: 1;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .chapter-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .chapter-desc {
+            color: #667085;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(74, 111, 165, 0.2);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(74, 111, 165, 0.3);
+        }
+
+        .download-icon {
+            margin-right: 8px;
+        }
+
+        .info {
+            display: flex;
+            align-items: center;
+            color: #667085;
+            font-size: 0.85rem;
+        }
+
+        .info-icon {
+            margin-right: 5px;
+        }
+
+        footer {
+            background: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .chapters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body ng-app="pythonNotes" ng-controller="NotesController">
+    <header>
+        <div class="header-content">
+            <h1>O-Level Python Programming</h1>
+            <p class="subtitle">Comprehensive notes to help you master Python concepts and ace your O-Level examinations</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-bar">
+            <div class="search-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+            <input type="text" placeholder="Search chapters..." ng-model="searchText">
+        </div>
+
+        <div class="chapters-grid">
+            <div class="chapter-card" ng-repeat="chapter in chapters | filter:searchText" ng-click="openChapter(chapter)">
+                <div class="card-header">
+                    <div class="card-header-bg"></div>
+                    <div class="chapter-number">{{chapter.id}}</div>
+                    <div class="card-icon">
+                        <svg ng-if="chapter.id == 1" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 16v-4a2 2 0 0 0-2-2h-1a2 2 0 0 0-2 2"></path>
+                            <path d="M12 12V8a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v8"></path>
+                            <circle cx="12" cy="16" r="1"></circle>
+                        </svg>
+                        <svg ng-if="chapter.id == 2" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        <svg ng-if="chapter.id == 3" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <svg ng-if="chapter.id == 4" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                        <svg ng-if="chapter.id == 5" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                        <svg ng-if="chapter.id == 6" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                        <svg ng-if="chapter.id == 7" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
+                        <svg ng-if="chapter.id == 8" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        <svg ng-if="chapter.id == 9" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                            <line x1="9" y1="21" x2="9" y2="9"></line>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="chapter-title">{{chapter.title}}</h3>
+                    <p class="chapter-desc">{{chapter.description}}</p>
+                    <div class="card-footer">
+                        <a href="{{chapter.pdfLink}}" class="download-btn">
+                            <span class="download-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </span>
+                            Download PDF
+                        </a>
+                        <div class="info">
+                            <span class="info-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </span>
+                            {{chapter.pages}} pages
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dark-mode-toggle" ng-click="toggleDarkMode()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </div>
+
+    <footer>
+        <p>© 2025 O-Level Python Programming Notes | Created with ❤️ for Python learners</p>
+    </footer>
+
+    <script>
+        angular.module('pythonNotes', [])
+        .controller('NotesController', function($scope) {
+            $scope.chapters = [
+                {
+                    id: 1,
+                    title: "Introduction to Programming",
+                    description: "Learn the fundamentals of programming concepts, problem-solving approaches, and computational thinking.",
+                    pdfLink: "chapter1.pdf",
+                    pages: 24
+                },
+                // {
+                //     id: 2,
+                //     title: "Algorithm and Flowcharts to solve problems",
+                //     description: "Master the art of developing algorithms and drawing flowcharts to visualize programming logic.",
+                //     pdfLink: "chapter2.pdf",
+                //     pages: 32
+                // },
+                {
+                    id: 3,
+                    title: "Introduction to Python",
+                    description: "Get started with Python programming language, syntax, variables, data types, and basic operations.",
+                    pdfLink: "chapter3.pdf",
+                    pages: 28
+                },
+                {
+                    id: 4,
+                    title: "Operators, Expressions, and Python Statements",
+                    description: "Explore Python operators, expressions, conditional statements, loops, and control structures.",
+                    pdfLink: "chapter4.pdf",
+                    pages: 36
+                },
+                {
+                    id: 5,
+                    title: "Sequence Data Types List",
+                    description: "Learn about Python's powerful sequence data types including lists, tuples, strings, and dictionaries.",
+                    pdfLink: "chapter5.pdf",
+                    pages: 12
+                },
+                {
+                    id: 6,
+                    title: "Sequence Data Types Tuple",
+                    description: "Learn about Python's powerful sequence data types including lists, tuples, strings, and dictionaries.",
+                    pdfLink: "chapter6.pdf",
+                    pages: 6
+                },
+                {
+                    id: 7,
+                    title: "Sequence Data Types Dictionary",
+                    description: "Learn about Python's powerful sequence data types including lists, tuples, strings, and dictionaries.",
+                    pdfLink: "chapter7.pdf",
+                    pages: 9
+                },
+                {
+                    id: 8,
+                    title: "Library Function",
+                    description: "Master function creation, arguments, return values, scope, and recursion in Python programming.",
+                    pdfLink: "chapter8.pdf",
+                    pages: 30
+                },
+                {
+                    id: 9,
+                    title: "User Define functions",
+                    description: "Understand file handling operations, reading and writing data, and working with different file formats.",
+                    pdfLink: "chapter9.pdf",
+                    pages: 26
+                },
+                {
+                    id: 9,
+                    title: "File Processing in Python",
+                    description: "Understand file handling operations, reading and writing data, and working with different file formats.",
+                    pdfLink: "chapter10.pdf",
+                    pages: 26
+                },
+                {
+                    id: 11,
+                    title: "Modules in Python",
+                    description: "Explore Python modules, importing techniques, creating custom modules, and popular standard libraries.",
+                    pdfLink: "chapter11.pdf",
+                    pages: 22
+                },
+                {
+                    id: 12,
+                    title: "NumPy Basics",
+                    description: "Get introduced to NumPy for scientific computing, arrays, mathematical operations, and data analysis.",
+                    pdfLink: "chapter12.pdf",
+                    pages: 34
+                }
+            ];
+            
+            $scope.openChapter = function(chapter) {
+                window.location.href = chapter.pdfLink;
+            };
+            
+            $scope.toggleDarkMode = function() {
+                document.body.classList.toggle('dark-mode');
+                // Additional dark mode styles could be added here
+            };
+        });
+    </script>
+</body>
+</html>

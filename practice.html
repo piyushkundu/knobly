@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>olevelcccexam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+ <!--<link rel="stylesheet" href="style.css">-->
+ <link rel="icon" type="image/x-icon" href="favicon.ico">
+<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.8em 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+header.scrolled {
+  background-color: rgba(255, 255, 255, 0.98);
+  padding: 0.6em 0;
+}
+        .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2em;
+}
+
+.logo a {
+  font-family: 'Playfair Display', serif;
+  color: #0c0c0c;
+  font-size: 2em;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.logo a:hover {
+  color: #007bff;
+  text-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2em;
+}
+
+.nav-links li a {
+  color: #0c0c0c;
+  text-decoration: none;
+  font-size: 1.1em;
+  font-weight: 600;
+  padding: 0.5em 1em;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-links li a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #007bff;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-links li a:hover::after,
+.nav-links li a.active::after {
+  width: 100%;
+}
+
+.nav-links li a:hover,
+.nav-links li a.active {
+  color: #007bff;
+}
+/* Active and hover effect */
+/* .nav-links li a::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background-color: #007bff;
+  transition: width 0.3s ease;
+}
+
+.nav-links li a:hover::after, .nav-links li a.active::after {
+  width: 100%;
+}
+
+.nav-links li a:hover, .nav-links li a.active {
+  color: #007bff;
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+} */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.hamburger .bar {
+  width: 30px;
+  height: 3px;
+  background-color: #0c0c0c;
+  margin: 4px 0;
+  transition: all 0.3s ease;
+  border-radius: 3px;
+}
+
+.hamburger.active .bar:nth-child(1) {
+  transform: translateY(10px) rotate(45deg);
+}
+
+.hamburger.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active .bar:nth-child(3) {
+  transform: translateY(-10px) rotate(-45deg);
+}
+/* .hamburger.active .bar:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active .bar:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+} */
+@media screen and (max-width: 768px) {
+  .nav-links {
+    position: fixed;
+    right: -117%;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.98);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.5s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-links li {
+    margin: 1.5em 0;
+  }
+
+  .nav-links li a {
+    font-size: 1.4em;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-active {
+    right: 0;
+  }
+}
+
+        /*.container {*/
+        /*    max-width: 900px;*/
+        /*    margin: 0 auto;*/
+        /*                margin-top: 150px;*/
+
+        /*    background-color: #fff;*/
+        /*    padding: 20px;*/
+        /*    border-radius: 8px;*/
+        /*    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
+        /*}*/
+        /*h1 {*/
+        /*    text-align: center;*/
+        /*    color: #333;*/
+        /*}*/
+        /*.question {*/
+        /*    margin-bottom: 20px;*/
+        /*}*/
+        /*.question p {*/
+        /*    font-size: 18px;*/
+        /*}*/
+        /*.answer, .explanation {*/
+        /*    display: none;*/
+        /*    margin-top: 10px;*/
+        /*}*/
+        /*.show-answer-btn {*/
+        /*    background-color: #007BFF;*/
+        /*    color: white;*/
+        /*    border: none;*/
+        /*    padding: 10px 20px;*/
+        /*    border-radius: 5px;*/
+        /*    cursor: pointer;*/
+        /*}*/
+        /*.show-answer-btn:hover {*/
+        /*    background-color: #0056b3;*/
+        /*}*/
+        
+ .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            margin-top: 120px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .question:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .question p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin: 0 0 10px;
+        }
+
+        ol {
+            padding-left: 20px;
+            margin: 0 0 10px;
+        }
+
+        ol li {
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .answer, .explanation {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .show-answer-btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .show-answer-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin-top: 80px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .question p {
+                font-size: 1em;
+            }
+
+            ol li {
+                font-size: 0.9em;
+            }
+
+            .show-answer-btn {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .question p {
+                font-size: 0.9em;
+            }
+
+            ol li {
+                font-size: 0.85em;
+            }
+
+            .show-answer-btn {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+        } 
+
+    </style>
+</head>
+<body>
+
+
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="index.html">olevelcccexam</a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="notes.html">Notes</a></li>
+        <li><a href="test.html">Test</a></li>
+        <li><a href="syllabus.html">Syllabus</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+  
+<div class="container">
+    <h1>Computer Fundamental MCQ for CCC/O-Level/SSC</h1>
+    
+  <!-- Question 1 -->
+<div class="question">
+    <p>1) A process is a _______. / एक प्रक्रिया _______ है।</p>
+    <ol type="a">
+        <li>single thread of execution. / निष्पादन की एकल थ्रेड।</li>
+        <li>program in the execution / निष्पादन में कार्यक्रम</li>
+        <li>program in the memory / मेमोरी में कार्यक्रम</li>
+        <li>task / कार्य</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(1)">Show Answer</button>
+    <div id="answer1" class="answer">
+        <p><strong>Answer:</strong> program in the execution / निष्पादन में कार्यक्रम</p>
+        <div class="explanation">
+            <p>Explanation: A process refers to a program in execution, different from a stored program. / स्पष्टीकरण: एक प्रक्रिया एक निष्पादन में कार्यक्रम को संदर्भित करती है, जो एक संग्रहीत कार्यक्रम से भिन्न होती है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 2 -->
+<div class="question">
+    <p>2) The word processing feature that catches most random typographical errors and misspellings is known as ____.
+        / वह वर्ड प्रोसेसिंग फीचर जो अधिकांश आकस्मिक टाइपोग्राफिकल त्रुटियों और गलत वर्तनी को पकड़ता है, उसे ____ के रूप में जाना जाता है।</p>
+    <ol type="a">
+        <li>Grammar checker / व्याकरण परीक्षक</li>
+        <li>Spell checker / वर्तनी परीक्षक</li>
+        <li>Word checker / शब्द परीक्षक</li>
+        <li>None of the above / उपरोक्त में से कोई नहीं</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(2)">Show Answer</button>
+    <div id="answer2" class="answer">
+        <p><strong>Answer:</strong> Spell checker / वर्तनी परीक्षक</p>
+        <div class="explanation">
+            <p>Explanation: A spell checker helps detect and correct spelling errors in a document. / स्पष्टीकरण: वर्तनी परीक्षक दस्तावेज़ में वर्तनी त्रुटियों का पता लगाने और उन्हें सुधारने में मदद करता है।</p>
+        </div>
+    </div>
+</div>
+<!-- Question 4 -->
+<div class="question">
+    <p>4) What is the decimal equivalent of the binary number 10111? / बाइनरी संख्या 10111 का दशमलव समतुल्य क्या है?</p>
+    <ol type="a">
+        <li>21 / 21</li>
+        <li>39 / 39</li>
+        <li>42 / 42</li>
+        <li>23 / 23</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(4)">Show Answer</button>
+    <div id="answer4" class="answer">
+        <p><strong>Answer:</strong> 23 / 23</p>
+        <div class="explanation">
+            <p>Explanation: The binary number 10111 is equivalent to decimal 23. / स्पष्टीकरण: बाइनरी संख्या 10111 दशमलव 23 के बराबर है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 5 -->
+<div class="question">
+    <p>5) What is the term for a temporary storage area that compensates for differences in data rate and data flow between devices? 
+       / अस्थायी भंडारण क्षेत्र के लिए क्या शब्द है जो उपकरणों के बीच डेटा दर और डेटा प्रवाह में अंतर की भरपाई करता है?</p>
+    <ol type="a">
+        <li>Buffer / बफर</li>
+        <li>Bus / बस</li>
+        <li>Channel / चैनल</li>
+        <li>Modem / मोडेम</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(5)">Show Answer</button>
+    <div id="answer5" class="answer">
+        <p><strong>Answer:</strong> Buffer / बफर</p>
+        <div class="explanation">
+            <p>Explanation: A buffer temporarily holds data to compensate for differences in the data rate between two devices. / स्पष्टीकरण: बफर अस्थायी रूप से डेटा को रखता है ताकि दो उपकरणों के बीच डेटा दर के अंतर की भरपाई की जा सके।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 6 -->
+<div class="question">
+    <p>6) How many color dots make up one color pixel on a screen? / स्क्रीन पर एक रंगीन पिक्सेल को कितने रंगीन डॉट बनाते हैं?</p>
+    <ol type="a">
+        <li>265 / 265</li>
+        <li>16 / 16</li>
+        <li>8 / 8</li>
+        <li>3 / 3</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(6)">Show Answer</button>
+    <div id="answer6" class="answer">
+        <p><strong>Answer:</strong> 3 / 3</p>
+        <div class="explanation">
+            <p>Explanation: Each pixel on a color screen is made up of 3 color dots (red, green, and blue). / स्पष्टीकरण: एक रंगीन स्क्रीन पर प्रत्येक पिक्सेल 3 रंगीन डॉट्स (लाल, हरा, और नीला) से बना होता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Additional questions in the same format -->
+
+<!-- Question 7 -->
+<div class="question">
+    <p>7) Which of the following values is the correct value of this hexadecimal code 1F.01B? / निम्नलिखित में से कौन सा मान हेक्साडेसिमल कोड 1F.01B का सही मान है?</p>
+    <ol type="a">
+        <li>35.0065918</li>
+        <li>32.0065918</li>
+        <li>31.0065918</li>
+        <li>30.0065918</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(7)">Show Answer</button>
+    <div id="answer7" class="answer">
+        <p><strong>Answer:</strong> 31.0065918</p>
+        <div class="explanation">
+            <p>Explanation: The hexadecimal code 1F.01B converts to 31.0065918 in decimal. / स्पष्टीकरण: हेक्साडेसिमल कोड 1F.01B दशमलव में 31.0065918 के बराबर है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 8 -->
+<div class="question">
+    <p>8) How is the data stored on the diskette? / डिस्केट पर डेटा कैसे संग्रहीत किया जाता है?</p>
+    <ol type="a">
+        <li>Ink / स्याही</li>
+        <li>Laser bubbles / लेजर बुलबुले</li>
+        <li>Magnetism / चुंबकत्व</li>
+        <li>Circuits / सर्किट्स</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(8)">Show Answer</button>
+    <div id="answer8" class="answer">
+        <p><strong>Answer:</strong> Magnetism / चुंबकत्व</p>
+        <div class="explanation">
+            <p>Explanation: Data on a diskette is stored using magnetic fields to represent bits. / स्पष्टीकरण: डिस्केट पर डेटा को बिट्स को प्रदर्शित करने के लिए चुंबकीय क्षेत्रों का उपयोग करके संग्रहीत किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 9 -->
+<div class="question">
+    <p>9) Which of the following is the smallest visual element on a video monitor? / निम्नलिखित में से कौन सा वीडियो मॉनिटर पर सबसे छोटा दृश्य तत्व है?</p>
+    <ol type="a">
+        <li>Character / अक्षर</li>
+        <li>Pixel / पिक्सेल</li>
+        <li>Byte / बाइट</li>
+        <li>Bit / बिट</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(9)">Show Answer</button>
+    <div id="answer9" class="answer">
+        <p><strong>Answer:</strong> Pixel / पिक्सेल</p>
+        <div class="explanation">
+            <p>Explanation: A pixel is the smallest visual element on a monitor, forming part of the display. / स्पष्टीकरण: पिक्सेल मॉनिटर पर सबसे छोटा दृश्य तत्व है, जो डिस्प्ले का हिस्सा बनता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 10 -->
+<div class="question">
+    <p>10) Which of the following natural elements is the primary element in computer chips? / निम्नलिखित में से कौन सा प्राकृतिक तत्व कंप्यूटर चिप्स में प्राथमिक तत्व है?</p>
+    <ol type="a">
+        <li>Silicon / सिलिकॉन</li>
+        <li>Carbon / कार्बन</li>
+        <li>Iron / लोहा</li>
+        <li>Uranium / यूरेनियम</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(10)">Show Answer</button>
+    <div id="answer10" class="answer">
+        <p><strong>Answer:</strong> Silicon / सिलिकॉन</p>
+        <div class="explanation">
+            <p>Explanation: Silicon is widely used in the manufacturing of semiconductors and computer chips. / स्पष्टीकरण: सिलिकॉन सेमीकंडक्टर और कंप्यूटर चिप्स के निर्माण में व्यापक रूप से उपयोग किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 11 -->
+<div class="question">
+    <p>11) Which of the following programs enables you to calculate numbers related to rows and columns? / निम्नलिखित में से कौन सा प्रोग्राम आपको पंक्तियों और स्तंभों से संबंधित संख्याओं की गणना करने में सक्षम बनाता है?</p>
+    <ol type="a">
+        <li>Window program / विंडो प्रोग्राम</li>
+        <li>Spreadsheet program / स्प्रेडशीट प्रोग्राम</li>
+        <li>Graphics program / ग्राफिक्स प्रोग्राम</li>
+        <li>Word program / वर्ड प्रोग्राम</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(11)">Show Answer</button>
+    <div id="answer11" class="answer">
+        <p><strong>Answer:</strong> Spreadsheet program / स्प्रेडशीट प्रोग्राम</p>
+        <div class="explanation">
+            <p>Explanation: A spreadsheet program is designed to calculate numbers and analyze data in rows and columns. / स्पष्टीकरण: स्प्रेडशीट प्रोग्राम संख्याओं की गणना करने और पंक्तियों और स्तंभों में डेटा का विश्लेषण करने के लिए डिज़ाइन किया गया है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 12 -->
+<div class="question">
+    <p>12) Which of the following is not an example of hardware? / निम्नलिखित में से कौन सा हार्डवेयर का उदाहरण नहीं है?</p>
+    <ol type="a">
+        <li>Printer / प्रिंटर</li>
+        <li>Operating System / ऑपरेटिंग सिस्टम</li>
+        <li>Monitor / मॉनिटर</li>
+        <li>Mouse / माउस</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(12)">Show Answer</button>
+    <div id="answer12" class="answer">
+        <p><strong>Answer:</strong> Operating System / ऑपरेटिंग सिस्टम</p>
+        <div class="explanation">
+            <p>Explanation: The operating system is software, whereas printer, monitor, and mouse are hardware components. / स्पष्टीकरण: ऑपरेटिंग सिस्टम सॉफ़्टवेयर है, जबकि प्रिंटर, मॉनिटर, और माउस हार्डवेयर घटक हैं।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 13 -->
+<div class="question">
+    <p>13) What does the acronym GUI stand for? / GUI का संक्षिप्त रूप क्या है?</p>
+    <ol type="a">
+        <li>Graphical User Instrument / ग्राफिकल यूज़र इंस्ट्रूमेंट</li>
+        <li>Graphical User Interface / ग्राफिकल यूज़र इंटरफ़ेस</li>
+        <li>General User Instrument / जनरल यूज़र इंस्ट्रूमेंट</li>
+        <li>General User Interface / जनरल यूज़र इंटरफ़ेस</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(13)">Show Answer</button>
+    <div id="answer13" class="answer">
+        <p><strong>Answer:</strong> Graphical User Interface / ग्राफिकल यूज़र इंटरफ़ेस</p>
+        <div class="explanation">
+            <p>Explanation: GUI stands for Graphical User Interface, which allows users to interact with devices through graphical elements. / स्पष्टीकरण: GUI का मतलब ग्राफिकल यूज़र इंटरफ़ेस है, जो उपयोगकर्ताओं को ग्राफिकल तत्वों के माध्यम से उपकरणों के साथ बातचीत करने की अनुमति देता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 14 -->
+<div class="question">
+    <p>14) Which of the following is volatile memory? / निम्नलिखित में से कौन सा वोलाटाइल मेमोरी है?</p>
+    <ol type="a">
+        <li>ROM / रोम</li>
+        <li>RAM / रैम</li>
+        <li>Hard Disk / हार्ड डिस्क</li>
+        <li>Flash Memory / फ्लैश मेमोरी</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(14)">Show Answer</button>
+    <div id="answer14" class="answer">
+        <p><strong>Answer:</strong> RAM / रैम</p>
+        <div class="explanation">
+            <p>Explanation: RAM is volatile memory, meaning it loses its contents when the power is turned off. / स्पष्टीकरण: रैम वोलाटाइल मेमोरी है, जिसका मतलब है कि बिजली बंद होने पर इसका डेटा खो जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 15 -->
+<div class="question">
+    <p>15) Which of the following is used to connect a personal computer to a telephone line for internet access? / निम्नलिखित में से किसका उपयोग व्यक्तिगत कंप्यूटर को इंटरनेट एक्सेस के लिए टेलीफोन लाइन से कनेक्ट करने के लिए किया जाता है?</p>
+    <ol type="a">
+        <li>Modem / मोडेम</li>
+        <li>Scanner / स्कैनर</li>
+        <li>Printer / प्रिंटर</li>
+        <li>Joystick / जॉयस्टिक</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(15)">Show Answer</button>
+    <div id="answer15" class="answer">
+        <p><strong>Answer:</strong> Modem / मोडेम</p>
+        <div class="explanation">
+            <p>Explanation: A modem converts digital signals to analog for transmission over telephone lines. / स्पष्टीकरण: एक मोडेम डिजिटल संकेतों को एनालॉग में बदलता है ताकि उन्हें टेलीफोन लाइनों पर प्रेषित किया जा सके।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 16 -->
+<div class="question">
+    <p>16) What is the full form of CPU? / CPU का पूरा नाम क्या है?</p>
+    <ol type="a">
+        <li>Central Processing Unit / सेंट्रल प्रोसेसिंग यूनिट</li>
+        <li>Control Processing Unit / कंट्रोल प्रोसेसिंग यूनिट</li>
+        <li>Central Program Unit / सेंट्रल प्रोग्राम यूनिट</li>
+        <li>Control Program Unit / कंट्रोल प्रोग्राम यूनिट</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(16)">Show Answer</button>
+    <div id="answer16" class="answer">
+        <p><strong>Answer:</strong> Central Processing Unit / सेंट्रल प्रोसेसिंग यूनिट</p>
+        <div class="explanation">
+            <p>Explanation: CPU stands for Central Processing Unit, the brain of the computer. / स्पष्टीकरण: CPU का मतलब सेंट्रल प्रोसेसिंग यूनिट है, जो कंप्यूटर का मस्तिष्क है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 17 -->
+<div class="question">
+    <p>17) What type of software is used for designing brochures, newsletters, and other visual materials? / किस प्रकार के सॉफ़्टवेयर का उपयोग ब्रोशर, न्यूज़लेटर, और अन्य दृश्य सामग्री डिजाइन करने के लिए किया जाता है?</p>
+    <ol type="a">
+        <li>Spreadsheet / स्प्रेडशीट</li>
+        <li>Desktop Publishing / डेस्कटॉप पब्लिशिंग</li>
+        <li>Word Processing / वर्ड प्रोसेसिंग</li>
+        <li>Database / डेटाबेस</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(17)">Show Answer</button>
+    <div id="answer17" class="answer">
+        <p><strong>Answer:</strong> Desktop Publishing / डेस्कटॉप पब्लिशिंग</p>
+        <div class="explanation">
+            <p>Explanation: Desktop publishing software is used to design brochures and newsletters. / स्पष्टीकरण: डेस्कटॉप पब्लिशिंग सॉफ़्टवेयर का उपयोग ब्रोशर और न्यूज़लेटर डिजाइन करने के लिए किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 18 -->
+<div class="question">
+    <p>18) Which of the following commands is used to clear the screen in MS-DOS? / MS-DOS में स्क्रीन को साफ करने के लिए निम्नलिखित में से किस कमांड का उपयोग किया जाता है?</p>
+    <ol type="a">
+        <li>CLS / CLS</li>
+        <li>DEL / DEL</li>
+        <li>COPY / COPY</li>
+        <li>DIR / DIR</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(18)">Show Answer</button>
+    <div id="answer18" class="answer">
+        <p><strong>Answer:</strong> CLS / CLS</p>
+        <div class="explanation">
+            <p>Explanation: The "CLS" command in MS-DOS is used to clear the screen. / स्पष्टीकरण: MS-DOS में "CLS" कमांड का उपयोग स्क्रीन को साफ करने के लिए किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 19 -->
+<div class="question">
+    <p>19) Which of the following is a type of non-volatile memory? / निम्नलिखित में से कौन सा वोलाटाइल मेमोरी का प्रकार नहीं है?</p>
+    <ol type="a">
+        <li>RAM / रैम</li>
+        <li>ROM / रोम</li>
+        <li>Cache Memory / कैश मेमोरी</li>
+        <li>Virtual Memory / वर्चुअल मेमोरी</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(19)">Show Answer</button>
+    <div id="answer19" class="answer">
+        <p><strong>Answer:</strong> ROM / रोम</p>
+        <div class="explanation">
+            <p>Explanation: ROM is non-volatile memory, meaning it retains data even when powered off. / स्पष्टीकरण: ROM नॉन-वोलाटाइल मेमोरी है, जो बिजली बंद होने पर भी डेटा बनाए रखती है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 20 -->
+<div class="question">
+    <p>20) Which type of printer uses a laser beam to print documents? / कौन सा प्रिंटर लेजर बीम का उपयोग करके दस्तावेज़ प्रिंट करता है?</p>
+    <ol type="a">
+        <li>Inkjet Printer / इंकजेट प्रिंटर</li>
+        <li>Laser Printer / लेजर प्रिंटर</li>
+        <li>Dot Matrix Printer / डॉट मैट्रिक्स प्रिंटर</li>
+        <li>Thermal Printer / थर्मल प्रिंटर</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(20)">Show Answer</button>
+    <div id="answer20" class="answer">
+        <p><strong>Answer:</strong> Laser Printer / लेजर प्रिंटर</p>
+        <div class="explanation">
+            <p>Explanation: A laser printer uses a laser beam to create the image on a drum, which is then transferred to paper. / स्पष्टीकरण: एक लेजर प्रिंटर लेजर बीम का उपयोग करके एक ड्रम पर छवि बनाता है, जिसे फिर कागज पर स्थानांतरित किया जाता है।</p>
+        </div>
+    </div>
+</div>
+<!-- Question 21 -->
+<div class="question">
+    <p>21) What is the primary function of the operating system? <br> ऑपरेटिंग सिस्टम का मुख्य कार्य क्या है?</p>
+    <ol type="a">
+        <li>Manage resources and hardware <br> संसाधनों और हार्डवेयर का प्रबंधन करना</li>
+        <li>Run application programs <br> एप्लिकेशन प्रोग्राम चलाना</li>
+        <li>Provide internet access <br> इंटरनेट एक्सेस प्रदान करना</li>
+        <li>Store data <br> डेटा संग्रहीत करना</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(21)">Show Answer</button>
+    <div id="answer21" class="answer">
+        <p><strong>Answer:</strong> Manage resources and hardware <br><strong>उत्तर:</strong> संसाधनों और हार्डवेयर का प्रबंधन करना</p>
+        <div class="explanation">
+            <p>Explanation: The operating system manages hardware resources like CPU, memory, and storage while also facilitating interaction between applications and hardware. <br> व्याख्या: ऑपरेटिंग सिस्टम हार्डवेयर संसाधनों जैसे सीपीयू, मेमोरी और स्टोरेज का प्रबंधन करता है और एप्लिकेशन और हार्डवेयर के बीच संपर्क की सुविधा प्रदान करता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 22 -->
+<div class="question">
+    <p>22) What type of memory is used for short-term storage in a computer? <br> कंप्यूटर में अल्पकालिक भंडारण के लिए किस प्रकार की मेमोरी का उपयोग किया जाता है?</p>
+    <ol type="a">
+        <li>RAM <br> रैम</li>
+        <li>ROM <br> रोम</li>
+        <li>Hard Drive <br> हार्ड ड्राइव</li>
+        <li>Flash Memory <br> फ्लैश मेमोरी</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(22)">Show Answer</button>
+    <div id="answer22" class="answer">
+        <p><strong>Answer:</strong> RAM <br><strong>उत्तर:</strong> रैम</p>
+        <div class="explanation">
+            <p>Explanation: RAM (Random Access Memory) is used for short-term storage of data that is actively being used by the system. <br> व्याख्या: रैम (रैंडम एक्सेस मेमोरी) का उपयोग डेटा के अल्पकालिक भंडारण के लिए किया जाता है जिसका सिस्टम सक्रिय रूप से उपयोग कर रहा है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 23 -->
+<div class="question">
+    <p>23) Which protocol is used for transferring files on the internet? <br> इंटरनेट पर फाइल ट्रांसफर के लिए किस प्रोटोकॉल का उपयोग किया जाता है?</p>
+    <ol type="a">
+        <li>FTP <br> एफटीपी</li>
+        <li>HTTP <br> एचटीटीपी</li>
+        <li>SMTP <br> एसएमटीपी</li>
+        <li>IP <br> आईपी</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(23)">Show Answer</button>
+    <div id="answer23" class="answer">
+        <p><strong>Answer:</strong> FTP <br><strong>उत्तर:</strong> एफटीपी</p>
+        <div class="explanation">
+            <p>Explanation: FTP (File Transfer Protocol) is used to transfer files between computers on the internet. <br> व्याख्या: एफटीपी (फाइल ट्रांसफर प्रोटोकॉल) का उपयोग इंटरनेट पर कंप्यूटरों के बीच फाइलें स्थानांतरित करने के लिए किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- Question 24 -->
+<div class="question">
+    <p>24) What is the full form of 'URL'?</p>
+    <p>URL का पूर्ण रूप क्या है?</p>
+    <ol type="a">
+        <li>Uniform Resource Locator</li>
+        <li>Uniform Retrieval Location</li>
+        <li>Universal Resource Locator</li>
+        <li>Universal Retrieval Location</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(24)">Show Answer</button>
+    <div id="answer24" class="answer">
+        <p><strong>Answer:</strong> Uniform Resource Locator</p>
+        <p><strong>उत्तर:</strong> Uniform Resource Locator</p>
+        <div class="explanation">
+            <p>Explanation: URL stands for Uniform Resource Locator, which is the address used to access websites and resources on the internet.</p>
+            <p>व्याख्या: URL का अर्थ यूनिफ़ॉर्म रिसोर्स लोकेटर है, जो वेबसाइटों और इंटरनेट पर संसाधनों तक पहुंचने के लिए उपयोग किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 25 -->
+<div class="question">
+    <p>25) What is the purpose of an IP address?</p>
+    <p>IP पते का उद्देश्य क्या है?</p>
+    <ol type="a">
+        <li>To identify a specific webpage</li>
+        <li>To identify a device on a network</li>
+        <li>To encrypt network traffic</li>
+        <li>To connect to the internet</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(25)">Show Answer</button>
+    <div id="answer25" class="answer">
+        <p><strong>Answer:</strong> To identify a device on a network</p>
+        <p><strong>उत्तर:</strong> नेटवर्क पर एक डिवाइस की पहचान करने के लिए</p>
+        <div class="explanation">
+            <p>Explanation: An IP address is a unique identifier for a device on a network, used to route data between devices over the internet or local network.</p>
+            <p>व्याख्या: IP पता नेटवर्क पर एक डिवाइस के लिए एक अनूठी पहचानकर्ता है, जिसका उपयोग इंटरनेट या स्थानीय नेटवर्क पर डिवाइसों के बीच डेटा रूट करने के लिए किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 26 -->
+<div class="question">
+    <p>26) Which of the following is a type of network topology?</p>
+    <p>निम्नलिखित में से कौन सा नेटवर्क टोपोलॉजी का प्रकार है?</p>
+    <ol type="a">
+        <li>Tree</li>
+        <li>Star</li>
+        <li>Ring</li>
+        <li>All of the above</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(26)">Show Answer</button>
+    <div id="answer26" class="answer">
+        <p><strong>Answer:</strong> All of the above</p>
+        <p><strong>उत्तर:</strong> उपरोक्त सभी</p>
+        <div class="explanation">
+            <p>Explanation: Tree, Star, and Ring are all types of network topologies, which define the structure and layout of connections between devices in a network.</p>
+            <p>व्याख्या: ट्री, स्टार और रिंग सभी नेटवर्क टोपोलॉजी के प्रकार हैं, जो नेटवर्क में डिवाइसों के बीच कनेक्शन की संरचना और लेआउट को परिभाषित करते हैं।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 27 -->
+<div class="question">
+    <p>27) What is the primary function of DNS in networking?</p>
+    <p>नेटवर्किंग में DNS का प्राथमिक कार्य क्या है?</p>
+    <ol type="a">
+        <li>Transferring data packets</li>
+        <li>Resolving domain names to IP addresses</li>
+        <li>Encrypting web traffic</li>
+        <li>Routing emails</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(27)">Show Answer</button>
+    <div id="answer27" class="answer">
+        <p><strong>Answer:</strong> Resolving domain names to IP addresses</p>
+        <p><strong>उत्तर:</strong> डोमेन नामों को IP पतों में बदलना</p>
+        <div class="explanation">
+            <p>Explanation: DNS (Domain Name System) translates domain names (like www.example.com) into IP addresses, allowing users to access websites without needing to remember numeric IP addresses.</p>
+            <p>व्याख्या: DNS (डोमेन नाम प्रणाली) डोमेन नामों (जैसे www.example.com) को IP पतों में बदलता है, जिससे उपयोगकर्ता वेबसाइटों तक पहुंच सकते हैं बिना संख्यात्मक IP पते याद किए।</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- Question 28 -->
+<div class="question">
+    <p>Q28: What is the speed of a computer measured in?</p>
+    <p>प्रश्न 28: कंप्यूटर की गति किसमें मापी जाती है?</p>
+    <ol type="a">
+        <li>Nanoseconds / नैनोसेकंड</li>
+        <li>Kilo-seconds / किलो-सेकंड</li>
+        <li>Gigahertz / गीगाहर्ट्ज़</li>
+        <li>Megabytes / मेगाबाइट्स</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(28)">Show Answer</button>
+    <div id="answer28" class="answer">
+        <p><strong>Answer:</strong> Gigahertz / गीगाहर्ट्ज़</p>
+        <div class="explanation">
+            <p>Explanation: Computer speed is generally measured in gigahertz (GHz), which refers to the clock speed of the CPU.</p>
+            <p>व्याख्या: कंप्यूटर की गति आमतौर पर गीगाहर्ट्ज़ (GHz) में मापी जाती है, जो CPU की क्लॉक गति को संदर्भित करती है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 29 -->
+<div class="question">
+    <p>Q29: What is the full form of RAM?</p>
+    <p>प्रश्न 29: RAM का पूरा नाम क्या है?</p>
+    <ol type="a">
+        <li>Random Access Memory / रैंडम एक्सेस मेमोरी</li>
+        <li>Remote Access Memory / रिमोट एक्सेस मेमोरी</li>
+        <li>Rapid Access Memory / रैपिड एक्सेस मेमोरी</li>
+        <li>Read Access Memory / रीड एक्सेस मेमोरी</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(29)">Show Answer</button>
+    <div id="answer29" class="answer">
+        <p><strong>Answer:</strong> Random Access Memory / रैंडम एक्सेस मेमोरी</p>
+        <div class="explanation">
+            <p>Explanation: RAM stands for Random Access Memory, which temporarily stores data for quick access by the CPU.</p>
+            <p>व्याख्या: RAM का मतलब रैंडम एक्सेस मेमोरी है, जो डेटा को अस्थायी रूप से स्टोर करती है ताकि CPU उसे तेजी से एक्सेस कर सके।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 30 -->
+<div class="question">
+    <p>Q30: What is the full form of DRAM?</p>
+    <p>प्रश्न 30: DRAM का पूरा नाम क्या है?</p>
+    <ol type="a">
+        <li>Dynamic Random-Access Memory / डायनेमिक रैंडम एक्सेस मेमोरी</li>
+        <li>Dynamic Remote Access Memory / डायनेमिक रिमोट एक्सेस मेमोरी</li>
+        <li>Dependent Random Access Memory / डिपेंडेंट रैंडम एक्सेस मेमोरी</li>
+        <li>Dependent Remote Access Memory / डिपेंडेंट रिमोट एक्सेस मेमोरी</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(30)">Show Answer</button>
+    <div id="answer30" class="answer">
+        <p><strong>Answer:</strong> Dynamic Random-Access Memory / डायनेमिक रैंडम एक्सेस मेमोरी</p>
+        <div class="explanation">
+            <p>Explanation: DRAM is a type of RAM that stores each bit of data in a separate capacitor.</p>
+            <p>व्याख्या: DRAM एक प्रकार की RAM है जो प्रत्येक बिट डेटा को एक अलग कैपेसिटर में स्टोर करती है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 31 -->
+<div class="question">
+    <p>Q31: Which one of the following software applications would be the most appropriate for performing numerical and statistical calculations?</p>
+    <p>प्रश्न 31: निम्नलिखित में से कौन सा सॉफ़्टवेयर अनुप्रयोग संख्यात्मक और सांख्यिकीय गणनाओं को करने के लिए सबसे उपयुक्त होगा?</p>
+    <ol type="a">
+        <li>Database / डेटाबेस</li>
+        <li>Document processor / दस्तावेज़ प्रोसेसर</li>
+        <li>Graphics package / ग्राफिक्स पैकेज</li>
+        <li>Spreadsheet / स्प्रेडशीट</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(31)">Show Answer</button>
+    <div id="answer31" class="answer">
+        <p><strong>Answer:</strong> Spreadsheet / स्प्रेडशीट</p>
+        <div class="explanation">
+            <p>Explanation: Spreadsheets are widely used for performing numerical and statistical calculations.</p>
+            <p>व्याख्या: संख्यात्मक और सांख्यिकीय गणनाओं को करने के लिए स्प्रेडशीट्स का व्यापक रूप से उपयोग किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 32 -->
+<div class="question">
+    <p>Q32: Which of the following is not considered hardware?</p>
+    <p>प्रश्न 32: निम्नलिखित में से किसे हार्डवेयर नहीं माना जाता है?</p>
+    <ol type="a">
+        <li>Operating system / ऑपरेटिंग सिस्टम</li>
+        <li>CPU / सीपीयू</li>
+        <li>Keyboard / कीबोर्ड</li>
+        <li>Hard disk / हार्ड डिस्क</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(32)">Show Answer</button>
+    <div id="answer32" class="answer">
+        <p><strong>Answer:</strong> Operating system / ऑपरेटिंग सिस्टम</p>
+        <div class="explanation">
+            <p>Explanation: An operating system is software, while the other options are hardware components.</p>
+            <p>व्याख्या: ऑपरेटिंग सिस्टम सॉफ़्टवेयर है, जबकि अन्य विकल्प हार्डवेयर घटक हैं।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 33 -->
+<div class="question">
+    <p>Q33: Which of the following is exclusively a sequential access storage device?</p>
+    <p>प्रश्न 33: निम्नलिखित में से कौन सा विशेष रूप से अनुक्रमिक पहुंच भंडारण उपकरण है?</p>
+    <ol type="a">
+        <li>Hard disk / हार्ड डिस्क</li>
+        <li>Floppy disk / फ्लॉपी डिस्क</li>
+        <li>Magnetic tape / चुंबकीय टेप</li>
+        <li>DVD / डीवीडी</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(33)">Show Answer</button>
+    <div id="answer33" class="answer">
+        <p><strong>Answer:</strong> Magnetic tape / चुंबकीय टेप</p>
+        <div class="explanation">
+            <p>Explanation: Magnetic tape is a sequential access storage device, meaning data is accessed in a set sequence.</p>
+            <p>व्याख्या: चुंबकीय टेप एक अनुक्रमिक पहुंच भंडारण उपकरण है, जिसका अर्थ है कि डेटा एक निर्धारित क्रम में एक्सेस किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 34 -->
+<div class="question">
+    <p>Q34: Akshat has created a story of ten pages, but only wants to print the first two pages. Which printer command should he choose?</p>
+    <p>प्रश्न 34: अक्षत ने दस पन्नों की कहानी बनाई है, लेकिन वह केवल पहले दो पन्ने ही प्रिंट करना चाहता है। उसे कौन सा प्रिंटर कमांड चुनना चाहिए?</p>
+    <ol type="a">
+        <li>Print all / सभी प्रिंट करें</li>
+        <li>Print from 1 to 2 / 1 से 2 तक प्रिंट करें</li>
+        <li>Page setup / पृष्ठ सेटअप</li>
+        <li>Print Preview / प्रिंट पूर्वावलोकन</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(34)">Show Answer</button>
+    <div id="answer34" class="answer">
+        <p><strong>Answer:</strong> Print from 1 to 2 / 1 से 2 तक प्रिंट करें</p>
+        <div class="explanation">
+            <p>Explanation: To print only the first two pages, select the option "Print from 1 to 2."</p>
+            <p>व्याख्या: केवल पहले दो पन्नों को प्रिंट करने के लिए "1 से 2 तक प्रिंट करें" विकल्प का चयन करें।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 35 -->
+<div class="question">
+    <p>Q35: What is the full form of SRAM?</p>
+    <p>प्रश्न 35: SRAM का पूरा नाम क्या है?</p>
+    <ol type="a">
+        <li>Static Random-Access Memory / स्टैटिक रैंडम-एक्सेस मेमोरी</li>
+        <li>Static Remote-Access Memory / स्टैटिक रिमोट-एक्सेस मेमोरी</li>
+        <li>Setup Random-Access Memory / सेटअप रैंडम-एक्सेस मेमोरी</li>
+        <li>Setup Remote-Access Memory / सेटअप रिमोट-एक्सेस मेमोरी</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(35)">Show Answer</button>
+    <div id="answer35" class="answer">
+        <p><strong>Answer:</strong> Static Random-Access Memory / स्टैटिक रैंडम-एक्सेस मेमोरी</p>
+        <div class="explanation">
+            <p>Explanation: SRAM is a type of memory that retains data bits in a static state, without needing to refresh.</p>
+            <p>व्याख्या: SRAM मेमोरी का एक प्रकार है जो डेटा बिट्स को स्थिर स्थिति में रखता है और इसे ताज़ा करने की आवश्यकता नहीं होती।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 36 -->
+<div class="question">
+    <p>Q36: What is the full form of USB?</p>
+    <p>प्रश्न 36: USB का पूरा नाम क्या है?</p>
+    <ol type="a">
+        <li>Unshielded System Board / अनशील्डेड सिस्टम बोर्ड</li>
+        <li>Universal System Board / यूनिवर्सल सिस्टम बोर्ड</li>
+        <li>Unidentified System Bus / अनआइडेंटिफाइड सिस्टम बस</li>
+        <li>Universal Serial Bus / यूनिवर्सल सीरियल बस</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(36)">Show Answer</button>
+    <div id="answer36" class="answer">
+        <p><strong>Answer:</strong> Universal Serial Bus / यूनिवर्सल सीरियल बस</p>
+        <div class="explanation">
+            <p>Explanation: USB stands for Universal Serial Bus, used to connect various devices to a computer.</p>
+            <p>व्याख्या: USB का मतलब यूनिवर्सल सीरियल बस है, जिसका उपयोग विभिन्न उपकरणों को कंप्यूटर से जोड़ने के लिए किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 37 -->
+<div class="question">
+    <p>Q37: Which one of the following is not a form of data storage media?</p>
+    <p>प्रश्न 37: निम्नलिखित में से कौन सा डेटा स्टोरेज मीडिया का रूप नहीं है?</p>
+    <ol type="a">
+        <li>A database / एक डेटाबेस</li>
+        <li>Magnetic tape / चुंबकीय टेप</li>
+        <li>Magnetic disc / चुंबकीय डिस्क</li>
+        <li>Optical disc / ऑप्टिकल डिस्क</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(37)">Show Answer</button>
+    <div id="answer37" class="answer">
+        <p><strong>Answer:</strong> A database / एक डेटाबेस</p>
+        <div class="explanation">
+            <p>Explanation: A database is not a physical storage media, it is a system to organize and manage data.</p>
+            <p>व्याख्या: डेटाबेस एक भौतिक स्टोरेज मीडिया नहीं है, यह डेटा को व्यवस्थित और प्रबंधित करने का एक सिस्टम है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 38 -->
+<div class="question">
+    <p>Q38: Which of the following is not a type of programming language?</p>
+    <p>प्रश्न 38: निम्नलिखित में से कौन सा प्रोग्रामिंग भाषा का प्रकार नहीं है?</p>
+    <ol type="a">
+        <li>Assembly / असेंबली</li>
+        <li>High-level language / उच्च स्तरीय भाषा</li>
+        <li>Machine language / मशीन भाषा</li>
+        <li>GUI / जीयूआई</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(38)">Show Answer</button>
+    <div id="answer38" class="answer">
+        <p><strong>Answer:</strong> GUI / जीयूआई</p>
+        <div class="explanation">
+            <p>Explanation: GUI stands for Graphical User Interface, which is not a programming language.</p>
+            <p>व्याख्या: GUI का मतलब ग्राफिकल यूज़र इंटरफ़ेस है, जो प्रोग्रामिंग भाषा नहीं है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 39 -->
+<div class="question">
+    <p>Q39: The operating system manages what types of resources in a computer?</p>
+    <p>प्रश्न 39: ऑपरेटिंग सिस्टम कंप्यूटर में किस प्रकार के संसाधनों को प्रबंधित करता है?</p>
+    <ol type="a">
+        <li>Hardware / हार्डवेयर</li>
+        <li>Software / सॉफ्टवेयर</li>
+        <li>Data / डेटा</li>
+        <li>All of the above / उपरोक्त सभी</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(39)">Show Answer</button>
+    <div id="answer39" class="answer">
+        <p><strong>Answer:</strong> All of the above / उपरोक्त सभी</p>
+        <div class="explanation">
+            <p>Explanation: The operating system manages hardware, software, and data in a computer system.</p>
+            <p>व्याख्या: ऑपरेटिंग सिस्टम कंप्यूटर सिस्टम में हार्डवेयर, सॉफ्टवेयर और डेटा का प्रबंधन करता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 40 -->
+<div class="question">
+    <p>Q40: What is the primary function of the ALU in a computer?</p>
+    <p>प्रश्न 40: कंप्यूटर में ALU का मुख्य कार्य क्या है?</p>
+    <ol type="a">
+        <li>Performing arithmetic operations / अंकगणितीय कार्य करना</li>
+        <li>Performing logic operations / तार्किक कार्य करना</li>
+        <li>Both A and B / दोनों A और B</li>
+        <li>Memory management / मेमोरी प्रबंधन</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(40)">Show Answer</button>
+    <div id="answer40" class="answer">
+        <p><strong>Answer:</strong> Both A and B / दोनों A और B</p>
+        <div class="explanation">
+            <p>Explanation: ALU (Arithmetic Logic Unit) is responsible for performing both arithmetic and logic operations.</p>
+            <p>व्याख्या: ALU (अंकगणितीय तार्किक इकाई) अंकगणितीय और तार्किक कार्य दोनों करने के लिए जिम्मेदार है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 41 -->
+<div class="question">
+    <p>Q41: What type of memory is used for long-term storage in a computer?</p>
+    <p>प्रश्न 41: कंप्यूटर में दीर्घकालिक भंडारण के लिए किस प्रकार की मेमोरी का उपयोग किया जाता है?</p>
+    <ol type="a">
+        <li>RAM / रैम</li>
+        <li>ROM / रोम</li>
+        <li>Secondary storage / द्वितीयक भंडारण</li>
+        <li>Cache memory / कैश मेमोरी</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(41)">Show Answer</button>
+    <div id="answer41" class="answer">
+        <p><strong>Answer:</strong> Secondary storage / द्वितीयक भंडारण</p>
+        <div class="explanation">
+            <p>Explanation: Secondary storage, such as hard drives and SSDs, is used for long-term storage of data.</p>
+            <p>व्याख्या: द्वितीयक भंडारण, जैसे हार्ड ड्राइव और SSD, डेटा के दीर्घकालिक भंडारण के लिए उपयोग किए जाते हैं।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 42 -->
+<div class="question">
+    <p>Q42: What does the term 'booting' refer to in a computer?</p>
+    <p>प्रश्न 42: कंप्यूटर में 'बूटिंग' शब्द का क्या अर्थ है?</p>
+    <ol type="a">
+        <li>Shutting down the computer / कंप्यूटर को बंद करना</li>
+        <li>Starting the computer / कंप्यूटर को चालू करना</li>
+        <li>Installing software / सॉफ़्टवेयर स्थापित करना</li>
+        <li>Updating the operating system / ऑपरेटिंग सिस्टम को अपडेट करना</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(42)">Show Answer</button>
+    <div id="answer42" class="answer">
+        <p><strong>Answer:</strong> Starting the computer / कंप्यूटर को चालू करना</p>
+        <div class="explanation">
+            <p>Explanation: Booting is the process of starting a computer and loading the operating system.</p>
+            <p>व्याख्या: बूटिंग कंप्यूटर को चालू करने और ऑपरेटिंग सिस्टम को लोड करने की प्रक्रिया है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 43 -->
+<div class="question">
+    <p>Q43: What type of device is a monitor?</p>
+    <p>प्रश्न 43: मॉनिटर किस प्रकार का उपकरण है?</p>
+    <ol type="a">
+        <li>Input device / इनपुट डिवाइस</li>
+        <li>Output device / आउटपुट डिवाइस</li>
+        <li>Processing device / प्रोसेसिंग डिवाइस</li>
+        <li>Storage device / स्टोरेज डिवाइस</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(43)">Show Answer</button>
+    <div id="answer43" class="answer">
+        <p><strong>Answer:</strong> Output device / आउटपुट डिवाइस</p>
+        <div class="explanation">
+            <p>Explanation: A monitor is an output device used to display information from a computer.</p>
+            <p>व्याख्या: मॉनिटर एक आउटपुट डिवाइस है जिसका उपयोग कंप्यूटर से जानकारी प्रदर्शित करने के लिए किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 44 -->
+<div class="question">
+    <p>Q44: What is the main purpose of a firewall in a computer system?</p>
+    <p>प्रश्न 44: कंप्यूटर सिस्टम में फ़ायरवॉल का मुख्य उद्देश्य क्या है?</p>
+    <ol type="a">
+        <li>To block viruses / वायरसों को रोकने के लिए</li>
+        <li>To prevent unauthorized access / अनधिकृत पहुंच को रोकने के लिए</li>
+        <li>To monitor system performance / सिस्टम प्रदर्शन की निगरानी के लिए</li>
+        <li>To manage data storage / डेटा स्टोरेज को प्रबंधित करने के लिए</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(44)">Show Answer</button>
+    <div id="answer44" class="answer">
+        <p><strong>Answer:</strong> To prevent unauthorized access / अनधिकृत पहुंच को रोकने के लिए</p>
+        <div class="explanation">
+            <p>Explanation: A firewall prevents unauthorized access to or from a private network.</p>
+            <p>व्याख्या: फ़ायरवॉल एक निजी नेटवर्क से अनधिकृत पहुंच को रोकता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 45 -->
+<div class="question">
+    <p>Q45: Which of the following is an example of system software?</p>
+    <p>प्रश्न 45: निम्नलिखित में से कौन सा सिस्टम सॉफ़्टवेयर का एक उदाहरण है?</p>
+    <ol type="a">
+        <li>Spreadsheet / स्प्रेडशीट</li>
+        <li>Operating system / ऑपरेटिंग सिस्टम</li>
+        <li>Word processor / वर्ड प्रोसेसर</li>
+        <li>Database / डेटाबेस</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(45)">Show Answer</button>
+    <div id="answer45" class="answer">
+        <p><strong>Answer:</strong> Operating system / ऑपरेटिंग सिस्टम</p>
+        <div class="explanation">
+            <p>Explanation: An operating system is a type of system software that manages computer hardware and software resources.</p>
+            <p>व्याख्या: ऑपरेटिंग सिस्टम एक प्रकार का सिस्टम सॉफ़्टवेयर है जो कंप्यूटर के हार्डवेयर और सॉफ़्टवेयर संसाधनों का प्रबंधन करता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 46 -->
+<div class="question">
+    <p>Q46: What type of storage is a USB flash drive?</p>
+    <p>प्रश्न 46: यूएसबी फ्लैश ड्राइव किस प्रकार का स्टोरेज है?</p>
+    <ol type="a">
+        <li>Primary storage / प्राथमिक भंडारण</li>
+        <li>Secondary storage / द्वितीयक भंडारण</li>
+        <li>Tertiary storage / तृतीयक भंडारण</li>
+        <li>Volatile storage / अस्थिर भंडारण</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(46)">Show Answer</button>
+    <div id="answer46" class="answer">
+        <p><strong>Answer:</strong> Secondary storage / द्वितीयक भंडारण</p>
+        <div class="explanation">
+            <p>Explanation: USB flash drives are a type of secondary storage, used to store data externally.</p>
+            <p>व्याख्या: यूएसबी फ्लैश ड्राइव द्वितीयक भंडारण का एक प्रकार है, जिसका उपयोग बाहरी डेटा भंडारण के लिए किया जाता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 47 -->
+<div class="question">
+    <p>Q47: Which part of the computer is considered its 'brain'?</p>
+    <p>प्रश्न 47: कंप्यूटर का कौन सा हिस्सा उसका 'मस्तिष्क' माना जाता है?</p>
+    <ol type="a">
+        <li>RAM / रैम</li>
+        <li>Hard drive / हार्ड ड्राइव</li>
+        <li>CPU / सीपीयू</li>
+        <li>Motherboard / मदरबोर्ड</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(47)">Show Answer</button>
+    <div id="answer47" class="answer">
+        <p><strong>Answer:</strong> CPU / सीपीयू</p>
+        <div class="explanation">
+            <p>Explanation: The CPU (Central Processing Unit) is considered the brain of the computer as it processes all instructions.</p>
+            <p>व्याख्या: CPU (केंद्रीय प्रसंस्करण इकाई) को कंप्यूटर का मस्तिष्क माना जाता है क्योंकि यह सभी निर्देशों को संसाधित करता है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 48 -->
+<div class="question">
+    <p>Q48: What is a key function of RAM in a computer?</p>
+    <p>प्रश्न 48: कंप्यूटर में RAM का मुख्य कार्य क्या है?</p>
+    <ol type="a">
+        <li>Storing files long-term / फ़ाइलों को लंबे समय तक स्टोर करना</li>
+        <li>Executing programs / प्रोग्राम निष्पादित करना</li>
+        <li>Backing up data / डेटा का बैकअप लेना</li>
+        <li>Cooling the processor / प्रोसेसर को ठंडा करना</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(48)">Show Answer</button>
+    <div id="answer48" class="answer">
+        <p><strong>Answer:</strong> Executing programs / प्रोग्राम निष्पादित करना</p>
+        <div class="explanation">
+            <p>Explanation: RAM (Random Access Memory) temporarily stores data and instructions needed to execute programs.</p>
+            <p>व्याख्या: RAM (रैंडम एक्सेस मेमोरी) अस्थायी रूप से डेटा और प्रोग्राम निष्पादित करने के लिए आवश्यक निर्देशों को स्टोर करती है।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 49 -->
+<div class="question">
+    <p>Q49: Which of the following is not an example of an input device?</p>
+    <p>प्रश्न 49: निम्नलिखित में से कौन इनपुट डिवाइस का उदाहरण नहीं है?</p>
+    <ol type="a">
+        <li>Keyboard / कीबोर्ड</li>
+        <li>Mouse / माउस</li>
+        <li>Printer / प्रिंटर</li>
+        <li>Scanner / स्कैनर</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(49)">Show Answer</button>
+    <div id="answer49" class="answer">
+        <p><strong>Answer:</strong> Printer / प्रिंटर</p>
+        <div class="explanation">
+            <p>Explanation: A printer is an output device, not an input device.</p>
+            <p>व्याख्या: प्रिंटर एक आउटपुट डिवाइस है, इनपुट डिवाइस नहीं।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Question 50 -->
+<div class="question">
+    <p>Q50: What is the purpose of a network switch?</p>
+    <p>प्रश्न 50: नेटवर्क स्विच का उद्देश्य क्या है?</p>
+    <ol type="a">
+        <li>To connect different networks / विभिन्न नेटवर्कों को जोड़ने के लिए</li>
+        <li>To transfer data between devices on the same network / एक ही नेटवर्क पर उपकरणों के बीच डेटा स्थानांतरित करने के लिए</li>
+        <li>To secure a network / एक नेटवर्क को सुरक्षित करने के लिए</li>
+        <li>To route data across the internet / इंटरनेट पर डेटा को रूट करने के लिए</li>
+    </ol>
+    <button class="show-answer-btn" onclick="toggleAnswer(50)">Show Answer</button>
+    <div id="answer50" class="answer">
+        <p><strong>Answer:</strong> To transfer data between devices on the same network / एक ही नेटवर्क पर उपकरणों के बीच डेटा स्थानां
+
+
+    <!-- Additional questions go here... -->
+</div>
+
+<script>
+    function toggleAnswer(questionNumber) {
+        const answer = document.getElementById('answer' + questionNumber);
+        if (answer.style.display === "none" || answer.style.display === "") {
+            answer.style.display = "block";
+        } else {
+            answer.style.display = "none";
+        }
+    }
+</script>
+<script src="scripts.js"></script>
+</body>
+</html>

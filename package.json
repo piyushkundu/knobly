@@ -1,0 +1,19 @@
+{
+  "name": "knobly-os",
+  "version": "1.0.0",
+  "description": "Knobly Operating System - Educational Platform",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "seed": "node scripts/seed-database.js"
+  },
+  "dependencies": {
+    "firebase": "^10.7.1"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "dotenv": "^16.3.1"
+  }
+}

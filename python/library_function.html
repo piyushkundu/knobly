@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Library Guide</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --code-bg: #282c34;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(255,255,255,0.05),
+                rgba(255,255,255,0.05) 10px,
+                rgba(255,255,255,0) 10px,
+                rgba(255,255,255,0) 20px
+            );
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        nav {
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        
+        .nav-logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        main {
+            padding: 3rem 0;
+        }
+        
+        section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin: 2rem 0 1rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .function-card {
+            background-color: #f9f9f9;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 4px 4px 0;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .function-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .function-name {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            color: #e0e0e0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .copy-btn {
+            float: right;
+            background-color: rgba(255,255,255,0.1);
+            border: none;
+            color: #aaa;
+            padding: 0.3rem 0.5rem;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .tab-container {
+            margin: 2rem 0;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background-color: #f0f0f0;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 0 4px 4px 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .search-container {
+            position: relative;
+            margin: 2rem 0;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--light);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+        
+        .highlight {
+            background-color: rgba(231, 76, 60, 0.2);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<a href="questions.html">Python Programing Questions</a>
+<body ng-app="pythonApp" ng-controller="MainController">
+    <header>
+        <div class="container">
+            <h1>Python Library Guide</h1>
+            <p>Comprehensive reference for essential Python modules and functions</p>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">PyGuide</div>
+            <div class="nav-links">
+                <a href="#introduction">Introduction</a>
+                <a href="#importing">Importing</a>
+                <a href="#math">Math</a>
+                <a href="#random">Random</a>
+                <a href="#string">String</a>
+                <a href="#datetime">Date & Time</a>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <div class="search-container">
+            <input type="text" class="search-input" ng-model="searchQuery" placeholder="Search for functions...">
+            <div class="search-icon">🔍</div>
+        </div>
+        
+        <section id="introduction">
+            <h2>Introduction to Python Libraries</h2>
+            <p>Python's standard library is a collection of modules that provide access to system functionality such as file I/O as well as modules that are written in Python that provide standardized solutions for many problems that occur in everyday programming.</p>
+            <p>The Python Standard Library is distributed with Python and provides a rich set of modules that extend the functionality of Python. These modules make Python a powerful language for various tasks from mathematical computations to web development.</p>
+            <p>In this guide, we'll explore some of the most commonly used modules:</p>
+            <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+                <li><strong>Math Module</strong> - For mathematical operations and functions</li>
+                <li><strong>Random Module</strong> - For generating random numbers</li>
+                <li><strong>String Module</strong> - For string manipulation operations</li>
+                <li><strong>Date and Time Modules</strong> - For handling dates and times</li>
+            </ul>
+        </section>
+        
+        <section id="importing">
+            <h2>Importing Modules in Python</h2>
+            <p>Before you can use a module, you need to import it. Python provides several ways to import modules:</p>
+            
+            <div class="function-card">
+                <div class="function-name">Standard Import</div>
+                <p>Import the entire module. You'll need to use the module name as a prefix when accessing functions.</p>
+                <pre><code>import math
+result = math.sqrt(16)  # Returns 4.0</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">From Import</div>
+                <p>Import specific functions from a module, eliminating the need for the module prefix.</p>
+                <pre><code>from math import sqrt
+result = sqrt(16)  # Returns 4.0</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">Import with Alias</div>
+                <p>Import a module with a different name (alias) to make it shorter or avoid name conflicts.</p>
+                <pre><code>import math as m
+result = m.sqrt(16)  # Returns 4.0</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">Import All (Not Recommended)</div>
+                <p>Import all functions from a module. This is generally not recommended as it can lead to name conflicts.</p>
+                <pre><code>from math import *
+result = sqrt(16)  # Returns 4.0</code></pre>
+            </div>
+        </section>
+        
+        <section id="math" ng-show="!searchQuery || 'math'.includes(searchQuery.toLowerCase())">
+            <h2>Math Module</h2>
+            <p>The math module provides mathematical functions defined by the C standard. These functions cannot be used with complex numbers; the cmath module provides similar functionality for complex numbers.</p>
+            
+            <div class="function-card" ng-show="!searchQuery || 'abs'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">abs()</div>
+                <p>Returns the absolute value of a number.</p>
+                <pre><code>import math
+math.abs(-5)  # Returns 5</code></pre>
+                <p>Note: Python has a built-in abs() function that works similarly.</p>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'sqrt'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">sqrt()</div>
+                <p>Returns the square root of a number.</p>
+                <pre><code>import math
+math.sqrt(16)  # Returns 4.0
+math.sqrt(2)   # Returns 1.4142135623730951</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'exp'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">exp()</div>
+                <p>Returns e raised to the power of x.</p>
+                <pre><code>import math
+math.exp(1)   # Returns 2.718281828459045 (e)
+math.exp(2)   # Returns 7.3890560989306495 (e²)</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'ceil'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">ceil()</div>
+                <p>Returns the ceiling of x, the smallest integer greater than or equal to x.</p>
+                <pre><code>import math
+math.ceil(4.1)  # Returns 5
+math.ceil(4.0)  # Returns 4</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'floor'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">floor()</div>
+                <p>Returns the floor of x, the largest integer less than or equal to x.</p>
+                <pre><code>import math
+math.floor(4.9)  # Returns 4
+math.floor(4.0)  # Returns 4</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'log'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">log()</div>
+                <p>Returns the natural logarithm of x (base e).</p>
+                <pre><code>import math
+math.log(math.e)  # Returns 1.0
+math.log(100, 10) # Returns 2.0 (log base 10)</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'log10'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">log10()</div>
+                <p>Returns the base-10 logarithm of x.</p>
+                <pre><code>import math
+math.log10(100)  # Returns 2.0
+math.log10(1000) # Returns 3.0</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'pow'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">pow()</div>
+                <p>Returns x raised to the power y.</p>
+                <pre><code>import math
+math.pow(2, 3)  # Returns 8.0
+math.pow(9, 0.5) # Returns 3.0 (square root of 9)</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'sin'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">sin()</div>
+                <p>Returns the sine of x (x in radians).</p>
+                <pre><code>import math
+math.sin(0)        # Returns 0.0
+math.sin(math.pi/2) # Returns 1.0</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'cos'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">cos()</div>
+                <p>Returns the cosine of x (x in radians).</p>
+                <pre><code>import math
+math.cos(0)        # Returns 1.0
+math.cos(math.pi) # Returns -1.0</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'tan'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">tan()</div>
+                <p>Returns the tangent of x (x in radians).</p>
+                <pre><code>import math
+math.tan(0)   # Returns 0.0
+math.tan(math.pi/4) # Returns 0.9999999999999999 (approximately 1)</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'degrees'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">degrees()</div>
+                <p>Converts an angle from radians to degrees.</p>
+                <pre><code>import math
+math.degrees(math.pi)      # Returns 180.0
+math.degrees(math.pi/2)   # Returns 90.0</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'radians'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">radians()</div>
+                <p>Converts an angle from degrees to radians.</p>
+                <pre><code>import math
+math.radians(180)  # Returns 3.141592653589793 (π)
+math.radians(90)   # Returns 1.5707963267948966 (π/2)</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'trunc'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">trunc()</div>
+                <p>Returns the truncated integer value of x (towards zero).</p>
+                <pre><code>import math
+math.trunc(4.9)  # Returns 4
+math.trunc(-4.9) # Returns -4</code></pre>
+            </div>
+        </section>
+        
+        <section id="random" ng-show="!searchQuery || 'random'.includes(searchQuery.toLowerCase())">
+            <h2>Random Module</h2>
+            <p>The random module implements pseudo-random number generators for various distributions. For cryptographic purposes, use the secrets module instead.</p>
+            
+            <div class="function-card" ng-show="!searchQuery || 'random()'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">random()</div>
+                <p>Returns a random floating point number in the range [0.0, 1.0).</p>
+                <pre><code>import random
+random.random()  # Returns a random float between 0.0 and 1.0
+# Example: 0.7134566380732742</code></pre>
+            </div>
+            
+            <div class="function-card" ng-show="!searchQuery || 'randint'.includes(searchQuery.toLowerCase())">
+                <div class="function-name">randint()</div>
+                <p>Returns a random integer N such that a <= N <= b.</p>
+                <pre><code>import random
+random.randint(1, 10)  # Returns a random integer between 1 and 10 (inclusive)
+# Example: 7</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">choice()</div>
+                <p>Returns a random element from a non-empty sequence.</p>
+                <pre><code>import random
+random.choice(['apple', 'banana', 'cherry'])  # Might return 'banana'</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">shuffle()</div>
+                <p>Shuffles a sequence in place.</p>
+                <pre><code>import random
+deck = ['ace', 'king', 'queen', 'jack']
+random.shuffle(deck)
+print(deck)  # Might print ['king', 'ace', 'jack', 'queen']</code></pre>
+            </div>
+        </section>
+        
+        <section id="string" ng-show="!searchQuery || 'string'.includes(searchQuery.toLowerCase())">
+            <h2>String Manipulation</h2>
+            <p>Python provides various ways to manipulate strings, both through operators and methods.</p>
+            
+            <h3>String Operators</h3>
+            <div class="function-card">
+                <div class="function-name">Concatenation (+)</div>
+                <p>Joins two or more strings.</p>
+                <pre><code>first_name = "John"
+last_name = "Doe"
+full_name = first_name + " " + last_name  # "John Doe"</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">Repetition (*)</div>
+                <p>Repeats a string a specified number of times.</p>
+                <pre><code>dash = "-"
+line = dash * 20  # "--------------------"</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">Membership (in)</div>
+                <p>Checks if a substring exists within a string.</p>
+                <pre><code>text = "Python is amazing"
+"Python" in text  # Returns True
+"Java" in text    # Returns False</code></pre>
+            </div>
+            
+            <h3>String Slicing</h3>
+            <div class="function-card">
+                <div class="function-name">Basic Slicing</div>
+                <p>Extract a portion of a string using indices.</p>
+                <pre><code>text = "Python Programming"
+text[0]     # Returns "P" (first character)
+text[7:18]  # Returns "Programming" (from index 7 to 17)
+text[:6]    # Returns "Python" (from start to index 5)
+text[7:]    # Returns "Programming" (from index 7 to end)</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">Step Slicing</div>
+                <p>Extract with a specific step increment.</p>
+                <pre><code>text = "Python Programming"
+text[::2]   # Returns "Pto rgamn" (every 2nd character)
+text[::-1]  # Returns "gnimmargorP nohtyP" (reversed)</code></pre>
+            </div>
+            
+            <h3>String Methods</h3>
+            <div class="function-card">
+                <div class="function-name">upper(), lower(), title(), capitalize()</div>
+                <p>Change the case of a string.</p>
+                <pre><code>text = "python programming"
+text.upper()       # Returns "PYTHON PROGRAMMING"
+text.title()       # Returns "Python Programming"
+text.capitalize()  # Returns "Python programming"</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">strip(), lstrip(), rstrip()</div>
+                <p>Remove whitespace or specified characters from a string.</p>
+                <pre><code>text = "  Hello, World!  "
+text.strip()    # Returns "Hello, World!"
+text.lstrip()   # Returns "Hello, World!  "
+text.rstrip()   # Returns "  Hello, World!"</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">replace()</div>
+                <p>Replace occurrences of a substring.</p>
+                <pre><code>text = "Hello, World!"
+text.replace("World", "Python")  # Returns "Hello, Python!"</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">split(), join()</div>
+                <p>Split a string into a list or join a list into a string.</p>
+                <pre><code>text = "apple,banana,cherry"
+fruits = text.split(",")  # Returns ["apple", "banana", "cherry"]
+
+fruits = ["apple", "banana", "cherry"]
+text = ", ".join(fruits)  # Returns "apple, banana, cherry"</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">find(), index()</div>
+                <p>Find the position of a substring.</p>
+                <pre><code>text = "Python is amazing"
+text.find("is")     # Returns 7
+text.find("Java")   # Returns -1 (not found)
+text.index("is")    # Returns 7
+# text.index("Java") would raise a ValueError</code></pre>
+            </div>
+        </section>
+        
+        <section id="datetime" ng-show="!searchQuery || 'datetime'.includes(searchQuery.toLowerCase()) || 'date'.includes(searchQuery.toLowerCase()) || 'time'.includes(searchQuery.toLowerCase())">
+            <h2>Date and Time Functions</h2>
+            <p>Python provides several modules for handling dates and times, including the time and calendar modules.</p>
+            
+            <h3>Time Module</h3>
+            <div class="function-card">
+                <div class="function-name">time()</div>
+                <p>Returns the current time in seconds since the Epoch (January 1, 1970).</p>
+                <pre><code>import time
+current = time.time()  # Returns something like 1647354861.7639298</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">ctime()</div>
+                <p>Converts a time expressed in seconds since the Epoch to a string.</p>
+                <pre><code>import time
+time.ctime()  # Returns current time as string like 'Tue Mar 15 13:41:01 2022'
+time.ctime(0)  # Returns 'Thu Jan  1 00:00:00 1970'</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">sleep()</div>
+                <p>Suspends execution for the given number of seconds.</p>
+                <pre><code>import time
+print("Hello")
+time.sleep(2)  # Pauses for 2 seconds
+print("World")</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">strftime()</div>
+                <p>Formats time according to the rules of the specified format.</p>
+                <pre><code>import time
+time.strftime("%Y-%m-%d %H:%M:%S")  # Example: '2022-03-15 13:45:30'</code></pre>
+            </div>
+            
+            <h3>Calendar Module</h3>
+            <div class="function-card">
+                <div class="function-name">month()</div>
+                <p>Returns a month's calendar as a multi-line string.</p>
+                <pre><code>import calendar
+print(calendar.month(2022, 3))  # Prints March 2022 calendar</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">isleap()</div>
+                <p>Returns True if the specified year is a leap year.</p>
+                <pre><code>import calendar
+calendar.isleap(2020)  # Returns True
+calendar.isleap(2022)  # Returns False</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">weekday()</div>
+                <p>Returns the day of the week (0 is Monday, 6 is Sunday) for the given date.</p>
+                <pre><code>import calendar
+# What day of the week was January 1, 2022?
+calendar.weekday(2022, 1, 1)  # Returns 5 (Saturday)</code></pre>
+            </div>
+            
+            <h3>Datetime Module</h3>
+            <div class="function-card">
+                <div class="function-name">datetime.now()</div>
+                <p>Returns the current local date and time.</p>
+                <pre><code>from datetime import datetime
+now = datetime.now()  # Current date and time
+print(now)  # Example: 2022-03-15 13:50:25.123456</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">datetime.strftime()</div>
+                <p>Formats datetime object as a string.</p>
+                <pre><code>from datetime import datetime
+now = datetime.now()
+formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+print(formatted)  # Example: '2022-03-15 13:50:25'</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">datetime.strptime()</div>
+                <p>Parses a string representing a time according to a format.</p>
+                <pre><code>from datetime import datetime
+date_string = "15/03/2022"
+date_object = datetime.strptime(date_string, "%d/%m/%Y")
+print(date_object)  # 2022-03-15 00:00:00</code></pre>
+            </div>
+            
+            <div class="function-card">
+                <div class="function-name">timedelta</div>
+                <p>Represents a duration, the difference between two dates or times.</p>
+                <pre><code>from datetime import datetime, timedelta
+now = datetime.now()
+# Add 10 days to current date
+future = now + timedelta(days=10)
+print(future)  # Example: 2022-03-25 13:55:30.123456</code></pre>
+            </div>
+        </section>
+        // Add to the end of the HTML file, before the closing </body> tag
+
+<script>
+    // Initialize Angular app
+    var app = angular.module('pythonApp', []);
+    
+    // Create main controller
+    app.controller('MainController', function($scope) {
+        // Search functionality
+        $scope.searchQuery = '';
+        
+        // Sample data for examples
+        $scope.examples = [
+            {
+                module: 'math',
+                function: 'sqrt',
+                description: 'Calculate square root',
+                code: 'import math\nresult = math.sqrt(16)\nprint(result)  # Output: 4.0',
+                output: '4.0'
+            },
+            {
+                module: 'random',
+                function: 'randint',
+                description: 'Generate random integer',
+                code: 'import random\nresult = random.randint(1, 10)\nprint(result)  # Output will vary',
+                output: '7 (may vary)'
+            },
+            {
+                module: 'string',
+                function: 'string manipulation',
+                description: 'String operations',
+                code: 'text = "Python Programming"\nprint(text.upper())\nprint(text.split())',
+                output: 'PYTHON PROGRAMMING\n["Python", "Programming"]'
+            },
+            {
+                module: 'datetime',
+                function: 'now',
+                description: 'Get current date and time',
+                code: 'from datetime import datetime\nnow = datetime.now()\nprint(now.strftime("%Y-%m-%d %H:%M:%S"))',
+                output: '2025-03-29 14:30:45 (current time)'
+            }
+        ];
+        
+        // Function to run code examples (simulated)
+        $scope.runCode = function(example) {
+            // In a real app, this might use an API to execute Python code
+            example.runStatus = 'Running...';
+            
+            setTimeout(function() {
+                example.runStatus = 'Completed';
+                example.result = example.output;
+                $scope.$apply();
+            }, 1000);
+        };
+        
+        // Interactive tabs
+        $scope.activeTab = 'overview';
+        
+        $scope.setActiveTab = function(tabName) {
+            $scope.activeTab = tabName;
+        };
+        
+        // Function to copy code to clipboard
+        $scope.copyToClipboard = function(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // Success feedback
+                alert('Code copied to clipboard!');
+            }, function() {
+                // Error feedback
+                alert('Failed to copy code. Please try again.');
+            });
+        };
+        
+        // Implement syntax highlighting
+        setTimeout(function() {
+            document.querySelectorAll('pre code').forEach(function(block) {
+                hljs.highlightBlock(block);
+            });
+        }, 100);
+    });
+    
+    // Directive for code highlighting
+    app.directive('highlightCode', function() {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                scope.$watch('activeTab', function() {
+                    element.find('pre code').each(function(i, block) {
+                        hljs.highlightBlock(block);
+                    });
+                });
+            }
+        };
+    });
+    
+    // Custom directive for interactive examples
+    app.directive('pythonExample', function() {
+        return {
+            restrict: 'E',
+            template: `
+                <div class="example-container">
+                    <h4>{{example.description}}</h4>
+                    <div class="code-container">
+                        <pre><code class="python">{{example.code}}</code></pre>
+                        <button class="copy-btn" ng-click="copyToClipboard(example.code)">Copy</button>
+                    </div>
+                    <button class="btn" ng-click="runCode(example)">Run Example</button>
+                    <div class="result" ng-if="example.runStatus">
+                        <div class="status">Status: {{example.runStatus}}</div>
+                        <pre ng-if="example.result">{{example.result}}</pre>
+                    </div>
+                </div>
+            `,
+            scope: {
+                example: '='
+            },
+            controller: function($scope) {
+                $scope.copyToClipboard = function(text) {
+                    navigator.clipboard.writeText(text).then(function() {
+                        alert('Code copied to clipboard!');
+                    }, function() {
+                        alert('Failed to copy code.');
+                    });
+                };
+            }
+        };
+    });
+</script>
+
+<!-- Add interactive examples section -->
+<section id="examples" highlight-code>
+    <h2>Interactive Examples</h2>
+    <p>Try out these examples to see Python libraries in action:</p>
+    
+    <div class="tabs">
+        <div class="tab" ng-class="{active: activeTab === 'overview'}" ng-click="setActiveTab('overview')">Overview</div>
+        <div class="tab" ng-class="{active: activeTab === 'math'}" ng-click="setActiveTab('math')">Math</div>
+        <div class="tab" ng-class="{active: activeTab === 'random'}" ng-click="setActiveTab('random')">Random</div>
+        <div class="tab" ng-class="{active: activeTab === 'string'}" ng-click="setActiveTab('string')">String</div>
+        <div class="tab" ng-class="{active: activeTab === 'datetime'}" ng-click="setActiveTab('datetime')">Date & Time</div>
+    </div>
+    
+    <div class="tab-content" ng-class="{active: activeTab === 'overview'}">
+        <h3>Getting Started with Python Libraries</h3>
+        <p>Python's standard library is a collection of modules that provide common functionality. This interactive guide allows you to explore some of the most frequently used modules and functions.</p>
+        <p>Click on the tabs above to explore different categories of Python functionality.</p>
+    </div>
+    
+    <div class="tab-content" ng-class="{active: activeTab === 'math'}">
+        <h3>Math Module Examples</h3>
+        <python-example ng-repeat="example in examples | filter:{module:'math'}" example="example"></python-example>
+        
+        <div class="function-card">
+            <div class="function-name">Common Mathematical Constants</div>
+            <pre><code class="python">import math
+
+# Pi
+print(math.pi)  # 3.141592653589793
+
+# Euler's number (e)
+print(math.e)   # 2.718281828459045
+
+# Tau (2π)
+print(math.tau) # 6.283185307179586
+
+# Infinity
+print(math.inf) # inf
+
+# Not a Number
+print(math.nan) # nan</code></pre>
+            <button class="copy-btn" ng-click="copyToClipboard('import math\n\n# Pi\nprint(math.pi)  # 3.141592653589793\n\n# Euler\'s number (e)\nprint(math.e)   # 2.718281828459045\n\n# Tau (2π)\nprint(math.tau) # 6.283185307179586\n\n# Infinity\nprint(math.inf) # inf\n\n# Not a Number\nprint(math.nan) # nan')">Copy</button>
+        </div>
+    </div>
+    
+    <div class="tab-content" ng-class="{active: activeTab === 'random'}">
+        <h3>Random Module Examples</h3>
+        <python-example ng-repeat="example in examples | filter:{module:'random'}" example="example"></python-example>
+        
+        <div class="function-card">
+            <div class="function-name">Generate a Random Sample</div>
+            <pre><code class="python">import random
+
+# Sample k unique elements from a population
+population = range(1, 51)  # Numbers from 1 to 50
+sample = random.sample(population, 6)
+print(sample)  # Example: [7, 13, 47, 21, 38, 5]
+
+# Generate random float in a range
+ranged_float = random.uniform(1.0, 10.0)
+print(ranged_float)  # Example: 4.527834982741</code></pre>
+            <button class="copy-btn" ng-click="copyToClipboard('import random\n\n# Sample k unique elements from a population\npopulation = range(1, 51)  # Numbers from 1 to 50\nsample = random.sample(population, 6)\nprint(sample)  # Example: [7, 13, 47, 21, 38, 5]\n\n# Generate random float in a range\nranged_float = random.uniform(1.0, 10.0)\nprint(ranged_float)  # Example: 4.527834982741')">Copy</button>
+        </div>
+    </div>
+    
+    <div class="tab-content" ng-class="{active: activeTab === 'string'}">
+        <h3>String Manipulation Examples</h3>
+        <python-example ng-repeat="example in examples | filter:{module:'string'}" example="example"></python-example>
+        
+        <div class="function-card">
+            <div class="function-name">Advanced String Formatting</div>
+            <pre><code class="python"># Using f-strings (Python 3.6+)
+name = "Alice"
+age = 30
+message = f"Hello, {name}! You are {age} years old."
+print(message)  # Output: Hello, Alice! You are 30 years old.
+
+# Using format() method
+template = "Hello, {}! You are {} years old."
+message = template.format(name, age)
+print(message)  # Output: Hello, Alice! You are 30 years old.
+
+# Using named placeholders
+template = "Hello, {name}! You are {age} years old."
+message = template.format(name=name, age=age)
+print(message)  # Output: Hello, Alice! You are 30 years old.</code></pre>
+            <button class="copy-btn" ng-click="copyToClipboard('# Using f-strings (Python 3.6+)\nname = "Alice"\nage = 30\nmessage = f"Hello, {name}! You are {age} years old."\nprint(message)  # Output: Hello, Alice! You are 30 years old.\n\n# Using format() method\ntemplate = "Hello, {}! You are {} years old."\nmessage = template.format(name, age)\nprint(message)  # Output: Hello, Alice! You are 30 years old.\n\n# Using named placeholders\ntemplate = "Hello, {name}! You are {age} years old."\nmessage = template.format(name=name, age=age)\nprint(message)  # Output: Hello, Alice! You are 30 years old.')">Copy</button>
+        </div>
+    </div>
+    
+    <div class="tab-content" ng-class="{active: activeTab === 'datetime'}">
+        <h3>Date and Time Examples</h3>
+        <python-example ng-repeat="example in examples | filter:{module:'datetime'}" example="example"></python-example>
+        
+        <div class="function-card">
+            <div class="function-name">Date Arithmetic</div>
+            <pre><code class="python">from datetime import datetime, timedelta
+
+# Current date and time
+now = datetime.now()
+print(f"Current date and time: {now}")
+
+# Add 7 days to current date
+one_week_later = now + timedelta(days=7)
+print(f"One week later: {one_week_later}")
+
+# Subtract 12 hours
+twelve_hours_ago = now - timedelta(hours=12)
+print(f"12 hours ago: {twelve_hours_ago}")
+
+# Calculate difference between dates
+future_date = datetime(2025, 12, 31)
+time_remaining = future_date - now
+print(f"Days until end of 2025: {time_remaining.days}")</code></pre>
+            <button class="copy-btn" ng-click="copyToClipboard('from datetime import datetime, timedelta\n\n# Current date and time\nnow = datetime.now()\nprint(f"Current date and time: {now}")\n\n# Add 7 days to current date\none_week_later = now + timedelta(days=7)\nprint(f"One week later: {one_week_later}")\n\n# Subtract 12 hours\ntwelve_hours_ago = now - timedelta(hours=12)\nprint(f"12 hours ago: {twelve_hours_ago}")\n\n# Calculate difference between dates\nfuture_date = datetime(2025, 12, 31)\ntime_remaining = future_date - now\nprint(f"Days until end of 2025: {time_remaining.days}")')">Copy</button>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>Python Library Guide © 2025</p>
+        <p>Created with HTML, CSS, JavaScript, and AngularJS</p>
+    </div>
+</footer>
+
+</body>
+</html>

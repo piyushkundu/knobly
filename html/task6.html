@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Basic information about India using HTML tags">
+    <meta name="keywords" content="India, HTML, basics, olevelcccexam">
+    <title>About India</title>
+    <style>
+        /* Circle Button for Compiler */
+        .compiler-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #ffbf00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-size: 24px;
+            color: #fff;
+            border: none;
+        }
+
+        /* Compiler Overlay */
+        .compiler-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        /* Visible State for Animation */
+        .compiler-overlay.show {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .compiler-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ffbf00;
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 17%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* Compiler Specific Styles */
+        .compiler-container {
+            background-color: #1e1e1e;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+        .compiler-container h1 {
+            color: #ffbf00;
+        }
+        .compiler-container textarea {
+            width: 95%;
+            height: 150px;
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 16px;
+            outline: none;
+            resize: vertical;
+        }
+        .compiler-container button {
+            background-color: #ffbf00;
+            color: #1e1e1e;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        .compiler-container button:hover {
+            background-color: #e6a700;
+            transform: scale(1.05);
+        }
+        .compiler-container iframe {
+            width: 100%;
+            height: 300px;
+            background-color: #fff;
+            border: none;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        /* Mobile Key Buttons */
+        .mobile-keys {
+            display: none;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .mobile-keys button {
+            background-color: #ffbf00;
+            color: #1e1e1e;
+            padding: 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        .mobile-keys button:hover {
+            background-color: #e6a700;
+        }
+
+        @media (max-width: 600px) {
+            .compiler-container h1 {
+                font-size: 2em;
+            }
+            .compiler-container textarea {
+                font-size: 14px;
+            }
+            .compiler-container button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .mobile-keys {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+   <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Complex Schedule Table</title>
+</head>
+<body>
+
+<h1>Weekly Study Schedule</h1>
+
+<table border="1" cellspacing="0" cellpadding="5" width="100%">
+    <caption><strong>Weekly Study Schedule - Semester Overview</strong></caption>
+
+    <!-- Header Row with merged cells for Weekdays and Weekend -->
+    <tr bgcolor="#c0c0c0">
+        <th rowspan="2">Time</th>
+        <th colspan="5">Weekdays</th>
+        <th colspan="2">Weekend</th>
+    </tr>
+
+    <!-- Sub-Header Row for Days of the Week -->
+    <tr bgcolor="#d3d3d3">
+        <th>Monday</th>
+        <th>Tuesday</th>
+        <th>Wednesday</th>
+        <th>Thursday</th>
+        <th>Friday</th>
+        <th>Saturday</th>
+        <th>Sunday</th>
+    </tr>
+
+    <!-- Morning Session -->
+    <tr>
+        <td rowspan="3" bgcolor="#e6e6fa"><strong>Morning<br>8:00 AM - 12:00 PM</strong></td>
+        <td bgcolor="#f2f2f2" colspan="2">Mathematics</td>
+        <td bgcolor="#f9f9f9">Physics</td>
+        <td bgcolor="#f2f2f2" colspan="2">Chemistry</td>
+        <td bgcolor="#f9f9f9">Project</td>
+        <td bgcolor="#f2f2f2">Free Time</td>
+    </tr>
+    <tr>
+        <td bgcolor="#f9f9f9">English</td>
+        <td bgcolor="#f2f2f2">Biology</td>
+        <td bgcolor="#f9f9f9" colspan="2">History</td>
+        <td bgcolor="#f2f2f2" colspan="2">Study Group</td>
+    </tr>
+    <tr>
+        <td bgcolor="#f2f2f2" colspan="5">Independent Study</td>
+        <td bgcolor="#f9f9f9" colspan="2">Optional Seminar</td>
+    </tr>
+
+    <!-- Afternoon Session -->
+    <tr>
+        <td rowspan="2" bgcolor="#e6e6fa"><strong>Afternoon<br>1:00 PM - 5:00 PM</strong></td>
+        <td bgcolor="#f2f2f2" colspan="3">Computer Science</td>
+        <td bgcolor="#f9f9f9" colspan="2">Physical Education</td>
+        <td bgcolor="#f2f2f2" rowspan="2" colspan="2">Personal Development</td>
+    </tr>
+    <tr>
+        <td bgcolor="#f9f9f9" colspan="2">Foreign Language</td>
+        <td bgcolor="#f2f2f2">Lab Work</td>
+        <td bgcolor="#f9f9f9" colspan="2">Study Hall</td>
+    </tr>
+
+    <!-- Evening Session -->
+    <tr>
+        <td rowspan="3" bgcolor="#e6e6fa"><strong>Evening<br>6:00 PM - 9:00 PM</strong></td>
+        <td bgcolor="#f2f2f2" colspan="2">Self-Study</td>
+        <td bgcolor="#f9f9f9">Tutoring</td>
+        <td bgcolor="#f2f2f2" colspan="2">Library</td>
+        <td bgcolor="#f9f9f9">Free Time</td>
+        <td bgcolor="#f2f2f2">Group Project</td>
+    </tr>
+    <tr>
+        <td bgcolor="#f9f9f9" colspan="5">Research</td>
+        <td bgcolor="#f2f2f2" colspan="2">Open Study</td>
+    </tr>
+    <tr>
+        <td bgcolor="#f2f2f2">Extra Credits</td>
+        <td bgcolor="#f9f9f9" colspan="3">Online Course</td>
+        <td bgcolor="#f2f2f2" colspan="3">Rest</td>
+    </tr>
+
+    <!-- Footer Row with merged cells -->
+    <tr bgcolor="#c0c0c0">
+        <td colspan="8" align="center"><strong>End of Schedule</strong></td>
+    </tr>
+
+</table>
+
+</body>
+</html>
+
+    
+
+    <!-- Compiler Button -->
+    <button class="compiler-btn" onclick="openCompiler()">&lt&sol;&gt </button>
+
+    <!-- Compiler Overlay -->
+    <div class="compiler-overlay" id="compilerOverlay">
+        <button class="compiler-close" onclick="closeCompiler()">X</button>
+        <div class="compiler-container">
+            <h1>HTML Compiler</h1>
+            <textarea id="html-code" placeholder="Write your HTML code here..."></textarea><br>
+
+            <!-- Mobile Keys -->
+            <div class="mobile-keys">
+                <button onclick="insertKey('<')">&lt;</button>
+                <button onclick="insertKey('>')">&gt;</button>
+                <button onclick="insertKey('/')">/</button>
+                <button onclick="insertKey('&quot;')">"</button>
+                <button onclick="insertKey('=')">=</button>
+            </div>
+
+            <button onclick="compileHTML()">Compile & Run</button><br>
+            <iframe id="output-frame"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Open Compiler Overlay with Animation
+        function openCompiler() {
+            const overlay = document.getElementById("compilerOverlay");
+            overlay.style.display = "flex";
+            setTimeout(() => overlay.classList.add("show"), 10);
+        }
+
+        // Close Compiler Overlay with Animation
+        function closeCompiler() {
+            const overlay = document.getElementById("compilerOverlay");
+            overlay.classList.remove("show");
+            setTimeout(() => overlay.style.display = "none", 400);
+        }
+
+        // Compile and Run HTML
+        function compileHTML() {
+            const code = document.getElementById("html-code").value;
+            const outputFrame = document.getElementById("output-frame");
+
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+
+            outputFrame.src = url;
+
+            outputFrame.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Insert Key to Textarea
+        function insertKey(key) {
+            const textarea = document.getElementById("html-code");
+            const startPos = textarea.selectionStart;
+            const endPos = textarea.selectionEnd;
+            const text = textarea.value;
+
+            textarea.value = text.substring(0, startPos) + key + text.substring(endPos);
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = startPos + key.length;
+        }
+    </script>
+</body>
+</html>

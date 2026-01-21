@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="pythonTutorialApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python User-Defined Functions Tutorial</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-bg: #f5f5f5;
+            --dark-bg: #2c3e50;
+            --text-color: #333;
+            --light-text: #f5f5f5;
+        }
+        header h1{
+          color: white;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+        }
+        
+        header {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            padding: 1rem 2rem;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        nav {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0;
+            margin: 0;
+            justify-content: center;
+        }
+        
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: var(--primary-color);
+        }
+        
+        section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2, h3 {
+            color: var(--secondary-color);
+        }
+        
+        h2 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        pre {
+            background-color: #282c34;
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        .example-container {
+            background-color: var(--light-bg);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .output {
+            background-color: #f1f1f1;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .note {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .interactive-demo {
+            background-color: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border: 1px solid #ddd;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .tab-container {
+            margin: 2rem 0;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tab-button {
+            padding: 0.5rem 1rem;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+        
+        .tab-button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 0 4px 4px 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body ng-controller="MainController">
+
+    <header>
+        <h1>Python User-Defined Functions</h1>
+        <p>A comprehensive guide to writing and using functions in Python</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#introduction" ng-click="scrollTo('introduction')" ng-class="{ active: activeSection === 'introduction' }">Introduction</a></li>
+            <li><a href="#defining" ng-click="scrollTo('defining')" ng-class="{ active: activeSection === 'defining' }">Defining Functions</a></li>
+            <li><a href="#invoking" ng-click="scrollTo('invoking')" ng-class="{ active: activeSection === 'invoking' }">Invoking Functions</a></li>
+            <li><a href="#arguments" ng-click="scrollTo('arguments')" ng-class="{ active: activeSection === 'arguments' }">Function Arguments</a></li>
+            <li><a href="#types" ng-click="scrollTo('types')" ng-class="{ active: activeSection === 'types' }">Types of Functions</a></li>
+            <li><a href="#scope" ng-click="scrollTo('scope')" ng-class="{ active: activeSection === 'scope' }">Variable Scope</a></li>
+            <li><a href="#recursion" ng-click="scrollTo('recursion')" ng-class="{ active: activeSection === 'recursion' }">Recursion</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- 9.1 Introduction -->
+        <section id="introduction">
+            <h2>9.1 Introduction to User-Defined Functions</h2>
+            <p>Functions are reusable blocks of code designed to perform a specific task. Python comes with many built-in functions like <code>print()</code>, <code>len()</code>, and <code>max()</code>, but you can also create your own functions, known as user-defined functions.</p>
+            
+            <div class="note">
+                <h3>Why Use Functions?</h3>
+                <ul>
+                    <li><strong>Reusability:</strong> Write code once and use it multiple times</li>
+                    <li><strong>Modularity:</strong> Break complex problems into smaller, manageable pieces</li>
+                    <li><strong>Organization:</strong> Structure your code logically</li>
+                    <li><strong>Abstraction:</strong> Hide complex implementations behind simple interfaces</li>
+                    <li><strong>Maintainability:</strong> Update one function instead of multiple code blocks</li>
+                </ul>
+            </div>
+            
+            <p>Think of functions as "mini-programs" within your program that can be called whenever needed.</p>
+        </section>
+
+        <!-- 9.2 Defining a function -->
+        <section id="defining">
+            <h2>9.2 Defining a Function</h2>
+            <p>In Python, functions are defined using the <code>def</code> keyword, followed by the function name and parentheses <code>()</code>.</p>
+            
+            <pre><code class="python">def function_name(parameters):
+    """Documentation string (docstring)"""
+    # Function body - code that runs when function is called
+    statement(s)
+    return value  # Optional return statement</code></pre>
+            
+            <div class="example-container">
+                <h3>Example: Simple greeting function</h3>
+                <pre><code class="python">def greet():
+    """A simple function that prints a greeting message"""
+    print("Hello, welcome to Python functions!")</code></pre>
+            </div>
+            
+            <p>Key components of a function definition:</p>
+            <ul>
+                <li><strong>Function header:</strong> Includes the <code>def</code> keyword, function name, parameters (if any), and colon.</li>
+                <li><strong>Docstring:</strong> Optional but recommended documentation string that describes what the function does.</li>
+                <li><strong>Function body:</strong> Contains the indented block of code that executes when the function is called.</li>
+                <li><strong>Return statement:</strong> Optional statement that specifies the value to return from the function.</li>
+            </ul>
+            
+            <div class="note">
+                <h3>Best Practices for Function Names</h3>
+                <ul>
+                    <li>Use lowercase letters with underscores (snake_case): <code>calculate_average</code></li>
+                    <li>Choose descriptive names that indicate what the function does</li>
+                    <li>Avoid using reserved keywords as function names</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 9.3 Invoking a function -->
+        <section id="invoking">
+            <h2>9.3 Invoking a Function</h2>
+            <p>To use a function, you need to call or "invoke" it by using its name followed by parentheses.</p>
+            
+            <div class="example-container">
+                <h3>Example: Calling a function</h3>
+                <pre><code class="python">def greet():
+    print("Hello, welcome to Python functions!")
+
+# Invoking the function
+greet()</code></pre>
+                <div class="output">Output:<br>Hello, welcome to Python functions!</div>
+            </div>
+            
+            <p>Functions can be called multiple times from different parts of your program:</p>
+            
+            <pre><code class="python">def display_separator():
+    print("-" * 30)
+
+# Call the function three times
+display_separator()
+print("Section 1")
+display_separator()
+print("Section 2")
+display_separator()</code></pre>
+            
+            <div class="output">Output:<br>------------------------------<br>Section 1<br>------------------------------<br>Section 2<br>------------------------------</div>
+            
+            <div class="interactive-demo" ng-init="functionResult = ''">
+                <h3>Try it yourself</h3>
+                <button ng-click="runGreetFunction()">Run greet() function</button>
+                <div class="output" ng-show="functionResult">{{ functionResult }}</div>
+            </div>
+        </section>
+
+        <!-- 9.4 Function Arguments -->
+        <section id="arguments">
+            <h2>9.4 Function Arguments</h2>
+            <p>Functions can accept inputs called arguments (or parameters) that allow them to work with different data each time they're called.</p>
+            
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-button" ng-class="{ active: activeTab === 'positional' }" ng-click="setActiveTab('positional')">Positional Arguments</button>
+                    <button class="tab-button" ng-class="{ active: activeTab === 'default' }" ng-click="setActiveTab('default')">Default Arguments</button>
+                    <button class="tab-button" ng-class="{ active: activeTab === 'named' }" ng-click="setActiveTab('named')">Named Arguments</button>
+                </div>
+                
+                <!-- 9.4.1 Positional Arguments -->
+                <div class="tab-content" ng-class="{ active: activeTab === 'positional' }">
+                    <h3>9.4.1 Positional Arguments</h3>
+                    <p>Positional arguments must be provided in the same order as they are defined in the function.</p>
+                    
+                    <div class="example-container">
+                        <pre><code class="python">def greet_person(name, message):
+    print(f"Hello, {name}! {message}")
+
+# Calling with positional arguments
+greet_person("Alice", "Welcome to Python.")
+greet_person("Bob", "How are you today?")</code></pre>
+                        <div class="output">Output:<br>Hello, Alice! Welcome to Python.<br>Hello, Bob! How are you today?</div>
+                    </div>
+                    
+                    <p>The first argument is assigned to the first parameter, the second argument to the second parameter, and so on.</p>
+                </div>
+                
+                <!-- 9.4.2 Default Arguments -->
+                <div class="tab-content" ng-class="{ active: activeTab === 'default' }">
+                    <h3>9.4.2 Default Arguments</h3>
+                    <p>Default arguments have predefined values that are used when the corresponding argument is not provided in the function call.</p>
+                    
+                    <div class="example-container">
+                        <pre><code class="python">def greet_person(name, message="Welcome to Python!"):
+    print(f"Hello, {name}! {message}")
+
+# Using default value for message
+greet_person("Alice")
+# Overriding default value
+greet_person("Bob", "Glad to see you!")</code></pre>
+                        <div class="output">Output:<br>Hello, Alice! Welcome to Python!<br>Hello, Bob! Glad to see you!</div>
+                    </div>
+                    
+                    <div class="note">
+                        <h4>Important Rules for Default Arguments:</h4>
+                        <ul>
+                            <li>Default parameters must come after non-default parameters</li>
+                            <li>Mutable objects (like lists, dictionaries) should not be used as default values (they are created only once when the function is defined)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 9.4.3 Named Arguments -->
+                <div class="tab-content" ng-class="{ active: activeTab === 'named' }">
+                    <h3>9.4.3 Named Arguments</h3>
+                    <p>Named arguments (also called keyword arguments) allow you to specify parameter values by name, regardless of their position.</p>
+                    
+                    <div class="example-container">
+                        <pre><code class="python">def display_info(name, age, city):
+    print(f"{name} is {age} years old and lives in {city}.")
+
+# Using named arguments
+display_info(name="Alice", age=30, city="New York")
+display_info(city="London", name="Bob", age=25)
+display_info("Charlie", city="Paris", age=35)</code></pre>
+                        <div class="output">Output:<br>Alice is 30 years old and lives in New York.<br>Bob is 25 years old and lives in London.<br>Charlie is 35 years old and lives in Paris.</div>
+                    </div>
+                    
+                    <p>Benefits of named arguments:</p>
+                    <ul>
+                        <li>Makes function calls more readable and self-documenting</li>
+                        <li>Allows you to specify arguments in any order</li>
+                        <li>Reduces errors from mixing up argument order</li>
+                    </ul>
+                    
+                    <div class="note">
+                        <p><strong>Note:</strong> You can mix positional and named arguments, but positional arguments must come before any named arguments.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9.5 Type of Functions -->
+        <section id="types">
+            <h2>9.5 Types of Functions</h2>
+            <p>Functions can be categorized based on whether they accept inputs (parameters) and return outputs.</p>
+            
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-button" ng-class="{ active: activeTypeTab === 'with-input-output' }" ng-click="setActiveTypeTab('with-input-output')">With Input & Output</button>
+                    <button class="tab-button" ng-class="{ active: activeTypeTab === 'with-input-no-output' }" ng-click="setActiveTypeTab('with-input-no-output')">With Input, No Output</button>
+                    <button class="tab-button" ng-class="{ active: activeTypeTab === 'no-input-with-output' }" ng-click="setActiveTypeTab('no-input-with-output')">No Input, With Output</button>
+                    <button class="tab-button" ng-class="{ active: activeTypeTab === 'no-input-no-output' }" ng-click="setActiveTypeTab('no-input-no-output')">No Input or Output</button>
+                </div>
+                
+                <!-- 9.5.1 Function with Input and Output -->
+                <div class="tab-content" ng-class="{ active: activeTypeTab === 'with-input-output' }">
+                    <h3>9.5.1 Function with Input and Output</h3>
+                    <p>These functions accept parameters and return values. They're ideal for transforming data or performing calculations.</p>
+                    
+                    <div class="example-container">
+                        <pre><code class="python">def calculate_area(length, width):
+    """Calculate the area of a rectangle"""
+    area = length * width
+    return area
+
+# Call the function and store the returned value
+rectangle_area = calculate_area(5, 3)
+print(f"The area of the rectangle is {rectangle_area} square units")
+
+# Use the returned value directly in another calculation
+perimeter = 2 * (5 + 3)
+print(f"Area to perimeter ratio: {rectangle_area / perimeter}")</code></pre>
+                        <div class="output">Output:<br>The area of the rectangle is 15 square units<br>Area to perimeter ratio: 0.9375</div>
+                    </div>
+                    
+                    <p>These functions are highly reusable and can be part of larger expressions.</p>
+                </div>
+                
+                <!-- 9.5.2 Function with Input and without Output -->
+                <div class="tab-content" ng-class="{ active: activeTypeTab === 'with-input-no-output' }">
+                    <h3>9.5.2 Function with Input and without Output</h3>
+                    <p>These functions accept parameters but don't explicitly return a value (or implicitly return <code>None</code>). They're typically used for actions or side effects.</p>
+                    
+                    <div class="example-container">
+                        <pre><code class="python">def print_details(name, age):
+    """Display formatted user details"""
+    print(f"Name: {name}")
+    print(f"Age: {age}")
+    print(f"Birth year: {2024 - age} (approximately)")
+    # No return statement
+
+# Call the function
+print_details("Alice", 30)
+
+# If you try to capture a return value, you'll get None
+result = print_details("Bob", 25)
+print(f"Return value: {result}")</code></pre>
+                        <div class="output">Output:<br>Name: Alice<br>Age: 30<br>Birth year: 1994 (approximately)<br>Name: Bob<br>Age: 25<br>Birth year: 1999 (approximately)<br>Return value: None</div>
+                    </div>
+                    
+                    <p>These functions are useful for tasks like displaying information, writing to files, or updating databases.</p>
+                </div>
+                
+                <!-- 9.5.3 Function without Input and with Output -->
+                <div class="tab-content" ng-class="{ active: activeTypeTab === 'no-input-with-output' }">
+                    <h3>9.5.3 Function without Input and with Output</h3>
+                    <p>These functions don't take parameters but return a value. They often generate values or retrieve information from elsewhere.</p>
+                    
+                    <div class="example-container">
+                        <pre><code class="python">import random
+import time
+
+def get_random_number():
+    """Generate a random number between 1 and 100"""
+    return random.randint(1, 100)
+
+def get_current_time():
+    """Return the current time as a string"""
+    return time.strftime("%H:%M:%S")
+
+# Call the functions
+random_number = get_random_number()
+print(f"Random number: {random_number}")
+
+current_time = get_current_time()
+print(f"Current time: {current_time}")</code></pre>
+                        <div class="output">Output:<br>Random number: 42<br>Current time: 14:35:27</div>
+                    </div>
+                    
+                    <p>These functions are useful for generating data, retrieving system information, or providing utility values.</p>
+                </div>
+                
+                <!-- 9.5.4 Function without Input-Output -->
+                <div class="tab-content" ng-class="{ active: activeTypeTab === 'no-input-no-output' }">
+                    <h3>9.5.4 Function without Input or Output</h3>
+                    <p>These functions neither accept parameters nor return values. They perform a specific action each time they're called.</p>
+                    
+                    <div class="example-container">
+                        <pre><code class="python">def display_menu():
+    """Display the application menu"""
+    print("\n===== MAIN MENU =====")
+    print("1. Start new game")
+    print("2. Load saved game")
+    print("3. Settings")
+    print("4. Exit")
+    print("=====================\n")
+
+def display_separator():
+    """Print a separator line"""
+    print("-" * 30)
+
+# Call the functions
+display_separator()
+display_menu()
+display_separator()</code></pre>
+                        <div class="output">Output:<br>------------------------------<br><br>===== MAIN MENU =====<br>1. Start new game<br>2. Load saved game<br>3. Settings<br>4. Exit<br>=====================<br><br>------------------------------</div>
+                    </div>
+                    
+                    <p>These functions are useful for organizing code that performs standard operations with no variable inputs.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9.6 scope of variable -->
+        <section id="scope">
+            <h2>9.6 Scope of Variables</h2>
+            <p>Variable scope refers to the region of a program where a variable is accessible. Python has four types of variable scopes:</p>
+            
+            <ul>
+                <li><strong>Local scope:</strong> Variables defined within a function</li>
+                <li><strong>Enclosing scope:</strong> Variables in the outer function (in nested functions)</li>
+                <li><strong>Global scope:</strong> Variables defined at the top level of a module</li>
+                <li><strong>Built-in scope:</strong> Names that are pre-defined in Python</li>
+            </ul>
+            
+            <div class="example-container">
+                <h3>Example: Local vs. Global variables</h3>
+                <pre><code class="python">global_var = "I'm a global variable"
+
+def function_with_local_var():
+    local_var = "I'm a local variable"
+    print(local_var)      # Accessing local variable
+    print(global_var)     # Accessing global variable
+
+function_with_local_var()
+print(global_var)         # Accessing global variable
+# print(local_var)        # This would cause an error - local_var is not accessible here</code></pre>
+                <div class="output">Output:<br>I'm a local variable<br>I'm a global variable<br>I'm a global variable</div>
+            </div>
+            
+            <h3>The <code>global</code> Keyword</h3>
+            <p>To modify a global variable from within a function, you need to use the <code>global</code> keyword:</p>
+            
+            <div class="example-container">
+                <pre><code class="python">counter = 0
+
+def increment_counter():
+    global counter    # Declare we want to use the global variable
+    counter += 1
+    print(f"Counter inside function: {counter}")
+
+print(f"Counter before: {counter}")
+increment_counter()
+print(f"Counter after: {counter}")</code></pre>
+                <div class="output">Output:<br>Counter before: 0<br>Counter inside function: 1<br>Counter after: 1</div>
+            </div>
+            
+            <h3>The <code>nonlocal</code> Keyword</h3>
+            <p>For nested functions, the <code>nonlocal</code> keyword allows you to modify a variable from the enclosing scope:</p>
+            
+            <div class="example-container">
+                <pre><code class="python">def outer_function():
+    outer_var = "I'm in the outer function"
+    
+    def inner_function():
+        nonlocal outer_var
+        outer_var = "Modified by inner function"
+        print(f"Inside inner function: {outer_var}")
+    
+    print(f"Before inner call: {outer_var}")
+    inner_function()
+    print(f"After inner call: {outer_var}")
+
+outer_function()</code></pre>
+                <div class="output">Output:<br>Before inner call: I'm in the outer function<br>Inside inner function: Modified by inner function<br>After inner call: Modified by inner function</div>
+            </div>
+            
+            <div class="note">
+                <h3>Variable Lookup Order (LEGB Rule)</h3>
+                <p>Python searches for variables in this order:</p>
+                <ol>
+                    <li><strong>L</strong>ocal scope</li>
+                    <li><strong>E</strong>nclosing scope</li>
+                    <li><strong>G</strong>lobal scope</li>
+                    <li><strong>B</strong>uilt-in scope</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 9.7 recursion -->
+        <section id="recursion">
+            <h2>9.7 Recursion</h2>
+            <p>Recursion is a programming technique where a function calls itself to solve a problem. It's particularly useful for problems that can be divided into similar sub-problems.</p>
+            
+            <div class="example-container">
+                <h3>Example: Factorial calculation using recursion</h3>
+                <pre><code class="python">def factorial(n):
+    """Calculate the factorial of a number using recursion"""
+    # Base case
+    if n == 0 or n == 1:
+        return 1
+    # Recursive case
+    else:
+        return n * factorial(n-1)
+
+# Test the function
+print(f"Factorial of 5: {factorial(5)}")
+print(f"Factorial of 0: {factorial(0)}")</code></pre>
+                <div class="output">Output:<br>Factorial of 5: 120<br>Factorial of 0: 1</div>
+            </div>
+            
+            <p>Every recursive function has two key components:</p>
+            <ul>
+                <li><strong>Base case:</strong> The condition that stops the recursion</li>
+                <li><strong>Recursive case:</strong> The function calling itself with a smaller instance of the problem</li>
+            </ul>
+            
+            <div class="example-container">
+                <h3>Example: Fibonacci sequence using recursion</h3>
+                <pre><code class="python">def fibonacci(n):
+    """Return the nth number in the Fibonacci sequence"""
+    # Base cases
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    # Recursive case
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+# Generate first 10 Fibonacci numbers
+for i in range(10):
+    print(f"Fibonacci({i}) = {fibonacci(i)}")</code></pre>
+                <div class="output">Output:<br>Fibonacci(0) = 0<br>Fibonacci(1) = 1<br>Fibonacci(2) = 1<br>Fibonacci(3) = 2<br>Fibonacci(4) = 3<br>Fibonacci(5) = 5<br>Fibonacci(6) = 8<br>Fibonacci(7) = 13<br>Fibonacci(8) = 21<br>Fibonacci(9) = 34</div>
+            </div>
+            
+            <div class="note">
+                <h3>Recursion Considerations</h3>
+                <ul>
+                    <li><strong>Memory usage:</strong> Each recursive call adds a new frame to the call stack</li>
+                    <li><strong>Stack overflow:</strong> Too many recursive calls can exceed the maximum stack depth</li>
+                    <li><strong>Performance:</strong> Recursive solutions can be less efficient than iterative approaches (e.g., naive recursive Fibonacci)</li>
+                    <li><strong>Optimization:</strong> Techniques like memoization can improve recursive performance</li>
+                </ul>
+            </div>
+            
+            <div class="example-container">
+                <h3>Example: Optimized Fibonacci with memoization</h3>
+                <pre><code class="python">def fibonacci_memoized(n, memo=None):
+    """Optimized Fibonacci using memoization to avoid redundant calculations"""
+    if memo is None:
+        memo = {}
+    
+    # Check if we've already calculated this value
+    if n in memo:
+        return memo[n]
+    
+    # Base cases
+    if n <= 0:
+        return 0
+    elif n == 1:
+        return 1
+    
+    # Calculate and store the result
+    memo[n] = fibonacci_memoized(n-1, memo) + fibonacci_memoized(n-2, memo)
+    return memo[n]
+
+# Much faster for larger values
+print(f"Fibonacci(30) = {fibonacci_memoized(30)}")
+</code></pre>
+                <div class="output">Output:<br>Fibonacci(30) = 832040</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        angular.module('pythonTutorialApp', [])
+        .controller('MainController', function($scope, $location, $anchorScroll, $timeout) {
+            // Set initial active tab states
+            $scope.activeTab = 'positional';
+            $scope.activeTypeTab = 'with-input-output';
+            $scope.activeSection = 'introduction';
+            
+            // Function to handle tab switching for arguments section
+            $scope.setActiveTab = function(tabName) {
+                $scope.activeTab = tabName;
+            };
+            
+            // Function to handle tab switching for function types section
+            $scope.setActiveTypeTab = function(tabName) {
+                $scope.activeTypeTab = tabName;
+            };
+            
+            // Function to scroll to a specific section
+            $scope.scrollTo = function(sectionId) {
+                $location.hash(sectionId);
+                $anchorScroll();
+                $scope.activeSection = sectionId;
+            };
+            
+            // Function to run the greet function demo
+            $scope.runGreetFunction = function() {
+                $scope.functionResult = "Hello, welcome to Python functions!";
+            };
+            
+            // Initialize syntax highlighting
+            $timeout(function() {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightBlock(block);
+                });
+            });
+            
+            // Detect scroll position for nav highlighting
+            angular.element(window).bind('scroll', function() {
+                const sections = ['introduction', 'defining', 'invoking', 'arguments', 'types', 'scope', 'recursion'];
+                let currentSection = '';
+                
+                for (let i = 0; i < sections.length; i++) {
+                    const section = document.getElementById(sections[i]);
+                    if (section) {
+                        const rect = section.getBoundingClientRect();
+                        if (rect.top <= 100) {
+                            currentSection = sections[i];
+                        }
+                    }
+                }
+                
+                if (currentSection !== '') {
+                    $scope.$apply(function() {
+                        $scope.activeSection = currentSection;
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knobly Complete Database Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .log-item {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen p-6">
+    <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-cyan-400 mb-2">🔧 Knobly Complete Database Setup</h1>
+            <p class="text-slate-400">Ye tool aapka PURA Firestore database setup kar dega - Sabhi 15 collections!</p>
+        </div>
+
+        <!-- Status Check -->
+        <div id="status-panel" class="bg-slate-900/90 border border-slate-700 rounded-2xl p-4 mb-4">
+            <div class="flex items-center gap-3">
+                <div id="auth-status" class="h-3 w-3 rounded-full bg-yellow-500 animate-pulse"></div>
+                <span id="auth-text" class="text-sm text-slate-300">Checking authentication...</span>
+            </div>
+        </div>
+
+        <!-- Collections Grid -->
+        <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+                <span>📦</span> Collections to Create (15 Total)
+            </h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6 text-sm">
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="profiles" checked>
+                    <span>profiles</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="user_settings" checked>
+                    <span>user_settings</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="apps" checked>
+                    <span>apps</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="videos" checked>
+                    <span>videos</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="notifications" checked>
+                    <span>notifications</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="exam_levels" checked>
+                    <span>exam_levels</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="exam_tests" checked>
+                    <span>exam_tests</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="exam_questions" checked>
+                    <span>exam_questions</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="exam_options" checked>
+                    <span>exam_options</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="exam_badges" checked>
+                    <span>exam_badges</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="exam_user_state" checked>
+                    <span>exam_user_state</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="exam_attempts" checked>
+                    <span>exam_attempts</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="exam_responses" checked>
+                    <span>exam_responses</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="exam_user_badges" checked>
+                    <span>exam_user_badges</span>
+                </label>
+                <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-700">
+                    <input type="checkbox" class="cb-item accent-cyan-500" data-key="exam_leaderboard" checked>
+                    <span>exam_leaderboard</span>
+                </label>
+            </div>
+
+            <div class="flex gap-3">
+                <button id="setup-btn" onclick="runSetup()"
+                    class="flex-1 py-3 px-6 bg-gradient-to-r from-cyan-500 to-emerald-500 text-black font-bold rounded-xl hover:opacity-90 active:scale-[0.98] transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    🚀 Setup Complete Database
+                </button>
+                <button onclick="selectAll(true)"
+                    class="px-4 py-3 bg-slate-700 text-white rounded-xl hover:bg-slate-600">All</button>
+                <button onclick="selectAll(false)"
+                    class="px-4 py-3 bg-slate-700 text-white rounded-xl hover:bg-slate-600">None</button>
+            </div>
+        </div>
+
+        <!-- Log Panel -->
+        <div id="log-container"
+            class="bg-slate-950 border border-slate-800 rounded-2xl p-4 min-h-[250px] max-h-[400px] overflow-y-auto font-mono text-xs">
+            <div class="text-slate-500">Logs will appear here...</div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="mt-6 text-center space-x-4">
+            <a href="index.html" class="text-cyan-400 hover:underline">← Knobly OS</a>
+            <a href="dashboard.html" class="text-emerald-400 hover:underline">Dashboard →</a>
+            <a href="admin.html" class="text-amber-400 hover:underline">Admin Panel →</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import {
+            collection, doc, setDoc, getDocs, addDoc, writeBatch, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        let currentUser = null;
+        const logContainer = document.getElementById('log-container');
+
+        function log(message, type = 'info') {
+            const colors = { info: 'text-slate-300', success: 'text-emerald-400', error: 'text-red-400', warning: 'text-yellow-400' };
+            const icons = { info: '→', success: '✓', error: '✗', warning: '!' };
+            const time = new Date().toLocaleTimeString('en-IN', { hour12: false });
+            logContainer.innerHTML += `<div class="log-item ${colors[type]} py-0.5"><span class="text-slate-500">[${time}]</span> ${icons[type]} ${message}</div>`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function clearLogs() { logContainer.innerHTML = ''; }
+
+        window.selectAll = function (val) {
+            document.querySelectorAll('.cb-item').forEach(cb => cb.checked = val);
+        };
+
+        // Auth check
+        onAuthStateChanged(auth, (user) => {
+            const statusDot = document.getElementById('auth-status');
+            const statusText = document.getElementById('auth-text');
+            const btn = document.getElementById('setup-btn');
+
+            if (user) {
+                currentUser = user;
+                statusDot.className = 'h-3 w-3 rounded-full bg-emerald-500';
+                statusText.textContent = `Logged in: ${user.email}`;
+                btn.disabled = false;
+                log(`Authenticated as: ${user.email}`, 'success');
+            } else {
+                statusDot.className = 'h-3 w-3 rounded-full bg-red-500';
+                statusText.textContent = 'Not logged in! Go to index.html first.';
+                btn.disabled = true;
+                log('Not authenticated. Please login from index.html first.', 'error');
+            }
+        });
+
+        // ═══════════════════════════════════════════════════════════════
+        // SAMPLE DATA
+        // ═══════════════════════════════════════════════════════════════
+
+        const OLEVEL_LEVELS = [
+            { level_no: 1, title: "Introduction to IT", description: "Basics of Information Technology", required_xp: 0 },
+            { level_no: 2, title: "Computer Fundamentals", description: "Hardware, Software & OS basics", required_xp: 100 },
+            { level_no: 3, title: "Internet & Web", description: "Internet, Email, Web Browsing", required_xp: 250 },
+            { level_no: 4, title: "MS Word Basics", description: "Word Processing fundamentals", required_xp: 400 },
+            { level_no: 5, title: "MS Excel Basics", description: "Spreadsheet fundamentals", required_xp: 600 },
+            { level_no: 6, title: "MS PowerPoint", description: "Presentation skills", required_xp: 800 },
+            { level_no: 7, title: "Python Basics", description: "Introduction to Python programming", required_xp: 1000 },
+            { level_no: 8, title: "Web Technologies", description: "HTML, CSS, JavaScript basics", required_xp: 1300 },
+            { level_no: 9, title: "IoT Fundamentals", description: "Internet of Things concepts", required_xp: 1600 },
+            { level_no: 10, title: "Final Challenge", description: "Complete O-Level assessment", required_xp: 2000 }
+        ];
+
+        const CCC_LEVELS = [
+            { level_no: 1, title: "Computer Basics", description: "Introduction to Computers", required_xp: 0 },
+            { level_no: 2, title: "Operating System", description: "Windows/Linux basics", required_xp: 80 },
+            { level_no: 3, title: "Internet Skills", description: "Web & Email usage", required_xp: 180 },
+            { level_no: 4, title: "LibreOffice Writer", description: "Document processing", required_xp: 300 },
+            { level_no: 5, title: "LibreOffice Calc", description: "Spreadsheet skills", required_xp: 450 },
+            { level_no: 6, title: "LibreOffice Impress", description: "Presentations", required_xp: 600 },
+            { level_no: 7, title: "Digital Financial Tools", description: "UPI, NetBanking, etc.", required_xp: 750 },
+            { level_no: 8, title: "CCC Final Test", description: "Complete CCC certification prep", required_xp: 1000 }
+        ];
+
+        const BADGES = [
+            { badge_name: "First Steps", badge_icon: "ph-footprints", description: "Complete your first test", xp_reward: 25 },
+            { badge_name: "Quick Learner", badge_icon: "ph-lightning", description: "Score 80%+ in any test", xp_reward: 50 },
+            { badge_name: "Streak Master", badge_icon: "ph-fire", description: "Maintain 7-day streak", xp_reward: 100 },
+            { badge_name: "Perfect Score", badge_icon: "ph-star", description: "Get 100% in any test", xp_reward: 150 },
+            { badge_name: "Level 5 Pro", badge_icon: "ph-trophy", description: "Reach Level 5", xp_reward: 200 },
+            { badge_name: "Champion", badge_icon: "ph-crown", description: "Reach Level 10", xp_reward: 500 },
+            { badge_name: "Speed Demon", badge_icon: "ph-rocket-launch", description: "Complete test in half time", xp_reward: 75 },
+            { badge_name: "Consistent", badge_icon: "ph-calendar-check", description: "30 day streak", xp_reward: 300 }
+        ];
+
+        const SAMPLE_APPS = [
+            { name: "Calculator", type: "Utility", link: "https://www.google.com/search?q=calculator", icon: "ti ti-calculator", color: "text-green-400" },
+            { name: "Dictionary", type: "Learning", link: "https://www.dictionary.com", icon: "ti ti-book", color: "text-blue-400" },
+            { name: "Typing Test", type: "Practice", link: "https://www.typingtest.com", icon: "ti ti-keyboard", color: "text-purple-400" }
+        ];
+
+        const SAMPLE_VIDEOS = [
+            { title: "Introduction to Computers", youtube_id: "dQw4w9WgXcQ", category: "Basics" },
+            { title: "MS Word Tutorial", youtube_id: "dQw4w9WgXcQ", category: "Office" },
+            { title: "Python for Beginners", youtube_id: "dQw4w9WgXcQ", category: "Programming" }
+        ];
+
+        const SAMPLE_NOTIFICATIONS = [
+            { title: "Welcome to Knobly!", message: "Start your learning journey today.", type: "info", is_read: false },
+            { title: "New Feature: Test Dashboard", message: "Try the new gamified test system.", type: "feature", is_read: false }
+        ];
+
+        const SAMPLE_QUESTIONS = [
+            {
+                question_text: "What does CPU stand for?", question_type: "MCQ", marks: 1, options: [
+                    { text: "Central Processing Unit", is_correct: true },
+                    { text: "Computer Personal Unit", is_correct: false },
+                    { text: "Central Program Utility", is_correct: false },
+                    { text: "Computer Processing Unit", is_correct: false }
+                ]
+            },
+            {
+                question_text: "Which of the following is an input device?", question_type: "MCQ", marks: 1, options: [
+                    { text: "Monitor", is_correct: false },
+                    { text: "Keyboard", is_correct: true },
+                    { text: "Printer", is_correct: false },
+                    { text: "Speaker", is_correct: false }
+                ]
+            },
+            {
+                question_text: "What is RAM?", question_type: "MCQ", marks: 1, options: [
+                    { text: "Read Access Memory", is_correct: false },
+                    { text: "Random Access Memory", is_correct: true },
+                    { text: "Run Access Module", is_correct: false },
+                    { text: "Read And Modify", is_correct: false }
+                ]
+            },
+            {
+                question_text: "HTML stands for?", question_type: "MCQ", marks: 1, options: [
+                    { text: "Hyper Text Markup Language", is_correct: true },
+                    { text: "High Tech Modern Language", is_correct: false },
+                    { text: "Hyper Transfer Markup Lang", is_correct: false },
+                    { text: "Home Tool Markup Language", is_correct: false }
+                ]
+            },
+            {
+                question_text: "Which software is used for spreadsheets?", question_type: "MCQ", marks: 1, options: [
+                    { text: "MS Word", is_correct: false },
+                    { text: "MS PowerPoint", is_correct: false },
+                    { text: "MS Excel", is_correct: true },
+                    { text: "MS Access", is_correct: false }
+                ]
+            }
+        ];
+
+        // ═══════════════════════════════════════════════════════════════
+        // SETUP FUNCTIONS
+        // ═══════════════════════════════════════════════════════════════
+
+        const levelIdMap = {};
+        const testIdMap = {};
+
+        async function setupProfiles() {
+            log('Setting up profiles collection...', 'info');
+            if (currentUser) {
+                const profileRef = doc(db, 'profiles', currentUser.uid);
+                await setDoc(profileRef, {
+                    id: currentUser.uid,
+                    email: currentUser.email,
+                    full_name: currentUser.displayName || 'Student',
+                    username: currentUser.email?.split('@')[0] || 'user',
+                    avatar_url: currentUser.photoURL || null,
+                    role: 'admin', // Making current user admin
+                    exam_track: null,
+                    created_at: serverTimestamp()
+                }, { merge: true });
+                log('Profile created/updated for current user (admin role)', 'success');
+            }
+        }
+
+        async function setupUserSettings() {
+            log('Setting up user_settings collection...', 'info');
+            if (currentUser) {
+                const settingsRef = doc(db, 'user_settings', currentUser.uid);
+                await setDoc(settingsRef, {
+                    user_id: currentUser.uid,
+                    theme: 'dark',
+                    wallpaper_id: 1,
+                    notes_data: 'Welcome to Knobly OS! You can write notes here.',
+                    favorites: [],
+                    hidden_apps: [],
+                    performance_mode: false,
+                    created_at: serverTimestamp()
+                }, { merge: true });
+                log('User settings initialized', 'success');
+            }
+        }
+
+        async function setupApps() {
+            log('Setting up apps collection...', 'info');
+            const batch = writeBatch(db);
+            for (const app of SAMPLE_APPS) {
+                const ref = doc(collection(db, 'apps'));
+                batch.set(ref, { ...app, user_id: null, created_at: serverTimestamp() });
+            }
+            await batch.commit();
+            log(`Created ${SAMPLE_APPS.length} global apps`, 'success');
+        }
+
+        async function setupVideos() {
+            log('Setting up videos collection...', 'info');
+            const batch = writeBatch(db);
+            for (const video of SAMPLE_VIDEOS) {
+                const ref = doc(collection(db, 'videos'));
+                batch.set(ref, { ...video, created_at: serverTimestamp() });
+            }
+            await batch.commit();
+            log(`Created ${SAMPLE_VIDEOS.length} sample videos`, 'success');
+        }
+
+        async function setupNotifications() {
+            log('Setting up notifications collection...', 'info');
+            const batch = writeBatch(db);
+            for (const notif of SAMPLE_NOTIFICATIONS) {
+                const ref = doc(collection(db, 'notifications'));
+                batch.set(ref, { ...notif, created_at: serverTimestamp() });
+            }
+            await batch.commit();
+            log(`Created ${SAMPLE_NOTIFICATIONS.length} notifications`, 'success');
+        }
+
+        async function setupExamLevels() {
+            log('Setting up exam_levels (O-Level + CCC)...', 'info');
+            const batch = writeBatch(db);
+
+            for (const level of OLEVEL_LEVELS) {
+                const ref = doc(collection(db, 'exam_levels'));
+                batch.set(ref, { ...level, track_id: 'OLEVEL', created_at: serverTimestamp() });
+                levelIdMap[`OLEVEL-${level.level_no}`] = ref.id;
+            }
+
+            for (const level of CCC_LEVELS) {
+                const ref = doc(collection(db, 'exam_levels'));
+                batch.set(ref, { ...level, track_id: 'CCC', created_at: serverTimestamp() });
+                levelIdMap[`CCC-${level.level_no}`] = ref.id;
+            }
+
+            await batch.commit();
+            log(`Created ${OLEVEL_LEVELS.length} O-Level + ${CCC_LEVELS.length} CCC levels`, 'success');
+        }
+
+        async function setupExamTests() {
+            log('Setting up exam_tests...', 'info');
+
+            // Fetch level IDs
+            const levelsSnap = await getDocs(collection(db, 'exam_levels'));
+            levelsSnap.forEach(d => {
+                const data = d.data();
+                levelIdMap[`${data.track_id}-${data.level_no}`] = d.id;
+            });
+
+            const batch = writeBatch(db);
+            const tests = [
+                { title: "Level 1 Practice Test", level_no: 1, duration: 15, marks: 20, xp: 30 },
+                { title: "Level 2 Practice Test", level_no: 2, duration: 20, marks: 25, xp: 40 },
+                { title: "Level 3 Practice Test", level_no: 3, duration: 20, marks: 30, xp: 50 },
+                { title: "Level 4 Practice Test", level_no: 4, duration: 25, marks: 35, xp: 60 },
+                { title: "Level 5 Final Test", level_no: 5, duration: 30, marks: 50, xp: 100 }
+            ];
+
+            // O-Level tests
+            for (const t of tests) {
+                const levelId = levelIdMap[`OLEVEL-${t.level_no}`];
+                if (levelId) {
+                    const ref = doc(collection(db, 'exam_tests'));
+                    batch.set(ref, {
+                        title: t.title,
+                        track_id: 'OLEVEL',
+                        level_id: levelId,
+                        mode: 'PRACTICE',
+                        duration_minutes: t.duration,
+                        total_marks: t.marks,
+                        xp_reward: t.xp,
+                        is_active: true,
+                        created_at: serverTimestamp()
+                    });
+                    testIdMap[`OLEVEL-${t.level_no}`] = ref.id;
+                }
+            }
+
+            // CCC tests
+            for (const t of tests.slice(0, 4)) {
+                const levelId = levelIdMap[`CCC-${t.level_no}`];
+                if (levelId) {
+                    const ref = doc(collection(db, 'exam_tests'));
+                    batch.set(ref, {
+                        title: `CCC ${t.title}`,
+                        track_id: 'CCC',
+                        level_id: levelId,
+                        mode: 'PRACTICE',
+                        duration_minutes: t.duration,
+                        total_marks: t.marks,
+                        xp_reward: t.xp,
+                        is_active: true,
+                        created_at: serverTimestamp()
+                    });
+                    testIdMap[`CCC-${t.level_no}`] = ref.id;
+                }
+            }
+
+            await batch.commit();
+            log('Created O-Level and CCC tests', 'success');
+        }
+
+        async function setupExamQuestions() {
+            log('Setting up exam_questions with options...', 'info');
+
+            // Fetch test IDs
+            const testsSnap = await getDocs(collection(db, 'exam_tests'));
+            testsSnap.forEach(d => {
+                const data = d.data();
+                if (data.track_id === 'OLEVEL') {
+                    Object.keys(levelIdMap).forEach(k => {
+                        if (levelIdMap[k] === data.level_id && k.startsWith('OLEVEL')) {
+                            testIdMap[k] = d.id;
+                        }
+                    });
+                }
+            });
+
+            const batch = writeBatch(db);
+            let questionCount = 0;
+            let optionCount = 0;
+
+            // Add questions to first O-Level test
+            const firstTestId = Object.values(testIdMap)[0];
+            if (firstTestId) {
+                for (let i = 0; i < SAMPLE_QUESTIONS.length; i++) {
+                    const q = SAMPLE_QUESTIONS[i];
+                    const qRef = doc(collection(db, 'exam_questions'));
+                    batch.set(qRef, {
+                        test_id: firstTestId,
+                        question_text: q.question_text,
+                        question_type: q.question_type,
+                        marks: q.marks,
+                        order_no: i + 1,
+                        created_at: serverTimestamp()
+                    });
+                    questionCount++;
+
+                    // Add options
+                    for (let j = 0; j < q.options.length; j++) {
+                        const opt = q.options[j];
+                        const oRef = doc(collection(db, 'exam_options'));
+                        batch.set(oRef, {
+                            question_id: qRef.id,
+                            option_text: opt.text,
+                            is_correct: opt.is_correct,
+                            order_no: j + 1
+                        });
+                        optionCount++;
+                    }
+                }
+            }
+
+            await batch.commit();
+            log(`Created ${questionCount} questions with ${optionCount} options`, 'success');
+        }
+
+        async function setupExamBadges() {
+            log('Setting up exam_badges...', 'info');
+            const batch = writeBatch(db);
+            for (const badge of BADGES) {
+                const ref = doc(collection(db, 'exam_badges'));
+                batch.set(ref, { ...badge, created_at: serverTimestamp() });
+            }
+            await batch.commit();
+            log(`Created ${BADGES.length} badges`, 'success');
+        }
+
+        async function setupExamUserState() {
+            log('Setting up exam_user_state...', 'info');
+            if (currentUser) {
+                const ref = doc(collection(db, 'exam_user_state'));
+                await setDoc(ref, {
+                    user_id: currentUser.uid,
+                    track_id: null,
+                    current_level: 1,
+                    total_xp: 0,
+                    streak_days: 0,
+                    created_at: serverTimestamp()
+                });
+                log('User state initialized', 'success');
+            }
+        }
+
+        async function setupExamAttempts() {
+            log('Creating empty exam_attempts collection...', 'info');
+            // Just create a placeholder that will be deleted
+            const ref = doc(collection(db, 'exam_attempts'));
+            await setDoc(ref, { _placeholder: true, created_at: serverTimestamp() });
+            log('exam_attempts collection initialized', 'success');
+        }
+
+        async function setupExamResponses() {
+            log('Creating empty exam_responses collection...', 'info');
+            const ref = doc(collection(db, 'exam_responses'));
+            await setDoc(ref, { _placeholder: true, created_at: serverTimestamp() });
+            log('exam_responses collection initialized', 'success');
+        }
+
+        async function setupExamUserBadges() {
+            log('Creating empty exam_user_badges collection...', 'info');
+            const ref = doc(collection(db, 'exam_user_badges'));
+            await setDoc(ref, { _placeholder: true, created_at: serverTimestamp() });
+            log('exam_user_badges collection initialized', 'success');
+        }
+
+        async function setupExamLeaderboard() {
+            log('Setting up exam_leaderboard...', 'info');
+            if (currentUser) {
+                const ref = doc(collection(db, 'exam_leaderboard'));
+                await setDoc(ref, {
+                    user_id: currentUser.uid,
+                    full_name: currentUser.displayName || 'Student',
+                    exam_track: 'OLEVEL',
+                    total_xp: 0,
+                    current_level: 1,
+                    track_rank: 1,
+                    created_at: serverTimestamp()
+                });
+                log('Leaderboard initialized with current user', 'success');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // MAIN SETUP
+        // ═══════════════════════════════════════════════════════════════
+
+        const setupFunctions = {
+            profiles: setupProfiles,
+            user_settings: setupUserSettings,
+            apps: setupApps,
+            videos: setupVideos,
+            notifications: setupNotifications,
+            exam_levels: setupExamLevels,
+            exam_tests: setupExamTests,
+            exam_questions: setupExamQuestions,
+            exam_badges: setupExamBadges,
+            exam_user_state: setupExamUserState,
+            exam_attempts: setupExamAttempts,
+            exam_responses: setupExamResponses,
+            exam_user_badges: setupExamUserBadges,
+            exam_leaderboard: setupExamLeaderboard
+        };
+
+        window.runSetup = async function () {
+            if (!currentUser) {
+                log('Please login first from index.html!', 'error');
+                return;
+            }
+
+            clearLogs();
+            const btn = document.getElementById('setup-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Setting up database...';
+
+            try {
+                log('═══════════════════════════════════════════', 'info');
+                log('Starting Complete Database Setup...', 'info');
+                log('═══════════════════════════════════════════', 'info');
+
+                const checkboxes = document.querySelectorAll('.cb-item:checked');
+                const selectedKeys = Array.from(checkboxes).map(cb => cb.dataset.key);
+
+                for (const key of selectedKeys) {
+                    if (setupFunctions[key]) {
+                        await setupFunctions[key]();
+                    }
+                }
+
+                log('', 'info');
+                log('═══════════════════════════════════════════', 'success');
+                log('🎉 DATABASE SETUP COMPLETE!', 'success');
+                log('═══════════════════════════════════════════', 'success');
+                log('', 'info');
+                log('Ab aap ye pages use kar sakte ho:', 'success');
+                log('  → dashboard.html (Test Dashboard)', 'info');
+                log('  → admin.html (Admin Panel)', 'info');
+                log('  → index.html (Main App)', 'info');
+
+                btn.textContent = '✅ Setup Complete!';
+                btn.classList.remove('from-cyan-500', 'to-emerald-500');
+                btn.classList.add('from-emerald-500', 'to-emerald-600');
+
+            } catch (error) {
+                log(`ERROR: ${error.message}`, 'error');
+                console.error(error);
+                btn.textContent = '❌ Error - Check Console';
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+
+</html>

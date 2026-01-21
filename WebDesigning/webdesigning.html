@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="title" content="olevelcccexam - Web Design Resources">
+<meta name="description" content="Explore top-quality web design resources, including notes, tips, and tutorials for HTML, CSS, and modern web development. Perfect for O-Level CCC exam preparation.">
+<meta name="keywords" content="olevelcccexam, web design resources, HTML tutorials, CSS tips, web development, O-Level CCC, web designing notes, web design tips">
+<meta name="author" content="Piyush Kundu">
+<meta name="robots" content="index, follow">
+<meta name="language" content="English">
+<meta name="subject" content="Web Design and Development Resources">
+<meta name="copyright" content="olevelcccexam.link">
+<meta name="url" content="https://olevelcccexam.link">
+<meta name="theme-color" content="#f4f7f6">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f4f7f6;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.8em 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    header.scrolled {
+      background-color: rgba(255, 255, 255, 0.98);
+      padding: 0.6em 0;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2em;
+    }
+
+    .logo a {
+      font-family: 'Playfair Display', serif;
+      color: #0c0c0c;
+      font-size: 2em;
+      font-weight: 700;
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+
+    .logo a:hover {
+      color: #007bff;
+      text-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 2em;
+    }
+
+    .nav-links li a {
+      color: #0c0c0c;
+      text-decoration: none;
+      font-size: 1.1em;
+      font-weight: 600;
+      padding: 0.5em 1em;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links li a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background-color: #007bff;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .nav-links li a:hover::after,
+    .nav-links li a.active::after {
+      width: 100%;
+    }
+
+    .nav-links li a:hover,
+    .nav-links li a.active {
+      color: #007bff;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .hamburger .bar {
+      width: 30px;
+      height: 3px;
+      background-color: #0c0c0c;
+      margin: 4px 0;
+      transition: all 0.3s ease;
+      border-radius: 3px;
+    }
+
+    .hamburger.active .bar:nth-child(1) {
+      transform: translateY(10px) rotate(45deg);
+    }
+
+    .hamburger.active .bar:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active .bar:nth-child(3) {
+      transform: translateY(-10px) rotate(-45deg);
+    }
+
+    @media screen and (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        right: -115%;
+        top: 0;
+        height: 100vh;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.98);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.5s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-links li {
+        margin: 1.5em 0;
+      }
+
+      .nav-links li a {
+        font-size: 1.4em;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-active {
+        right: 0;
+      }
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      z-index: 999;
+    }
+
+    .card-section {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      flex-wrap: wrap;
+      gap: 24px;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 120px auto 0;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #ffffff, #f0f4f8);
+      width: 280px;
+      border-radius: 16px;
+      box-shadow: 
+        8px 8px 16px #d1d9e6,
+        -8px -8px 16px #ffffff;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    .card:hover {
+      transform: translateY(-10px) rotateX(5deg);
+      box-shadow: 
+        12px 12px 24px #d1d9e6,
+        -12px -12px 24px #ffffff;
+      border-color: rgba(37, 99, 235, 0.2);
+    }
+
+    .card-content {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .card-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    }
+
+    .card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+      color: #1a1a1a;
+      letter-spacing: -0.01em;
+    }
+
+    .card p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #64748b;
+      margin: 0;
+    }
+
+    .card-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #2563eb, #1e40af);
+      color: white;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: all 0.6s;
+    }
+
+    .card-button:hover::before {
+      left: 100%;
+    }
+
+    .card-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(37, 99, 235, 0.1);
+      color: #2563eb;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="index">olevelcccexam</a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="../index">Home</a></li>
+        <li><a href="../notes">Notes</a></li>
+        <li><a href="../test" class="active">Webdesigning</a></li>
+        <li><a href="../syllabus">Syllabus</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </nav>
+  </header>
+
+  <div class="card-section">
+      <div class="card">
+  <div class="card-content">
+    <svg class="card-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="paper-texture" x="0" y="0">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="3"/>
+        </filter>
+      </defs>
+      <path d="M50 10L85 30V70L50 90L15 70V30L50 10Z" fill="#10b981" fill-opacity="0.2"/>
+      <path d="M35 40L50 50L65 40M35 55L50 65L65 55M35 70L50 80L65 70" stroke="#059669" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="25" stroke="#10b981" stroke-width="2" stroke-dasharray="5 5"/>
+    </svg>
+    <h3>Web Designing Notes</h3>
+    <p>Essential tips & tricks for modern web design, HTML, CSS, and more!</p>
+    <a href="webdesigning_notes" class="card-button">Start Learning</a>
+  </div>
+  <div class="card-badge">Notes</div>
+</div>
+    <!-- Card 1: HTML -->
+    <div class="card">
+      <div class="card-content">
+        <svg class="card-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M25 30L50 20L75 30L50 40L25 30Z" fill="#3b82f6" fill-opacity="0.2"/>
+          <path d="M25 30V70L50 80V40L25 30Z" fill="#2563eb" fill-opacity="0.3"/>
+          <path d="M50 40V80L75 70V30L50 40Z" fill="#1d4ed8" fill-opacity="0.4"/>
+          <path d="M35 45L50 50L65 45M35 55L50 60L65 55M35 65L50 70L65 65" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h3>HTML</h3>
+        <p>Learn the fundamentals of web structure and semantic markup.</p>
+        <a href="https://www.olevelcccexam.unaux.com/html/basichtml" class="card-button">View Resources</a>
+      </div>
+      <div class="card-badge">Foundation</div>
+    </div>
+
+    <!-- Card 2: CSS -->
+    <div class="card">
+      <div class="card-content">
+        <svg class="card-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="20" width="60" height="60" rx="4" fill="#3b82f6" fill-opacity="0.1"/>
+          <rect x="30" y="30" width="40" height="40" rx="2" fill="#2563eb" fill-opacity="0.2"/>
+          <path d="M40 40H60M40 50H60M40 60H60" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="70" cy="70" r="10" fill="#1d4ed8" fill-opacity="0.3"/>
+        </svg>
+        <h3>CSS</h3>
+        <p>Master modern styling techniques and responsive design.</p>
+        <a href="csspage" class="card-button">View Resources</a>
+      </div>
+      <div class="card-badge">Styling</div>
+    </div>
+ <!-- Card 4: W3.CSS -->
+    <div class="card">
+      <div class="card-content">
+        <svg class="card-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 10L85 30V70L50 90L15 70V30L50 10Z" fill="#10b981" fill-opacity="0.2"/>
+          <path d="M35 40L50 50L65 40M35 55L50 65L65 55M35 70L50 80L65 70" stroke="#059669" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="25" stroke="#10b981" stroke-width="2" stroke-dasharray="5 5"/>
+        </svg>
+        <h3>W3.CSS</h3>
+        <p>Create responsive and modern web designs with W3.CSS framework.</p>
+        <a href="w3css" class="card-button">View Resources</a>
+      </div>
+      <div class="card-badge">Framework</div>
+    </div>
+    <!-- Card 3: JavaScript -->
+    <div class="card">
+      <div class="card-content">
+        <svg class="card-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 20L80 35V65L50 80L20 65V35L50 20Z" fill="#3b82f6" fill-opacity="0.2"/>
+          <path d="M35 42.5L50 50M65 42.5L50 50M50 50V65" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="20" stroke="#2563eb" stroke-width="2" stroke-dasharray="4 4"/>
+        </svg>
+        <h3>JavaScript</h3>
+        <p>Build interactive features and dynamic applications.</p>
+        <a href="javascript" class="card-button">View Resources</a>
+      </div>
+      <div class="card-badge">Interactive</div>
+    </div>
+    <div class="card">
+    <div class="card-content">
+      <svg class="card-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="60" height="60" rx="4" fill="#3b82f6" fill-opacity="0.1"/>
+        <rect x="30" y="30" width="40" height="40" rx="2" fill="#2563eb" fill-opacity="0.2"/>
+        <path d="M40 40H60M40 50H60M40 60H60" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="70" cy="70" r="10" fill="#1d4ed8" fill-opacity="0.3"/>
+      </svg>
+      <h3>Angular JS</h3>
+      <p>Master AngularJS Development</p>
+      <a href="angularjs" class="card-button">View Resources</a>
+    </div>
+    <div class="card-badge">Development</div>
+  </div>
+    <div class="card">
+        
+      <div class="card-content">
+        <svg class="card-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 30L50 15L80 30L50 45L20 30Z" fill="#8b5cf6" fill-opacity="0.2"/>
+          <path d="M35 50L50 58L65 50M35 65L50 73L65 65" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 30V70L50 85V45L20 30Z" fill="#9333ea" fill-opacity="0.3"/>
+          <path d="M50 45V85L80 70V30L50 45Z" fill="#a855f7" fill-opacity="0.4"/>
+          <circle cx="50" cy="75" r="10" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4 4"/>
+        </svg>
+        <h3>HTML Test</h3>
+        <p>Prepare and assess your web design skills with comprehensive online tests.</p>
+        <a href="/html/html_test_1/index.php" class="card-button">Start Test</a>
+      </div>
+      <div class="card-badge">Test</div>
+    </div>
+    <div class="card">
+        
+      <div class="card-content">
+        <svg class="card-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 30L50 15L80 30L50 45L20 30Z" fill="#8b5cf6" fill-opacity="0.2"/>
+          <path d="M35 50L50 58L65 50M35 65L50 73L65 65" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 30V70L50 85V45L20 30Z" fill="#9333ea" fill-opacity="0.3"/>
+          <path d="M50 45V85L80 70V30L50 45Z" fill="#a855f7" fill-opacity="0.4"/>
+          <circle cx="50" cy="75" r="10" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4 4"/>
+        </svg>
+        <h3>Practice Test - 1</h3>
+        <p>Prepare and assess your web design skills with comprehensive online tests.</p>
+        <a href="wp1.html" class="card-button">Start Test</a>
+      </div>
+      <div class="card-badge">Practice Test</div>
+    </div>
+     <div class="card">
+      <div class="card-content">
+        <svg class="card-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 30L50 15L80 30L50 45L20 30Z" fill="#8b5cf6" fill-opacity="0.2"/>
+          <path d="M35 50L50 58L65 50M35 65L50 73L65 65" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 30V70L50 85V45L20 30Z" fill="#9333ea" fill-opacity="0.3"/>
+          <path d="M50 45V85L80 70V30L50 45Z" fill="#a855f7" fill-opacity="0.4"/>
+          <circle cx="50" cy="75" r="10" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4 4"/>
+        </svg>
+        <h3>Web Designing</h3>
+        <p>Prepare and assess your web design skills with comprehensive online tests.</p>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSf5CD2Nc827Txl1bQYW-aCtktulliiFjK8SCDWblj9ZZ7oQjw/viewform" class="card-button">Start Test</a>
+      </div>
+      <div class="card-badge">Practice Test</div>
+    </div>
+  </div>
+
+   
+  </div>
+
+  <script>
+    // Mobile navigation toggle
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    const overlay = document.querySelector('.overlay');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navLinks.classList.toggle('nav-active');
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      header.classList.toggle('scrolled', window.scrollY > 0);
+    });
+  </script>
+</body>
+</html>

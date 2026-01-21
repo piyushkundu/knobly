@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Premium AngularJS tutorial for developers. Master AngularJS with our comprehensive guide including interactive examples and practical demonstrations.">
+    <meta name="keywords" content="AngularJS tutorial, AngularJS guide, Angular development, JavaScript frameworks, web development">
+    <title>AngularJS Tutorial - Master Web Development</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Base Styles and Variables */
+        :root {
+            --primary-color: #2D3250;
+            --secondary-color: #424B77;
+            --accent-color: #7077A1;
+            --background-light: #F6F8FF;
+            --text-color: #2D3250;
+            --code-background: #F8F9FC;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 4px rgba(45, 50, 80, 0.1);
+            --shadow-md: 0 4px 6px rgba(45, 50, 80, 0.1);
+            --shadow-lg: 0 8px 16px rgba(45, 50, 80, 0.1);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-light);
+        }
+
+        /* Navigation Styles */
+        .navbar {
+            background: var(--white);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+            background: var(--background-light);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 8rem 0 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Main Content Styles */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 3rem;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 90px);
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        .sidebar-nav {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .sidebar-nav h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.75rem;
+        }
+
+        .sidebar-nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--background-light);
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        /* Content Cards */
+        .card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Typography */
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-background);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(45, 50, 80, 0.1);
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Interactive Elements */
+        .try-it-yourself {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            margin-top: 3rem;
+        }
+
+        .editor {
+            width: 100%;
+            height: 300px;
+            border: 1px solid rgba(45, 50, 80, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            margin: 1rem 0;
+            background: var(--code-background);
+            resize: vertical;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--background-light);
+            z-index: 1000;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--gradient);
+            width: 0;
+            transition: width 0.3s ease;
+        }
+        .mobile-nav {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 70px);
+            background: var(--white);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 999;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+
+        .mobile-nav ul {
+            list-style: none;
+        }
+
+        .mobile-nav li {
+            margin-bottom: 1rem;
+        }
+
+        .mobile-nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: block;
+            padding: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav a:hover {
+            background: var(--background-light);
+            color: var(--accent-color);
+        }
+
+        /* Enhanced Mobile Responsive Styles */
+        @media (max-width: 1024px) {
+            .hero-text h1 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .hero-text p {
+                font-size: 1.1rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .hero {
+                padding: 6rem 0 3rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .card {
+                padding: 1.25rem;
+                margin-bottom: 1.5rem;
+            }
+
+            pre {
+                padding: 1rem;
+                font-size: 0.8rem;
+            }
+
+            .editor {
+                height: 200px;
+            }
+
+            /* Touch-friendly adjustments */
+            .sidebar-nav a, 
+            .mobile-nav a {
+                padding: 0.75rem;
+                margin: 0.5rem 0;
+            }
+
+            .mobile-menu-btn {
+                width: 44px;
+                height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero-text p {
+                font-size: 1rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.25rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) {
+            .card:hover {
+                transform: none;
+            }
+
+            .sidebar-nav a:hover,
+            .mobile-nav a:hover {
+                transform: none;
+            }
+        }
+
+        /* Improved Accessibility */
+        .mobile-menu-btn:focus,
+        .nav-links a:focus,
+        .mobile-nav a:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-light: #1a1a2e;
+                --text-color: #e1e1e1;
+                --white: #232342;
+                --code-background: #2a2a4a;
+            }
+
+            .navbar.scrolled {
+                background: rgba(35, 35, 66, 0.95);
+            }
+
+            code {
+                color: #a0a0a0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fab fa-angular"></i>
+                AngularJS Tutorial
+            </a>
+            <ul class="nav-links">
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#advantages">Advantages</a></li>
+                <li><a href="#first-program">First Program</a></li>
+                <li><a href="#directives">Directives</a></li>
+                <li><a href="#try-it">Try It</a></li>
+            </ul>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+    </nav>
+    <div class="mobile-nav">
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#advantages">Advantages</a></li>
+            <li><a href="#disadvantages">Disadvantages</a></li>
+            <li><a href="#first-program">First Program</a></li>
+            <li><a href="#directives">Directives</a></li>
+            <li><a href="#complete-example">Complete Example</a></li>
+            <li><a href="#try-it">Try It Yourself</a></li>
+        </ul>
+    </div>
+    <div class="progress-bar">
+        <div class="progress"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Master AngularJS Development</h1>
+                <p>Learn the fundamentals of AngularJS through our comprehensive, hands-on tutorial designed for developers of all skill levels.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content-grid">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <nav class="sidebar-nav">
+                    <h3>Quick Navigation</h3>
+                    <ul>
+                        <li><a href="#introduction">Introduction to AngularJS</a></li>
+                        <li><a href="#advantages">Advantages</a></li>
+                        <li><a href="#disadvantages">Disadvantages</a></li>
+                        <li><a href="#first-program">First Program</a></li>
+                        <li><a href="#directives">Directives</a></li>
+                        <li><a href="#complete-example">Complete Example</a></li>
+                        <li><a href="#try-it">Try It Yourself</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Content Sections -->
+            <main>
+                <!-- Introduction Section -->
+                
+        <section id="introduction" class="card">
+            <h2>Introduction to AngularJS</h2>
+            <p>AngularJS, developed by Google and released in 2010, revolutionized web development by introducing the concept of extending HTML with dynamic capabilities. It was created by Miško Hevery and Adam Abrons, initially as a project to simplify web application development for enterprise applications.</p>
+            
+            <h3>History and Evolution</h3>
+            <p>What began as a side project at Google quickly evolved into a full-fledged framework that introduced groundbreaking concepts like two-way data binding and dependency injection to the frontend development world. The framework's name comes from the angular brackets (&lt; &gt;) used in HTML, reflecting its deep integration with HTML's structure.</p>
+        </section>
+
+        <section id="advantages" class="card">
+            <h2>Advantages of AngularJS</h2>
+            <div class="advantages-grid">
+                <div class="advantage-item">
+                    <i class="fas fa-sync-alt"></i>
+                    <h3>Two-Way Data Binding</h3>
+                    <p>Automatically synchronizes data between the model and the view, reducing the need for manual DOM manipulation.</p>
+                </div>
+                <div class="advantage-item">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <h3>Dependency Injection</h3>
+                    <p>Built-in dependency injection system makes applications more testable, maintainable, and modular.</p>
+                </div>
+                <div class="advantage-item">
+                    <i class="fas fa-code"></i>
+                    <h3>Directives</h3>
+                    <p>Allows creation of custom HTML tags that serve as new, custom widgets.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="disadvantages" class="card">
+            <h2>Disadvantages of AngularJS</h2>
+            <div class="disadvantages-grid">
+                <div class="disadvantage-item">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Learning Curve</h3>
+                    <p>The framework has a steep learning curve, especially for developers new to JavaScript frameworks.</p>
+                </div>
+                <div class="disadvantage-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h3>Performance</h3>
+                    <p>Can be slower than newer frameworks due to its digest cycle implementation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="first-program" class="card">
+            <h2>Your First AngularJS Program</h2>
+            <p>Let's create a simple AngularJS application step by step:</p>
+            
+            <h3>Step 1: Include AngularJS</h3>
+            <pre><code>&lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"&gt;&lt;/script&gt;</code></pre>
+
+            <h3>Step 2: Initialize the Application</h3>
+            <pre><code>&lt;div ng-app="myApp" ng-controller="myCtrl"&gt;
+    &lt;!-- Your application content here --&gt;
+&lt;/div&gt;</code></pre>
+
+            <h3>Step 3: Create a Model</h3>
+            <pre><code>&lt;input ng-model="name"&gt;
+&lt;p ng-bind="name"&gt;&lt;/p&gt;</code></pre>
+        </section>
+
+        <section id="directives" class="card">
+            <h2>AngularJS Directives</h2>
+            
+            <h3>ng-app</h3>
+            <p>Initializes an AngularJS application. It can be used to auto-bootstrap an AngularJS application.</p>
+            <pre><code>&lt;div ng-app="myApp"&gt;
+    &lt;!-- AngularJS application code --&gt;
+&lt;/div&gt;</code></pre>
+
+            <h3>ng-model</h3>
+            <p>Binds form elements to application data.</p>
+            <pre><code>&lt;input ng-model="user.name"&gt;</code></pre>
+
+            <h3>ng-bind</h3>
+            <p>Replaces the text content of an HTML element with the value of an expression.</p>
+            <pre><code>&lt;p ng-bind="user.name"&gt;&lt;/p&gt;</code></pre>
+        </section>
+
+        <section id="complete-example" class="card">
+            <h2>Complete Example</h2>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html ng-app="myApp"&gt;
+&lt;head&gt;
+    &lt;title&gt;My First AngularJS App&lt;/title&gt;
+    &lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div ng-controller="myCtrl"&gt;
+        &lt;input ng-model="name" placeholder="Enter your name"&gt;
+        &lt;p&gt;Hello &lt;span ng-bind="name"&gt;&lt;/span&gt;!&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function($scope) {
+            $scope.name = '';
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </section>
+                <section id="try-it" class="try-it-yourself">
+                    <h2>Try it Yourself</h2>
+                    <div ng-app="demoApp" ng-controller="demoCtrl">
+                        <input ng-model="name" placeholder="Enter your name" class="editor">
+                        <p>Hello <span ng-bind="name"></span>!</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript for Navigation Features -->
+    <script>
+        // Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.progress').style.width = scrolled + '%';
+        });
+
+        // Navbar Background Change on Scroll
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                document.querySelector('.navbar').classList.add('scrolled');
+            } else {
+                document.querySelector('.navbar').classList.remove('scrolled');
+            }
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        // AngularJS Demo Application
+        angular.module('demoApp', [])
+            .controller('demoCtrl', function($scope) {
+                $scope.name = '';
+            });
+    </script>
+     <script>
+        // Previous JavaScript remains and we add:
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mobileNav = document.querySelector('.mobile-nav');
+        let isMenuOpen = false;
+
+        mobileMenuBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            mobileNav.classList.toggle('active');
+            mobileMenuBtn.innerHTML = isMenuOpen ? 
+                '<i class="fas fa-times"></i>' : 
+                '<i class="fas fa-bars"></i>';
+            document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+        });
+
+        // Close mobile menu when clicking links
+        document.querySelectorAll('.mobile-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNav.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                document.body.style.overflow = '';
+                isMenuOpen = false;
+            });
+        });
+
+        // Close mobile menu on resize if open
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768 && isMenuOpen) {
+                mobileNav.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                document.body.style.overflow = '';
+                isMenuOpen = false;
+            }
+        });
+
+        // Touch event handling for mobile devices
+        let touchStartY = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isMenuOpen) {
+                const touchY = e.touches[0].clientY;
+                const diff = touchStartY - touchY;
+
+                if (diff > 50) { // Swipe up to close
+                    mobileNav.classList.remove('active');
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    document.body.style.overflow = '';
+                    isMenuOpen = false;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

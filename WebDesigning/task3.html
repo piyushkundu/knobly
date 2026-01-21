@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Development Journey</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border: 5px solid #3498db;
+            border-radius: 10px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            text-align: center;
+            font-size: 28px;
+            color: #2c3e50;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            transition: color 0.3s ease;
+        }
+
+        .header:hover {
+            color: #e74c3c;
+        }
+
+        .skills-section {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .skills-list {
+            list-style-type: square;
+            line-height: 1.8;
+            padding-left: 30px;
+            width: 45%;
+        }
+
+        .skills-list li {
+            font-weight: bold;
+            color: #2980b9;
+            position: relative;
+            left: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .skills-list li:hover {
+            color: #e74c3c;
+            transform: translateX(10px);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .highlight {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #27ae60;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .highlight:hover {
+            background-color: #2ecc71;
+        }
+
+        .description {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #3498db;
+            font-style: italic;
+        }
+
+        .tech-details {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="highlight">Featured</div>
+        <h1 class="header">Web Development Learning Journey</h1>
+        
+        <div class="description">
+            Embarking on a comprehensive web development learning path, exploring cutting-edge technologies and best practices in modern web design and development.
+        </div>
+
+        <div class="skills-section">
+            <ul class="skills-list">
+                <li>HTML5</li>
+                <li>CSS3</li>
+                <li>Responsive Design</li>
+                <li>JavaScript</li>
+                <li>Frontend Frameworks</li>
+            </ul>
+
+            <ul class="skills-list">
+                <li>React.js</li>
+                <li>Node.js</li>
+                <li>Bootstrap</li>
+                <li>SASS</li>
+                <li>Web Accessibility</li>
+            </ul>
+        </div>
+
+        <div class="tech-details">
+            <h3>Learning Approach</h3>
+            <p>Focus on building practical skills through hands-on projects, understanding core concepts, and staying updated with the latest web technologies.</p>
+        </div>
+    </div>
+</body>
+</html>
