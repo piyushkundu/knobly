@@ -1933,7 +1933,8 @@
         </div>
 
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl md:text-2xl font-gaming font-bold text-white tracking-widest">{{ isSignUp ? 'CREATE ACCOUNT' : 'SYSTEM LOGIN' }}</h2>
+          <h2 class="text-xl md:text-2xl font-gaming font-bold text-white tracking-widest">{{ isSignUp ? 'CREATE
+            ACCOUNT' : 'SYSTEM LOGIN' }}</h2>
           <button @click="showLoginModal = false" class="text-gray-400 hover:text-white"><i
               class="ph-bold ph-x text-xl"></i></button>
         </div>
@@ -1980,7 +1981,7 @@
               <label class="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Password</label>
               <input v-model="authForm.password" type="password"
                 class="rounded-lg p-3 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
-                placeholder="ÃƒÆ’Ã‚Â¢Ã¢â‚¬Å¡Ã‚Â¬Ã‚Â¢ÃƒÆ’Ã‚Â¢Ã¢â‚¬Å¡Ã‚Â¬Ã‚Â¢ÃƒÆ’Ã‚Â¢Ã¢â‚¬Å¡Ã‚Â¬Ã‚Â¢ÃƒÆ’Ã‚Â¢Ã¢â‚¬Å¡Ã‚Â¬Ã‚Â¢ÃƒÆ’Ã‚Â¢Ã¢â‚¬Å¡Ã‚Â¬Ã‚Â¢ÃƒÆ’Ã‚Â¢Ã¢â‚¬Å¡Ã‚Â¬Ã‚Â¢ÃƒÆ’Ã‚Â¢Ã¢â‚¬Å¡Ã‚Â¬Ã‚Â¢ÃƒÆ’Ã‚Â¢Ã¢â‚¬Å¡Ã‚Â¬Ã‚Â¢">
+                placeholder="Enter your password">
             </div>
           </div>
 
@@ -2476,6 +2477,10 @@
                 created_at: serverTimestamp()
               });
             }
+            // Close modal and show success
+            this.showLoginModal = false;
+            this.loadUserData();
+            Swal.fire({ icon: 'success', title: 'Welcome!', text: 'Signed in with Google.', timer: 2000, showConfirmButton: false });
           } catch (error) {
             this.authError = error.message;
           }
