@@ -1033,11 +1033,64 @@
 
 <body>
   <script>
+    // Beautiful error handling with login prompt for Firebase permission errors
+    function showLoginPrompt() {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          title: '🔐 Login Required',
+          html: '<p style="color:#94a3b8;font-size:14px;">Please login to access all features of Knobly OS</p>',
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonText: '<i class="ph-bold ph-sign-in"></i> Login',
+          cancelButtonText: '<i class="ph-bold ph-x"></i> Close',
+          confirmButtonColor: '#22d3ee',
+          cancelButtonColor: '#475569',
+          background: '#0f172a',
+          color: '#e2e8f0',
+          customClass: {
+            popup: 'rounded-2xl border border-white/10',
+            confirmButton: 'rounded-xl px-6',
+            cancelButton: 'rounded-xl px-6'
+          }
+        }).then((result) => {
+          if (result.isConfirmed && window.vueAppMounted) {
+            // Trigger login modal
+            const app = document.querySelector('#app').__vue_app__;
+            if (app && app._instance && app._instance.proxy) {
+              app._instance.proxy.showLoginModal = true;
+            }
+          }
+        });
+      }
+    }
+
+    let loginPromptShown = false;
+
     window.onerror = function (message, source, lineno, colno, error) {
-      alert("System Error:\n" + message + "\nLine: " + lineno);
+      // Silently ignore Firebase permission errors, show login prompt once
+      if (message && message.includes && (message.includes('permission-denied') || message.includes('FirebaseError'))) {
+        if (!loginPromptShown) {
+          loginPromptShown = true;
+          setTimeout(showLoginPrompt, 500);
+        }
+        return true; // Prevent default error handling
+      }
+      console.error("Error:", message, "Line:", lineno);
+      return false;
     };
+
     window.addEventListener('unhandledrejection', function (event) {
-      alert("Unhandled Promise Rejection:\n" + event.reason);
+      const reason = event.reason ? event.reason.toString() : '';
+      // Silently ignore Firebase permission errors, show login prompt once
+      if (reason.includes('permission-denied') || reason.includes('FirebaseError')) {
+        if (!loginPromptShown) {
+          loginPromptShown = true;
+          setTimeout(showLoginPrompt, 500);
+        }
+        event.preventDefault();
+        return;
+      }
+      console.error("Unhandled Promise Rejection:", event.reason);
     });
   </script>
   <div id="boot-screen">
@@ -1879,7 +1932,8 @@
         </div>
 
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl md:text-2xl font-gaming font-bold text-white tracking-widest">{{ isSignUp ? 'CREATE ACCOUNT' : 'SYSTEM LOGIN' }}</h2>
+          <h2 class="text-xl md:text-2xl font-gaming font-bold text-white tracking-widest">{{ isSignUp ? 'CREATE
+            ACCOUNT' : 'SYSTEM LOGIN' }}</h2>
           <button @click="showLoginModal = false" class="text-gray-400 hover:text-white"><i
               class="ph-bold ph-x text-xl"></i></button>
         </div>
