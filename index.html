@@ -1583,7 +1583,8 @@
                 <i class="ph-bold" :class="isLightMode ? 'ph-sun text-yellow-400' : 'ph-moon-stars text-cyan-300'"></i>
               </div>
               <div class="text-xs font-semibold text-gray-200">
-                {{ isLightMode ? 'Light mode' : 'Dark mode' }} ÃƒÆ’Ã‚Â¢Ã¢â‚¬Å¡Ã‚Â¬Ã‚Â¢ Wallpaper: {{ selectedWallpaper }}
+                {{ isLightMode ? 'Light mode' : 'Dark mode' }} ÃƒÆ’Ã‚Â¢Ã¢â‚¬Å¡Ã‚Â¬Ã‚Â¢ Wallpaper: {{ selectedWallpaper
+                }}
               </div>
             </div>
           </div>
@@ -1932,7 +1933,8 @@
         </div>
 
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl md:text-2xl font-gaming font-bold text-white tracking-widest">{{ isSignUp ? 'CREATE ACCOUNT' : 'SYSTEM LOGIN' }}</h2>
+          <h2 class="text-xl md:text-2xl font-gaming font-bold text-white tracking-widest">{{ isSignUp ? 'CREATE
+            ACCOUNT' : 'SYSTEM LOGIN' }}</h2>
           <button @click="showLoginModal = false" class="text-gray-400 hover:text-white"><i
               class="ph-bold ph-x text-xl"></i></button>
         </div>
@@ -2202,7 +2204,7 @@
           searchQuery: "",
           showModal: false,
           selectedApp: {},
-          weatherTemp: "--ÃƒÆ’Ã¢â‚¬Å¡Ã‚Â°C",
+          weatherTemp: "--°C",
           cityName: "System Local",
           greeting: "Hello",
           dateString: "",
@@ -2225,7 +2227,7 @@
           contextApp: null,
 
           // YouTube Data
-          currentVideo: { id: "bJzb-RuUcMU", title: "React in 100 Seconds", views: "Featured" },
+          currentVideo: { id: "9JaW8zC_p2c", title: "LibreOffice Writer Full Guide: Introduction and File Menu Part-1 2026", views: "Featured" },
           myVideos: [],
 
           performanceMode: true,
@@ -2863,8 +2865,8 @@
           Swal.fire({ title: "System Reset", text: "Are you sure you want to reset Guest Mode?", icon: "warning", showCancelButton: true, confirmButtonColor: "#ef4444", cancelButtonColor: "#3b82f6", confirmButtonText: "Yes, Reset", background: this.isLightMode ? "rgba(255,255,255,0.9)" : "rgba(15,23,42,0.9)", color: this.isLightMode ? "#0f172a" : "#fff", }).then((result) => { if (result.isConfirmed) { this.logActivity("System reset initiated"); gsap.to("#app", { scale: 0.9, opacity: 0, duration: 0.5 }); gsap.to("body", { backgroundColor: "#000", duration: 0.5, delay: 0.4, onComplete: () => { document.body.innerHTML = "<div style='height:100vh; background:black; display:flex; align-items:center; justify-content:center; color:#333; font-family:monospace;'>SYSTEM HALTED</div>"; }, }); } });
         },
         launchApp() { this.showModal = false; this.addRecentApp(this.selectedApp); const Toast = Swal.mixin({ toast: true, position: "top", showConfirmButton: false, timer: 2500, background: this.isLightMode ? "#fff" : "rgba(15,23,42,0.95)", color: this.isLightMode ? "#000" : "#fff", didOpen: (toast) => { toast.addEventListener("mouseenter", Swal.stopTimer); toast.addEventListener("mouseleave", Swal.resumeTimer); }, }); Toast.fire({ icon: "success", title: `Launching ${this.selectedApp.name}...`, }); this.logActivity(`Launched ${this.selectedApp.name}`); },
-        fetchWeather() { if (navigator.geolocation) { navigator.geolocation.getCurrentPosition(async (pos) => { try { const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current_weather=true`); const weatherData = await weatherRes.json(); this.weatherTemp = Math.round(weatherData.current_weather.temperature) + "ÃƒÆ’Ã¢â‚¬Å¡Ã‚Â°C"; const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&localityLanguage=en`); const geoData = await geoRes.json(); this.cityName = geoData.city || geoData.locality || "System Local"; } catch (e) { this.useFallbackWeather(); } }, () => this.useFallbackWeather()); } else { this.useFallbackWeather(); } },
-        useFallbackWeather() { this.weatherTemp = "24ÃƒÆ’Ã¢â‚¬Å¡Ã‚Â°C"; this.cityName = "System Local"; },
+        fetchWeather() { if (navigator.geolocation) { navigator.geolocation.getCurrentPosition(async (pos) => { try { const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&current_weather=true`); const weatherData = await weatherRes.json(); this.weatherTemp = Math.round(weatherData.current_weather.temperature) + "°C"; const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&localityLanguage=en`); const geoData = await geoRes.json(); this.cityName = geoData.city || geoData.locality || "System Local"; } catch (e) { this.useFallbackWeather(); } }, () => this.useFallbackWeather()); } else { this.useFallbackWeather(); } },
+        useFallbackWeather() { this.weatherTemp = "24°C"; this.cityName = "System Local"; },
         playVideo(video) { this.currentVideo = video; },
         themeFlash(goingToLight) { if (!this.performanceMode || typeof gsap === "undefined") return; const flash = document.createElement("div"); flash.className = "theme-flash-circle"; document.body.appendChild(flash); gsap.fromTo(flash, { scale: 0, opacity: 0.95 }, { scale: 6, opacity: 0, duration: 0.45, ease: "power2.out", onComplete: () => flash.remove(), }); const main = document.querySelector("main"); if (main) { gsap.fromTo(main, { scale: 0.96, filter: "blur(2px)", opacity: 0.7 }, { scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.4, ease: "power2.out" }); } },
         applyPerformanceFromState() { if (this.performanceMode) { document.body.classList.remove("knobly-low-perf"); } else { document.body.classList.add("knobly-low-perf"); } },
