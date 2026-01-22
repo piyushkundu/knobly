@@ -1,9 +1,61 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow authenticated users to read and write all collections
-    match /{document=**} {
-      allow read, write: if request.auth != null;
+    
+    // PROFILES: Users can only read/write their own profile
+    match /profiles/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // USER SETTINGS: Users can only access their own settings
+    match /user_settings/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // APPS: 
+    // - Global apps (user_id == null) are readable by all authenticated users
+    // - Personal apps are only accessible by the owner
+    match /apps/{appId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && 
+        (resource.data.user_id == request.auth.uid || resource.data.user_id == null);
+    }
+    
+    // VIDEOS: Any authenticated user can read, only admins can write
+    match /videos/{videoId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // NOTIFICATIONS: Any authenticated user can read, only admins can write
+    match /notifications/{notifId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // TESTS: Any authenticated user can read, only admins can write
+    match /tests/{testId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // EXAM USER STATE: Users can only access their own exam state
+    match /exam_user_state/{stateId} {
+      allow read, write: if request.auth != null && 
+        resource.data.user_id == request.auth.uid;
+      allow create: if request.auth != null;
+    }
+    
+    // LEADERBOARD: Any authenticated user can read
+    match /leaderboard/{entryId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        request.auth.uid == resource.data.user_id;
     }
   }
 }
