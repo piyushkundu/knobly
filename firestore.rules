@@ -2,55 +2,35 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Helper function to check if user is admin
+    // ===== HELPER FUNCTIONS =====
     function isAdmin() {
       return request.auth != null && request.auth.token.email == 'piyushkundu99@gmail.com';
     }
     
-    // Helper function to check if user is authenticated
     function isAuthenticated() {
       return request.auth != null;
     }
     
-    // PROFILES: Users can read all, write only their own profile
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    // ===== USER DATA (Users can read/write their own) =====
+    
+    // PROFILES: Public read, users write their own, admin writes all
     match /profiles/{userId} {
       allow read: if true;
-      allow write: if isAdmin() || (isAuthenticated() && request.auth.uid == userId);
+      allow write: if isAdmin() || isOwner(userId);
     }
     
-    // USER SETTINGS: Users can only access their own settings
+    // USER SETTINGS: Only owner or admin
     match /user_settings/{userId} {
-      allow read: if isAuthenticated() && request.auth.uid == userId;
-      allow write: if isAuthenticated() && request.auth.uid == userId;
+      allow read, write: if isAdmin() || isOwner(userId);
     }
     
-    // APPS: Users can read all, only admin can write global apps, users can write their own
-    match /apps/{appId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow update, delete: if isAdmin() || 
-        (isAuthenticated() && resource.data.user_id == request.auth.uid);
-    }
+    // ===== EXAM SYSTEM (Users need to save answers & scores) =====
     
-    // VIDEOS: Anyone can read, only admin can write
-    match /videos/{videoId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-    
-    // NOTIFICATIONS: Authenticated users can read, only admin can write
-    match /notifications/{notifId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
-    }
-    
-    // TESTS: Authenticated users can read, only admin can write
-    match /tests/{testId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
-    }
-    
-    // EXAM USER STATE: Users can read/write their own exam state
+    // EXAM USER STATE: Users can create and modify their own exam progress
     match /exam_user_state/{stateId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
@@ -58,33 +38,64 @@ service cloud.firestore {
         (isAuthenticated() && resource.data.user_id == request.auth.uid);
     }
     
-    // LEADERBOARD: Public read, users can write their own entry
-    match /leaderboard/{entryId} {
-      allow read: if true;
-      allow write: if isAdmin() || 
-        (isAuthenticated() && resource.data.user_id == request.auth.uid);
-      allow create: if isAuthenticated();
+    // TESTS: Everyone reads, only admin creates/edits tests
+    match /tests/{testId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
     }
     
-    // BADGES: Public read, only admin can write
+    // LEADERBOARD: Public read, users write their own entries, admin writes all
+    match /leaderboard/{entryId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update: if isAdmin() || 
+        (isAuthenticated() && resource.data.user_id == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+    
+    // ===== CONTENT (Admin manages, users read) =====
+    
+    // VIDEOS: Public read, admin writes
+    match /videos/{videoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // BADGES: Public read, admin writes
     match /badges/{badgeId} {
       allow read: if true;
       allow write: if isAdmin();
     }
     
-    // LEVELS: Public read, only admin can write
+    // LEVELS: Public read, admin writes
     match /levels/{levelId} {
       allow read: if true;
       allow write: if isAdmin();
     }
     
-    // GLOBAL APPS: Public read, only admin can write
+    // NOTIFICATIONS: Authenticated read, admin writes
+    match /notifications/{notifId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // ===== APPS (Users can add their own, admin manages global) =====
+    
+    // APPS: Users read all, create their own, edit/delete their own
+    match /apps/{appId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin() || 
+        (isAuthenticated() && resource.data.user_id == request.auth.uid);
+    }
+    
+    // GLOBAL APPS: Public read, admin writes
     match /global_apps/{appId} {
       allow read: if true;
       allow write: if isAdmin();
     }
     
-    // Catch-all for any other collections - admin only write
+    // ===== CATCH-ALL (Authenticated read, admin write) =====
     match /{document=**} {
       allow read: if isAuthenticated();
       allow write: if isAdmin();
