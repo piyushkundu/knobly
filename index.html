@@ -1879,13 +1879,15 @@
         </div>
 
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl md:text-2xl font-gaming font-bold text-white tracking-widest">{{ isSignUp ? 'CREATE ACCOUNT' : 'SYSTEM LOGIN' }}</h2>
+          <h2 class="text-xl md:text-2xl font-gaming font-bold text-white tracking-widest">{{ isSignUp ? 'CREATE
+            ACCOUNT' : 'SYSTEM LOGIN' }}</h2>
           <button @click="showLoginModal = false" class="text-gray-400 hover:text-white"><i
               class="ph-bold ph-x text-xl"></i></button>
         </div>
 
         <div class="flex flex-col gap-4">
-          <div v-if="authError" class="bg-red-500/10 border border-red-500/30 text-red-400 text-xs p-3 rounded-lg">{{ authError }}</div>
+          <div v-if="authError" class="bg-red-500/10 border border-red-500/30 text-red-400 text-xs p-3 rounded-lg">{{
+            authError }}</div>
 
           <div v-if="isSignUp" class="flex flex-col gap-3">
             <div>
@@ -2841,40 +2843,55 @@
         });
 
         // --- REAL TIME LISTENERS ---
-        // 1. Listen for NEW Notifications
-        const notifQ = query(collection(db, 'notifications'), orderBy('created_at', 'desc'), limit(1));
-        onSnapshot(notifQ, (snapshot) => {
-          snapshot.docChanges().forEach((change) => {
-            if (change.type === 'added') {
-              const data = change.doc.data();
-              this.logActivity(data.message, data.link, true);
-              this.unreadCount++;
-              const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 4000 });
-              Toast.fire({ icon: 'info', title: 'New System Message', text: data.message });
-            }
-          });
-        });
-
-        // 2. Listen for NEW Global Apps
-        const appsQ = query(collection(db, 'apps'), where('user_id', '==', null));
-        onSnapshot(appsQ, (snapshot) => {
-          snapshot.docChanges().forEach((change) => {
-            if (change.type === 'added') {
-              const data = change.doc.data();
-              if (!this.globalApps.some(a => a.id === change.doc.id)) {
-                this.globalApps.push({ id: change.doc.id, ...data });
+        // 1. Listen for NEW Notifications (only when authenticated)
+        try {
+          const notifQ = query(collection(db, 'notifications'), orderBy('created_at', 'desc'), limit(1));
+          onSnapshot(notifQ, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === 'added') {
+                const data = change.doc.data();
+                this.logActivity(data.message, data.link, true);
+                this.unreadCount++;
+                const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 4000 });
+                Toast.fire({ icon: 'info', title: 'New System Message', text: data.message });
               }
-            } else if (change.type === 'removed') {
-              this.globalApps = this.globalApps.filter(a => a.id !== change.doc.id);
-            }
+            });
+          }, (error) => {
+            // Silently ignore permission errors when not logged in
+            if (error.code !== 'permission-denied') console.error('Notification listener error:', error);
           });
-        });
+        } catch (e) { /* ignore */ }
 
-        // 3. LISTEN FOR NEW VIDEOS
-        const videosQ = query(collection(db, 'videos'));
-        onSnapshot(videosQ, () => {
-          this.fetchVideos();
-        });
+        // 2. Listen for NEW Global Apps (only when authenticated)
+        try {
+          const appsQ = query(collection(db, 'apps'), where('user_id', '==', null));
+          onSnapshot(appsQ, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === 'added') {
+                const data = change.doc.data();
+                if (!this.globalApps.some(a => a.id === change.doc.id)) {
+                  this.globalApps.push({ id: change.doc.id, ...data });
+                }
+              } else if (change.type === 'removed') {
+                this.globalApps = this.globalApps.filter(a => a.id !== change.doc.id);
+              }
+            });
+          }, (error) => {
+            // Silently ignore permission errors when not logged in
+            if (error.code !== 'permission-denied') console.error('Apps listener error:', error);
+          });
+        } catch (e) { /* ignore */ }
+
+        // 3. LISTEN FOR NEW VIDEOS (only when authenticated)
+        try {
+          const videosQ = query(collection(db, 'videos'));
+          onSnapshot(videosQ, () => {
+            this.fetchVideos();
+          }, (error) => {
+            // Silently ignore permission errors when not logged in
+            if (error.code !== 'permission-denied') console.error('Videos listener error:', error);
+          });
+        } catch (e) { /* ignore */ }
 
         // --- FETCH DATA ---
         this.fetchNotifications();
