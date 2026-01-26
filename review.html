@@ -184,8 +184,8 @@
         </div>
       </div>
 
-      <div
-        class="relative rounded-3xl bg-gradient-to-br from-slate-900/95 to-slate-950/95 border border-emerald-500/40 shadow-k-card overflow-hidden">
+      <div id="filterCorrectCard"
+        class="relative rounded-3xl bg-gradient-to-br from-slate-900/95 to-slate-950/95 border border-emerald-500/40 shadow-k-card overflow-hidden cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform">
         <div class="absolute inset-0 bg-k-radial opacity-70"></div>
         <div class="relative p-4 sm:p-5 flex flex-col justify-between gap-2">
           <div class="flex items-center justify-between gap-2">
@@ -201,13 +201,13 @@
             <span id="statCorrect">0</span>
           </div>
           <p class="text-[10px] text-slate-500">
-            Fully correct objective questions.
+            Click to show only correct answers
           </p>
         </div>
       </div>
 
-      <div
-        class="relative rounded-3xl bg-gradient-to-br from-slate-900/95 to-slate-950/95 border border-rose-500/40 shadow-k-card overflow-hidden">
+      <div id="filterWrongCard"
+        class="relative rounded-3xl bg-gradient-to-br from-slate-900/95 to-slate-950/95 border border-rose-500/40 shadow-k-card overflow-hidden cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform">
         <div class="absolute inset-0 bg-gradient-to-tr from-rose-500/25 via-transparent to-transparent opacity-80">
         </div>
         <div class="relative p-4 sm:p-5 flex flex-col justify-between gap-2">
@@ -224,7 +224,7 @@
             <span id="statWrong">0</span>
           </div>
           <p class="text-[10px] text-slate-500">
-            Includes skipped + subjective (short) questions.
+            Click to show only wrong answers
           </p>
         </div>
       </div>
@@ -256,11 +256,39 @@
     </section>
 
     <section class="space-y-4">
-      <div class="flex items-center justify-between px-1">
+      <div class="flex flex-wrap items-center justify-between gap-3 px-1">
         <h2 class="text-sm sm:text-base font-semibold text-slate-100 flex items-center gap-2">
           <i class="ph ph-list-magnifying-glass text-sky-400"></i>
           Detailed Question Review
         </h2>
+
+        <!-- Filter Buttons -->
+        <div class="flex items-center gap-2">
+          <button id="filterAllBtn"
+            class="px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all filter-btn-active"
+            data-filter="all">
+            <i class="ph ph-list text-xs mr-1"></i>All
+          </button>
+          <button id="filterCorrectBtn"
+            class="px-3 py-1.5 rounded-xl text-[11px] font-semibold border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition-all"
+            data-filter="correct">
+            <i class="ph ph-check-circle text-xs mr-1"></i>Correct
+          </button>
+          <button id="filterWrongBtn"
+            class="px-3 py-1.5 rounded-xl text-[11px] font-semibold border border-rose-500/40 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 transition-all"
+            data-filter="wrong">
+            <i class="ph ph-x-circle text-xs mr-1"></i>Wrong
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Filter Indicator -->
+      <div id="filterIndicator"
+        class="hidden px-3 py-2 rounded-xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-between gap-2">
+        <span id="filterIndicatorText" class="text-xs text-slate-300"></span>
+        <button id="clearFilterBtn" class="text-[10px] text-sky-400 hover:text-sky-300 flex items-center gap-1">
+          <i class="ph ph-x text-xs"></i>Clear
+        </button>
       </div>
 
       <div id="questionsContainer" class="space-y-4 sm:space-y-5"></div>
@@ -613,7 +641,8 @@
               : "text-emerald-300 bg-emerald-500/10 border-emerald-400/40";
 
         const card = document.createElement("article");
-        card.className = "rounded-3xl border border-slate-800/80 bg-slate-950/80 backdrop-blur-xl shadow-k-card overflow-hidden relative";
+        card.className = "rounded-3xl border border-slate-800/80 bg-slate-950/80 backdrop-blur-xl shadow-k-card overflow-hidden relative question-card";
+        card.dataset.status = statusLabel.toLowerCase(); // 'correct', 'wrong', 'skipped', 'review'
 
         card.innerHTML = `
           <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-500/40 to-transparent"></div>
@@ -668,6 +697,99 @@
       statCorrectEl.textContent = correctCount;
       statWrongEl.textContent = wrongCount;
     }
+
+    // ---------- FILTER FUNCTIONALITY ----------
+    let currentFilter = 'all';
+
+    const filterAllBtn = document.getElementById('filterAllBtn');
+    const filterCorrectBtn = document.getElementById('filterCorrectBtn');
+    const filterWrongBtn = document.getElementById('filterWrongBtn');
+    const filterCorrectCard = document.getElementById('filterCorrectCard');
+    const filterWrongCard = document.getElementById('filterWrongCard');
+    const filterIndicator = document.getElementById('filterIndicator');
+    const filterIndicatorText = document.getElementById('filterIndicatorText');
+    const clearFilterBtn = document.getElementById('clearFilterBtn');
+
+    function applyFilter(filter) {
+      currentFilter = filter;
+      const cards = document.querySelectorAll('.question-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const status = card.dataset.status;
+        let show = false;
+
+        if (filter === 'all') {
+          show = true;
+        } else if (filter === 'correct') {
+          show = status === 'correct';
+        } else if (filter === 'wrong') {
+          show = status === 'wrong' || status === 'skipped' || status === 'review';
+        }
+
+        if (show) {
+          card.style.display = '';
+          visibleCount++;
+          // Animate card appearance
+          gsap.fromTo(card, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Update filter buttons appearance
+      updateFilterButtonStyles(filter);
+
+      // Update filter indicator
+      if (filter === 'all') {
+        filterIndicator.classList.add('hidden');
+      } else {
+        filterIndicator.classList.remove('hidden');
+        filterIndicator.classList.add('flex');
+        if (filter === 'correct') {
+          filterIndicatorText.innerHTML = `<i class="ph ph-check-circle text-emerald-400 mr-1"></i> Showing <strong class="text-emerald-300">${visibleCount}</strong> correct answer(s)`;
+        } else {
+          filterIndicatorText.innerHTML = `<i class="ph ph-x-circle text-rose-400 mr-1"></i> Showing <strong class="text-rose-300">${visibleCount}</strong> wrong/skipped answer(s)`;
+        }
+      }
+    }
+
+    function updateFilterButtonStyles(activeFilter) {
+      // Reset all buttons
+      filterAllBtn.className = 'px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all';
+      filterCorrectBtn.className = 'px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all';
+      filterWrongBtn.className = 'px-3 py-1.5 rounded-xl text-[11px] font-semibold border transition-all';
+
+      // Style active button
+      if (activeFilter === 'all') {
+        filterAllBtn.classList.add('border-sky-500', 'bg-sky-500/20', 'text-sky-300', 'shadow-lg', 'shadow-sky-500/20');
+        filterCorrectBtn.classList.add('border-emerald-500/40', 'bg-emerald-500/10', 'text-emerald-300', 'hover:bg-emerald-500/20');
+        filterWrongBtn.classList.add('border-rose-500/40', 'bg-rose-500/10', 'text-rose-300', 'hover:bg-rose-500/20');
+      } else if (activeFilter === 'correct') {
+        filterAllBtn.classList.add('border-slate-700', 'bg-slate-800', 'text-slate-400', 'hover:bg-slate-700');
+        filterCorrectBtn.classList.add('border-emerald-400', 'bg-emerald-500/20', 'text-emerald-200', 'shadow-lg', 'shadow-emerald-500/20');
+        filterWrongBtn.classList.add('border-rose-500/40', 'bg-rose-500/10', 'text-rose-300', 'hover:bg-rose-500/20');
+      } else if (activeFilter === 'wrong') {
+        filterAllBtn.classList.add('border-slate-700', 'bg-slate-800', 'text-slate-400', 'hover:bg-slate-700');
+        filterCorrectBtn.classList.add('border-emerald-500/40', 'bg-emerald-500/10', 'text-emerald-300', 'hover:bg-emerald-500/20');
+        filterWrongBtn.classList.add('border-rose-400', 'bg-rose-500/20', 'text-rose-200', 'shadow-lg', 'shadow-rose-500/20');
+      }
+    }
+
+    // Event Listeners for filter buttons
+    filterAllBtn.addEventListener('click', () => applyFilter('all'));
+    filterCorrectBtn.addEventListener('click', () => applyFilter('correct'));
+    filterWrongBtn.addEventListener('click', () => applyFilter('wrong'));
+
+    // Event Listeners for clickable stat cards
+    filterCorrectCard.addEventListener('click', () => applyFilter('correct'));
+    filterWrongCard.addEventListener('click', () => applyFilter('wrong'));
+
+    // Clear filter button
+    clearFilterBtn.addEventListener('click', () => applyFilter('all'));
+
+    // Initialize filter buttons style
+    updateFilterButtonStyles('all');
 
     // Run
     initReview();
