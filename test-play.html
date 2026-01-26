@@ -1223,41 +1223,58 @@
       }, 500);
     });
 
-    // ---------- TIMER (FIXED) ----------
+    // ---------- TIMER (FIXED - RELIABLE) ----------
     function startTimer() {
-      // Safety: if somehow deadline not set, set from now
-      if (!deadline && testData) {
-        const duration = testData.duration_minutes || 60;
+      // Clear any existing interval first
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+
+      // ALWAYS set deadline from NOW when exam starts if not already set or invalid
+      if (!deadline || isNaN(deadline.getTime())) {
+        const duration = (testData && testData.duration_minutes) ? testData.duration_minutes : 60;
         const now = new Date();
         deadline = new Date(now.getTime() + duration * 60000);
+        console.log("Timer: Deadline set from now - ", deadline.toISOString(), "Duration:", duration, "minutes");
       }
-      if (!deadline) {
-        console.warn("No deadline set, timer cannot start.");
-        return;
+
+      // Double-check deadline is valid
+      if (!deadline || isNaN(deadline.getTime())) {
+        console.error("Timer: Failed to set deadline, using 60 min default");
+        deadline = new Date(Date.now() + 60 * 60000);
       }
-      if (timerInterval) clearInterval(timerInterval);
 
       function tick() {
         if (examFinished) {
-          clearInterval(timerInterval);
+          if (timerInterval) clearInterval(timerInterval);
           return;
         }
         const now = new Date();
         let remaining = Math.floor((deadline - now) / 1000);
+
+        // Handle edge case where deadline might be in the past
         if (remaining <= 0) {
           timerDisplay.textContent = "00:00";
-          clearInterval(timerInterval);
+          if (timerInterval) clearInterval(timerInterval);
           finalizeSubmit("AUTO_SUBMITTED");
           return;
         }
+
         if (remaining < 60) {
           timerDisplay.classList.add("text-rose-400", "animate-pulse");
         }
         timerDisplay.textContent = formatTimer(remaining);
       }
 
+      // Execute tick immediately to show time right away
       tick();
+
+      // Start interval - use timeout to ensure it starts
       timerInterval = setInterval(tick, 1000);
+
+      // Log for debugging
+      console.log("Timer: Started successfully, interval ID:", timerInterval);
     }
 
     // ---------- SUBMIT ----------
