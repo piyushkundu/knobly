@@ -535,10 +535,93 @@
                         <div class="flex flex-col gap-2">
                            <button @click="openUserProfile(u)"
                               class="text-xs text-blue-400 hover:text-white border border-blue-500/30 px-2 py-1 rounded">PROFILE</button>
-                           <button @click="deleteUser(u.id)" v-if="u.id !== user.id"
+
+                           <!-- Admin Toggle Button -->
+                           <button v-if="u.role !== 'admin'" @click="toggleAdminRole(u)"
+                              class="text-xs text-gray-400 hover:text-white border border-gray-600 px-2 py-1 rounded bg-white/5 hover:bg-white/10">
+                              MAKE ADMIN
+                           </button>
+                           <button v-else-if="u.id !== user.uid" @click="toggleAdminRole(u)"
+                              class="text-xs text-amber-500 hover:text-amber-300 border border-amber-500/30 px-2 py-1 rounded bg-amber-500/10 hover:bg-amber-500/20">
+                              REMOVE ADMIN
+                           </button>
+
+                           <button @click="deleteUser(u.id)" v-if="u.id !== user.uid"
                               class="text-xs text-red-400 hover:text-white border border-red-500/30 px-2 py-1 rounded">DELETE</button>
                         </div>
                      </div>
+                  </div>
+               </div>
+
+               <!-- LEADERBOARD TAB -->
+               <div v-if="activeTab === 'leaderboard'" class="space-y-4">
+                  <div
+                     class="glass-panel p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                     <div class="flex items-center gap-3">
+                        <i class="ph-duotone ph-trophy text-2xl text-amber-500"></i>
+                        <div>
+                           <h3 class="text-sm font-bold text-white uppercase tracking-wider">User Leaderboard</h3>
+                           <p class="text-[10px] text-gray-400">Users ranked by total points. Delete users directly from
+                              here.</p>
+                        </div>
+                     </div>
+                     <div class="text-xs text-gray-400">
+                        Total Users: <span class="text-amber-500 font-bold">{{ leaderboardUsers.length }}</span>
+                     </div>
+                  </div>
+
+                  <div class="glass-panel rounded-xl overflow-hidden overflow-x-auto">
+                     <table class="w-full text-left text-sm min-w-[600px]">
+                        <thead class="bg-white/5 text-gray-400 text-xs uppercase">
+                           <tr>
+                              <th class="p-3 w-16 text-center">Rank</th>
+                              <th class="p-3">User</th>
+                              <th class="p-3 w-24 text-center">Track</th>
+                              <th class="p-3 w-28 text-center">Points</th>
+                              <th class="p-3 w-32 text-center">Actions</th>
+                           </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                           <tr v-if="leaderboardUsers.length === 0">
+                              <td colspan="5" class="p-6 text-center text-gray-500 text-xs">No users found.</td>
+                           </tr>
+                           <tr v-for="(u, idx) in leaderboardUsers" :key="u.id" class="hover:bg-white/5">
+                              <td class="p-3 text-center">
+                                 <span v-if="idx === 0" class="text-lg text-amber-400 font-bold">#1</span>
+                                 <span v-else-if="idx === 1" class="text-lg text-gray-300 font-bold">#2</span>
+                                 <span v-else-if="idx === 2" class="text-lg text-amber-600 font-bold">#3</span>
+                                 <span v-else class="text-gray-500 font-mono">{{ idx + 1 }}</span>
+                              </td>
+                              <td class="p-3">
+                                 <div class="flex items-center gap-3">
+                                    <div
+                                       class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white text-[10px]">
+                                       {{ u.full_name ? u.full_name.substring(0,2).toUpperCase() : 'UN' }}
+                                    </div>
+                                    <div class="min-w-0">
+                                       <div class="font-medium text-white text-xs truncate">{{ u.full_name || 'No Name'
+                                          }}</div>
+                                       <div class="text-[10px] text-gray-500 truncate">{{ u.email }}</div>
+                                    </div>
+                                 </div>
+                              </td>
+                              <td class="p-3 text-center">
+                                 <span class="text-[9px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded">{{
+                                    u.exam_track || 'N/A' }}</span>
+                              </td>
+                              <td class="p-3 text-center">
+                                 <span class="font-bold text-emerald-400 font-mono">{{ u.total_points || 0 }}</span>
+                              </td>
+                              <td class="p-3 text-center">
+                                 <button @click="deleteUser(u.id)" v-if="u.id !== user.id"
+                                    class="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1.5 rounded flex items-center gap-1 mx-auto transition-colors">
+                                    <i class="ph-bold ph-trash"></i> Delete
+                                 </button>
+                                 <span v-else class="text-[10px] text-gray-500 italic">Current Admin</span>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
                   </div>
                </div>
 
@@ -1032,6 +1115,7 @@
                { id: 'results', label: 'Results & Monitoring', icon: 'ph-bold ph-chart-line-up' },
                { header: 'Management' },
                { id: 'users', label: 'User Directory', icon: 'ph-bold ph-users' },
+               { id: 'leaderboard', label: 'Leaderboard', icon: 'ph-bold ph-trophy' },
                { id: 'gamification', label: 'Levels & Badges', icon: 'ph-bold ph-medal' },
                { id: 'resources', label: 'Apps, Videos & Notifs', icon: 'ph-bold ph-storefront' },
             ];
@@ -1043,6 +1127,11 @@
                if (!userSearch.value) return users.value;
                const q = userSearch.value.toLowerCase();
                return users.value.filter(u => (u.full_name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q));
+            });
+
+            // Leaderboard - users sorted by total_points descending
+            const leaderboardUsers = computed(() => {
+               return [...users.value].sort((a, b) => (b.total_points || 0) - (a.total_points || 0));
             });
 
             // --- AUTH ---
@@ -1415,6 +1504,31 @@
                currentProfile.badges = badgeNames;
                showProfileModal.value = true;
             }
+
+
+            async function toggleAdminRole(u) {
+               const action = u.role === 'admin' ? 'Remove' : 'Make';
+               if (!confirm(`${action} Admin for ${u.full_name}?`)) return;
+
+               try {
+                  const newRole = u.role === 'admin' ? 'user' : 'admin';
+                  // Optimistic update
+                  u.role = newRole;
+
+                  await updateDoc(doc(db, 'profiles', u.id), { role: newRole });
+                  console.log(`User ${u.id} role updated to ${newRole}`);
+
+                  // If we removed our own admin access, reload to force logout/check
+                  if (u.id === user.value.uid && newRole !== 'admin') {
+                     location.reload();
+                  }
+               } catch (e) {
+                  console.error('Error updating role:', e);
+                  alert('Error: ' + e.message);
+                  u.role = u.role === 'admin' ? 'user' : 'admin'; // Revert on error
+               }
+            }
+
             async function deleteUser(uid) {
                if (!confirm('Delete User? This is irreversible.')) return;
                try {
@@ -1571,7 +1685,7 @@
                questions, selectedTestId, showQModal, qForm, loadQuestions, openAddQuestionModal, addOption, setCorrectOption, editQuestion, saveQuestion, deleteQuestion,
                importMode, importText, importLogs, parseAndImport,
                results, resultFilter, loadResults, getUserName, getTestName, viewAttemptDetail, showAttemptModal, currentAttemptDetail,
-               users, userSearch, filteredUsers, openUserProfile, deleteUser, showProfileModal, currentProfile,
+               users, userSearch, filteredUsers, leaderboardUsers, openUserProfile, deleteUser, toggleAdminRole, showProfileModal, currentProfile,
                levels, badges, levelForm, badgeForm, saveLevel, deleteLevel, saveBadge, deleteBadge,
                editingLevelId, editLevel, cancelLevelEdit, editingBadgeId, editBadge, cancelBadgeEdit,
                notifications, apps, videos, notifMsg, notifLink, appForm, videoForm, sendNotification, deleteNotification, deployApp, deleteApp, publishVideo, deleteVideo,

@@ -4,7 +4,11 @@ service cloud.firestore {
     
     // ===== HELPER FUNCTIONS =====
     function isAdmin() {
-      return request.auth != null && request.auth.token.email == 'piyushkundu99@gmail.com';
+      return request.auth != null && (
+        request.auth.token.email == 'piyushkundu99@gmail.com' || 
+        (exists(/databases/$(database)/documents/profiles/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'admin')
+      );
     }
     
     function isAuthenticated() {
@@ -36,6 +40,34 @@ service cloud.firestore {
       allow create: if isAuthenticated();
       allow update, delete: if isAdmin() || 
         (isAuthenticated() && resource.data.user_id == request.auth.uid);
+    }
+
+    // EXAM CONTENT (Tests, Questions, Options): Read-only for users
+    match /exam_tests/{testId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    match /exam_questions/{qId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    match /exam_options/{oId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // EXAM ATTEMPTS & RESPONSES: Users create/update their own
+    match /exam_attempts/{aId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAdmin() || (isAuthenticated() && resource.data.user_id == request.auth.uid);
+    }
+    match /exam_responses/{rId} {
+      allow read, write: if isAuthenticated();
+    }
+    match /exam_proctor_log/{lId} {
+      allow create: if isAuthenticated();
+      allow read: if isAdmin();
     }
     
     // TESTS: Everyone reads, only admin creates/edits tests

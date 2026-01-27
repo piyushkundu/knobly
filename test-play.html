@@ -960,9 +960,9 @@
         const q = query(collection(db, "exam_questions"), where("test_id", "==", testId));
         const querySnapshot = await getDocs(q);
 
-        // Fetch options for each question manually since we can't join
-        let loadedQuestions = [];
-        for (const docSnap of querySnapshot.docs) {
+        // OPTIMIZATION: Fetch options in parallel using Promise.all
+        // This prevents the "waterfall" effect where each question waits for the previous one
+        const promises = querySnapshot.docs.map(async (docSnap) => {
           const quest = { id: docSnap.id, ...docSnap.data() };
 
           // Fetch options for this question
@@ -973,11 +973,18 @@
           if (quest.exam_options.length > 0) {
             shuffleArray(quest.exam_options);
           }
-          loadedQuestions.push(quest);
-        }
+          return quest;
+        });
+
+        const loadedQuestions = await Promise.all(promises);
 
         questions = shuffleArray(loadedQuestions);
         totalCounterEl.textContent = questions.length;
+
+        // Show update to user
+        if (questions.length > 0) {
+          console.log(`Loaded ${questions.length} questions in parallel.`);
+        }
       } catch (error) {
         console.error("Question load error:", error);
       }
@@ -1006,6 +1013,7 @@
 
       } catch (error) {
         console.error("Attempt insert error:", error);
+        return error;
       }
     }
 
@@ -1178,16 +1186,25 @@
 
     async function handleOptionClick(questionId, optionId) {
       if (!examStarted || examFinished) return;
+
+      // 1. Optimistic Update: Update local state immediately
       responsesMap[questionId] = {
         option_id: optionId,
         short_answer: null,
       };
+
+      // Update UI immediately so user sees the selection
+      renderQuestion();
       answeredCounterEl.textContent = countAnswered();
       updatePaletteColors();
 
-      // Upsert response
-      // We need to query if response exists for this attempt+question, or use a custom ID structure
-      // Composite ID idea: attempt_id + "_" + question_id
+      // 2. Safety Check
+      if (!attempt || !attempt.id) {
+        console.warn("Attempt ID missing, cannot save to DB yet.");
+        return;
+      }
+
+      // 3. Background Save
       const respId = `${attempt.id}_${questionId}`;
       const payload = {
         attempt_id: attempt.id,
@@ -1196,9 +1213,13 @@
         short_answer: null,
         updated_at: serverTimestamp()
       };
-      await setDoc(doc(db, "exam_responses", respId), payload, { merge: true });
 
-      renderQuestion();
+      try {
+        await setDoc(doc(db, "exam_responses", respId), payload, { merge: true });
+      } catch (e) {
+        console.error("Save failed:", e);
+        // Optionally show toast/error to user here
+      }
     }
 
     let shortSaveTimeout = null;
@@ -1211,6 +1232,7 @@
       updatePaletteColors();
       if (shortSaveTimeout) clearTimeout(shortSaveTimeout);
       shortSaveTimeout = setTimeout(async () => {
+        if (!attempt || !attempt.id) return;
         const respId = `${attempt.id}_${q.id}`;
         const payload = {
           attempt_id: attempt.id,
@@ -1219,7 +1241,9 @@
           short_answer: val,
           updated_at: serverTimestamp()
         };
-        await setDoc(doc(db, "exam_responses", respId), payload, { merge: true });
+        try {
+          await setDoc(doc(db, "exam_responses", respId), payload, { merge: true });
+        } catch (e) { console.error("Short answer save failed", e); }
       }, 500);
     });
 
@@ -1335,6 +1359,17 @@
 
     // ---------- START EXAM ----------
     startExamBtn.addEventListener("click", async () => {
+      // Retry loading attempt if missing (e.g. network/perm error earlier)
+      if (!attempt) {
+        console.log("Attempt missing, retrying loadAttempt...");
+        const err = await loadAttempt();
+        if (!attempt) {
+          const errMsg = err ? err.message : "Unknown error";
+          alert(`Could not initialize exam attempt.\nError: ${errMsg}\n\nPlease check your connection, refresh, or contact support.`);
+          return;
+        }
+      }
+
       try {
         if (!document.fullscreenElement) {
           await document.documentElement.requestFullscreen();
@@ -1351,7 +1386,12 @@
 
     // ---------- FINALIZE SUBMIT ----------
     async function finalizeSubmit(type = "SUBMITTED") {
-      if (examFinished || !attempt) return;
+      if (examFinished) return;
+      if (!attempt) {
+        alert("Error: No active exam attempt found. Cannot submit.");
+        return;
+      }
+
       examFinished = true;
       if (timerInterval) clearInterval(timerInterval);
       mobileTriggerApp.classList.add("hidden");
@@ -1370,27 +1410,32 @@
 
       const totalQuestions = questions.length || 1;
       const accuracy = Math.round((correctCount / totalQuestions) * 100);
-      const xpEarned = score; // Fixed: Points = Score obtained
+      const xpEarned = score;
 
-      await updateDoc(doc(db, "exam_attempts", attempt.id), {
-        status: type,
-        submitted_at: new Date().toISOString(),
-        score,
-        accuracy,
-        xp_earned: xpEarned,
-      });
+      try {
+        await updateDoc(doc(db, "exam_attempts", attempt.id), {
+          status: type,
+          submitted_at: new Date().toISOString(),
+          score,
+          accuracy,
+          xp_earned: xpEarned,
+        });
 
-      if (xpEarned > 0) {
-        // Query user state
-        const qState = query(collection(db, "exam_user_state"), where("user_id", "==", user.uid));
-        const stateSnap = await getDocs(qState);
-        if (!stateSnap.empty) {
-          const stDoc = stateSnap.docs[0];
-          await updateDoc(stDoc.ref, {
-            total_xp: (stDoc.data().total_xp || 0) + xpEarned,
-            total_points: (stDoc.data().total_points || 0) + xpEarned // Sync points
-          });
+        if (xpEarned > 0) {
+          // Query user state
+          const qState = query(collection(db, "exam_user_state"), where("user_id", "==", user.uid));
+          const stateSnap = await getDocs(qState);
+          if (!stateSnap.empty) {
+            const stDoc = stateSnap.docs[0];
+            await updateDoc(stDoc.ref, {
+              total_xp: (stDoc.data().total_xp || 0) + xpEarned,
+              total_points: (stDoc.data().total_points || 0) + xpEarned
+            });
+          }
         }
+      } catch (err) {
+        console.error("Submit error:", err);
+        alert("Note: Results rendered, but failed to save to server (Connection/Permission error).");
       }
 
       if (document.fullscreenElement) {
