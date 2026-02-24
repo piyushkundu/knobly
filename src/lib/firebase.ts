@@ -12,18 +12,32 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const auth = getAuth(app);
+const isServer = typeof window === 'undefined';
 
-// Use initializeFirestore on first init to avoid INTERNAL ASSERTION FAILED errors
+// Don't initialize full Firebase during static prerendering if keys are missing
+// This prevents Next.js builds from failing on Vercel before env vars are added
+let app;
+let auth: ReturnType<typeof getAuth>;
 let db: Firestore;
-try {
-  db = getApps().length <= 1 && !('_knobly_db' in globalThis)
-    ? initializeFirestore(app, { experimentalForceLongPolling: true, ignoreUndefinedProperties: true })
-    : getFirestore(app);
-  (globalThis as any)._knobly_db = true;
-} catch {
-  db = getFirestore(app);
+
+if (!firebaseConfig.apiKey && isServer) {
+  console.warn('Firebase API Key is missing. Skipping full initialization during build.');
+  // Mock objects for build time
+  app = {} as any;
+  auth = {} as any;
+  db = {} as any;
+} else {
+  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  auth = getAuth(app);
+
+  try {
+    db = getApps().length <= 1 && !('_knobly_db' in globalThis)
+      ? initializeFirestore(app, { experimentalForceLongPolling: true, ignoreUndefinedProperties: true })
+      : getFirestore(app);
+    (globalThis as any)._knobly_db = true;
+  } catch {
+    db = getFirestore(app);
+  }
 }
 
 export { app, auth, db };
