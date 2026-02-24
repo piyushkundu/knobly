@@ -407,26 +407,28 @@ export default function KnoblyAI() {
                                     <button
                                         key={a.path}
                                         onClick={() => navigateTo(a.path)}
-                                        className="flex flex-col items-center gap-1 py-2.5 rounded-xl transition-all duration-200 cursor-pointer"
+                                        className="flex flex-col items-center justify-center gap-1.5 py-3 rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden relative group"
                                         style={{
-                                            background: 'rgba(30,41,59,0.5)',
-                                            border: '1px solid rgba(139,92,246,0.12)',
+                                            background: 'rgba(15, 23, 42, 0.4)',
+                                            border: '1px solid rgba(139,92,246,0.15)',
+                                            backdropFilter: 'blur(8px)',
                                         }}
                                         onMouseEnter={e => {
                                             (e.currentTarget as HTMLElement).style.background = 'rgba(139,92,246,0.15)';
-                                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(139,92,246,0.35)';
-                                            (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
-                                            (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(139,92,246,0.15)';
+                                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(139,92,246,0.4)';
+                                            (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px) scale(1.02)';
+                                            (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px -6px rgba(139,92,246,0.25), inset 0 1px 1px rgba(255,255,255,0.1)';
                                         }}
                                         onMouseLeave={e => {
-                                            (e.currentTarget as HTMLElement).style.background = 'rgba(30,41,59,0.5)';
-                                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(139,92,246,0.12)';
-                                            (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                                            (e.currentTarget as HTMLElement).style.background = 'rgba(15, 23, 42, 0.4)';
+                                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(139,92,246,0.15)';
+                                            (e.currentTarget as HTMLElement).style.transform = 'translateY(0) scale(1)';
                                             (e.currentTarget as HTMLElement).style.boxShadow = 'none';
                                         }}
                                     >
-                                        <span style={{ fontSize: 18 }}>{a.emoji}</span>
-                                        <span style={{ fontSize: 10, color: '#94a3b8', fontWeight: 500 }}>{a.label}</span>
+                                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                        <span style={{ fontSize: 20, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }}>{a.emoji}</span>
+                                        <span style={{ fontSize: 11, color: '#cbd5e1', fontWeight: 600, letterSpacing: '0.02em' }}>{a.label}</span>
                                     </button>
                                 ))}
                             </div>
@@ -436,39 +438,57 @@ export default function KnoblyAI() {
                     {/* ── Input ── */}
                     <div className="px-3 pb-3 pt-1">
                         <div
-                            className="flex items-center gap-2 rounded-2xl px-3.5 py-2.5 transition-all duration-300"
+                            className="flex items-center gap-2 rounded-full px-4 py-3 transition-all duration-300"
                             style={{
-                                background: 'rgba(15,23,42,0.9)',
-                                border: '1px solid rgba(139,92,246,0.2)',
+                                background: 'linear-gradient(145deg, rgba(15,23,42,0.8) 0%, rgba(30,41,59,0.6) 100%)',
+                                border: '1px solid rgba(139,92,246,0.25)',
+                                boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.3)',
+                                backdropFilter: 'blur(12px)',
+                            }}
+                            onFocus={e => {
+                                e.currentTarget.style.border = '1px solid rgba(139,92,246,0.6)';
+                                e.currentTarget.style.boxShadow = 'inset 0 2px 10px rgba(0,0,0,0.5), 0 0 20px rgba(139,92,246,0.2)';
+                            }}
+                            onBlur={e => {
+                                e.currentTarget.style.border = '1px solid rgba(139,92,246,0.25)';
+                                e.currentTarget.style.boxShadow = 'inset 0 2px 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.3)';
                             }}
                         >
+                            <div className="flex-shrink-0 text-purple-400 mr-1">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                </svg>
+                            </div>
                             <input
                                 ref={inputRef}
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 onKeyDown={onKeyDown}
-                                placeholder="Kuch bhi poochho..."
-                                className="flex-1 bg-transparent outline-none min-w-0"
-                                style={{ fontSize: 13, color: '#f1f5f9', caretColor: '#8b5cf6' }}
+                                placeholder="Kuch bhi puchhiye ya search kariye..."
+                                className="flex-1 bg-transparent outline-none min-w-0 font-medium placeholder:text-slate-500"
+                                style={{ fontSize: 14, color: '#f8fafc', caretColor: '#a855f7' }}
                             />
                             <button
                                 onClick={() => send()}
                                 disabled={!input.trim() || loading}
                                 className="flex items-center justify-center transition-all duration-200"
                                 style={{
-                                    width: 30,
-                                    height: 30,
-                                    borderRadius: 10,
+                                    width: 36,
+                                    height: 36,
+                                    borderRadius: '50%',
                                     background: input.trim() && !loading
-                                        ? 'linear-gradient(135deg, #8b5cf6, #6366f1)'
-                                        : 'rgba(30,41,59,0.5)',
-                                    color: input.trim() && !loading ? '#fff' : '#475569',
+                                        ? 'linear-gradient(135deg, #a855f7, #6366f1)'
+                                        : 'rgba(30,41,59,0.8)',
+                                    color: input.trim() && !loading ? '#fff' : '#64748b',
                                     cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
-                                    boxShadow: input.trim() && !loading ? '0 4px 12px rgba(139,92,246,0.3)' : 'none',
+                                    boxShadow: input.trim() && !loading ? '0 4px 15px rgba(168,85,247,0.4), inset 0 2px 4px rgba(255,255,255,0.2)' : 'inset 0 2px 4px rgba(0,0,0,0.2)',
+                                    transform: input.trim() && !loading ? 'scale(1.05)' : 'scale(1)',
                                 }}
                             >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: input.trim() ? 'translate(1px, -1px)' : 'none', transition: 'transform 0.2s' }}>
+                                    <line x1="22" y1="2" x2="11" y2="13" />
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
                                 </svg>
                             </button>
                         </div>
