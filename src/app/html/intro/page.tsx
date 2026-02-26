@@ -388,9 +388,9 @@ export default function HtmlIntro() {
     <p>I just created my first web page using HTML.</p>
     <p>HTML is easy and fun to learn.</p>
     <hr>
-    <h2>About Me</h2>
+    <h2 id="about-me">About Me</h2>
     <p>My name is Student and I am learning web development.</p>
-    <h2>My Hobbies</h2>
+    <h2 id="my-hobbies">My Hobbies</h2>
     <ul>
         <li>Coding</li>
         <li>Reading</li>
@@ -462,7 +462,7 @@ export default function HtmlIntro() {
                 <Link href="/html/elements" className="group flex items-center justify-between bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-5 sm:p-6 shadow-lg shadow-blue-500/20 hover:shadow-xl transition-shadow mb-4">
                     <div>
                         <span className="text-[10px] font-bold text-blue-200 uppercase tracking-wider">Next Chapter</span>
-                        <h3 className="text-lg sm:text-xl font-extrabold text-white">Elements, Tags & Attributes →</h3>
+                        <h3 id="elements-tags-attributes" className="text-lg sm:text-xl font-extrabold text-white">Elements, Tags & Attributes →</h3>
                         <p className="text-blue-200 text-xs mt-1">18 sections covering every HTML element with examples</p>
                     </div>
                     <ChevronRight size={24} className="text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all shrink-0" />

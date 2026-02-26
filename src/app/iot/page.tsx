@@ -106,7 +106,7 @@ export default function IoTPage() {
                         <div key={topic.title} className="glass-panel rounded-2xl p-5 border border-white/5 hover:border-orange-500/20 transition-all duration-300">
                             <div className="flex items-center gap-3 mb-4">
                                 <i className={`${topic.icon} text-2xl ${topic.color}`} />
-                                <h2 className="text-base font-bold text-white">{topic.title}</h2>
+                                <h2 id="topictitle" className="text-base font-bold text-white">{topic.title}</h2>
                             </div>
                             <ul className="space-y-2">
                                 {topic.items.map((item, i) => (

@@ -81,7 +81,7 @@ h2 { color: #1a202c; margin-bottom: 4px; }
 </style></head><body>
 <div class="card">
   <div class="avatar">👨‍💻</div>
-  <h2>Your Name</h2>
+  <h2 id="your-name">Your Name</h2>
   <p class="role">Web Developer</p>
   <div class="stats">
     <div class="stat"><div class="stat-num">42</div><div class="stat-label">Projects</div></div>
@@ -107,7 +107,7 @@ button:hover { opacity: 0.9; }
 a { color: #818cf8; text-decoration: none; }
 </style></head><body>
 <div class="form-box">
-  <h2>Welcome Back</h2>
+  <h2 id="welcome-back">Welcome Back</h2>
   <label>Email</label>
   <input type="email" placeholder="you@example.com">
   <label>Password</label>
@@ -132,7 +132,7 @@ tr:hover td { background: #f0f9ff; }
 .pass { background: #dcfce7; color: #166534; }
 .fail { background: #fee2e2; color: #991b1b; }
 </style></head><body>
-<h2>Student Results</h2>
+<h2 id="student-results">Student Results</h2>
 <table>
   <tr><th>Roll No</th><th>Name</th><th>Subject</th><th>Marks</th><th>Status</th></tr>
   <tr><td>1</td><td>Rahul</td><td>HTML</td><td>92</td><td><span class="badge pass">Pass</span></td></tr>

@@ -292,14 +292,14 @@ It stretches the text so each line has equal width.</p>`} />
             <Section id="heading-tag" title="8. Heading Tags (h1-h6)">
                 <p>HTML provides six levels of headings. <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> is the largest and most important, <code className="bg-gray-100 px-1 rounded">&lt;h6&gt;</code> is the smallest.</p>
                 <Code code={`<h1>Heading 1 - Most Important</h1>
-<h2>Heading 2</h2>
-<h3>Heading 3</h3>
+<h2 id="heading-2">Heading 2</h2>
+<h3 id="heading-3">Heading 3</h3>
 <h4>Heading 4</h4>
 <h5>Heading 5</h5>
 <h6>Heading 6 - Least Important</h6>
 
 <h1 align="center">Centered Heading</h1>
-<h2 align="right">Right-aligned Heading</h2>`} />
+<h2 id="right-aligned-heading" align="right">Right-aligned Heading</h2>`} />
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 my-3 space-y-1">
                     <p className="text-2xl sm:text-3xl font-bold text-gray-900">H1 Heading</p>
                     <p className="text-xl sm:text-2xl font-bold text-gray-800">H2 Heading</p>
@@ -512,7 +512,7 @@ It stretches the text so each line has equal width.</p>`} />
                 <p><code className="bg-gray-100 px-1 rounded">&lt;div&gt;</code> is a block-level container. <code className="bg-gray-100 px-1 rounded">&lt;span&gt;</code> is an inline container.</p>
                 <Code code={`<!-- div - Block level -->
 <div style="background:#eee; padding:20px; margin:10px 0;">
-    <h2>Section Title</h2>
+    <h2 id="section-title">Section Title</h2>
     <p>Content in a div.</p>
 </div>
 
@@ -549,10 +549,10 @@ Computer Science</span>.</p>`} />
         <p>Content...</p>
     </article>
     <section>
-        <h2>Section Title</h2>
+        <h2 id="section-title">Section Title</h2>
     </section>
     <aside>
-        <h3>Related Links</h3>
+        <h3 id="related-links">Related Links</h3>
     </aside>
 </main>
 <footer>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface Message {
@@ -41,17 +41,11 @@ function parseNavOptions(text: string): { clean: string; options: { path: string
     return { clean, options };
 }
 
-const QUICK_ACTIONS = [
-    { emoji: '🏠', label: 'Home', path: '/' },
-    { emoji: '📊', label: 'Dashboard', path: '/dashboard' },
-    { emoji: '🐍', label: 'Python', path: '/python' },
-    { emoji: '🌐', label: 'HTML', path: '/html' },
-    { emoji: '📝', label: 'MCQ', path: '/mcq' },
-    { emoji: '📒', label: 'Notes', path: '/notes' },
-];
 
 export default function KnoblyAI() {
     const router = useRouter();
+    const pathname = usePathname();
+    const isHomePage = pathname === '/';
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
@@ -78,7 +72,6 @@ export default function KnoblyAI() {
                     role: 'assistant',
                     content: '👋 **Namaste!** Main KnoblyAI hoon — aapka personal assistant.\n\nKya karna chahte ho? Neeche se choose karo ya kuch bhi poochho!',
                     navOptions: [
-                        { path: '/dashboard', label: '📊 Dashboard' },
                         { path: '/python', label: '🐍 Python Course' },
                         { path: '/html', label: '🌐 HTML Course' },
                         { path: '/mcq', label: '📝 MCQ Practice' },
@@ -94,9 +87,16 @@ export default function KnoblyAI() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, loading]);
 
+    // Listen for external toggle event (from home sidebar CTA)
+    useEffect(() => {
+        const handler = () => setOpen(prev => !prev);
+        window.addEventListener('toggle-knobly-ai', handler);
+        return () => window.removeEventListener('toggle-knobly-ai', handler);
+    }, []);
+
     const navigateTo = useCallback((path: string) => {
         setOpen(false);
-        setTimeout(() => router.push(path), 200);
+        router.push(path);
     }, [router]);
 
     const send = useCallback(async (text?: string) => {
@@ -156,92 +156,52 @@ export default function KnoblyAI() {
     // ─── Render ──────────────────────────────────────────────────────────────────
     return (
         <>
-            {/* ═══════════════════ FLOATING TRIGGER ═══════════════════ */}
+            {/* ═══════════════════ FLOATING TRIGGER (hidden on desktop home, visible on mobile home) ═══════════════════ */}
             <div
-                className="fixed bottom-5 right-5 z-[9999] select-none"
+                className={`fixed bottom-5 right-5 z-[9999] select-none ${isHomePage ? 'xl:hidden' : ''}`}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
             >
-                {/* Outer glow rings */}
+                {/* Gradient ring with pulse glow */}
                 <div
-                    className="absolute rounded-full transition-all duration-700"
+                    className="relative p-[2px] rounded-full transition-all duration-500"
                     style={{
-                        inset: open ? -6 : -4,
-                        background: `conic-gradient(from ${Date.now() / 10 % 360}deg, #38bdf8, #8b5cf6, #ec4899, #f59e0b, #22c55e, #38bdf8)`,
-                        filter: `blur(${open ? 12 : 8}px)`,
-                        opacity: open ? 0.7 : hovered ? 0.6 : 0.35,
-                        animation: 'spin 4s linear infinite',
+                        background: 'linear-gradient(135deg, #8b5cf6, #38bdf8, #a855f7)',
+                        boxShadow: hovered
+                            ? '0 0 25px rgba(139,92,246,0.6), 0 0 50px rgba(56,189,248,0.25)'
+                            : '0 0 14px rgba(139,92,246,0.35)',
+                        animation: 'breathe 2.5s ease-in-out infinite',
                     }}
-                />
-                <div
-                    className="absolute rounded-full"
-                    style={{
-                        inset: -2,
-                        background: 'conic-gradient(from 180deg, #38bdf8, #8b5cf6, #ec4899, #38bdf8)',
-                        filter: 'blur(4px)',
-                        opacity: open ? 0.5 : 0.2,
-                        animation: 'spin 6s linear infinite reverse',
-                    }}
-                />
-
-                {/* Main button */}
-                <button
-                    onClick={() => setOpen(o => !o)}
-                    className="relative flex items-center justify-center transition-all duration-500"
-                    style={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: '50%',
-                        background: open
-                            ? 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)'
-                            : 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-                        border: '2px solid rgba(139, 92, 246, 0.5)',
-                        boxShadow: open
-                            ? '0 0 30px rgba(139,92,246,0.4), inset 0 0 20px rgba(56,189,248,0.1)'
-                            : '0 0 20px rgba(56,189,248,0.25), inset 0 0 15px rgba(139,92,246,0.05)',
-                        transform: `scale(${open ? 0.92 : hovered ? 1.12 : 1}) rotate(${open ? 180 : 0}deg)`,
-                    }}
-                    title="KnoblyAI Assistant"
                 >
-                    {open ? (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c084fc" strokeWidth="2.5" strokeLinecap="round">
-                            <path d="M18 6L6 18M6 6l12 12" />
-                        </svg>
-                    ) : (
-                        <div className="relative" style={{ width: 32, height: 32 }}>
-                            {/* AI Brain icon */}
-                            <svg viewBox="0 0 40 40" width="32" height="32">
-                                <defs>
-                                    <linearGradient id="knoblyAIGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stopColor="#38bdf8" />
-                                        <stop offset="50%" stopColor="#8b5cf6" />
-                                        <stop offset="100%" stopColor="#ec4899" />
-                                    </linearGradient>
-                                </defs>
-                                <circle cx="20" cy="20" r="10" fill="url(#knoblyAIGrad)" opacity="0.9" />
-                                <circle cx="20" cy="20" r="4" fill="white" opacity="0.95" />
-                                {/* Neural network lines */}
-                                <line x1="20" y1="10" x2="20" y2="6" stroke="#8b5cf6" strokeWidth="1.2" opacity="0.6" />
-                                <line x1="20" y1="30" x2="20" y2="34" stroke="#38bdf8" strokeWidth="1.2" opacity="0.6" />
-                                <line x1="10" y1="20" x2="6" y2="20" stroke="#ec4899" strokeWidth="1.2" opacity="0.6" />
-                                <line x1="30" y1="20" x2="34" y2="20" stroke="#22c55e" strokeWidth="1.2" opacity="0.6" />
-                                {/* Corner nodes */}
-                                <circle cx="20" cy="6" r="2" fill="#8b5cf6" opacity="0.8" />
-                                <circle cx="20" cy="34" r="2" fill="#38bdf8" opacity="0.8" />
-                                <circle cx="6" cy="20" r="2" fill="#ec4899" opacity="0.8" />
-                                <circle cx="34" cy="20" r="2" fill="#22c55e" opacity="0.8" />
+                    <button
+                        onClick={() => setOpen(o => !o)}
+                        className="relative flex items-center justify-center transition-all duration-500 overflow-hidden"
+                        style={{
+                            width: 52,
+                            height: 52,
+                            borderRadius: '50%',
+                            background: 'linear-gradient(145deg, #0c1631 0%, #1a1145 50%, #0f172a 100%)',
+                            transform: `scale(${hovered ? 1.08 : 1})`,
+                        }}
+                        title="KnoblyAI Assistant"
+                    >
+                        {open ? (
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#closeGrad2)" strokeWidth="2.5" strokeLinecap="round">
+                                <defs><linearGradient id="closeGrad2" x1="0" y1="0" x2="24" y2="24"><stop stopColor="#c084fc" /><stop offset="1" stopColor="#38bdf8" /></linearGradient></defs>
+                                <path d="M18 6L6 18M6 6l12 12" />
                             </svg>
-                            {/* Pulse ring */}
-                            <div
-                                className="absolute inset-0 rounded-full"
-                                style={{
-                                    border: '1px solid rgba(139,92,246,0.3)',
-                                    animation: 'ping 2.5s cubic-bezier(0,0,0.2,1) infinite',
-                                }}
-                            />
-                        </div>
-                    )}
-                </button>
+                        ) : (
+                            <span style={{
+                                fontSize: 16,
+                                fontWeight: 900,
+                                letterSpacing: '0.04em',
+                                background: 'linear-gradient(135deg, #c4b5fd 0%, #38bdf8 50%, #a78bfa 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                            }}>AI</span>
+                        )}
+                    </button>
+                </div>
             </div>
 
             {/* ═══════════════════ CHAT PANEL ═══════════════════ */}
@@ -398,102 +358,72 @@ export default function KnoblyAI() {
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* ── Quick Actions Grid (only on first load) ── */}
-                    {messages.length <= 1 && !loading && (
-                        <div className="px-3 pb-2">
-                            <div style={{ fontSize: 10, color: '#64748b', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6, fontWeight: 600 }}>Quick Actions</div>
-                            <div className="grid grid-cols-3 gap-1.5">
-                                {QUICK_ACTIONS.map(a => (
-                                    <button
-                                        key={a.path}
-                                        onClick={() => navigateTo(a.path)}
-                                        className="flex flex-col items-center justify-center gap-1.5 py-3 rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden relative group"
-                                        style={{
-                                            background: 'rgba(15, 23, 42, 0.4)',
-                                            border: '1px solid rgba(139,92,246,0.15)',
-                                            backdropFilter: 'blur(8px)',
-                                        }}
-                                        onMouseEnter={e => {
-                                            (e.currentTarget as HTMLElement).style.background = 'rgba(139,92,246,0.15)';
-                                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(139,92,246,0.4)';
-                                            (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px) scale(1.02)';
-                                            (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px -6px rgba(139,92,246,0.25), inset 0 1px 1px rgba(255,255,255,0.1)';
-                                        }}
-                                        onMouseLeave={e => {
-                                            (e.currentTarget as HTMLElement).style.background = 'rgba(15, 23, 42, 0.4)';
-                                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(139,92,246,0.15)';
-                                            (e.currentTarget as HTMLElement).style.transform = 'translateY(0) scale(1)';
-                                            (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-                                        }}
-                                    >
-                                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                        <span style={{ fontSize: 20, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))' }}>{a.emoji}</span>
-                                        <span style={{ fontSize: 11, color: '#cbd5e1', fontWeight: 600, letterSpacing: '0.02em' }}>{a.label}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
 
                     {/* ── Input ── */}
                     <div className="px-3 pb-3 pt-1">
-                        <div
-                            className="flex items-center gap-2 rounded-full px-4 py-3 transition-all duration-300"
-                            style={{
-                                background: 'linear-gradient(145deg, rgba(15,23,42,0.8) 0%, rgba(30,41,59,0.6) 100%)',
-                                border: '1px solid rgba(139,92,246,0.25)',
-                                boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.3)',
-                                backdropFilter: 'blur(12px)',
-                            }}
-                            onFocus={e => {
-                                e.currentTarget.style.border = '1px solid rgba(139,92,246,0.6)';
-                                e.currentTarget.style.boxShadow = 'inset 0 2px 10px rgba(0,0,0,0.5), 0 0 20px rgba(139,92,246,0.2)';
-                            }}
-                            onBlur={e => {
-                                e.currentTarget.style.border = '1px solid rgba(139,92,246,0.25)';
-                                e.currentTarget.style.boxShadow = 'inset 0 2px 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.3)';
-                            }}
-                        >
-                            <div className="flex-shrink-0 text-purple-400 mr-1">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="11" cy="11" r="8" />
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                </svg>
-                            </div>
-                            <input
-                                ref={inputRef}
-                                value={input}
-                                onChange={e => setInput(e.target.value)}
-                                onKeyDown={onKeyDown}
-                                placeholder="Kuch bhi puchhiye ya search kariye..."
-                                className="flex-1 bg-transparent outline-none min-w-0 font-medium placeholder:text-slate-500"
-                                style={{ fontSize: 14, color: '#f8fafc', caretColor: '#a855f7' }}
-                            />
-                            <button
-                                onClick={() => send()}
-                                disabled={!input.trim() || loading}
-                                className="flex items-center justify-center transition-all duration-200"
+                        {/* Animated border wrapper */}
+                        <div className="relative rounded-full p-[1.5px] overflow-hidden" style={{ background: 'linear-gradient(90deg, #8b5cf6, #38bdf8, #ec4899, #22c55e, #8b5cf6)', backgroundSize: '300% 100%', animation: 'gradientSlide 4s linear infinite' }}>
+                            <div
+                                className="flex items-center gap-2 rounded-full px-4 py-3 transition-all duration-300 relative"
                                 style={{
-                                    width: 36,
-                                    height: 36,
-                                    borderRadius: '50%',
-                                    background: input.trim() && !loading
-                                        ? 'linear-gradient(135deg, #a855f7, #6366f1)'
-                                        : 'rgba(30,41,59,0.8)',
-                                    color: input.trim() && !loading ? '#fff' : '#64748b',
-                                    cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
-                                    boxShadow: input.trim() && !loading ? '0 4px 15px rgba(168,85,247,0.4), inset 0 2px 4px rgba(255,255,255,0.2)' : 'inset 0 2px 4px rgba(0,0,0,0.2)',
-                                    transform: input.trim() && !loading ? 'scale(1.05)' : 'scale(1)',
+                                    background: 'linear-gradient(145deg, #080d1f 0%, #0c1229 100%)',
                                 }}
                             >
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: input.trim() ? 'translate(1px, -1px)' : 'none', transition: 'transform 0.2s' }}>
-                                    <line x1="22" y1="2" x2="11" y2="13" />
-                                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                                </svg>
-                            </button>
+                                {/* Sparkle icon */}
+                                <div className="flex-shrink-0" style={{ color: '#a78bfa' }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="url(#sparkFill)" stroke="url(#sparkStroke)" strokeWidth="1.5">
+                                            <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="8s" repeatCount="indefinite" />
+                                        </path>
+                                        <defs>
+                                            <linearGradient id="sparkFill" x1="0" y1="0" x2="24" y2="24">
+                                                <stop offset="0%" stopColor="#c4b5fd" stopOpacity="0.3" />
+                                                <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.15" />
+                                            </linearGradient>
+                                            <linearGradient id="sparkStroke" x1="0" y1="0" x2="24" y2="24">
+                                                <stop offset="0%" stopColor="#a78bfa" />
+                                                <stop offset="100%" stopColor="#38bdf8" />
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                </div>
+                                <input
+                                    ref={inputRef}
+                                    value={input}
+                                    onChange={e => setInput(e.target.value)}
+                                    onKeyDown={onKeyDown}
+                                    placeholder="Ask me anything..."
+                                    className="flex-1 bg-transparent outline-none min-w-0 font-medium placeholder:text-slate-600"
+                                    style={{ fontSize: 14, color: '#f1f5f9', caretColor: '#a855f7', letterSpacing: '0.01em' }}
+                                />
+                                <button
+                                    onClick={() => send()}
+                                    disabled={!input.trim() || loading}
+                                    className="flex items-center justify-center transition-all duration-300 flex-shrink-0"
+                                    style={{
+                                        width: 38,
+                                        height: 38,
+                                        borderRadius: '50%',
+                                        background: input.trim() && !loading
+                                            ? 'linear-gradient(135deg, #a855f7, #6366f1, #38bdf8)'
+                                            : 'rgba(30,41,59,0.6)',
+                                        color: input.trim() && !loading ? '#fff' : '#475569',
+                                        cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
+                                        boxShadow: input.trim() && !loading
+                                            ? '0 4px 20px rgba(168,85,247,0.5), inset 0 2px 4px rgba(255,255,255,0.25)'
+                                            : 'inset 0 2px 4px rgba(0,0,0,0.3)',
+                                        transform: input.trim() && !loading ? 'scale(1.08)' : 'scale(1)',
+                                    }}
+                                >
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: input.trim() ? 'translate(1px, -1px)' : 'none', transition: 'transform 0.2s' }}>
+                                        <line x1="22" y1="2" x2="11" y2="13" />
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                        <div style={{ textAlign: 'center', marginTop: 6, fontSize: 9, color: '#374151' }}>
-                            Powered by KnoblyAI · Ask anything
+                        <div style={{ textAlign: 'center', marginTop: 8, fontSize: 9, color: '#334155', letterSpacing: '0.05em' }}>
+                            ✨ Powered by KnoblyAI · Ask anything
                         </div>
                     </div>
                 </div>
@@ -512,6 +442,14 @@ export default function KnoblyAI() {
                 @keyframes spin {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
+                }
+                @keyframes breathe {
+                    0%, 100% { transform: scale(1); opacity: 0.4; }
+                    50% { transform: scale(1.15); opacity: 0.7; }
+                }
+                @keyframes gradientSlide {
+                    0% { background-position: 0% 50%; }
+                    100% { background-position: 300% 50%; }
                 }
             `}</style>
         </>

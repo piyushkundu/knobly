@@ -73,7 +73,7 @@ export default function CybersecurityPage() {
                             <ShieldAlert size={16} style={{ color: '#6ee7b7' }} />
                             <span className="text-[10px] uppercase tracking-[0.3em] font-bold" style={{ color: '#6ee7b7' }}>Awareness Program</span>
                         </div>
-                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: '#ffffff' }}>
+                        <h2 id="cyber-security-awareness" className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: '#ffffff' }}>
                             Cyber Security Awareness
                         </h2>
                         <p className="text-base md:text-lg leading-relaxed max-w-xl mb-6" style={{ color: '#e2e8f0' }}>
@@ -113,7 +113,7 @@ export default function CybersecurityPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.25)' }}>
                             <Shield size={18} style={{ color: '#60a5fa' }} />
                         </div>
-                        <h2 className="text-lg font-bold" style={{ color: '#60a5fa' }}>Cyber Security क्या है?</h2>
+                        <h2 id="cyber-security" className="text-lg font-bold" style={{ color: '#60a5fa' }}>Cyber Security क्या है?</h2>
                     </div>
                     <p className="text-sm leading-relaxed" style={{ color: '#cbd5e1' }}>
                         Cyber security का मतलब है कि internet और digital platforms पर आपकी personal जानकारी और data को सुरक्षित रखना। जब हम online होते हैं, तो हमें कई तरह के खतरों का सामना करना पड़ता है जैसे phishing, hacking, और data चोरी।
@@ -126,7 +126,7 @@ export default function CybersecurityPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.25)' }}>
                             <AlertTriangle size={18} style={{ color: '#f87171' }} />
                         </div>
-                        <h2 className="text-lg font-bold" style={{ color: '#f87171' }}>Cyber Crimes के मुख्य threats</h2>
+                        <h2 id="cyber-crimes-threats" className="text-lg font-bold" style={{ color: '#f87171' }}>Cyber Crimes के मुख्य threats</h2>
                     </div>
                     <p className="text-sm mb-4" style={{ color: '#cbd5e1' }}>भारत में कई प्रकार के cyber crimes होते हैं, जिनसे लोग अनजान होते हैं:</p>
                     <div className="grid gap-3">
@@ -154,7 +154,7 @@ export default function CybersecurityPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(249,115,22,0.15)', border: '1px solid rgba(249,115,22,0.25)' }}>
                             <Phone size={18} style={{ color: '#fdba74' }} />
                         </div>
-                        <h2 className="text-lg font-bold" style={{ color: '#fdba74' }}>Phone Call Frauds से कैसे बचें?</h2>
+                        <h2 id="phone-call-frauds" className="text-lg font-bold" style={{ color: '#fdba74' }}>Phone Call Frauds से कैसे बचें?</h2>
                     </div>
                     <div className="grid gap-3">
                         {[
@@ -183,7 +183,7 @@ export default function CybersecurityPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.25)' }}>
                             <Lock size={18} style={{ color: '#6ee7b7' }} />
                         </div>
-                        <h2 className="text-lg font-bold" style={{ color: '#6ee7b7' }}>कैसे बचें इन cyber threats से?</h2>
+                        <h2 id="cyber-threats" className="text-lg font-bold" style={{ color: '#6ee7b7' }}>कैसे बचें इन cyber threats से?</h2>
                     </div>
                     <div className="grid gap-3">
                         {[
@@ -207,7 +207,7 @@ export default function CybersecurityPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(129,140,248,0.15)', border: '1px solid rgba(129,140,248,0.25)' }}>
                             <Landmark size={18} style={{ color: '#a5b4fc' }} />
                         </div>
-                        <h2 className="text-lg font-bold" style={{ color: '#a5b4fc' }}>RBI की नई पहल: Digital Banking और Cyber Frauds से बचाव</h2>
+                        <h2 id="rbi-digital-banking-cyber-frauds" className="text-lg font-bold" style={{ color: '#a5b4fc' }}>RBI की नई पहल: Digital Banking और Cyber Frauds से बचाव</h2>
                     </div>
                     <p className="text-sm mb-4" style={{ color: '#cbd5e1' }}>भारतीय रिज़र्व बैंक (RBI) ने लोगों को digital banking और online लेनदेन से जुड़े cyber frauds के बारे में जागरूक करने के लिए अभियान शुरू किया है:</p>
                     <div className="grid gap-3">
@@ -232,7 +232,7 @@ export default function CybersecurityPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.25)' }}>
                             <ShieldCheck size={18} style={{ color: '#fcd34d' }} />
                         </div>
-                        <h2 className="text-lg font-bold" style={{ color: '#fcd34d' }}>RBI के नियम — साइबर धोखाधड़ी से बचाव</h2>
+                        <h2 id="rbi" className="text-lg font-bold" style={{ color: '#fcd34d' }}>RBI के नियम — साइबर धोखाधड़ी से बचाव</h2>
                     </div>
                     <p className="text-sm mb-4" style={{ color: '#cbd5e1' }}>RBI ने cyber fraud से जुड़े मामलों में ग्राहकों को सुरक्षित रखने के लिए कई rules बनाए हैं:</p>
                     <div className="grid gap-3">
@@ -256,7 +256,7 @@ export default function CybersecurityPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(244,63,94,0.15)', border: '1px solid rgba(244,63,94,0.25)' }}>
                             <Skull size={18} style={{ color: '#fda4af' }} />
                         </div>
-                        <h2 className="text-lg font-bold" style={{ color: '#fda4af' }}>वास्तविक Cyber Crime Cases</h2>
+                        <h2 id="cyber-crime-cases" className="text-lg font-bold" style={{ color: '#fda4af' }}>वास्तविक Cyber Crime Cases</h2>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-3">
                         {[
@@ -290,7 +290,7 @@ export default function CybersecurityPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(6,182,212,0.15)', border: '1px solid rgba(6,182,212,0.25)' }}>
                             <Siren size={18} style={{ color: '#67e8f9' }} />
                         </div>
-                        <h2 className="text-lg font-bold" style={{ color: '#67e8f9' }}>Emergency Contacts &amp; Helplines</h2>
+                        <h2 id="emergency-contacts-amp-helplines" className="text-lg font-bold" style={{ color: '#67e8f9' }}>Emergency Contacts &amp; Helplines</h2>
                     </div>
                     <div className="grid sm:grid-cols-3 gap-3">
                         <div className="rounded-xl p-4 text-center" style={{ background: 'linear-gradient(135deg, #164e63, #0e7490)', border: '1px solid rgba(6,182,212,0.3)' }}>
@@ -314,7 +314,7 @@ export default function CybersecurityPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.25)' }}>
                             <ShieldAlert size={18} style={{ color: '#c4b5fd' }} />
                         </div>
-                        <h2 className="text-lg font-bold" style={{ color: '#c4b5fd' }}>Cyber Crime के बाद क्या करें? — RBI दिशानिर्देश</h2>
+                        <h2 id="cyber-crime-rbi" className="text-lg font-bold" style={{ color: '#c4b5fd' }}>Cyber Crime के बाद क्या करें? — RBI दिशानिर्देश</h2>
                     </div>
                     <div className="grid gap-3">
                         {[

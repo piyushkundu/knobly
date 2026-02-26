@@ -24,32 +24,32 @@ print(fruits)  # Output: ['apple', 'banana', 'cherry', 'orange']`} />
 
             {/* ── Types of Python Lists ── */}
             <Section title="Types of Python Lists">
-                <h3 className="text-lg font-semibold mt-2 mb-2">Empty List</h3>
+                <h3 id="empty-list" className="text-lg font-semibold mt-2 mb-2">Empty List</h3>
                 <p>A list with no elements.</p>
                 <CodeBlock code={`empty_list = []
 print(empty_list)  # Output: []`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">List of Integers</h3>
+                <h3 id="list-of-integers" className="text-lg font-semibold mt-4 mb-2">List of Integers</h3>
                 <p>A list containing only integer values.</p>
                 <CodeBlock code={`integers = [1, 2, 3, 4, 5]
 print(integers)  # Output: [1, 2, 3, 4, 5]`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">List of Floating Point Numbers</h3>
+                <h3 id="list-of-floating-point-numbers" className="text-lg font-semibold mt-4 mb-2">List of Floating Point Numbers</h3>
                 <p>A list containing decimal or floating-point values.</p>
                 <CodeBlock code={`floats = [1.1, 2.2, 3.3, 4.4, 5.5]
 print(floats)  # Output: [1.1, 2.2, 3.3, 4.4, 5.5]`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">List of Characters</h3>
+                <h3 id="list-of-characters" className="text-lg font-semibold mt-4 mb-2">List of Characters</h3>
                 <p>A list containing individual characters.</p>
                 <CodeBlock code={`characters = ['a', 'b', 'c', 'd', 'e']
 print(characters)  # Output: ['a', 'b', 'c', 'd', 'e']`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">List of Strings</h3>
+                <h3 id="list-of-strings" className="text-lg font-semibold mt-4 mb-2">List of Strings</h3>
                 <p>A list containing text strings.</p>
                 <CodeBlock code={`strings = ["apple", "banana", "cherry"]
 print(strings)  # Output: ['apple', 'banana', 'cherry']`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Mixed Value List</h3>
+                <h3 id="mixed-value-list" className="text-lg font-semibold mt-4 mb-2">Mixed Value List</h3>
                 <p>A list containing different types of elements.</p>
                 <CodeBlock code={`mixed = [1, "Hello", 3.14, True, [1, 2, 3]]
 print(mixed)  # Output: [1, 'Hello', 3.14, True, [1, 2, 3]]`} />
@@ -59,13 +59,13 @@ print(mixed)  # Output: [1, 'Hello', 3.14, True, [1, 2, 3]]`} />
             <Section title="Creating Python Lists">
                 <p>There are three primary ways to create lists in Python:</p>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">1. Creating by Assigning Values</h3>
+                <h3 id="1-creating-by-assigning-values" className="text-lg font-semibold mt-4 mb-2">1. Creating by Assigning Values</h3>
                 <p>The most direct way is to create a list by defining values within square brackets.</p>
                 <CodeBlock code={`# Creating a list by directly assigning values
 fruits = ["apple", "banana", "cherry"]
 numbers = [1, 2, 3, 4, 5]`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">2. Creating from Other Sequences</h3>
+                <h3 id="2-creating-from-other-sequences" className="text-lg font-semibold mt-4 mb-2">2. Creating from Other Sequences</h3>
                 <p>You can create a list from other sequences such as tuples, strings, sets, or dictionaries using the list() constructor.</p>
                 <CodeBlock code={`# Creating a list from a tuple
 tuple_example = (1, 2, 3)
@@ -81,7 +81,7 @@ print(list_from_string)  # Output: ['P', 'y', 't', 'h', 'o', 'n']
 list_from_range = list(range(1, 6))
 print(list_from_range)  # Output: [1, 2, 3, 4, 5]`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">3. Creating Dynamically via User Input</h3>
+                <h3 id="3-creating-dynamically-via-user-input" className="text-lg font-semibold mt-4 mb-2">3. Creating Dynamically via User Input</h3>
                 <p>You can create lists by gathering input from users or other dynamic sources.</p>
                 <CodeBlock code={`# Creating a list dynamically with user input
 n = int(input("Enter number of elements: "))
@@ -110,12 +110,12 @@ print(squares)  # Output: [1, 4, 9, 16, 25]`} />
             <Section title="Accessing Elements in Python Lists">
                 <p>There are two main ways to access elements in a Python list:</p>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">1. Accessing the Whole List at Once</h3>
+                <h3 id="1-accessing-the-whole-list-at-once" className="text-lg font-semibold mt-4 mb-2">1. Accessing the Whole List at Once</h3>
                 <p>You can access the entire list by simply referring to its variable name.</p>
                 <CodeBlock code={`fruits = ["apple", "banana", "cherry", "orange"]
 print(fruits)  # Output: ['apple', 'banana', 'cherry', 'orange']`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">2. Accessing Individual Elements</h3>
+                <h3 id="2-accessing-individual-elements" className="text-lg font-semibold mt-4 mb-2">2. Accessing Individual Elements</h3>
                 <p>You can access individual elements using indexing. Python uses zero-based indexing, meaning the first element is at index 0.</p>
                 <CodeBlock code={`fruits = ["apple", "banana", "cherry", "orange"]
 
@@ -148,7 +148,7 @@ print(fruits[-3:])  # Output: ['kiwi', 'melon', 'mango']`} />
             <Section title="Traversing Python Lists">
                 <p>Traversing a list means accessing each element of the list sequentially. There are several ways:</p>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Using a For Loop</h3>
+                <h3 id="using-a-for-loop" className="text-lg font-semibold mt-4 mb-2">Using a For Loop</h3>
                 <CodeBlock code={`fruits = ["apple", "banana", "cherry", "orange"]
 
 # Simple for loop
@@ -156,7 +156,7 @@ for fruit in fruits:
     print(fruit)
 # Output: apple, banana, cherry, orange`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Using a For Loop with Index</h3>
+                <h3 id="using-a-for-loop-with-index" className="text-lg font-semibold mt-4 mb-2">Using a For Loop with Index</h3>
                 <CodeBlock code={`fruits = ["apple", "banana", "cherry", "orange"]
 
 # Using range and len
@@ -164,7 +164,7 @@ for i in range(len(fruits)):
     print(f"Index {i}: {fruits[i]}")
 # Output: Index 0: apple, Index 1: banana, ...`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Using enumerate()</h3>
+                <h3 id="using-enumerate" className="text-lg font-semibold mt-4 mb-2">Using enumerate()</h3>
                 <CodeBlock code={`fruits = ["apple", "banana", "cherry", "orange"]
 
 # Using enumerate (provides both index and value)
@@ -172,7 +172,7 @@ for index, fruit in enumerate(fruits):
     print(f"Index {index}: {fruit}")
 # Output: Index 0: apple, Index 1: banana, ...`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Using a While Loop</h3>
+                <h3 id="using-a-while-loop" className="text-lg font-semibold mt-4 mb-2">Using a While Loop</h3>
                 <CodeBlock code={`fruits = ["apple", "banana", "cherry", "orange"]
 
 # Using a while loop
@@ -181,7 +181,7 @@ while i < len(fruits):
     print(fruits[i])
     i += 1`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">List Comprehension (for creating a new list)</h3>
+                <h3 id="list-comprehension-for-creating-a-new-list" className="text-lg font-semibold mt-4 mb-2">List Comprehension (for creating a new list)</h3>
                 <CodeBlock code={`fruits = ["apple", "banana", "cherry", "orange"]
 
 # Using list comprehension to create a new list
@@ -191,7 +191,7 @@ print(uppercase_fruits)  # Output: ['APPLE', 'BANANA', 'CHERRY', 'ORANGE']`} />
 
             {/* ── List Operations ── */}
             <Section title="List Operations">
-                <h3 className="text-lg font-semibold mt-2 mb-2">Combining Lists (Concatenation)</h3>
+                <h3 id="combining-lists-concatenation" className="text-lg font-semibold mt-2 mb-2">Combining Lists (Concatenation)</h3>
                 <p>You can combine lists using the + operator.</p>
                 <CodeBlock code={`list1 = [1, 2, 3]
 list2 = [4, 5, 6]
@@ -200,7 +200,7 @@ list2 = [4, 5, 6]
 combined_list = list1 + list2
 print(combined_list)  # Output: [1, 2, 3, 4, 5, 6]`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Replicating Lists</h3>
+                <h3 id="replicating-lists" className="text-lg font-semibold mt-4 mb-2">Replicating Lists</h3>
                 <p>You can replicate a list using the * operator.</p>
                 <CodeBlock code={`list1 = [1, 2, 3]
 
@@ -208,7 +208,7 @@ print(combined_list)  # Output: [1, 2, 3, 4, 5, 6]`} />
 replicated_list = list1 * 3
 print(replicated_list)  # Output: [1, 2, 3, 1, 2, 3, 1, 2, 3]`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Slicing Lists</h3>
+                <h3 id="slicing-lists" className="text-lg font-semibold mt-4 mb-2">Slicing Lists</h3>
                 <p>Slicing allows you to extract a portion of a list.</p>
                 <CodeBlock code={`numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 

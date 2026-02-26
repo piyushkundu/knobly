@@ -81,7 +81,7 @@ export default function CccPage() {
                             <i className="ph-bold ph-certificate text-lg text-yellow-400" />
                         </div>
                         <div>
-                            <h2 className="font-semibold text-white text-sm">CCC Practice Tests</h2>
+                            <h2 id="ccc-practice-tests" className="font-semibold text-white text-sm">CCC Practice Tests</h2>
                             <p className="text-[10px] text-gray-400">Chapter-wise and full book tests</p>
                         </div>
                     </div>
@@ -102,7 +102,7 @@ export default function CccPage() {
                                     </div>
                                     <div>
                                         <span className={`text-[9px] font-bold uppercase tracking-[0.18em] ${c.text}`}>Chapter {ch.number}</span>
-                                        <h3 className="font-semibold text-white text-sm leading-tight">{ch.title}</h3>
+                                        <h3 id="chtitle" className="font-semibold text-white text-sm leading-tight">{ch.title}</h3>
                                     </div>
                                 </div>
                                 <p className="text-xs text-gray-400 leading-relaxed flex-1">{ch.description}</p>

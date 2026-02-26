@@ -22,7 +22,7 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
     { id: 'css', name: 'CSS', type: 'Style', link: '/web-design/css', icon: 'ti ti-brand-css3', color: 'text-blue-500', borderClass: 'border-blue', category: 'Main' },
     { id: 'w3css', name: 'W3.CSS', type: 'Framework', link: '/web-design/w3css', icon: 'ph-bold ph-layout', color: 'text-green-400', borderClass: 'border-green', category: 'Main' },
     { id: 'js', name: 'JS', type: 'Scripting', link: '/web-design/javascript', icon: 'ti ti-brand-javascript', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'Main' },
-    { id: 'test', name: 'Test', type: 'Exam', link: '/dashboard', icon: 'ti ti-test', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'Main' },
+    { id: 'youtube', name: 'YouTube', type: 'Channel', link: 'https://youtube.com/@Knobly', icon: 'ph-bold ph-youtube-logo', color: 'text-red-500', borderClass: 'border-red', category: 'Main' },
     { id: 'notes', name: 'Notes', type: 'Utility', link: '/notes', icon: 'ti ti-notes', color: 'text-cyan-300', borderClass: 'border-cyan', category: 'Main' },
   ],
   OLevel: [
@@ -1025,17 +1025,35 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* YouTube CTA */}
-        <a href="https://youtube.com/@knobly1" target="_blank" rel="noopener noreferrer"
-          className="glass-panel w-full yt-cta rounded-[22px] p-3 flex items-center justify-between group transition-all shrink-0 hover:bg-red-500/5 active-press">
+        {/* KnoblyAI CTA */}
+        <div
+          onClick={() => {
+            window.dispatchEvent(new Event('toggle-knobly-ai'));
+          }}
+          className="glass-panel w-full rounded-[22px] p-3 flex items-center justify-between group transition-all shrink-0 hover:bg-purple-500/5 active-press cursor-pointer"
+          style={{ borderColor: 'rgba(139,92,246,0.2)' }}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
-              <i className="ph-fill ph-youtube-logo text-lg" />
+            <div className="w-9 h-9 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"
+              style={{ background: 'linear-gradient(135deg, #8b5cf6, #38bdf8)' }}>
+              <svg viewBox="0 0 40 40" width="20" height="20">
+                <defs>
+                  <radialGradient id="sidebarOrb" cx="40%" cy="35%" r="50%">
+                    <stop offset="0%" stopColor="#fff" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#c4b5fd" stopOpacity="0.6" />
+                  </radialGradient>
+                </defs>
+                <circle cx="20" cy="20" r="8" fill="url(#sidebarOrb)" />
+                <circle cx="20" cy="20" r="3" fill="white" opacity="0.95" />
+              </svg>
             </div>
-            <div className="font-bold text-[11px] text-gray-200">Knobly OS</div>
+            <div className="font-bold text-[11px] text-gray-200">KnoblyAI</div>
           </div>
-          <div className="yt-cta-join text-[9px] font-bold">JOIN</div>
-        </a>
+          <div className="text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+            style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(56,189,248,0.15))', color: '#a78bfa', border: '1px solid rgba(139,92,246,0.3)' }}>
+            ASK
+          </div>
+        </div>
       </aside>
 
       {/* ══════ MOBILE BOTTOM DOCK ══════ */}

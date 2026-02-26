@@ -35,11 +35,11 @@ mixed_tuple = (1, 'hello', 3.14, True)`} />
 
             {/* ── Creating Tuples ── */}
             <Section title="Creating Tuples">
-                <h3 className="text-lg font-semibold mt-2 mb-2">Method 1: Direct Assignment</h3>
+                <h3 id="method-1-direct-assignment" className="text-lg font-semibold mt-2 mb-2">Method 1: Direct Assignment</h3>
                 <CodeBlock code={`my_tuple = (1, 2, 3)
 single = (5,)  # Note the comma! Without it, (5) is just an integer`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Method 2: From Another Sequence</h3>
+                <h3 id="method-2-from-another-sequence" className="text-lg font-semibold mt-4 mb-2">Method 2: From Another Sequence</h3>
                 <CodeBlock code={`# Convert a list to tuple
 list_to_tuple = tuple([1, 2, 3])
 print(list_to_tuple)  # (1, 2, 3)
@@ -52,7 +52,7 @@ print(str_to_tuple)  # ('P', 'y', 't', 'h', 'o', 'n')
 range_to_tuple = tuple(range(1, 6))
 print(range_to_tuple)  # (1, 2, 3, 4, 5)`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Method 3: Dynamic Input</h3>
+                <h3 id="method-3-dynamic-input" className="text-lg font-semibold mt-4 mb-2">Method 3: Dynamic Input</h3>
                 <CodeBlock code={`# Create tuple from user input
 dynamic_tuple = tuple(input("Enter tuple elements: ").split())
 print(dynamic_tuple)`} />
@@ -62,11 +62,11 @@ print(dynamic_tuple)`} />
 
             {/* ── Accessing Tuples ── */}
             <Section title="Accessing Tuples">
-                <h3 className="text-lg font-semibold mt-2 mb-2">Whole Tuple Access</h3>
+                <h3 id="whole-tuple-access" className="text-lg font-semibold mt-2 mb-2">Whole Tuple Access</h3>
                 <CodeBlock code={`full_tuple = (1, 2, 3, 4, 5)
 print(full_tuple)  # Prints entire tuple: (1, 2, 3, 4, 5)`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Individual Element Access</h3>
+                <h3 id="individual-element-access" className="text-lg font-semibold mt-4 mb-2">Individual Element Access</h3>
                 <CodeBlock code={`full_tuple = (1, 2, 3, 4, 5)
 
 # Positive index (from beginning)
@@ -79,7 +79,7 @@ second_last = full_tuple[-2]    # 4
 
 print(first_element, last_element)  # 1 5`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Slicing Tuples</h3>
+                <h3 id="slicing-tuples" className="text-lg font-semibold mt-4 mb-2">Slicing Tuples</h3>
                 <CodeBlock code={`t = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 print(t[2:6])    # (2, 3, 4, 5)
@@ -91,23 +91,23 @@ print(t[::-1])   # (9, 8, 7, 6, 5, 4, 3, 2, 1, 0)`} />
 
             {/* ── Tuple Operations ── */}
             <Section title="Tuple Operations">
-                <h3 className="text-lg font-semibold mt-2 mb-2">Combining Tuples (Concatenation)</h3>
+                <h3 id="combining-tuples-concatenation" className="text-lg font-semibold mt-2 mb-2">Combining Tuples (Concatenation)</h3>
                 <CodeBlock code={`tuple1 = (1, 2)
 tuple2 = (3, 4)
 combined_tuple = tuple1 + tuple2  # (1, 2, 3, 4)
 print(combined_tuple)`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Replicating Tuples</h3>
+                <h3 id="replicating-tuples" className="text-lg font-semibold mt-4 mb-2">Replicating Tuples</h3>
                 <CodeBlock code={`tuple1 = (1, 2)
 repeated_tuple = tuple1 * 3  # (1, 2, 1, 2, 1, 2)
 print(repeated_tuple)`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Slicing</h3>
+                <h3 id="slicing" className="text-lg font-semibold mt-4 mb-2">Slicing</h3>
                 <CodeBlock code={`full_tuple = (1, 2, 3, 4, 5)
 subset = full_tuple[1:4]  # Select elements from index 1 to 3
 print(subset)  # (2, 3, 4)`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Membership Test</h3>
+                <h3 id="membership-test" className="text-lg font-semibold mt-4 mb-2">Membership Test</h3>
                 <CodeBlock code={`t = (1, 2, 3, 4, 5)
 print(3 in t)      # True
 print(10 not in t)  # True`} />
@@ -140,14 +140,14 @@ print(tuple_example.index(8))  # 2`} />
 
             {/* ── Packing & Unpacking ── */}
             <Section title="Packing & Unpacking">
-                <h3 className="text-lg font-semibold mt-2 mb-2">Tuple Packing</h3>
+                <h3 id="tuple-packing" className="text-lg font-semibold mt-2 mb-2">Tuple Packing</h3>
                 <p>Creating a tuple by assigning multiple values to a single variable.</p>
                 <CodeBlock code={`# Packing - parentheses are optional
 coords = 10, 20, 30
 print(coords)       # (10, 20, 30)
 print(type(coords)) # <class 'tuple'>`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Tuple Unpacking</h3>
+                <h3 id="tuple-unpacking" className="text-lg font-semibold mt-4 mb-2">Tuple Unpacking</h3>
                 <p>Assigning tuple elements to individual variables.</p>
                 <CodeBlock code={`# Unpacking
 coords = (10, 20, 30)

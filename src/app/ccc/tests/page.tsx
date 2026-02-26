@@ -49,7 +49,7 @@ export default function CccTests() {
                                         <i className="ph-bold ph-certificate text-lg text-yellow-400" />
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-white text-sm">{test.title}</h3>
+                                        <h3 id="testtitle" className="font-semibold text-white text-sm">{test.title}</h3>
                                         <span className="text-[9px] text-gray-400">{test.questions?.length || 0} questions</span>
                                     </div>
                                 </div>

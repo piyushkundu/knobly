@@ -92,12 +92,22 @@ export function CodeBlock({ code, lang = 'python' }: { code: string; lang?: stri
     );
 }
 
+function slugify(text: string) {
+    return text.toString().toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+}
+
 export function Section({ title, children }: { title: string; children: ReactNode }) {
+    const id = slugify(title);
     return (
         <section className="glass-panel rounded-2xl p-5 md:p-6 mb-4">
             <div className="flex items-center gap-2 mb-3">
                 <BookOpen size={16} className="text-cyan-400" />
-                <h2 className="text-base md:text-lg font-bold text-white">{title}</h2>
+                <h2 id={id} className="text-base md:text-lg font-bold text-white scroll-mt-24">{title}</h2>
             </div>
             <div className="text-sm text-gray-300 leading-relaxed space-y-3">{children}</div>
         </section>

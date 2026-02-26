@@ -135,7 +135,7 @@ export default function HtmlPage() {
                                     </span>
                                 </div>
 
-                                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5 group-hover:text-blue-700 transition-colors">
+                                <h3 id="stitle" className="text-base sm:text-lg font-bold text-gray-900 mb-1.5 group-hover:text-blue-700 transition-colors">
                                     {s.title}
                                 </h3>
                                 <p className="text-xs sm:text-sm text-gray-500 leading-relaxed mb-4">

@@ -9,7 +9,7 @@ export default function PythonFundamentals() {
             <Section title="Introduction to Python">
                 <p>Python is a high-level, interpreted programming language known for its readability and simplicity. Created by <strong>Guido van Rossum</strong> and first released in <strong>1991</strong>, Python&apos;s design philosophy emphasizes code readability with its notable use of significant whitespace.</p>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Development of Python</h3>
+                <h3 id="development-of-python" className="text-lg font-semibold mt-4 mb-2">Development of Python</h3>
                 <p>Guido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language. He wanted to create a language that was extensible and had better exception handling than its predecessors. The name &quot;Python&quot; was inspired by the British comedy group Monty Python, as van Rossum was a fan of Monty Python&apos;s Flying Circus.</p>
                 <p>Python was designed to be a highly readable language. Its formatting is visually uncluttered, and it frequently uses English keywords where other languages use punctuation. Python&apos;s syntax allows programmers to express concepts in fewer lines of code than possible in languages such as C++ or Java.</p>
 
@@ -66,7 +66,7 @@ export default function PythonFundamentals() {
 
             {/* ── Working with Python ── */}
             <Section title="Working with Python">
-                <h3 className="text-lg font-semibold mt-2 mb-2">Installing Python</h3>
+                <h3 id="installing-python" className="text-lg font-semibold mt-2 mb-2">Installing Python</h3>
                 <ol className="list-decimal ml-6 space-y-2 mb-4">
                     <li><strong>Download Python:</strong> Visit the official Python website at <a href="https://www.python.org/downloads/" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">python.org/downloads</a> and download the latest version.</li>
                     <li><strong>Run the Installer:</strong>
@@ -80,7 +80,7 @@ export default function PythonFundamentals() {
                 </ol>
                 <CodeBlock code={`python --version`} />
 
-                <h3 className="text-lg font-semibold mt-6 mb-2">Python Interactive Mode</h3>
+                <h3 id="python-interactive-mode" className="text-lg font-semibold mt-6 mb-2">Python Interactive Mode</h3>
                 <p>Python offers an interactive mode where you can write and execute code line by line. This is great for testing small code snippets.</p>
                 <CodeBlock code={`>>> print("Hello, World!")
 Hello, World!
@@ -91,7 +91,7 @@ Hello, World!
 I love Python programming!`} />
                 <p>To exit interactive mode, type <code>exit()</code> or press Ctrl+Z (Windows) / Ctrl+D (Unix).</p>
 
-                <h3 className="text-lg font-semibold mt-6 mb-2">Python Program Mode</h3>
+                <h3 id="python-program-mode" className="text-lg font-semibold mt-6 mb-2">Python Program Mode</h3>
                 <p>For larger programs, write your code in a file with a <code>.py</code> extension and execute it:</p>
                 <CodeBlock code={`# This is program.py
 print("Running Python in program mode")
@@ -102,7 +102,7 @@ for i in range(5):
 
             {/* ── Creating Modules and Program Files ── */}
             <Section title="Creating Modules and Program Files">
-                <h3 className="text-lg font-semibold mt-2 mb-2">Creating a Python File</h3>
+                <h3 id="creating-a-python-file" className="text-lg font-semibold mt-2 mb-2">Creating a Python File</h3>
                 <ol className="list-decimal ml-6 space-y-1 mb-4">
                     <li>Open your preferred text editor (VSCode, PyCharm, Sublime Text, etc.)</li>
                     <li>Create a new file</li>
@@ -110,7 +110,7 @@ for i in range(5):
                     <li>Save the file with a <code>.py</code> extension (e.g., <code>my_program.py</code>)</li>
                 </ol>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Running a Python File</h3>
+                <h3 id="running-a-python-file" className="text-lg font-semibold mt-4 mb-2">Running a Python File</h3>
                 <p><strong>Using Command Line:</strong></p>
                 <CodeBlock code={`python my_program.py`} />
                 <p><strong>From an IDE:</strong> Most IDEs have a &quot;Run&quot; button or keyboard shortcut (like F5 in VSCode).</p>
@@ -120,7 +120,7 @@ for i in range(5):
             <Section title="Python Tokens">
                 <p>In Python, a token is the smallest unit of a program. The Python interpreter breaks down a program into tokens before parsing it. There are five types of tokens:</p>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Identifiers</h3>
+                <h3 id="identifiers" className="text-lg font-semibold mt-4 mb-2">Identifiers</h3>
                 <p>An identifier is a name used to identify a variable, function, class, module, or other object. Rules:</p>
                 <ul className="list-disc ml-6 space-y-1 mb-4">
                     <li>Can only start with a letter (A-Z, a-z) or underscore (_)</li>
@@ -145,7 +145,7 @@ my-var   # Hyphen not allowed
 for      # Reserved keyword
 $amount  # Special symbol not allowed`} />
 
-                <h3 className="text-lg font-semibold mt-6 mb-2">Keywords</h3>
+                <h3 id="keywords" className="text-lg font-semibold mt-6 mb-2">Keywords</h3>
                 <p>Keywords are reserved words that have special meanings in Python. They cannot be used as identifiers.</p>
 
                 <div className="overflow-x-auto my-4">
@@ -172,7 +172,7 @@ $amount  # Special symbol not allowed`} />
             <Section title="Literals">
                 <p>Literals are data items that have a fixed value. Python supports different types of literals:</p>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">String Literals</h3>
+                <h3 id="string-literals" className="text-lg font-semibold mt-4 mb-2">String Literals</h3>
                 <p>String literals are enclosed within single quotes (&apos; &apos;), double quotes (&quot; &quot;), or triple quotes (&apos;&apos;&apos; &apos;&apos;&apos; or &quot;&quot;&quot; &quot;&quot;&quot;).</p>
 
                 <p><strong>Single-line String:</strong></p>
@@ -189,7 +189,7 @@ Triple quotes allow this."""`} />
 that continues on the next line \\
 using backslashes."`} />
 
-                <h3 className="text-lg font-semibold mt-6 mb-2">Numeric Literals</h3>
+                <h3 id="numeric-literals" className="text-lg font-semibold mt-6 mb-2">Numeric Literals</h3>
                 <p><strong>Integer Literals:</strong></p>
                 <CodeBlock code={`a = 10      # Decimal
 b = 0b1010  # Binary (starts with 0b)
@@ -205,12 +205,12 @@ z = .5       # Same as 0.5`} />
                 <p>Complex numbers are written in the form of a + bj, where a is the real part and b is the imaginary part.</p>
                 <CodeBlock code={`complex_num = 3 + 5j`} />
 
-                <h3 className="text-lg font-semibold mt-6 mb-2">Boolean Literals</h3>
+                <h3 id="boolean-literals" className="text-lg font-semibold mt-6 mb-2">Boolean Literals</h3>
                 <p>Boolean literals represent truth values. There are only two: <code>True</code> and <code>False</code>.</p>
                 <CodeBlock code={`is_active = True
 is_completed = False`} />
 
-                <h3 className="text-lg font-semibold mt-6 mb-2">None Literal</h3>
+                <h3 id="none-literal" className="text-lg font-semibold mt-6 mb-2">None Literal</h3>
                 <p>The <code>None</code> literal represents the absence of a value or a null value. It&apos;s often used as a placeholder for optional or missing values.</p>
                 <CodeBlock code={`result = None`} />
             </Section>
@@ -239,7 +239,7 @@ print(type(name))   # <class 'str'>`} />
             <Section title="Operators">
                 <p>Operators are special symbols that perform operations on variables and values. Python provides a wide range of operators.</p>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Arithmetic Operators</h3>
+                <h3 id="arithmetic-operators" className="text-lg font-semibold mt-4 mb-2">Arithmetic Operators</h3>
                 <div className="overflow-x-auto my-4">
                     <table className="w-full text-sm border-collapse">
                         <thead><tr className="bg-blue-600 text-white"><th className="p-3">Operator</th><th className="p-3">Name</th><th className="p-3">Example</th><th className="p-3">Result</th></tr></thead>
@@ -255,7 +255,7 @@ print(type(name))   # <class 'str'>`} />
                     </table>
                 </div>
 
-                <h3 className="text-lg font-semibold mt-6 mb-2">Relational (Comparison) Operators</h3>
+                <h3 id="relational-comparison-operators" className="text-lg font-semibold mt-6 mb-2">Relational (Comparison) Operators</h3>
                 <div className="overflow-x-auto my-4">
                     <table className="w-full text-sm border-collapse">
                         <thead><tr className="bg-blue-600 text-white"><th className="p-3">Operator</th><th className="p-3">Name</th><th className="p-3">Example</th><th className="p-3">Result</th></tr></thead>
@@ -270,7 +270,7 @@ print(type(name))   # <class 'str'>`} />
                     </table>
                 </div>
 
-                <h3 className="text-lg font-semibold mt-6 mb-2">Assignment Operators</h3>
+                <h3 id="assignment-operators" className="text-lg font-semibold mt-6 mb-2">Assignment Operators</h3>
                 <div className="overflow-x-auto my-4">
                     <table className="w-full text-sm border-collapse">
                         <thead><tr className="bg-blue-600 text-white"><th className="p-3">Operator</th><th className="p-3">Example</th><th className="p-3">Equivalent to</th></tr></thead>
@@ -287,7 +287,7 @@ print(type(name))   # <class 'str'>`} />
                     </table>
                 </div>
 
-                <h3 className="text-lg font-semibold mt-6 mb-2">Identity Operators</h3>
+                <h3 id="identity-operators" className="text-lg font-semibold mt-6 mb-2">Identity Operators</h3>
                 <p>Identity operators are used to compare objects — not if they are equal, but if they are the same object with the same memory location.</p>
                 <div className="overflow-x-auto my-4">
                     <table className="w-full text-sm border-collapse">
@@ -305,7 +305,7 @@ c = a
 print(a is b)    # False (different objects with the same value)
 print(a is c)    # True (same object)`} />
 
-                <h3 className="text-lg font-semibold mt-6 mb-2">Membership Operators</h3>
+                <h3 id="membership-operators" className="text-lg font-semibold mt-6 mb-2">Membership Operators</h3>
                 <p>Membership operators are used to test if a sequence is present in an object.</p>
                 <div className="overflow-x-auto my-4">
                     <table className="w-full text-sm border-collapse">
@@ -348,15 +348,15 @@ result = (1 + 2) * 3  # Parentheses affect operator precedence`} />
             <Section title="Print Statement in Python">
                 <p>The <code>print()</code> function is used to output data to the standard output device (screen).</p>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Basic Print Usage</h3>
+                <h3 id="basic-print-usage" className="text-lg font-semibold mt-4 mb-2">Basic Print Usage</h3>
                 <CodeBlock code={`print("Hello, World!")  # Outputs: Hello, World!
 print(10)             # Outputs: 10
 print(True)           # Outputs: True`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Printing Multiple Items</h3>
+                <h3 id="printing-multiple-items" className="text-lg font-semibold mt-4 mb-2">Printing Multiple Items</h3>
                 <CodeBlock code={`print("Name:", "Alice", "Age:", 25)  # Outputs: Name: Alice Age: 25`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Print with Separator and End Parameters</h3>
+                <h3 id="print-with-separator-and-end-parameters" className="text-lg font-semibold mt-4 mb-2">Print with Separator and End Parameters</h3>
                 <CodeBlock code={`# Custom separator
 print("apple", "banana", "cherry", sep="|")  # Outputs: apple|banana|cherry
 
@@ -364,13 +364,13 @@ print("apple", "banana", "cherry", sep="|")  # Outputs: apple|banana|cherry
 print("Hello", end=" ")
 print("World")  # Outputs: Hello World`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Formatted String Literals (f-strings)</h3>
+                <h3 id="formatted-string-literals-f-strings" className="text-lg font-semibold mt-4 mb-2">Formatted String Literals (f-strings)</h3>
                 <CodeBlock code={`name = "Alice"
 age = 25
 print(f"My name is {name} and I am {age} years old.")
 # Outputs: My name is Alice and I am 25 years old.`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Format Method</h3>
+                <h3 id="format-method" className="text-lg font-semibold mt-4 mb-2">Format Method</h3>
                 <CodeBlock code={`print("My name is {} and I am {} years old.".format(name, age))
 
 # With position indexes
@@ -379,7 +379,7 @@ print("My name is {0} and I am {1} years old.".format(name, age))
 # With named parameters
 print("My name is {n} and I am {a} years old.".format(n=name, a=age))`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Old-style String Formatting</h3>
+                <h3 id="old-style-string-formatting" className="text-lg font-semibold mt-4 mb-2">Old-style String Formatting</h3>
                 <CodeBlock code={`print("My name is %s and I am %d years old." % (name, age))
 # Outputs: My name is Alice and I am 25 years old.`} />
             </Section>
@@ -388,13 +388,13 @@ print("My name is {n} and I am {a} years old.".format(n=name, a=age))`} />
             <Section title="Input Statement in Python">
                 <p>The <code>input()</code> function allows user input from the standard input device (keyboard).</p>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Basic Input Usage</h3>
+                <h3 id="basic-input-usage" className="text-lg font-semibold mt-4 mb-2">Basic Input Usage</h3>
                 <CodeBlock code={`name = input("Enter your name: ")
 print("Hello, " + name + "!")`} />
 
                 <InfoBox type="note">The <code>input()</code> function always returns a string, even if the user enters a number.</InfoBox>
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Converting Input to Other Types</h3>
+                <h3 id="converting-input-to-other-types" className="text-lg font-semibold mt-4 mb-2">Converting Input to Other Types</h3>
                 <CodeBlock code={`# Converting input to an integer
 age = int(input("Enter your age: "))
 next_year_age = age + 1
@@ -404,7 +404,7 @@ print(f"Next year, you will be {next_year_age} years old.")
 height = float(input("Enter your height in meters: "))
 print(f"Your height is {height} meters.")`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Input Validation Example</h3>
+                <h3 id="input-validation-example" className="text-lg font-semibold mt-4 mb-2">Input Validation Example</h3>
                 <CodeBlock code={`while True:
     try:
         number = int(input("Enter a positive number: "))
@@ -417,7 +417,7 @@ print(f"Your height is {height} meters.")`} />
         
 print(f"You entered: {number}")`} />
 
-                <h3 className="text-lg font-semibold mt-4 mb-2">Multiple Inputs</h3>
+                <h3 id="multiple-inputs" className="text-lg font-semibold mt-4 mb-2">Multiple Inputs</h3>
                 <CodeBlock code={`# Getting multiple inputs on separate lines
 first_name = input("Enter your first name: ")
 last_name = input("Enter your last name: ")

@@ -54,7 +54,7 @@ export default function TasksPage() {
                                 <span className={`w-8 h-8 rounded-lg ${task.color} text-white font-bold text-xs flex items-center justify-center`}>
                                     {task.id}
                                 </span>
-                                <h3 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{task.title}</h3>
+                                <h3 id="tasktitle" className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{task.title}</h3>
                             </div>
                             <p className="text-xs text-gray-600 mb-3">{task.desc}</p>
                             <div className="flex items-center justify-between">

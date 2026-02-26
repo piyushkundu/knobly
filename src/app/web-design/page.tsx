@@ -91,7 +91,7 @@ export default function WebDesignPage() {
                             <Globe size={16} style={{ color: '#93c5fd' }} />
                             <span className="text-[10px] uppercase tracking-[0.3em] font-bold" style={{ color: '#93c5fd' }}>Complete Course</span>
                         </div>
-                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: '#ffffff' }}>
+                        <h2 id="web-design" className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: '#ffffff' }}>
                             Web Design
                         </h2>
                         <p className="text-base md:text-lg leading-relaxed max-w-xl mb-6" style={{ color: '#e2e8f0' }}>
@@ -136,7 +136,7 @@ export default function WebDesignPage() {
                                     <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.1)' }}>
                                         {topic.icon}
                                     </div>
-                                    <h3 className="text-base font-bold" style={{ color: '#ffffff' }}>{topic.title}</h3>
+                                    <h3 id="topictitle" className="text-base font-bold" style={{ color: '#ffffff' }}>{topic.title}</h3>
                                 </div>
                                 <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>{topic.desc}</p>
                                 <div className="mt-4 h-0.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>

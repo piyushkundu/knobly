@@ -16,7 +16,7 @@ export default function ControlStatements() {
                             <GitBranch size={28} style={{ color: '#ffffff' }} />
                         </div>
                         <div>
-                            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight drop-shadow-lg" style={{ color: '#ffffff' }}>Control Statements</h2>
+                            <h2 id="control-statements" className="text-2xl md:text-3xl font-extrabold tracking-tight drop-shadow-lg" style={{ color: '#ffffff' }}>Control Statements</h2>
                             <p className="text-sm font-medium mt-1" style={{ color: '#c7d2fe' }}>Chapter 2 • Python Programming</p>
                         </div>
                     </div>
@@ -145,7 +145,7 @@ else:
             <Section title="Complex Conditions">
                 <div className="space-y-6">
                     <div>
-                        <h3 className="text-base font-bold mb-2" style={{ color: '#7c3aed' }}>Logical Operators (and, or)</h3>
+                        <h3 id="logical-operators-and-or" className="text-base font-bold mb-2" style={{ color: '#7c3aed' }}>Logical Operators (and, or)</h3>
                         <p>Logical operators allow you to combine multiple conditions in a single statement, often making your code more concise and readable than nested if statements.</p>
                     </div>
 

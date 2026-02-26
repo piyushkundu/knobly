@@ -1216,4 +1216,4 @@ body.light-mode .text-xl.font-bold.text-white {
 .low-perf-mode * {
   animation-duration: 0s !important;
   transition-duration: 0.05s !important;
-}
+}html { scroll-behavior: smooth; }
