@@ -22,7 +22,7 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
     { id: 'css', name: 'CSS', type: 'Style', link: '/web-design/css', icon: 'ti ti-brand-css3', color: 'text-blue-500', borderClass: 'border-blue', category: 'Main' },
     { id: 'w3css', name: 'W3.CSS', type: 'Framework', link: '/web-design/w3css', icon: 'ph-bold ph-layout', color: 'text-green-400', borderClass: 'border-green', category: 'Main' },
     { id: 'js', name: 'JS', type: 'Scripting', link: '/web-design/javascript', icon: 'ti ti-brand-javascript', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'Main' },
-    { id: 'youtube', name: 'YouTube', type: 'Channel', link: 'https://youtube.com/@Knobly', icon: 'ph-bold ph-youtube-logo', color: 'text-red-500', borderClass: 'border-red', category: 'Main' },
+    { id: 'youtube', name: 'YouTube', type: 'Channel', link: 'https://youtube.com/@knobly1', icon: 'ph-bold ph-youtube-logo', color: 'text-red-500', borderClass: 'border-red', category: 'Main' },
     { id: 'notes', name: 'Notes', type: 'Utility', link: '/notes', icon: 'ti ti-notes', color: 'text-cyan-300', borderClass: 'border-cyan', category: 'Main' },
   ],
   OLevel: [
@@ -203,28 +203,50 @@ export default function HomePage() {
 
   // ── Fetch weather ──
   useEffect(() => {
-    const fetchWeather = async () => {
+    const fetchWeather = async (lat?: number, lon?: number) => {
       try {
-        const res = await fetch('/api/weather');
+        const url = lat && lon ? `/api/weather?lat=${lat}&lon=${lon}` : '/api/weather';
+        const res = await fetch(url);
         const data = await res.json();
         if (data.temp != null) {
           setWeatherTemp(`${data.temp}°C`);
           setWeatherCity(data.city || '');
-          // WMO weather codes → icon
           const code = parseInt(data.code);
-          if (code === 0) setWeatherIcon('ph-sun');                         // Clear
-          else if (code <= 3) setWeatherIcon('ph-cloud-sun');               // Partly cloudy
-          else if (code <= 49) setWeatherIcon('ph-cloud-fog');              // Fog
-          else if (code <= 69) setWeatherIcon('ph-cloud-rain');             // Rain/Drizzle
-          else if (code <= 79) setWeatherIcon('ph-cloud-snow');             // Snow
-          else if (code <= 99) setWeatherIcon('ph-cloud-lightning');         // Thunderstorm
+          if (code === 0) setWeatherIcon('ph-sun');
+          else if (code <= 3) setWeatherIcon('ph-cloud-sun');
+          else if (code <= 49) setWeatherIcon('ph-cloud-fog');
+          else if (code <= 69) setWeatherIcon('ph-cloud-rain');
+          else if (code <= 79) setWeatherIcon('ph-cloud-snow');
+          else if (code <= 99) setWeatherIcon('ph-cloud-lightning');
           else setWeatherIcon('ph-cloud');
         }
       } catch { /* silently ignore */ }
     };
-    fetchWeather();
-    const interval = setInterval(fetchWeather, 600000);
-    return () => clearInterval(interval);
+
+    // Try browser geolocation for accurate location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          fetchWeather(pos.coords.latitude, pos.coords.longitude);
+          // Refresh every 10 min with same location
+          const id = setInterval(() => fetchWeather(pos.coords.latitude, pos.coords.longitude), 600000);
+          (window as any).__weatherInterval = id;
+        },
+        () => {
+          // Permission denied → fallback to IP-based
+          fetchWeather();
+          const id = setInterval(() => fetchWeather(), 600000);
+          (window as any).__weatherInterval = id;
+        },
+        { timeout: 5000 }
+      );
+    } else {
+      fetchWeather();
+      const id = setInterval(() => fetchWeather(), 600000);
+      (window as any).__weatherInterval = id;
+    }
+
+    return () => clearInterval((window as any).__weatherInterval);
   }, []);
 
   // ── Listen to global apps from Firestore ──
