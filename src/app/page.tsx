@@ -116,6 +116,11 @@ export default function HomePage() {
   const [dateString, setDateString] = useState('');
   const [greeting, setGreeting] = useState('');
 
+  // ── Weather ──
+  const [weatherTemp, setWeatherTemp] = useState<string | null>(null);
+  const [weatherIcon, setWeatherIcon] = useState('ph-cloud-sun');
+  const [weatherCity, setWeatherCity] = useState('');
+
   // ── YouTube ──
   const [currentVideo, setCurrentVideo] = useState(VIDEOS[0]);
   const [myVideos, setMyVideos] = useState(VIDEOS);
@@ -195,6 +200,32 @@ export default function HomePage() {
   useEffect(() => {
     document.body.classList.toggle('low-perf-mode', !performanceMode);
   }, [performanceMode]);
+
+  // ── Fetch weather ──
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const res = await fetch('/api/weather');
+        const data = await res.json();
+        if (data.temp != null) {
+          setWeatherTemp(`${data.temp}°C`);
+          setWeatherCity(data.city || '');
+          // WMO weather codes → icon
+          const code = parseInt(data.code);
+          if (code === 0) setWeatherIcon('ph-sun');                         // Clear
+          else if (code <= 3) setWeatherIcon('ph-cloud-sun');               // Partly cloudy
+          else if (code <= 49) setWeatherIcon('ph-cloud-fog');              // Fog
+          else if (code <= 69) setWeatherIcon('ph-cloud-rain');             // Rain/Drizzle
+          else if (code <= 79) setWeatherIcon('ph-cloud-snow');             // Snow
+          else if (code <= 99) setWeatherIcon('ph-cloud-lightning');         // Thunderstorm
+          else setWeatherIcon('ph-cloud');
+        }
+      } catch { /* silently ignore */ }
+    };
+    fetchWeather();
+    const interval = setInterval(fetchWeather, 600000);
+    return () => clearInterval(interval);
+  }, []);
 
   // ── Listen to global apps from Firestore ──
   useEffect(() => {
@@ -565,9 +596,10 @@ export default function HomePage() {
                       </div>
                       <div className="flex flex-col items-end">
                         <div className="flex items-center gap-1 text-yellow-400">
-                          <i className="ph-fill ph-cloud-sun text-lg" />
-                          <span className="text-xl font-bold">--°C</span>
+                          <i className={`ph-fill ${weatherIcon} text-lg`} />
+                          <span className="text-xl font-bold">{weatherTemp || '--°C'}</span>
                         </div>
+                        {weatherCity && <span className="text-[9px] text-gray-500 uppercase tracking-wider">{weatherCity}</span>}
                         <span className="text-xs font-medium text-gray-400 uppercase tracking-widest">System Local</span>
                       </div>
                     </div>
@@ -987,8 +1019,9 @@ export default function HomePage() {
             <div className="text-[9px] font-bold text-cyan-400 uppercase tracking-widest">System Local</div>
           </div>
           <div className="text-right relative">
-            <i className="ph-fill ph-cloud-sun text-2xl text-yellow-400 drop-shadow-md mb-1 animate-float" />
-            <div className="text-lg font-semibold text-white tracking-tight">--°C</div>
+            <i className={`ph-fill ${weatherIcon} text-2xl text-yellow-400 drop-shadow-md mb-1 animate-float`} />
+            <div className="text-lg font-semibold text-white tracking-tight">{weatherTemp || '--°C'}</div>
+            {weatherCity && <div className="text-[8px] text-gray-400 uppercase tracking-wider mt-0.5">{weatherCity}</div>}
           </div>
         </div>
 
