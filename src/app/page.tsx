@@ -104,6 +104,7 @@ export default function HomePage() {
 
   // ── Modals ──
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showNotifPanel, setShowNotifPanel] = useState(false);
 
   // ── Data ──
   const [globalApps, setGlobalApps] = useState<KnoblyApp[]>([]);
@@ -167,16 +168,18 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  // ── Load favourites, hidden, userName, notes from localStorage ──
+  // ── Load favourites, hidden, userName, notes, recentApps from localStorage ──
   useEffect(() => {
     const savedFavs = localStorage.getItem('knobly-favourites');
     const savedHidden = localStorage.getItem('knobly-hidden');
     const savedName = localStorage.getItem('knobly-guest-name');
     const savedNotes = localStorage.getItem('knobly-notes');
+    const savedRecent = localStorage.getItem('knobly-recent-apps');
     if (savedFavs) setFavourites(JSON.parse(savedFavs));
     if (savedHidden) setHiddenApps(JSON.parse(savedHidden));
     if (savedName) setUserName(savedName);
     if (savedNotes) setNotesText(savedNotes);
+    if (savedRecent) setRecentApps(JSON.parse(savedRecent));
     setIsMobile(window.innerWidth <= 640);
     const handleResize = () => setIsMobile(window.innerWidth <= 640);
     window.addEventListener('resize', handleResize);
@@ -310,10 +313,12 @@ export default function HomePage() {
 
   // ── Actions ──
   const handleAppClick = (app: KnoblyApp) => {
-    // Track recent apps
+    // Track recent apps & persist
     setRecentApps(prev => {
       const filtered = prev.filter(a => a.id !== app.id);
-      return [app, ...filtered].slice(0, 8);
+      const updated = [app, ...filtered].slice(0, 8);
+      localStorage.setItem('knobly-recent-apps', JSON.stringify(updated));
+      return updated;
     });
     // Navigate directly
     const link = app.link || (app.id === 'notes' ? '/notes' : '');
@@ -572,8 +577,9 @@ export default function HomePage() {
                 </span>
               </div>
               <div className="flex items-center gap-2 md:gap-3">
-                <button className="relative w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press">
+                <button onClick={() => setShowNotifPanel(p => !p)} className="relative w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press">
                   <i className="ph-bold ph-bell-simple text-xs md:text-sm text-gray-400" />
+                  {recentApps.length > 0 && <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border border-[#0a0f1e]"></span>}
                 </button>
                 <button onClick={toggleTheme} className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press">
                   {isDark ? <i className="ph-bold ph-moon-stars text-xs md:text-sm text-cyan-300" /> : <i className="ph-bold ph-sun-dim text-xs md:text-sm text-yellow-500" />}
@@ -596,9 +602,9 @@ export default function HomePage() {
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-3">
                   <div id="knobly-logo" className="text-2xl md:text-3xl knobly-header-style">KNOBLY</div>
-                  <div className="flex items-center gap-1.5 opacity-70">
+                  <div className="flex items-center gap-1.5 opacity-70 whitespace-nowrap">
                     <i className="ph-bold ph-calendar-blank text-cyan-400 text-xs" />
-                    <span className="text-[9px] md:text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400">{dateString}</span>
+                    <span className="text-[9px] md:text-[10px] font-bold tracking-[0.12em] uppercase text-gray-400">{dateString}</span>
                   </div>
                 </div>
                 <h1 className="text-xl md:text-2xl font-semibold text-white leading-tight mt-0.5">
@@ -631,8 +637,9 @@ export default function HomePage() {
 
               <div className="flex flex-col items-end gap-2 shrink-0">
                 <div className="flex items-center gap-2 md:gap-3">
-                  <button className="relative w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press">
+                  <button onClick={() => setShowNotifPanel(p => !p)} className="relative w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press">
                     <i className="ph-bold ph-bell-simple text-xs md:text-sm text-gray-400" />
+                    {recentApps.length > 0 && <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border border-[#0a0f1e]"></span>}
                   </button>
                   <button onClick={toggleTheme} className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press">
                     {isDark ? <i className="ph-bold ph-moon-stars text-xs md:text-sm text-cyan-300" /> : <i className="ph-bold ph-sun-dim text-xs md:text-sm text-yellow-500" />}
@@ -648,12 +655,15 @@ export default function HomePage() {
                     )}
                   </button>
                   {/* Desktop search */}
-                  <div className="relative w-48 md:w-60 lg:w-72 group hidden md:block">
-                    <div className="search-shell relative rounded-xl flex items-center px-3 md:px-4 py-2">
-                      <i className="ph-bold ph-magnifying-glass text-gray-500 mr-2 md:mr-3 transition-colors text-xs md:text-sm search-shell-icon" />
-                      <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search system... (Ctrl + K)"
-                        className="bg-transparent w-full text-[11px] md:text-sm text-white focus:outline-none placeholder-gray-400 font-medium" />
+                  <div className="relative w-48 md:w-64 lg:w-80 group hidden md:block">
+                    <div className="relative rounded-2xl p-[1px] overflow-hidden" style={{ background: 'linear-gradient(90deg, rgba(139,92,246,0.3), rgba(56,189,248,0.3), rgba(236,72,153,0.3), rgba(139,92,246,0.3))', backgroundSize: '300% 100%', animation: 'gradientSlide 6s linear infinite' }}>
+                      <div className="search-shell relative rounded-2xl flex items-center px-4 py-2.5">
+                        <i className="ph-bold ph-magnifying-glass mr-3 transition-colors text-sm search-shell-icon" style={{ color: isDark ? '#64748b' : '#94a3b8' }} />
+                        <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Search system... (Ctrl+K)"
+                          className="bg-transparent w-full text-sm focus:outline-none font-medium"
+                          style={{ color: isDark ? '#e2e8f0' : '#1e293b' }} />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -661,6 +671,70 @@ export default function HomePage() {
             </div>
           )}
         </header>
+
+        {/* ══════ NOTIFICATION PANEL ══════ */}
+        {showNotifPanel && (
+          <>
+            {/* Backdrop */}
+            <div className="fixed inset-0 z-40" onClick={() => setShowNotifPanel(false)} />
+            <div className={`absolute top-16 right-4 md:right-8 z-50 w-80 max-h-[70vh] overflow-y-auto rounded-2xl shadow-2xl border ${isDark ? 'border-white/10' : 'border-gray-200'}`}
+              style={{ background: isDark ? 'linear-gradient(145deg, rgba(15,23,42,0.98), rgba(20,16,50,0.98))' : 'rgba(255,255,255,0.98)', backdropFilter: 'blur(20px)' }}>
+              {/* Header */}
+              <div className={`flex items-center justify-between p-4 border-b ${isDark ? 'border-white/5' : 'border-gray-100'}`}>
+                <h3 className={`text-sm font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  <i className="ph-bold ph-bell-simple text-cyan-500" /> Notifications
+                </h3>
+                {recentApps.length > 0 && (
+                  <button onClick={() => { setRecentApps([]); localStorage.removeItem('knobly-recent-apps'); }}
+                    className={`text-[9px] hover:text-red-400 transition-colors uppercase tracking-wider font-bold ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                    Clear All
+                  </button>
+                )}
+              </div>
+
+              {/* Recent Apps Section */}
+              {recentApps.length > 0 && (
+                <div className="p-3">
+                  <div className={`text-[9px] font-bold uppercase tracking-widest mb-2 px-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>Recent Apps</div>
+                  <div className="flex flex-col gap-1">
+                    {recentApps.map(app => (
+                      <button key={app.id} onClick={() => { handleAppClick(app); setShowNotifPanel(false); }}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all text-left group ${isDark ? 'hover:bg-white/5' : 'hover:bg-gray-50'}`}>
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${isDark ? 'border-white/10 bg-white/5' : 'border-gray-200 bg-gray-50'} ${app.color}`}>
+                          <i className={`${app.icon} text-sm`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className={`text-xs font-semibold truncate ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{app.name}</div>
+                          <div className={`text-[9px] ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>{app.type}</div>
+                        </div>
+                        <i className={`ph-bold ph-arrow-right text-[10px] group-hover:text-cyan-400 transition-colors ${isDark ? 'text-gray-600' : 'text-gray-300'}`} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* System Notifications */}
+              <div className={`p-3 border-t ${isDark ? 'border-white/5' : 'border-gray-100'}`}>
+                <div className={`text-[9px] font-bold uppercase tracking-widest mb-2 px-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>System</div>
+                <div className={`flex items-start gap-3 px-3 py-2 rounded-xl border ${isDark ? 'bg-cyan-500/5 border-cyan-500/10' : 'bg-cyan-50 border-cyan-100'}`}>
+                  <i className="ph-fill ph-info text-cyan-500 text-base mt-0.5" />
+                  <div>
+                    <div className={`text-xs font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Welcome to Knobly OS!</div>
+                    <div className={`text-[10px] mt-0.5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Explore courses, practice MCQs, and learn with KnoblyAI assistant.</div>
+                  </div>
+                </div>
+              </div>
+
+              {recentApps.length === 0 && (
+                <div className="p-6 text-center">
+                  <i className={`ph-bold ph-bell-slash text-2xl mb-2 ${isDark ? 'text-gray-600' : 'text-gray-300'}`} />
+                  <div className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>No recent activity</div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
 
         {/* ── Settings Panel ── */}
         {activeNav === 'settings' && (
@@ -1033,17 +1107,35 @@ export default function HomePage() {
 
       {/* ══════ RIGHT SIDEBAR (Desktop XL) ══════ */}
       <aside className="hidden xl:flex w-[320px] min-w-[320px] max-w-[320px] flex-col gap-4 h-full z-10 shrink-0">
-        {/* Clock/Weather */}
-        <div className="glass-panel w-full rounded-[28px] p-4 flex items-center justify-between relative overflow-hidden shrink-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent pointer-events-none" />
-          <div className="relative">
-            <div className="text-4xl font-black tracking-tight text-white leading-none mb-1">{currentTime}</div>
-            <div className="text-[9px] font-bold text-cyan-400 uppercase tracking-widest">System Local</div>
-          </div>
-          <div className="text-right relative">
-            <i className={`ph-fill ${weatherIcon} text-2xl text-yellow-400 drop-shadow-md mb-1 animate-float`} />
-            <div className="text-lg font-semibold text-white tracking-tight">{weatherTemp || '--°C'}</div>
-            {weatherCity && <div className="text-[8px] text-gray-400 uppercase tracking-wider mt-0.5">{weatherCity}</div>}
+        {/* Clock/Weather — Premium Card */}
+        <div className="w-full rounded-[28px] overflow-hidden shrink-0 relative" style={{
+          background: isDark
+            ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0c4a6e 100%)'
+            : 'linear-gradient(to right, #ffffff 0%, #e0f2fe 40%, #7dd3fc 100%)',
+          boxShadow: isDark
+            ? '0 8px 32px rgba(14,165,233,0.15), inset 0 1px 0 rgba(255,255,255,0.05)'
+            : '0 4px 20px rgba(56,189,248,0.12), inset 0 1px 0 rgba(255,255,255,0.6)',
+        }}>
+          {/* Decorative clouds */}
+          <div className="absolute top-2 right-8 opacity-20"><i className="ph-fill ph-cloud text-5xl text-white" /></div>
+          <div className="absolute bottom-4 left-4 opacity-10"><i className="ph-fill ph-cloud text-4xl text-white" /></div>
+          <div className="absolute top-6 right-24 opacity-15"><i className="ph-fill ph-cloud text-3xl text-white" /></div>
+
+          <div className="relative p-5 flex items-center justify-between">
+            {/* Left: Clock */}
+            <div>
+              <div className="text-4xl font-black tracking-tight leading-none mb-1" style={{ color: isDark ? '#fff' : '#1e1b4b', textShadow: isDark ? '0 2px 12px rgba(99,102,241,0.4)' : 'none' }}>{currentTime}</div>
+              <div className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: isDark ? '#a5b4fc' : '#4338ca' }}>System Local</div>
+            </div>
+
+            {/* Right: Weather */}
+            <div className="text-right flex flex-col items-end gap-1">
+              <div className="relative">
+                <i className={`ph-fill ${weatherIcon} text-4xl animate-float`} style={{ color: isDark ? '#fbbf24' : '#f59e0b', filter: 'drop-shadow(0 2px 8px rgba(251,191,36,0.4))' }} />
+              </div>
+              <div className="text-2xl font-black tracking-tight" style={{ color: isDark ? '#fff' : '#1e1b4b' }}>{weatherTemp || '--°C'}</div>
+              {weatherCity && <div className="text-[8px] font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded-full" style={{ background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(30,27,75,0.1)', color: isDark ? '#c7d2fe' : '#4338ca' }}>{weatherCity}</div>}
+            </div>
           </div>
         </div>
 

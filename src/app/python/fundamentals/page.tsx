@@ -1,508 +1,419 @@
 'use client';
-import ContentPage, { CodeBlock, Section, InfoBox } from '@/components/content/ContentPage';
+import { useState, ReactNode } from 'react';
+import Link from 'next/link';
+import { ArrowLeft, Home, BookOpen, Copy, Check, LayoutDashboard, StickyNote, Code2, Brain, Keyboard as KBIcon, Sparkles, Play, Zap, Globe, Cpu, Terminal, FileCode2, Hash, Type, ToggleLeft, CircleDot, Braces, Printer, Keyboard, Menu, X, ChevronRight } from 'lucide-react';
+import MCQSection from '@/components/content/MCQSection';
+
+/* ─── Code Block ─── */
+function CB({ code, lang = 'python' }: { code: string; lang?: string }) {
+    const [c, setC] = useState(false);
+    const copy = () => { navigator.clipboard.writeText(code); setC(true); setTimeout(() => setC(false), 2000); };
+    return (
+        <div className="relative rounded-2xl overflow-hidden my-3" style={{ background: '#1e293b', boxShadow: '0 4px 16px rgba(15,23,42,0.12)', border: '1px solid #334155' }}>
+            <div className="flex items-center justify-between px-4 py-1.5" style={{ background: '#0f172a', borderBottom: '1px solid #334155' }}>
+                <div className="flex items-center gap-2">
+                    <div className="flex gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-400/60" /><span className="w-2.5 h-2.5 rounded-full bg-yellow-400/60" /><span className="w-2.5 h-2.5 rounded-full bg-green-400/60" /></div>
+                    <span className="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-500">{lang}</span>
+                </div>
+                <button onClick={copy} className="text-xs flex items-center gap-1 transition-colors" style={{ color: c ? '#34d399' : '#64748b' }}>
+                    {c ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
+                </button>
+            </div>
+            <pre className="p-4 overflow-x-auto text-sm text-slate-200"><code>{code}</code></pre>
+        </div>
+    );
+}
+
+function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
+    return (
+        <section id={id} className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20 transition-all duration-300 hover:shadow-lg" style={{ background: '#fff', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02)' }}>
+            <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #f1f5f9' }}>
+                {icon}
+                <h2 className="text-base md:text-lg font-extrabold" style={{ color: '#1e293b' }}>{title}</h2>
+            </div>
+            <div className="text-sm leading-relaxed space-y-3" style={{ color: '#475569' }}>{children}</div>
+        </section>
+    );
+}
+
+function IB({ type = 'tip', children }: { type?: 'tip' | 'note' | 'warning'; children: ReactNode }) {
+    const s = { tip: { bg: '#ecfdf5', bc: '#86efac', tc: '#166534', emoji: '💡' }, note: { bg: '#eff6ff', bc: '#93c5fd', tc: '#1e40af', emoji: '📝' }, warning: { bg: '#fefce8', bc: '#fde047', tc: '#854d0e', emoji: '⚠️' } };
+    const st = s[type];
+    return <div className="rounded-xl p-3.5 text-xs font-medium my-3" style={{ background: st.bg, border: `1px solid ${st.bc}`, color: st.tc }}>{st.emoji} {children}</div>;
+}
+
+/* ─── Highlight box for simple definitions ─── */
+function Def({ children }: { children: ReactNode }) {
+    return <div className="rounded-xl p-4 my-3 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', border: '1px solid #c7d2fe', color: '#3730a3' }}>{children}</div>;
+}
+
+function TH({ children }: { children: ReactNode }) {
+    return <tr style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }} className="text-white">{children}</tr>;
+}
+
+const tocItems = [
+    { icon: <Globe size={13} />, label: 'Introduction', id: 'intro', color: '#6366f1' },
+    { icon: <Cpu size={13} />, label: 'Versions', id: 'versions', color: '#8b5cf6' },
+    { icon: <Zap size={13} />, label: 'Advantages', id: 'advantages', color: '#a855f7' },
+    { icon: <Terminal size={13} />, label: 'Working', id: 'working', color: '#c084fc' },
+    { icon: <FileCode2 size={13} />, label: 'Modules', id: 'modules', color: '#d946ef' },
+    { icon: <Code2 size={13} />, label: 'Tokens', id: 'tokens', color: '#ec4899' },
+    { icon: <Type size={13} />, label: 'Literals', id: 'literals', color: '#f43f5e' },
+    { icon: <ToggleLeft size={13} />, label: 'Variables', id: 'variables', color: '#ef4444' },
+    { icon: <CircleDot size={13} />, label: 'Operators', id: 'operators', color: '#f97316' },
+    { icon: <Braces size={13} />, label: 'Punctuation', id: 'punctuation', color: '#eab308' },
+    { icon: <Printer size={13} />, label: 'Print', id: 'print', color: '#22c55e' },
+    { icon: <Keyboard size={13} />, label: 'Input', id: 'input', color: '#14b8a6' },
+    { icon: <Code2 size={13} />, label: 'Strings', id: 'strings', color: '#06b6d4' },
+    { icon: <Brain size={13} />, label: 'MCQ Quiz', id: 'mcq', color: '#6366f1' },
+    { icon: <BookOpen size={13} />, label: 'Practice', id: 'practice', color: '#8b5cf6' },
+];
+
+const navLinks = [
+    { label: 'Home', href: '/', icon: <Home size={14} /> },
+    { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={14} /> },
+    { label: 'Notes', href: '/notes', icon: <StickyNote size={14} /> },
+    { label: 'Python', href: '/python', icon: <Code2 size={14} /> },
+    { label: 'MCQ', href: '/mcq', icon: <Brain size={14} /> },
+    { label: 'Shortcuts', href: '/shortcuts', icon: <KBIcon size={14} /> },
+];
 
 export default function PythonFundamentals() {
+    const [tocOpen, setTocOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState('intro');
+
     return (
-        <ContentPage title="Python Fundamentals" breadcrumb={{ label: 'Python', href: '/python' }}>
+        <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 30%, #e2e8f0 100%)' }}>
 
-            {/* ── Introduction to Python ── */}
-            <Section title="Introduction to Python">
-                <p>Python is a high-level, interpreted programming language known for its readability and simplicity. Created by <strong>Guido van Rossum</strong> and first released in <strong>1991</strong>, Python&apos;s design philosophy emphasizes code readability with its notable use of significant whitespace.</p>
-
-                <h3 id="development-of-python" className="text-lg font-semibold mt-4 mb-2">Development of Python</h3>
-                <p>Guido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language. He wanted to create a language that was extensible and had better exception handling than its predecessors. The name &quot;Python&quot; was inspired by the British comedy group Monty Python, as van Rossum was a fan of Monty Python&apos;s Flying Circus.</p>
-                <p>Python was designed to be a highly readable language. Its formatting is visually uncluttered, and it frequently uses English keywords where other languages use punctuation. Python&apos;s syntax allows programmers to express concepts in fewer lines of code than possible in languages such as C++ or Java.</p>
-
-                <InfoBox type="tip">Python uses indentation instead of curly braces to define code blocks. This makes code cleaner and more uniform.</InfoBox>
-            </Section>
-
-            {/* ── Python Versions ── */}
-            <Section title="Python Versions">
-                <div className="overflow-x-auto my-4">
-                    <table className="w-full text-sm border-collapse">
-                        <thead><tr className="bg-blue-600 text-white"><th className="p-3 text-left">Version</th><th className="p-3 text-left">Year</th><th className="p-3 text-left">Details</th></tr></thead>
-                        <tbody>
-                            <tr className="border-b"><td className="p-3 font-mono">Python 1.0</td><td className="p-3">1994</td><td className="p-3">First major release</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-3 font-mono">Python 2.0</td><td className="p-3">2000</td><td className="p-3">Introduced list comprehensions</td></tr>
-                            <tr className="border-b"><td className="p-3 font-mono">Python 2.7</td><td className="p-3">2010</td><td className="p-3">Final 2.x release</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-3 font-mono">Python 3.0</td><td className="p-3">2008</td><td className="p-3">Major revision with breaking changes</td></tr>
-                            <tr className="border-b"><td className="p-3 font-mono">Python 3.11</td><td className="p-3">2022</td><td className="p-3">Faster execution, improved error messages</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-3 font-mono">Python 3.12</td><td className="p-3">2023</td><td className="p-3">Latest stable release</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <p>Python 2 reached end-of-life on January 1, 2020, and is no longer maintained. Python 3 introduced significant changes to the language, improving Unicode support, division operations, and fixing design flaws.</p>
-            </Section>
-
-            {/* ── Advantages of Python ── */}
-            <Section title="Advantages of Python">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 my-4">
-                    <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                        <h4 className="font-bold text-blue-800 mb-1">Easy to Learn and Use</h4>
-                        <p className="text-sm">Python has a simple, easy-to-learn syntax that emphasizes readability, reducing program maintenance costs and making it accessible to beginners.</p>
+            {/* ══════ WHITE PREMIUM NAVBAR ══════ */}
+            <header className="sticky top-0 z-50" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.03)' }}>
+                <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Link href="/python" className="flex items-center justify-center w-9 h-9 rounded-xl transition-all hover:scale-105 hover:shadow-lg" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 2px 8px rgba(99,102,241,0.3)' }}>
+                            <ArrowLeft size={16} className="text-white" />
+                        </Link>
+                        <div>
+                            <h1 className="text-sm font-extrabold" style={{ color: '#1e293b' }}>Python Fundamentals</h1>
+                            <div className="flex items-center gap-1.5">
+                                <Sparkles size={8} style={{ color: '#6366f1' }} />
+                                <span className="text-[9px] uppercase tracking-[0.18em] font-bold" style={{ color: '#6366f1' }}>Complete Guide</span>
+                            </div>
+                        </div>
                     </div>
-                    <div className="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-                        <h4 className="font-bold text-green-800 mb-1">Versatility</h4>
-                        <p className="text-sm">Python is used in web development, data analysis, AI, scientific computing, automation, and more.</p>
-                    </div>
-                    <div className="p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
-                        <h4 className="font-bold text-purple-800 mb-1">Large Standard Library</h4>
-                        <p className="text-sm">Python comes with a vast standard library that provides modules for various tasks, reducing the need for external libraries.</p>
-                    </div>
-                    <div className="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                        <h4 className="font-bold text-orange-800 mb-1">Interpreted Language</h4>
-                        <p className="text-sm">Being an interpreted language, Python code is executed line by line, making debugging easier and more efficient.</p>
-                    </div>
-                    <div className="p-4 bg-teal-50 rounded-lg border-l-4 border-teal-500">
-                        <h4 className="font-bold text-teal-800 mb-1">Open Source</h4>
-                        <p className="text-sm">Python is free to use and distribute, even for commercial purposes, under an OSI-approved open-source license.</p>
-                    </div>
-                    <div className="p-4 bg-pink-50 rounded-lg border-l-4 border-pink-500">
-                        <h4 className="font-bold text-pink-800 mb-1">Strong Community Support</h4>
-                        <p className="text-sm">Python has a large and active community that contributes to libraries, provides support, and shares knowledge.</p>
+                    <div className="flex items-center gap-0.5">
+                        {navLinks.map(l => (
+                            <Link key={l.href} href={l.href} className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold transition-all hover:scale-105"
+                                style={{ color: '#64748b' }}
+                                onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#6366f1'; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b'; }}>
+                                {l.icon}<span>{l.label}</span>
+                            </Link>
+                        ))}
+                        <button onClick={() => setTocOpen(!tocOpen)} className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl transition-all hover:shadow-md" style={{ background: '#f1f5f9', border: '1px solid #e2e8f0' }}>
+                            {tocOpen ? <X size={18} style={{ color: '#6366f1' }} /> : <Menu size={18} style={{ color: '#6366f1' }} />}
+                        </button>
                     </div>
                 </div>
-            </Section>
+                <div className="h-[2px]" style={{ background: 'linear-gradient(90deg, #6366f1, #a855f7, #ec4899, #f97316, #6366f1)' }} />
+            </header>
 
-            {/* ── Working with Python ── */}
-            <Section title="Working with Python">
-                <h3 id="installing-python" className="text-lg font-semibold mt-2 mb-2">Installing Python</h3>
-                <ol className="list-decimal ml-6 space-y-2 mb-4">
-                    <li><strong>Download Python:</strong> Visit the official Python website at <a href="https://www.python.org/downloads/" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">python.org/downloads</a> and download the latest version.</li>
-                    <li><strong>Run the Installer:</strong>
-                        <ul className="list-disc ml-6 mt-1">
-                            <li>On Windows: Make sure to check &quot;Add Python to PATH&quot; before clicking Install Now.</li>
-                            <li>On macOS: Follow the instructions in the installer.</li>
-                            <li>On Linux: Use your package manager (e.g., <code>apt-get install python3</code>).</li>
+            <div className="max-w-7xl mx-auto flex relative">
+                {/* ── LEFT SIDEBAR TOC ── */}
+                <aside className={`${tocOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:sticky top-[52px] left-0 z-40 lg:z-10 w-64 lg:w-56 xl:w-64 h-[calc(100vh-52px)] overflow-y-auto transition-transform duration-300 lg:flex-shrink-0`}
+                    style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', borderRight: '1px solid #e2e8f0', boxShadow: tocOpen ? '4px 0 24px rgba(0,0,0,0.08)' : 'none' }}>
+                    <div className="p-4">
+                        <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid #e2e8f0' }}>
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                                <Hash size={12} className="text-white" />
+                            </div>
+                            <span className="text-xs font-extrabold uppercase tracking-wider" style={{ color: '#1e293b' }}>Contents</span>
+                        </div>
+                        <nav className="space-y-0.5">
+                            {tocItems.map(item => (
+                                <a key={item.id} href={`#${item.id}`} onClick={() => { setActiveSection(item.id); setTocOpen(false); }}
+                                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200"
+                                    style={{ background: activeSection === item.id ? `${item.color}12` : 'transparent', border: activeSection === item.id ? `1px solid ${item.color}30` : '1px solid transparent', color: activeSection === item.id ? item.color : '#64748b' }}
+                                    onMouseEnter={e => { if (activeSection !== item.id) { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#334155'; } }}
+                                    onMouseLeave={e => { if (activeSection !== item.id) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b'; } }}>
+                                    <span style={{ color: item.color }}>{item.icon}</span>
+                                    {item.label}
+                                    {activeSection === item.id && <ChevronRight size={10} className="ml-auto" />}
+                                </a>
+                            ))}
+                        </nav>
+                    </div>
+                </aside>
+                {tocOpen && <div className="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm lg:hidden" onClick={() => setTocOpen(false)} />}
+
+                {/* ── MAIN CONTENT ── */}
+                <main className="flex-1 min-w-0 px-4 py-6 lg:pl-6">
+
+                    {/* HERO */}
+                    <section className="relative rounded-3xl overflow-hidden mb-6" style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 30%, #8b5cf6 60%, #a855f7 100%)', boxShadow: '0 8px 32px rgba(99,102,241,0.25)' }}>
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%)' }} />
+                            <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%)' }} />
+                        </div>
+                        <div className="relative z-10 p-6 md:p-10">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold mb-4" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: '#fff' }}>
+                                <Sparkles size={10} /> Complete Python Guide
+                            </div>
+                            <h2 className="text-2xl md:text-4xl font-black mb-3 text-white" style={{ lineHeight: '1.2' }}>Python Fundamentals</h2>
+                            <p className="text-sm md:text-base max-w-2xl mb-5" style={{ color: 'rgba(255,255,255,0.85)' }}>Har ek topic ki simple definition aur clear examples ke saath — Python seekhna ab bahut aasan hai!</p>
+                            <div className="flex flex-wrap gap-2">
+                                {[{ icon: <BookOpen size={14} />, label: '15 Topics' }, { icon: <Code2 size={14} />, label: '30+ Examples' }, { icon: <Brain size={14} />, label: '10 MCQs' }, { icon: <Zap size={14} />, label: 'Beginner Friendly' }].map((s, i) => (
+                                    <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold text-white" style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)' }}>{s.icon}<span>{s.label}</span></div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* YOUTUBE */}
+                    <section className="rounded-2xl overflow-hidden mb-6" style={{ background: '#fff', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                        <div className="p-5 md:p-6">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="flex items-center justify-center w-11 h-11 rounded-xl" style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)', boxShadow: '0 4px 12px rgba(239,68,68,0.3)' }}>
+                                    <Play size={18} className="text-white ml-0.5" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-bold" style={{ color: '#1e293b' }}>Watch the Video Lesson</h3>
+                                    <p className="text-[11px]" style={{ color: '#94a3b8' }}>Python Fundamentals — Knobly YouTube</p>
+                                </div>
+                                <div className="ml-auto hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /> YouTube
+                                </div>
+                            </div>
+                            <div className="relative rounded-2xl overflow-hidden" style={{ aspectRatio: '16/9', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
+                                <iframe src="https://www.youtube.com/embed/sUlahBo2Xik?si=43hIgfqupqGIriOb" title="Python Fundamentals - Knobly" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen className="absolute inset-0 w-full h-full" style={{ border: 'none' }} />
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* ═══════ CONTENT SECTIONS ═══════ */}
+
+                    <Sec id="intro" title="Introduction to Python" icon={<Globe size={16} className="text-indigo-500" />}>
+                        <Def>🐍 <strong>Python</strong> ek high-level, interpreted programming language hai jo simple aur readable hoti hai. Isko <strong>Guido van Rossum</strong> ne banaya tha aur <strong>1991</strong> mein pehli baar release hua tha.</Def>
+                        <p><strong>Simple explanation:</strong> Python ek aisi programming language hai jisme aap English jaisi simple bhasha mein code likh sakte ho. Ye beginners ke liye sabse best language hai kyunki iska code padhna aur likhna bahut aasan hai.</p>
+                        <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>Python kyun banaya gaya?</h3>
+                        <p>Guido van Rossum 1980s mein ABC language par kaam kar rahe the. Unhone socha ki ek aisi language honi chahiye jo <strong>simple ho, powerful ho, aur sabke liye accessible ho</strong>. Issi idea se Python bani!</p>
+                        <p>Naam &quot;Python&quot; British comedy show <strong>Monty Python&apos;s Flying Circus</strong> se liya gaya hai — saanp (snake) se nahi! 😄</p>
+
+                        <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>Python kya kya kar sakti hai?</h3>
+                        <ul className="list-disc ml-6 space-y-1">
+                            <li><strong>Web Development</strong> — Websites banao (Django, Flask)</li>
+                            <li><strong>Data Science</strong> — Data analyze karo (Pandas, NumPy)</li>
+                            <li><strong>AI / Machine Learning</strong> — Smart apps banao (TensorFlow, PyTorch)</li>
+                            <li><strong>Automation</strong> — Boring tasks automate karo</li>
+                            <li><strong>Game Development</strong> — Games banao (Pygame)</li>
                         </ul>
-                    </li>
-                    <li><strong>Verify Installation:</strong></li>
-                </ol>
-                <CodeBlock code={`python --version`} />
 
-                <h3 id="python-interactive-mode" className="text-lg font-semibold mt-6 mb-2">Python Interactive Mode</h3>
-                <p>Python offers an interactive mode where you can write and execute code line by line. This is great for testing small code snippets.</p>
-                <CodeBlock code={`>>> print("Hello, World!")
-Hello, World!
->>> 2 + 3
-5
->>> name = "Python"
->>> print(f"I love {name} programming!")
-I love Python programming!`} />
-                <p>To exit interactive mode, type <code>exit()</code> or press Ctrl+Z (Windows) / Ctrl+D (Unix).</p>
+                        <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>Python vs Other Languages</h3>
+                        <CB code={`# Python mein Hello World — sirf 1 line!\nprint("Hello, World!")\n\n# C++ mein same kaam — 5 lines!\n# #include <iostream>\n# using namespace std;\n# int main() {\n#     cout << "Hello, World!";\n#     return 0;\n# }`} />
+                        <IB type="tip">Python mein curly braces {'{ }'} ki jagah <strong>indentation</strong> (spaces) use hoti hai. Isse code saaf aur clean dikhta hai.</IB>
+                    </Sec>
 
-                <h3 id="python-program-mode" className="text-lg font-semibold mt-6 mb-2">Python Program Mode</h3>
-                <p>For larger programs, write your code in a file with a <code>.py</code> extension and execute it:</p>
-                <CodeBlock code={`# This is program.py
-print("Running Python in program mode")
+                    <Sec id="versions" title="Python Versions" icon={<Cpu size={16} className="text-violet-500" />}>
+                        <Def>📦 Python ke alag-alag versions release hue hain jisme har baar naye features aur improvements mile hain.</Def>
+                        <div className="overflow-x-auto my-3 rounded-xl" style={{ border: '1px solid #e2e8f0' }}><table className="w-full text-sm border-collapse"><thead><TH><th className="p-3 text-left">Version</th><th className="p-3 text-left">Year</th><th className="p-3 text-left">Kya Naya Aaya?</th></TH></thead><tbody>
+                            {[['Python 1.0', '1994', 'Sabse pehla major release'], ['Python 2.0', '2000', 'List comprehensions aaye'], ['Python 2.7', '2010', 'Python 2 ka aakhri version'], ['Python 3.0', '2008', 'Bahut bade changes — naya Python!'], ['Python 3.11', '2022', 'Bahut fast + better error messages'], ['Python 3.12', '2023', 'Latest version ✨ — Use this!']].map(([v, y, d], i) => (
+                                <tr key={i} style={{ background: i % 2 ? '#f8fafc' : '#fff', borderBottom: '1px solid #f1f5f9' }}><td className="p-3 font-mono font-semibold" style={{ color: '#6366f1' }}>{v}</td><td className="p-3">{y}</td><td className="p-3">{d}</td></tr>
+                            ))}
+                        </tbody></table></div>
+                        <IB type="warning">Python 2 ab band ho gaya hai (January 2020 se). Hamesha <strong>Python 3</strong> use karo!</IB>
+                    </Sec>
 
-for i in range(5):
-    print(f"Count: {i}")`} />
-            </Section>
+                    <Sec id="advantages" title="Advantages of Python" icon={<Zap size={16} className="text-purple-500" />}>
+                        <Def>🌟 Python ke bahut saare faayde hain jo ise duniya ki sabse popular language banate hain.</Def>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-3">
+                            {[{ t: '📚 Easy to Learn', d: 'Python ka code English jaisa hota hai. Beginners sirf kuch hi dino mein Python seekh sakte hain.', bg: '#eef2ff', bc: '#c7d2fe', tc: '#4338ca' }, { t: '🚀 Versatile', d: 'Web apps, AI, data analysis, games — Python se sab kuch bana sakte ho!', bg: '#ecfdf5', bc: '#a7f3d0', tc: '#166534' }, { t: '📦 Huge Library', d: 'Thousands of ready-made libraries available hain — aapko sab kuch scratch se nahi banana padta.', bg: '#f5f3ff', bc: '#ddd6fe', tc: '#5b21b6' }, { t: '⚡ Interpreted', d: 'Code ek ek line execute hota hai. Error aaye to turant pata chal jaata hai!', bg: '#fff7ed', bc: '#fed7aa', tc: '#9a3412' }, { t: '🔓 Free & Open Source', d: 'Python free hai! Koi bhi download karke use kar sakta hai — commercial use bhi!', bg: '#f0fdfa', bc: '#99f6e4', tc: '#115e59' }, { t: '🤝 Big Community', d: 'Lakho developers worldwide. Koi bhi problem ho — Stack Overflow par answer mil jaata hai!', bg: '#fdf2f8', bc: '#fbcfe8', tc: '#9d174d' }].map((item, i) => (
+                                <div key={i} className="p-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style={{ background: item.bg, border: `1px solid ${item.bc}` }}>
+                                    <h4 className="font-bold text-sm mb-1" style={{ color: item.tc }}>{item.t}</h4>
+                                    <p className="text-xs" style={{ color: '#64748b' }}>{item.d}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </Sec>
 
-            {/* ── Creating Modules and Program Files ── */}
-            <Section title="Creating Modules and Program Files">
-                <h3 id="creating-a-python-file" className="text-lg font-semibold mt-2 mb-2">Creating a Python File</h3>
-                <ol className="list-decimal ml-6 space-y-1 mb-4">
-                    <li>Open your preferred text editor (VSCode, PyCharm, Sublime Text, etc.)</li>
-                    <li>Create a new file</li>
-                    <li>Write your Python code</li>
-                    <li>Save the file with a <code>.py</code> extension (e.g., <code>my_program.py</code>)</li>
-                </ol>
+                    <Sec id="working" title="Working with Python" icon={<Terminal size={16} className="text-fuchsia-500" />}>
+                        <Def>🖥️ Python mein kaam karne ke liye pehle ise install karna hota hai, phir aap code likh aur chala sakte ho.</Def>
 
-                <h3 id="running-a-python-file" className="text-lg font-semibold mt-4 mb-2">Running a Python File</h3>
-                <p><strong>Using Command Line:</strong></p>
-                <CodeBlock code={`python my_program.py`} />
-                <p><strong>From an IDE:</strong> Most IDEs have a &quot;Run&quot; button or keyboard shortcut (like F5 in VSCode).</p>
-            </Section>
+                        <h3 className="text-base font-bold mt-4 mb-2" style={{ color: '#1e293b' }}>Step 1: Python Install Karo</h3>
+                        <ol className="list-decimal ml-6 space-y-2 mb-4">
+                            <li><strong>Download karo:</strong> <a href="https://www.python.org/downloads/" className="text-indigo-600 underline font-semibold" target="_blank" rel="noopener noreferrer">python.org/downloads</a> par jaake latest version download karo</li>
+                            <li><strong>Install karo:</strong> Installer open karo. ⚠️ <strong>&quot;Add Python to PATH&quot;</strong> checkbox zaroor tick karo!</li>
+                            <li><strong>Check karo:</strong> Command Prompt open karo aur type karo:</li>
+                        </ol>
+                        <CB code="python --version\n# Output: Python 3.12.x" />
 
-            {/* ── Python Tokens ── */}
-            <Section title="Python Tokens">
-                <p>In Python, a token is the smallest unit of a program. The Python interpreter breaks down a program into tokens before parsing it. There are five types of tokens:</p>
+                        <h3 className="text-base font-bold mt-6 mb-2" style={{ color: '#1e293b' }}>Step 2: Interactive Mode (Direct Typing)</h3>
+                        <p>Command Prompt mein <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">python</code> type karo aur directly code likho. Ye testing ke liye best hai!</p>
+                        <CB code={`>>> print("Hello, World!")\nHello, World!\n\n>>> 2 + 3\n5\n\n>>> name = "Python"\n>>> print(f"I love {name}!")\nI love Python!\n\n>>> exit()  # Interactive mode se bahar aane ke liye`} />
 
-                <h3 id="identifiers" className="text-lg font-semibold mt-4 mb-2">Identifiers</h3>
-                <p>An identifier is a name used to identify a variable, function, class, module, or other object. Rules:</p>
-                <ul className="list-disc ml-6 space-y-1 mb-4">
-                    <li>Can only start with a letter (A-Z, a-z) or underscore (_)</li>
-                    <li>Can consist of letters, underscores, and digits (0-9)</li>
-                    <li>Are case-sensitive (<code>name</code>, <code>Name</code>, and <code>NAME</code> are different)</li>
-                    <li>Reserved keywords cannot be used as identifiers</li>
-                    <li>Special symbols like !, @, #, $, % cannot be used</li>
-                    <li>No limit on the length of an identifier</li>
-                </ul>
+                        <h3 className="text-base font-bold mt-6 mb-2" style={{ color: '#1e293b' }}>Step 3: Program Mode (File mein Code)</h3>
+                        <p>Bade programs ke liye code ek <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">.py</code> file mein likho:</p>
+                        <CB code={`# hello.py file banao aur ye likho:\nprint("Namaste! Mera naam Python hai!")\nprint("Mein ek programming language hoon.")\n\nfor i in range(1, 6):\n    print(f"Counting: {i}")`} />
+                        <p>Phir terminal mein run karo: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">python hello.py</code></p>
+                    </Sec>
 
-                <p><strong>Valid identifiers:</strong></p>
-                <CodeBlock code={`name
-student_1
-_private
-totalSum
-get_value
-UserAccount`} />
+                    <Sec id="modules" title="Modules and Program Files" icon={<FileCode2 size={16} className="text-pink-500" />}>
+                        <Def>📁 <strong>Module</strong> ek Python file hoti hai (.py extension ke saath) jisme aap apna code likhte ho. Aap dusre modules ko <code>import</code> karke use bhi kar sakte ho.</Def>
+                        <h3 className="text-base font-bold mt-4 mb-2" style={{ color: '#1e293b' }}>Python File kaise banaye?</h3>
+                        <ol className="list-decimal ml-6 space-y-1 mb-4">
+                            <li>Koi bhi text editor kholo (VSCode, Notepad++, PyCharm)</li>
+                            <li>Naya file banao aur Python code likho</li>
+                            <li>File ko <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">.py</code> extension ke saath save karo (jaise: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">calculator.py</code>)</li>
+                        </ol>
+                        <CB code={`# calculator.py - ek simple calculator\nnum1 = 10\nnum2 = 5\n\nprint(f"Jod (Sum): {num1 + num2}")      # 15\nprint(f"Ghata (Diff): {num1 - num2}")    # 5\nprint(f"Guna (Multiply): {num1 * num2}") # 50\nprint(f"Bhaag (Divide): {num1 / num2}")  # 2.0`} />
+                        <p>Run karo: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">python calculator.py</code></p>
+                    </Sec>
 
-                <p><strong>Invalid identifiers:</strong></p>
-                <CodeBlock code={`123name  # Cannot start with a digit
-my-var   # Hyphen not allowed
-for      # Reserved keyword
-$amount  # Special symbol not allowed`} />
+                    <Sec id="tokens" title="Python Tokens" icon={<Code2 size={16} className="text-rose-500" />}>
+                        <Def>🧩 <strong>Token</strong> Python code ka sabse chhota hissa hai. Jaise sentence mein words hote hain, waise hi code mein tokens hote hain. Python mein 5 type ke tokens hote hain.</Def>
 
-                <h3 id="keywords" className="text-lg font-semibold mt-6 mb-2">Keywords</h3>
-                <p>Keywords are reserved words that have special meanings in Python. They cannot be used as identifiers.</p>
+                        <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>1. Identifiers (Naam)</h3>
+                        <p><strong>Simple definition:</strong> Identifier ek naam hai jo aap apne variables, functions, ya classes ko dete ho. Jaise aapka naam aapki pehchaan hai, waise hi identifier code ki pehchaan hai.</p>
+                        <p className="mt-2"><strong>Rules (Niyam):</strong></p>
+                        <ul className="list-disc ml-6 space-y-1 mb-3">
+                            <li>Letter (A-Z, a-z) ya underscore (_) se shuru hona chahiye</li>
+                            <li>Numbers bhi ho sakte hain lekin pehla character number nahi ho sakta</li>
+                            <li>Case-sensitive hai — <code>name</code>, <code>Name</code>, <code>NAME</code> teen alag cheezein hain!</li>
+                            <li>Special characters (@, #, $, !) allowed nahi hain</li>
+                        </ul>
+                        <CB code={`# ✅ Sahi (Valid) Identifiers:\nname = "Rahul"\nstudent_1 = "Priya"\n_private = "Secret"\ntotalMarks = 450\n\n# ❌ Galat (Invalid) Identifiers:\n# 123name = "Error"    → Number se shuru nahi ho sakta\n# my-var = 10          → Hyphen (-) allowed nahi\n# for = 5             → Reserved keyword hai\n# $price = 100        → Special symbol nahi chalega`} />
 
-                <div className="overflow-x-auto my-4">
-                    <table className="w-full text-sm border-collapse">
-                        <thead><tr className="bg-blue-600 text-white"><th className="p-3 text-left" colSpan={5}>Python Keywords</th></tr></thead>
-                        <tbody>
-                            <tr className="border-b"><td className="p-2 font-mono">False</td><td className="p-2 font-mono">None</td><td className="p-2 font-mono">True</td><td className="p-2 font-mono">and</td><td className="p-2 font-mono">as</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 font-mono">assert</td><td className="p-2 font-mono">async</td><td className="p-2 font-mono">await</td><td className="p-2 font-mono">break</td><td className="p-2 font-mono">class</td></tr>
-                            <tr className="border-b"><td className="p-2 font-mono">continue</td><td className="p-2 font-mono">def</td><td className="p-2 font-mono">del</td><td className="p-2 font-mono">elif</td><td className="p-2 font-mono">else</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 font-mono">except</td><td className="p-2 font-mono">finally</td><td className="p-2 font-mono">for</td><td className="p-2 font-mono">from</td><td className="p-2 font-mono">global</td></tr>
-                            <tr className="border-b"><td className="p-2 font-mono">if</td><td className="p-2 font-mono">import</td><td className="p-2 font-mono">in</td><td className="p-2 font-mono">is</td><td className="p-2 font-mono">lambda</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 font-mono">nonlocal</td><td className="p-2 font-mono">not</td><td className="p-2 font-mono">or</td><td className="p-2 font-mono">pass</td><td className="p-2 font-mono">raise</td></tr>
-                            <tr className="border-b"><td className="p-2 font-mono">return</td><td className="p-2 font-mono">try</td><td className="p-2 font-mono">while</td><td className="p-2 font-mono">with</td><td className="p-2 font-mono">yield</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                        <h3 className="text-base font-bold mt-6 mb-2" style={{ color: '#1e293b' }}>2. Keywords (Reserved Words)</h3>
+                        <p><strong>Simple definition:</strong> Keywords woh special words hain jo Python ne pehle se book kar rakhe hain. Inhe aap apne variable naam ke roop mein use nahi kar sakte.</p>
+                        <div className="overflow-x-auto my-3 rounded-xl" style={{ border: '1px solid #e2e8f0' }}><table className="w-full text-sm border-collapse"><thead><TH><th className="p-3 text-left" colSpan={5}>Python ke 35 Keywords</th></TH></thead><tbody>
+                            {[['False', 'None', 'True', 'and', 'as'], ['assert', 'async', 'await', 'break', 'class'], ['continue', 'def', 'del', 'elif', 'else'], ['except', 'finally', 'for', 'from', 'global'], ['if', 'import', 'in', 'is', 'lambda'], ['nonlocal', 'not', 'or', 'pass', 'raise'], ['return', 'try', 'while', 'with', 'yield']].map((row, i) => (
+                                <tr key={i} style={{ background: i % 2 ? '#f8fafc' : '#fff', borderBottom: '1px solid #f1f5f9' }}>{row.map((k, j) => <td key={j} className="p-2 font-mono font-semibold" style={{ color: '#6366f1' }}>{k}</td>)}</tr>
+                            ))}
+                        </tbody></table></div>
+                        <CB code={`# Keywords check karne ka tarika:\nimport keyword\nprint(keyword.kwlist)\nprint(f"Total keywords: {len(keyword.kwlist)}")`} />
+                    </Sec>
 
-                <p>You can check all keywords using the <code>keyword</code> module:</p>
-                <CodeBlock code={`>>> import keyword
->>> print(keyword.kwlist)`} />
-            </Section>
+                    <Sec id="literals" title="Literals" icon={<Type size={16} className="text-red-500" />}>
+                        <Def>📌 <strong>Literal</strong> ek fixed value hoti hai jo directly code mein likhi jaati hai. Jaise <code>10</code>, <code>&quot;Hello&quot;</code>, <code>True</code> — ye sab literals hain.</Def>
 
-            {/* ── Literals ── */}
-            <Section title="Literals">
-                <p>Literals are data items that have a fixed value. Python supports different types of literals:</p>
+                        <h3 className="text-base font-bold mt-4 mb-2" style={{ color: '#1e293b' }}>String Literals (Text)</h3>
+                        <p>Text ko single quotes, double quotes, ya triple quotes mein likha jaata hai.</p>
+                        <CB code={`# Single quotes\nname = 'Rahul'\n\n# Double quotes\ncity = "Delhi"\n\n# Triple quotes - jab text multiple lines mein ho\npoem = """Twinkle twinkle little star,\nHow I wonder what you are.\nUp above the world so high,\nLike a diamond in the sky."""\n\nprint(poem)`} />
 
-                <h3 id="string-literals" className="text-lg font-semibold mt-4 mb-2">String Literals</h3>
-                <p>String literals are enclosed within single quotes (&apos; &apos;), double quotes (&quot; &quot;), or triple quotes (&apos;&apos;&apos; &apos;&apos;&apos; or &quot;&quot;&quot; &quot;&quot;&quot;).</p>
+                        <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>Numeric Literals (Numbers)</h3>
+                        <CB code={`# Integer (poore numbers)\nage = 18\nmarks = 95\n\n# Float (decimal wale numbers)\nheight = 5.8\npi = 3.14159\n\n# Binary (0b se shuru)\nbinary = 0b1010  # ye hai 10\n\n# Hexadecimal (0x se shuru)\nhex_num = 0xFF   # ye hai 255\n\nprint(f"Age: {age}, Height: {height}")\nprint(f"Binary 0b1010 = {binary}")  # Output: 10`} />
 
-                <p><strong>Single-line String:</strong></p>
-                <CodeBlock code={`name = 'John'
-message = "Hello, World!"`} />
+                        <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>Boolean & None</h3>
+                        <p><strong>Boolean:</strong> Sirf do values — <code>True</code> (haan) ya <code>False</code> (nahi)</p>
+                        <p><strong>None:</strong> Koi value nahi hai — khaali (empty)</p>
+                        <CB code={`# Boolean - True ya False\nis_student = True\nhas_passed = False\nprint(is_student)  # True\n\n# None - koi value nahi\nresult = None\nprint(result)      # None\nprint(type(result)) # <class 'NoneType'>`} />
+                    </Sec>
 
-                <p><strong>Multi-line String using Triple Quotes:</strong></p>
-                <CodeBlock code={`long_text = """This is a long text
-that spans over multiple lines.
-Triple quotes allow this."""`} />
+                    <Sec id="variables" title="Variables & Data Types" icon={<ToggleLeft size={16} className="text-orange-500" />}>
+                        <Def>📦 <strong>Variable</strong> ek dabba (container) hai jisme aap koi bhi value rakh sakte ho. Python mein aapko type batane ki zaroorat nahi — Python khud samajh jaata hai!</Def>
 
-                <p><strong>Multi-line String using Backslash:</strong></p>
-                <CodeBlock code={`another_text = "This is another long text \\
-that continues on the next line \\
-using backslashes."`} />
+                        <p><strong>Real life example:</strong> Jaise ek dabba hai jisme aap apna naam likh sakte ho, ya number daal sakte ho — Python variable bhi exactly aisa hai!</p>
 
-                <h3 id="numeric-literals" className="text-lg font-semibold mt-6 mb-2">Numeric Literals</h3>
-                <p><strong>Integer Literals:</strong></p>
-                <CodeBlock code={`a = 10      # Decimal
-b = 0b1010  # Binary (starts with 0b)
-c = 0o12    # Octal (starts with 0o)
-d = 0xA     # Hexadecimal (starts with 0x)`} />
+                        <CB code={`# Variable banane ka tarika: naam = value\nname = "Rahul"        # String (text)\nage = 18              # Integer (poora number)\nheight = 5.8          # Float (decimal number)\nis_student = True     # Boolean (haan/nahi)\nfav_fruits = ["Apple", "Mango"]  # List\n\n# Type check karo - Python khud batata hai!\nprint(type(name))      # <class 'str'>\nprint(type(age))       # <class 'int'>\nprint(type(height))    # <class 'float'>\nprint(type(is_student)) # <class 'bool'>\n\n# Variable ki value change bhi kar sakte ho!\nage = 19  # ab age 19 hai\nprint(f"{name} ki age {age} hai aur height {height} hai")`} />
 
-                <p><strong>Float Literals:</strong></p>
-                <CodeBlock code={`x = 10.5
-y = 1.5e2    # Scientific notation (150.0)
-z = .5       # Same as 0.5`} />
+                        <IB type="tip">Python mein aap variable ka type kabhi bhi change kar sakte ho. <code>x = 10</code> ke baad <code>x = &quot;hello&quot;</code> likh sakte ho — koi error nahi aayega!</IB>
+                    </Sec>
 
-                <p><strong>Complex Literals:</strong></p>
-                <p>Complex numbers are written in the form of a + bj, where a is the real part and b is the imaginary part.</p>
-                <CodeBlock code={`complex_num = 3 + 5j`} />
+                    <Sec id="operators" title="Operators" icon={<CircleDot size={16} className="text-amber-500" />}>
+                        <Def>➕ <strong>Operators</strong> woh special symbols hain jo values par kaam (operations) karte hain. Jaise Math mein + aur - hai, waise hi Python mein bhi bahut operators hain.</Def>
 
-                <h3 id="boolean-literals" className="text-lg font-semibold mt-6 mb-2">Boolean Literals</h3>
-                <p>Boolean literals represent truth values. There are only two: <code>True</code> and <code>False</code>.</p>
-                <CodeBlock code={`is_active = True
-is_completed = False`} />
+                        <h3 className="text-base font-bold mt-4 mb-2" style={{ color: '#1e293b' }}>Arithmetic Operators (Math wale)</h3>
+                        <div className="overflow-x-auto my-3 rounded-xl" style={{ border: '1px solid #e2e8f0' }}><table className="w-full text-sm border-collapse"><thead><TH><th className="p-3">Symbol</th><th className="p-3">Kaam</th><th className="p-3">Example</th><th className="p-3">Answer</th></TH></thead><tbody>
+                            {[['+', 'Jod (Add)', '10 + 3', '13'], ['-', 'Ghatao (Subtract)', '10 - 3', '7'], ['*', 'Guna (Multiply)', '10 * 3', '30'], ['/', 'Bhaag (Divide)', '10 / 3', '3.33'], ['//', 'Floor Division', '10 // 3', '3'], ['%', 'Remainder', '10 % 3', '1'], ['**', 'Power', '2 ** 3', '8']].map(([o, n, e, r], i) => (
+                                <tr key={i} style={{ background: i % 2 ? '#f8fafc' : '#fff', borderBottom: '1px solid #f1f5f9' }}><td className="p-2 text-center font-mono font-bold" style={{ color: '#6366f1' }}>{o}</td><td className="p-2">{n}</td><td className="p-2 font-mono">{e}</td><td className="p-2 font-semibold">{r}</td></tr>
+                            ))}
+                        </tbody></table></div>
+                        <CB code={`a = 10\nb = 3\nprint(f"Jod: {a + b}")        # 13\nprint(f"Ghatao: {a - b}")     # 7\nprint(f"Guna: {a * b}")       # 30\nprint(f"Bhaag: {a / b}")      # 3.333...\nprint(f"Floor: {a // b}")     # 3 (decimal hata do)\nprint(f"Remainder: {a % b}")  # 1\nprint(f"Power: {a ** b}")     # 1000`} />
 
-                <h3 id="none-literal" className="text-lg font-semibold mt-6 mb-2">None Literal</h3>
-                <p>The <code>None</code> literal represents the absence of a value or a null value. It&apos;s often used as a placeholder for optional or missing values.</p>
-                <CodeBlock code={`result = None`} />
-            </Section>
+                        <h3 className="text-base font-bold mt-6 mb-2" style={{ color: '#1e293b' }}>Comparison Operators (Compare karo)</h3>
+                        <p>Do values ko compare karte hain aur result <code>True</code> ya <code>False</code> aata hai:</p>
+                        <CB code={`x = 5\ny = 10\n\nprint(x == y)   # False (5 barabar 10? Nahi!)\nprint(x != y)   # True  (5 alag hai 10 se? Haan!)\nprint(x > y)    # False (5 bada hai 10 se? Nahi!)\nprint(x < y)    # True  (5 chhota hai 10 se? Haan!)\nprint(x >= 5)   # True  (5 barabar ya bada 5 se? Haan!)\nprint(x <= 3)   # False (5 barabar ya chhota 3 se? Nahi!)`} />
 
-            {/* ── Variables & Data Types ── */}
-            <Section title="Variables & Data Types">
-                <p>Variables are containers for storing data values. Python determines the type automatically.</p>
-                <CodeBlock code={`# Integer
-age = 25
+                        <h3 className="text-base font-bold mt-6 mb-2" style={{ color: '#1e293b' }}>Identity Operators (is / is not)</h3>
+                        <p><strong>Simple:</strong> <code>==</code> value check karta hai, <code>is</code> check karta hai ki dono same object hain ya nahi.</p>
+                        <CB code={`a = [1, 2, 3]\nb = [1, 2, 3]  # Same value, but different object!\nc = a          # Same object\n\nprint(a == b)   # True  (values same hain)\nprint(a is b)   # False (objects alag hain)\nprint(a is c)   # True  (c toh a ka hi naam hai!)`} />
 
-# Float
-price = 99.99
+                        <h3 className="text-base font-bold mt-6 mb-2" style={{ color: '#1e293b' }}>Membership Operators (in / not in)</h3>
+                        <p><strong>Simple:</strong> Check karo ki koi cheez list/string mein hai ya nahi.</p>
+                        <CB code={`fruits = ["apple", "banana", "mango"]\n\nprint("banana" in fruits)     # True  ✅ hai!\nprint("grape" in fruits)      # False ❌ nahi hai!\nprint("grape" not in fruits)  # True  ✅ sahi, nahi hai!\n\n# Strings mein bhi kaam karta hai:\nprint("py" in "python")       # True ✅`} />
+                    </Sec>
 
-# String
-name = "Knobly"
+                    <Sec id="punctuation" title="Python Punctuation" icon={<Braces size={16} className="text-yellow-500" />}>
+                        <Def>✏️ <strong>Punctuation</strong> woh special symbols hain jo Python code ko structure dete hain — jaise Hindi mein danda (।) aur comma (,) hota hai.</Def>
+                        <ul className="list-disc ml-6 space-y-2 mb-3">
+                            <li><strong>Colon <code>:</code></strong> → if, for, while, function ke baad lagta hai</li>
+                            <li><strong>Comma <code>,</code></strong> → Items alag karta hai (list mein, function mein)</li>
+                            <li><strong>Parentheses <code>()</code></strong> → Function call karne mein</li>
+                            <li><strong>Square brackets <code>[]</code></strong> → List banane ya index karne mein</li>
+                            <li><strong>Curly braces <code>{'{}'}</code></strong> → Dictionary aur Set mein</li>
+                            <li><strong>Hash <code>#</code></strong> → Comment likhne ke liye (Python ise ignore karta hai)</li>
+                        </ul>
+                        <CB code={`# Colon (:) - function definition mein\ndef namaste(name):     # ← colon yahan hai\n    print(f"Namaste, {name}!")\n\n# Brackets - list banao\nfruits = ["Apple", "Banana", "Mango"]  # ← square brackets\n\n# Curly braces - dictionary banao\nstudent = {"name": "Rahul", "age": 18}  # ← curly braces\n\n# Hash (#) - comments likhne ke liye\n# Ye line Python ignore karega`} />
+                    </Sec>
 
-# Boolean
-is_active = True
+                    <Sec id="print" title="Print Statement" icon={<Printer size={16} className="text-green-500" />}>
+                        <Def>🖨️ <strong>print()</strong> function screen par output dikhata hai. Ye Python ka sabse pehla aur sabse zyada use hone wala function hai!</Def>
 
-# Check type
-print(type(age))    # <class 'int'>
-print(type(name))   # <class 'str'>`} />
-            </Section>
+                        <h3 className="text-base font-bold mt-4 mb-2" style={{ color: '#1e293b' }}>Basic Print</h3>
+                        <CB code={`print("Hello, World!")       # Text print karo\nprint(42)                   # Number print karo\nprint(True)                 # Boolean print karo\nprint("Mera naam", "Rahul") # Multiple items print karo\n# Output: Mera naam Rahul`} />
 
-            {/* ── Operators ── */}
-            <Section title="Operators">
-                <p>Operators are special symbols that perform operations on variables and values. Python provides a wide range of operators.</p>
+                        <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>Separator (sep) aur End</h3>
+                        <CB code={`# sep = items ke beech mein kya aaye\nprint("Apple", "Banana", "Mango", sep=" | ")\n# Output: Apple | Banana | Mango\n\n# end = line ke end mein kya aaye (default: new line)\nprint("Hello", end=" ")\nprint("World!")\n# Output: Hello World!  (ek hi line mein!)`} />
 
-                <h3 id="arithmetic-operators" className="text-lg font-semibold mt-4 mb-2">Arithmetic Operators</h3>
-                <div className="overflow-x-auto my-4">
-                    <table className="w-full text-sm border-collapse">
-                        <thead><tr className="bg-blue-600 text-white"><th className="p-3">Operator</th><th className="p-3">Name</th><th className="p-3">Example</th><th className="p-3">Result</th></tr></thead>
-                        <tbody>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">+</td><td className="p-2">Addition</td><td className="p-2 font-mono">5 + 3</td><td className="p-2">8</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">-</td><td className="p-2">Subtraction</td><td className="p-2 font-mono">5 - 3</td><td className="p-2">2</td></tr>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">*</td><td className="p-2">Multiplication</td><td className="p-2 font-mono">5 * 3</td><td className="p-2">15</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">/</td><td className="p-2">Division</td><td className="p-2 font-mono">5 / 3</td><td className="p-2">1.666...</td></tr>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">//</td><td className="p-2">Floor Division</td><td className="p-2 font-mono">5 // 3</td><td className="p-2">1</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">%</td><td className="p-2">Modulus</td><td className="p-2 font-mono">5 % 3</td><td className="p-2">2</td></tr>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">**</td><td className="p-2">Exponentiation</td><td className="p-2 font-mono">5 ** 3</td><td className="p-2">125</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                        <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>F-strings — Sabse Best Tarika! ⭐</h3>
+                        <CB code={`name = "Rahul"\nage = 18\nmarks = 95.5\n\n# f-string: f"..." ke andar {variable} likho\nprint(f"Mera naam {name} hai")\nprint(f"Meri age {age} hai")\nprint(f"Mere marks {marks} hain")\nprint(f"Next year meri age {age + 1} hogi")\n\n# Old tarika (format method)\nprint("Naam: {}, Age: {}".format(name, age))`} />
+                        <IB type="tip">Hamesha <strong>f-strings</strong> use karo — ye sabse easy aur fast hai! Bas <code>f&quot;...&quot;</code> likho aur variables <code>{'{}'}</code> mein daalo.</IB>
+                    </Sec>
 
-                <h3 id="relational-comparison-operators" className="text-lg font-semibold mt-6 mb-2">Relational (Comparison) Operators</h3>
-                <div className="overflow-x-auto my-4">
-                    <table className="w-full text-sm border-collapse">
-                        <thead><tr className="bg-blue-600 text-white"><th className="p-3">Operator</th><th className="p-3">Name</th><th className="p-3">Example</th><th className="p-3">Result</th></tr></thead>
-                        <tbody>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">==</td><td className="p-2">Equal to</td><td className="p-2 font-mono">5 == 3</td><td className="p-2">False</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">!=</td><td className="p-2">Not equal to</td><td className="p-2 font-mono">5 != 3</td><td className="p-2">True</td></tr>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">&gt;</td><td className="p-2">Greater than</td><td className="p-2 font-mono">5 &gt; 3</td><td className="p-2">True</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">&lt;</td><td className="p-2">Less than</td><td className="p-2 font-mono">5 &lt; 3</td><td className="p-2">False</td></tr>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">&gt;=</td><td className="p-2">Greater than or equal</td><td className="p-2 font-mono">5 &gt;= 5</td><td className="p-2">True</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">&lt;=</td><td className="p-2">Less than or equal</td><td className="p-2 font-mono">3 &lt;= 5</td><td className="p-2">True</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                    <Sec id="input" title="Input Statement" icon={<Keyboard size={16} className="text-teal-500" />}>
+                        <Def>⌨️ <strong>input()</strong> function user se data leta hai keyboard se. Ye hamesha <strong>string</strong> return karta hai — number chahiye to convert karna padta hai!</Def>
 
-                <h3 id="assignment-operators" className="text-lg font-semibold mt-6 mb-2">Assignment Operators</h3>
-                <div className="overflow-x-auto my-4">
-                    <table className="w-full text-sm border-collapse">
-                        <thead><tr className="bg-blue-600 text-white"><th className="p-3">Operator</th><th className="p-3">Example</th><th className="p-3">Equivalent to</th></tr></thead>
-                        <tbody>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">=</td><td className="p-2 font-mono">x = 5</td><td className="p-2 font-mono">x = 5</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">+=</td><td className="p-2 font-mono">x += 5</td><td className="p-2 font-mono">x = x + 5</td></tr>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">-=</td><td className="p-2 font-mono">x -= 5</td><td className="p-2 font-mono">x = x - 5</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">*=</td><td className="p-2 font-mono">x *= 5</td><td className="p-2 font-mono">x = x * 5</td></tr>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">/=</td><td className="p-2 font-mono">x /= 5</td><td className="p-2 font-mono">x = x / 5</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">//=</td><td className="p-2 font-mono">x //= 5</td><td className="p-2 font-mono">x = x // 5</td></tr>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">%=</td><td className="p-2 font-mono">x %= 5</td><td className="p-2 font-mono">x = x % 5</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">**=</td><td className="p-2 font-mono">x **= 5</td><td className="p-2 font-mono">x = x ** 5</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                        <h3 className="text-base font-bold mt-4 mb-2" style={{ color: '#1e293b' }}>Basic Input</h3>
+                        <CB code={`# User se naam pucho\nname = input("Aapka naam kya hai? ")\nprint(f"Namaste, {name}! Kaise ho?")\n\n# Output:\n# Aapka naam kya hai? Rahul  ← user type karega\n# Namaste, Rahul! Kaise ho?`} />
 
-                <h3 id="identity-operators" className="text-lg font-semibold mt-6 mb-2">Identity Operators</h3>
-                <p>Identity operators are used to compare objects — not if they are equal, but if they are the same object with the same memory location.</p>
-                <div className="overflow-x-auto my-4">
-                    <table className="w-full text-sm border-collapse">
-                        <thead><tr className="bg-blue-600 text-white"><th className="p-3">Operator</th><th className="p-3">Description</th><th className="p-3">Example</th></tr></thead>
-                        <tbody>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">is</td><td className="p-2">Returns True if both variables are the same object</td><td className="p-2 font-mono">x is y</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">is not</td><td className="p-2">Returns True if both variables are not the same object</td><td className="p-2 font-mono">x is not y</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <CodeBlock code={`a = [1, 2, 3]
-b = [1, 2, 3]
-c = a
+                        <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>Number Input (Type Convert)</h3>
+                        <CB code={`# ⚠️ input() hamesha STRING deta hai!\nage_str = input("Age batao: ")  # ye string hai: "18"\nage = int(age_str)              # ab integer hai: 18\n\n# Short tarika — ek hi line mein:\nage = int(input("Age batao: "))\nnext_year = age + 1\nprint(f"Next year aap {next_year} saal ke ho jaoge!")\n\n# Float ke liye\nheight = float(input("Height batao (meters): "))\nprint(f"Aapki height {height} meters hai")`} />
 
-print(a is b)    # False (different objects with the same value)
-print(a is c)    # True (same object)`} />
+                        <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>Multiple Inputs Ek Line Mein</h3>
+                        <CB code={`# Ek line mein do numbers lo\nx, y = input("Do numbers likho (space se alag): ").split()\nx, y = int(x), int(y)\n\nprint(f"Jod: {x + y}")\nprint(f"Guna: {x * y}")`} />
+                        <IB type="warning">Agar user number ki jagah text type kare to <code>int()</code> error de dega. Real programs mein <code>try-except</code> se error handle karo!</IB>
+                    </Sec>
 
-                <h3 id="membership-operators" className="text-lg font-semibold mt-6 mb-2">Membership Operators</h3>
-                <p>Membership operators are used to test if a sequence is present in an object.</p>
-                <div className="overflow-x-auto my-4">
-                    <table className="w-full text-sm border-collapse">
-                        <thead><tr className="bg-blue-600 text-white"><th className="p-3">Operator</th><th className="p-3">Description</th><th className="p-3">Example</th></tr></thead>
-                        <tbody>
-                            <tr className="border-b"><td className="p-2 text-center font-mono">in</td><td className="p-2">True if value is found in the sequence</td><td className="p-2 font-mono">x in y</td></tr>
-                            <tr className="border-b bg-gray-50"><td className="p-2 text-center font-mono">not in</td><td className="p-2">True if value is not found in the sequence</td><td className="p-2 font-mono">x not in y</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <CodeBlock code={`fruits = ["apple", "banana", "cherry"]
-print("banana" in fruits)     # True
-print("pear" not in fruits)   # True`} />
-            </Section>
+                    <Sec id="strings" title="String Operations" icon={<Code2 size={16} className="text-sky-500" />}>
+                        <Def>🔤 <strong>String</strong> text data hoti hai. Python mein strings par bahut saare operations kar sakte ho — length nikalo, uppercase karo, kuch dhundho, replace karo!</Def>
+                        <CB code={`name = "Knobly OS"\n\n# Length (kitne characters hain)\nprint(len(name))          # 9\n\n# Uppercase / Lowercase\nprint(name.upper())       # KNOBLY OS\nprint(name.lower())       # knobly os\n\n# Slicing (hissa nikalo)\nprint(name[0:6])          # Knobly (index 0 se 5 tak)\nprint(name[-2:])          # OS (last 2 characters)\n\n# Replace (badal do)\nprint(name.replace("OS", "System"))  # Knobly System\n\n# Check karo kuch hai ya nahi\nprint("Knobly" in name)   # True ✅\nprint("Python" in name)   # False ❌\n\n# Split (tod do)\nwords = "apple,banana,mango".split(",")\nprint(words)  # ['apple', 'banana', 'mango']`} />
+                    </Sec>
 
-            {/* ── Python Punctuation ── */}
-            <Section title="Python Punctuation">
-                <p>Python uses various punctuation marks for different purposes:</p>
-                <ul className="list-disc ml-6 space-y-1 mb-4">
-                    <li><strong>Colon (:)</strong> — Used in if, for, while, class, and function definitions.</li>
-                    <li><strong>Semicolon (;)</strong> — Separates multiple statements on a single line.</li>
-                    <li><strong>Comma (,)</strong> — Separates items in lists, tuples, and function arguments.</li>
-                    <li><strong>Period (.)</strong> — Used for attribute and method access, or for floating-point numbers.</li>
-                    <li><strong>Parentheses ()</strong> — Used in function calls, expressions, and tuples.</li>
-                    <li><strong>Square brackets []</strong> — Used for lists and indexing.</li>
-                    <li><strong>Curly braces {'{}'}</strong> — Used for dictionaries and sets.</li>
-                    <li><strong>Hash (#)</strong> — Used for comments.</li>
-                </ul>
-                <CodeBlock code={`# Example of Python punctuation usage
-def greet(name):  # Function definition with colon
-    print("Hello, " + name + "!")  # Period in function name
-    
-names = ["Alice", "Bob", "Charlie"]  # Square brackets for list
-person = {"name": "David", "age": 30}  # Curly braces for dictionary
-                
-result = (1 + 2) * 3  # Parentheses affect operator precedence`} />
-            </Section>
+                    {/* ═══ MCQ QUIZ ═══ */}
+                    <Sec id="mcq" title="MCQ Quiz — Apna Knowledge Test Karo!" icon={<Brain size={16} className="text-indigo-500" />}>
+                        <p className="mb-4">Neeche <strong>10 important MCQs</strong> hain — har ek question ka answer select karo aur check karo kitna samjhe!</p>
+                        <MCQSection />
+                    </Sec>
 
-            {/* ── Print Statement ── */}
-            <Section title="Print Statement in Python">
-                <p>The <code>print()</code> function is used to output data to the standard output device (screen).</p>
-
-                <h3 id="basic-print-usage" className="text-lg font-semibold mt-4 mb-2">Basic Print Usage</h3>
-                <CodeBlock code={`print("Hello, World!")  # Outputs: Hello, World!
-print(10)             # Outputs: 10
-print(True)           # Outputs: True`} />
-
-                <h3 id="printing-multiple-items" className="text-lg font-semibold mt-4 mb-2">Printing Multiple Items</h3>
-                <CodeBlock code={`print("Name:", "Alice", "Age:", 25)  # Outputs: Name: Alice Age: 25`} />
-
-                <h3 id="print-with-separator-and-end-parameters" className="text-lg font-semibold mt-4 mb-2">Print with Separator and End Parameters</h3>
-                <CodeBlock code={`# Custom separator
-print("apple", "banana", "cherry", sep="|")  # Outputs: apple|banana|cherry
-
-# Custom end character (default is newline)
-print("Hello", end=" ")
-print("World")  # Outputs: Hello World`} />
-
-                <h3 id="formatted-string-literals-f-strings" className="text-lg font-semibold mt-4 mb-2">Formatted String Literals (f-strings)</h3>
-                <CodeBlock code={`name = "Alice"
-age = 25
-print(f"My name is {name} and I am {age} years old.")
-# Outputs: My name is Alice and I am 25 years old.`} />
-
-                <h3 id="format-method" className="text-lg font-semibold mt-4 mb-2">Format Method</h3>
-                <CodeBlock code={`print("My name is {} and I am {} years old.".format(name, age))
-
-# With position indexes
-print("My name is {0} and I am {1} years old.".format(name, age))
-
-# With named parameters
-print("My name is {n} and I am {a} years old.".format(n=name, a=age))`} />
-
-                <h3 id="old-style-string-formatting" className="text-lg font-semibold mt-4 mb-2">Old-style String Formatting</h3>
-                <CodeBlock code={`print("My name is %s and I am %d years old." % (name, age))
-# Outputs: My name is Alice and I am 25 years old.`} />
-            </Section>
-
-            {/* ── Input Statement ── */}
-            <Section title="Input Statement in Python">
-                <p>The <code>input()</code> function allows user input from the standard input device (keyboard).</p>
-
-                <h3 id="basic-input-usage" className="text-lg font-semibold mt-4 mb-2">Basic Input Usage</h3>
-                <CodeBlock code={`name = input("Enter your name: ")
-print("Hello, " + name + "!")`} />
-
-                <InfoBox type="note">The <code>input()</code> function always returns a string, even if the user enters a number.</InfoBox>
-
-                <h3 id="converting-input-to-other-types" className="text-lg font-semibold mt-4 mb-2">Converting Input to Other Types</h3>
-                <CodeBlock code={`# Converting input to an integer
-age = int(input("Enter your age: "))
-next_year_age = age + 1
-print(f"Next year, you will be {next_year_age} years old.")
-
-# Converting input to a float
-height = float(input("Enter your height in meters: "))
-print(f"Your height is {height} meters.")`} />
-
-                <h3 id="input-validation-example" className="text-lg font-semibold mt-4 mb-2">Input Validation Example</h3>
-                <CodeBlock code={`while True:
-    try:
-        number = int(input("Enter a positive number: "))
-        if number <= 0:
-            print("That's not a positive number. Try again.")
-        else:
-            break
-    except ValueError:
-        print("That's not a valid number. Try again.")
-        
-print(f"You entered: {number}")`} />
-
-                <h3 id="multiple-inputs" className="text-lg font-semibold mt-4 mb-2">Multiple Inputs</h3>
-                <CodeBlock code={`# Getting multiple inputs on separate lines
-first_name = input("Enter your first name: ")
-last_name = input("Enter your last name: ")
-print(f"Hello, {first_name} {last_name}!")
-
-# Getting multiple inputs on a single line
-x, y = input("Enter two numbers separated by space: ").split()
-x, y = int(x), int(y)
-print(f"Sum: {x + y}")`} />
-            </Section>
-
-            {/* ── String Operations ── */}
-            <Section title="String Operations">
-                <CodeBlock code={`s = "Knobly OS"
-print(len(s))          # 9
-print(s.upper())       # KNOBLY OS
-print(s.lower())       # knobly os
-print(s[0:6])          # Knobly
-print(s.replace("OS", "System"))  # Knobly System
-print("Knobly" in s)   # True`} />
-            </Section>
-
-            {/* ── Practice Questions ── */}
-            <Section title="Practice Questions">
-                <p>Test your understanding of Python operators with these practice questions:</p>
-
-                <div className="space-y-4 mt-4">
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                        <h4 className="font-bold mb-2">Question 1: Arithmetic Operators</h4>
-                        <p>What will be the output?</p>
-                        <CodeBlock code={`a = 10
-b = 3
-print(a // b)
-print(a % b)
-print(a ** b)`} />
-                        <p className="text-sm text-gray-600 mt-2"><strong>Think:</strong> Calculate the floor division, modulus, and exponentiation.</p>
-                    </div>
-
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                        <h4 className="font-bold mb-2">Question 2: Comparison and Logical Operators</h4>
-                        <p>What will be the output?</p>
-                        <CodeBlock code={`x = 5
-y = 10
-z = 5
-print(x == z)
-print(x != y)
-print(x > y or x == z)
-print(x < y and y > z)`} />
-                        <p className="text-sm text-gray-600 mt-2"><strong>Think:</strong> Evaluate each comparison and logical expression step by step.</p>
-                    </div>
-
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                        <h4 className="font-bold mb-2">Question 3: Identity vs Equality</h4>
-                        <p>What will be the output?</p>
-                        <CodeBlock code={`list1 = [1, 2, 3]
-list2 = [1, 2, 3]
-list3 = list1
-print(list1 == list2)
-print(list1 is list2)
-print(list1 is list3)`} />
-                        <p className="text-sm text-gray-600 mt-2"><strong>Think:</strong> Understand the difference between equality (==) and identity (is).</p>
-                    </div>
-
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                        <h4 className="font-bold mb-2">Question 4: Membership Operators</h4>
-                        <p>What will be the output?</p>
-                        <CodeBlock code={`fruits = ["apple", "banana", "cherry"]
-print("apple" in fruits)
-print("grape" not in fruits)
-print("ban" in "banana")`} />
-                        <p className="text-sm text-gray-600 mt-2"><strong>Think:</strong> Understand how membership operators work with different sequence types.</p>
-                    </div>
-
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                        <h4 className="font-bold mb-2">Question 5: Assignment Operators</h4>
-                        <p>What will be the final value of x?</p>
-                        <CodeBlock code={`x = 10
-x += 5
-x *= 2
-x //= 3
-print(x)`} />
-                        <p className="text-sm text-gray-600 mt-2"><strong>Think:</strong> Calculate each step of the compound assignments.</p>
-                    </div>
-                </div>
-            </Section>
-        </ContentPage>
+                    {/* ═══ PRACTICE ═══ */}
+                    <Sec id="practice" title="Practice Questions — Khud Karo!" icon={<BookOpen size={16} className="text-violet-500" />}>
+                        <p className="mb-3">In questions ka output khud socho, phir code chalake check karo! 💪</p>
+                        <div className="space-y-3">
+                            {[{ q: 'Arithmetic Operators', h: 'Floor division, modulus aur power calculate karo.', code: 'a = 10\nb = 3\nprint(a // b)   # ?\nprint(a % b)    # ?\nprint(a ** b)   # ?', bg: '#eef2ff', bc: '#c7d2fe', tc: '#4338ca' }, { q: 'Comparison & Logical', h: 'Har expression ko step by step solve karo.', code: 'x = 5\ny = 10\nprint(x == 5)          # ?\nprint(x != y)          # ?\nprint(x > y or x == 5) # ?', bg: '#f5f3ff', bc: '#ddd6fe', tc: '#5b21b6' }, { q: 'Identity vs Equality', h: '== value check karta hai, is object check karta hai.', code: 'list1 = [1, 2, 3]\nlist2 = [1, 2, 3]\nlist3 = list1\nprint(list1 == list2)  # ?\nprint(list1 is list2)  # ?\nprint(list1 is list3)  # ?', bg: '#fdf2f8', bc: '#fbcfe8', tc: '#9d174d' }, { q: 'Assignment Operators', h: 'Har step mein x ki value calculate karo.', code: 'x = 10\nx += 5    # x = 10 + 5 = ?\nx *= 2    # x = ? * 2 = ?\nx //= 3   # x = ? // 3 = ?\nprint(x)  # Final answer?', bg: '#ecfdf5', bc: '#a7f3d0', tc: '#166534' }].map((item, i) => (
+                                <div key={i} className="rounded-2xl overflow-hidden" style={{ background: item.bg, border: `1px solid ${item.bc}` }}>
+                                    <div className="px-4 py-3 flex items-center gap-2" style={{ borderBottom: `1px solid ${item.bc}` }}>
+                                        <span className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black text-white" style={{ background: item.tc }}>{i + 1}</span>
+                                        <h4 className="font-bold text-sm" style={{ color: item.tc }}>{item.q}</h4>
+                                    </div>
+                                    <div className="p-4">
+                                        <p className="text-sm mb-2" style={{ color: '#475569' }}>Output kya hoga? Pehle socho, phir check karo! 🤔</p>
+                                        <CB code={item.code} />
+                                        <p className="text-xs" style={{ color: '#94a3b8' }}>💡 <strong>Hint:</strong> {item.h}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </Sec>
+                </main>
+            </div>
+        </div>
     );
 }

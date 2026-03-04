@@ -179,6 +179,251 @@ select {
   cursor: pointer;
 }
 
+/* ━━━━━━━━━━━━━━━━━━━ LIGHT MODE OVERRIDES ━━━━━━━━━━━━━━━━━━━ */
+body.light-mode .glass-panel {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode .glass-card {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(148, 163, 184, 0.15) !important;
+  box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+body.light-mode .glass-card:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 12px 28px -8px rgba(56, 189, 248, 0.2), 0 4px 12px -4px rgba(0, 0, 0, 0.05) !important;
+  transform: translateY(-4px) !important;
+}
+
+body.light-mode .glass-card:active {
+  transform: translateY(-1px) scale(0.98) !important;
+}
+
+body.light-mode .app-icon-tile {
+  background: linear-gradient(145deg, #ffffff, #f1f5f9) !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.06), inset 0 -1px 2px rgba(0, 0, 0, 0.02) !important;
+}
+
+body.light-mode .glass-card:hover .app-icon-tile {
+  box-shadow: 0 4px 16px -4px rgba(56, 189, 248, 0.2), inset 0 -1px 2px rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
+}
+
+body.light-mode .search-shell {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+}
+
+body.light-mode .search-shell:focus-within {
+  border-color: rgba(56, 189, 248, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1), 0 2px 8px -2px rgba(0, 0, 0, 0.06) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+body.light-mode .search-shell input {
+  color: #1e293b !important;
+}
+
+body.light-mode .search-shell input::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.light-mode .search-shell-icon {
+  color: #94a3b8 !important;
+}
+
+body.light-mode input,
+body.light-mode select,
+body.light-mode textarea {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #1e293b !important;
+  border: 1px solid rgba(148, 163, 184, 0.3) !important;
+}
+
+body.light-mode input::placeholder,
+body.light-mode textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.light-mode .knobly-header-style {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+body.light-mode #knobly-logo {
+  animation: none !important;
+  opacity: 1 !important;
+}
+
+body.light-mode .tab-btn-active {
+  color: #0284c7 !important;
+  border-color: #0284c7 !important;
+}
+
+body.light-mode .nav-btn.is-active {
+  background: rgba(56, 189, 248, 0.12) !important;
+  color: #0284c7 !important;
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.12) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+body.light-mode .video-item {
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+body.light-mode .video-item:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
+}
+
+body.light-mode .video-active {
+  background: rgba(56, 189, 248, 0.08) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
+}
+
+body.light-mode .apps-filter-btn-active {
+  color: #0284c7 !important;
+  border-color: #0284c7 !important;
+}
+
+body.light-mode ::selection {
+  background: #38bdf8 !important;
+  color: #fff !important;
+}
+
+/* Light mode sidebar */
+body.light-mode .border-white {
+  border-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+/* Light mode: smaller icons for premium spacing */
+body.light-mode .devicon-fix {
+  font-size: 2rem !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08)) !important;
+}
+
+body.light-mode .glass-card:hover .devicon-fix {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)) !important;
+}
+
+/* Light mode: app icon tile inner bg */
+body.light-mode .app-icon-tile {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 249, 0.9)) !important;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Light mode: app card text visibility */
+body.light-mode .glass-card h3 {
+  color: #334155 !important;
+}
+
+body.light-mode .glass-card:hover h3 {
+  color: #0284c7 !important;
+}
+
+body.light-mode .glass-card p {
+  color: #94a3b8 !important;
+}
+
+/* Light mode: header icon buttons */
+body.light-mode button[class*="border-white/10"] {
+  border-color: rgba(148, 163, 184, 0.25) !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.light-mode button[class*="border-white/10"]:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+body.light-mode button[class*="border-white/10"] i {
+  color: #64748b !important;
+}
+
+/* Light mode: nav sidebar buttons */
+body.light-mode .nav-btn {
+  color: #64748b !important;
+}
+
+body.light-mode .nav-btn:hover {
+  background: rgba(56, 189, 248, 0.06) !important;
+}
+
+/* Light mode: sidebar clock panel */
+body.light-mode [class*="text-cyan-400"] {
+  color: #0284c7 !important;
+}
+
+/* Light mode: right sidebar panels */
+body.light-mode [class*="border-white/5"] {
+  border-color: rgba(148, 163, 184, 0.12) !important;
+}
+
+/* Light mode: KnoblyAI CTA */
+body.light-mode [class*="hover:bg-purple-500/5"]:hover {
+  background: rgba(139, 92, 246, 0.06) !important;
+}
+
+/* Light mode: right sidebar clock gradient */
+body.light-mode .glass-panel [class*="bg-gradient-to-br"] {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.06), transparent) !important;
+}
+
+/* Light mode: sidebar text readability */
+body.light-mode .glass-panel .text-4xl,
+body.light-mode .glass-panel .text-3xl,
+body.light-mode .glass-panel .text-2xl {
+  color: #1e293b !important;
+}
+
+body.light-mode .glass-panel .text-lg {
+  color: #334155 !important;
+}
+
+/* Light mode: right sidebar section titles */
+body.light-mode [class*="text-gray-400"] {
+  color: #64748b !important;
+}
+
+/* Light mode: right sidebar YouTube section */
+body.light-mode .glass-panel h3[class*="text-gray-400"] {
+  color: #64748b !important;
+}
+
+/* Light mode: nav sidebar background */
+body.light-mode aside [class*="bg-black/40"],
+body.light-mode aside [class*="bg-black/60"] {
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Light mode: scrollbar */
+body.light-mode ::-webkit-scrollbar {
+  width: 6px;
+}
+
+body.light-mode ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body.light-mode ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 3px;
+}
+
+body.light-mode ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+
+
 ::selection {
   background: #22d3ee;
   color: #000;
@@ -1216,4 +1461,19 @@ body.light-mode .text-xl.font-bold.text-white {
 .low-perf-mode * {
   animation-duration: 0s !important;
   transition-duration: 0.05s !important;
-}html { scroll-behavior: smooth; }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ──── Gradient Slide Animation ──── */
+@keyframes gradientSlide {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 300% 50%;
+  }
+}

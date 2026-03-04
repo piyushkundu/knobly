@@ -34,13 +34,13 @@ const pythonTopics = [
         chapter: 2,
     },
     {
-        title: 'Functions',
-        href: '/python/functions',
-        icon: <FunctionSquare size={22} style={{ color: '#c084fc' }} />,
-        gradient: 'linear-gradient(135deg, #3b0764, #6b21a8, #7c3aed)',
-        border: '#8b5cf6',
-        glow: 'rgba(139,92,246,0.15)',
-        desc: 'Defining functions, parameters, return values, recursion, and scope',
+        title: 'Lists',
+        href: '/python/lists',
+        icon: <List size={22} style={{ color: '#fdba74' }} />,
+        gradient: 'linear-gradient(135deg, #7c2d12, #c2410c, #ea580c)',
+        border: '#f97316',
+        glow: 'rgba(249,115,22,0.15)',
+        desc: 'List operations, methods, slicing, comprehensions, and nested lists',
         chapter: 3,
     },
     {
@@ -64,16 +64,6 @@ const pythonTopics = [
         chapter: 5,
     },
     {
-        title: 'Lists',
-        href: '/python/lists',
-        icon: <List size={22} style={{ color: '#fdba74' }} />,
-        gradient: 'linear-gradient(135deg, #7c2d12, #c2410c, #ea580c)',
-        border: '#f97316',
-        glow: 'rgba(249,115,22,0.15)',
-        desc: 'List operations, methods, slicing, comprehensions, and nested lists',
-        chapter: 6,
-    },
-    {
         title: 'Tuples',
         href: '/python/tuples',
         icon: <Circle size={22} style={{ color: '#f9a8d4' }} />,
@@ -81,7 +71,7 @@ const pythonTopics = [
         border: '#ec4899',
         glow: 'rgba(236,72,153,0.15)',
         desc: 'Tuple creation, operations, packing/unpacking, and immutability',
-        chapter: 7,
+        chapter: 6,
     },
 ];
 
@@ -145,7 +135,7 @@ export default function PythonPage() {
                         {/* Stats row */}
                         <div className="flex flex-wrap gap-4">
                             {[
-                                { icon: <BookOpen size={14} />, label: '7 Chapters', color: '#93c5fd' },
+                                { icon: <BookOpen size={14} />, label: '6 Chapters', color: '#93c5fd' },
                                 { icon: <GraduationCap size={14} />, label: 'Beginner Friendly', color: '#86efac' },
                                 { icon: <Zap size={14} />, label: 'Practice Questions', color: '#fde68a' },
                             ].map((stat, i) => (

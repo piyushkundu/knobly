@@ -51,6 +51,7 @@ export default function KnoblyAI() {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [hovered, setHovered] = useState(false);
+    const [isDark, setIsDark] = useState(true);
     const [particles] = useState(() =>
         Array.from({ length: 6 }, (_, i) => ({
             id: i,
@@ -82,6 +83,15 @@ export default function KnoblyAI() {
             }
         }
     }, [open]);
+
+    // Detect theme
+    useEffect(() => {
+        const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+        check();
+        const observer = new MutationObserver(check);
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        return () => observer.disconnect();
+    }, []);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -221,9 +231,13 @@ export default function KnoblyAI() {
                     className="rounded-[28px] overflow-hidden flex flex-col"
                     style={{
                         maxHeight: 'min(560px, calc(100vh - 120px))',
-                        background: 'linear-gradient(180deg, #080d1f 0%, #0c1229 50%, #0a0f1e 100%)',
-                        border: '1px solid rgba(139,92,246,0.2)',
-                        boxShadow: '0 0 80px rgba(139,92,246,0.1), 0 0 40px rgba(56,189,248,0.08), 0 24px 48px rgba(0,0,0,0.7)',
+                        background: isDark
+                            ? 'linear-gradient(180deg, #080d1f 0%, #0c1229 50%, #0a0f1e 100%)'
+                            : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+                        border: isDark ? '1px solid rgba(139,92,246,0.2)' : '1px solid rgba(139,92,246,0.15)',
+                        boxShadow: isDark
+                            ? '0 0 80px rgba(139,92,246,0.1), 0 0 40px rgba(56,189,248,0.08), 0 24px 48px rgba(0,0,0,0.7)'
+                            : '0 8px 40px rgba(0,0,0,0.12), 0 0 20px rgba(139,92,246,0.08)',
                     }}
                 >
                     {/* ── Header ── */}
@@ -254,21 +268,21 @@ export default function KnoblyAI() {
                                 boxShadow: '0 0 20px rgba(139,92,246,0.4)',
                             }}>
                             <span style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>K</span>
-                            <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full" style={{ background: '#22c55e', border: '2px solid #0a0f1e' }} />
+                            <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full" style={{ background: '#22c55e', border: isDark ? '2px solid #0a0f1e' : '2px solid #fff' }} />
                         </div>
 
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                                <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>KnoblyAI</span>
+                                <span style={{ fontSize: 15, fontWeight: 700, color: isDark ? '#fff' : '#1e293b' }}>KnoblyAI</span>
                                 <span style={{ fontSize: 9, padding: '1px 6px', borderRadius: 6, background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: '#fff', fontWeight: 600, letterSpacing: 0.5 }}>PRO</span>
                             </div>
-                            <div style={{ fontSize: 10, color: '#64748b', marginTop: 1 }}>⚡ Instant responses · Navigate anywhere</div>
+                            <div style={{ fontSize: 10, color: isDark ? '#64748b' : '#94a3b8', marginTop: 1 }}>⚡ Instant responses · Navigate anywhere</div>
                         </div>
 
                         <button
                             onClick={() => setOpen(false)}
                             className="flex items-center justify-center transition-all flex-shrink-0"
-                            style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(139,92,246,0.15)', color: '#a78bfa', border: '1px solid rgba(139,92,246,0.2)' }}
+                            style={{ width: 28, height: 28, borderRadius: '50%', background: isDark ? 'rgba(139,92,246,0.15)' : 'rgba(139,92,246,0.1)', color: '#a78bfa', border: isDark ? '1px solid rgba(139,92,246,0.2)' : '1px solid rgba(139,92,246,0.15)' }}
                         >
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
                         </button>
@@ -288,11 +302,11 @@ export default function KnoblyAI() {
                                         className={`max-w-[82%] px-3.5 py-2.5 text-[13px] leading-relaxed whitespace-pre-wrap ${m.role === 'user' ? 'rounded-2xl rounded-tr-md' : 'rounded-2xl rounded-tl-md'}`}
                                         style={m.role === 'user'
                                             ? { background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', color: '#f0e6ff', boxShadow: '0 4px 12px rgba(139,92,246,0.3)' }
-                                            : { background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(139,92,246,0.12)', color: '#e2e8f0' }
+                                            : { background: isDark ? 'rgba(30,41,59,0.8)' : 'rgba(241,245,249,0.9)', border: isDark ? '1px solid rgba(139,92,246,0.12)' : '1px solid rgba(139,92,246,0.1)', color: isDark ? '#e2e8f0' : '#334155' }
                                         }
                                         dangerouslySetInnerHTML={{
                                             __html: m.content
-                                                .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#c4b5fd;font-weight:700">$1</strong>')
+                                                .replace(/\*\*(.*?)\*\*/g, `<strong style="color:${isDark ? '#c4b5fd' : '#7c3aed'};font-weight:700">$1</strong>`)
                                                 .replace(/\n/g, '<br/>')
                                         }}
                                     />
@@ -348,7 +362,7 @@ export default function KnoblyAI() {
                                 <div className="flex-shrink-0 mt-0.5" style={{ width: 24, height: 24, borderRadius: '50%', background: 'linear-gradient(135deg, #8b5cf6, #38bdf8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <span style={{ fontSize: 10, fontWeight: 800, color: '#fff' }}>K</span>
                                 </div>
-                                <div className="flex items-center gap-1.5 px-4 py-3 rounded-2xl rounded-tl-md" style={{ background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(139,92,246,0.12)' }}>
+                                <div className="flex items-center gap-1.5 px-4 py-3 rounded-2xl rounded-tl-md" style={{ background: isDark ? 'rgba(30,41,59,0.8)' : 'rgba(241,245,249,0.9)', border: isDark ? '1px solid rgba(139,92,246,0.12)' : '1px solid rgba(139,92,246,0.1)' }}>
                                     <span className="animate-bounce" style={{ width: 6, height: 6, borderRadius: '50%', background: '#8b5cf6', animationDelay: '0ms' }} />
                                     <span className="animate-bounce" style={{ width: 6, height: 6, borderRadius: '50%', background: '#38bdf8', animationDelay: '150ms' }} />
                                     <span className="animate-bounce" style={{ width: 6, height: 6, borderRadius: '50%', background: '#ec4899', animationDelay: '300ms' }} />
@@ -359,43 +373,32 @@ export default function KnoblyAI() {
                     </div>
 
 
-                    {/* ── Input ── */}
-                    <div className="px-3 pb-3 pt-1">
-                        {/* Animated border wrapper */}
-                        <div className="relative rounded-full p-[1.5px] overflow-hidden" style={{ background: 'linear-gradient(90deg, #8b5cf6, #38bdf8, #ec4899, #22c55e, #8b5cf6)', backgroundSize: '300% 100%', animation: 'gradientSlide 4s linear infinite' }}>
-                            <div
-                                className="flex items-center gap-2 rounded-full px-4 py-3 transition-all duration-300 relative"
-                                style={{
-                                    background: 'linear-gradient(145deg, #080d1f 0%, #0c1229 100%)',
-                                }}
-                            >
-                                {/* Sparkle icon */}
-                                <div className="flex-shrink-0" style={{ color: '#a78bfa' }}>
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="url(#sparkFill)" stroke="url(#sparkStroke)" strokeWidth="1.5">
-                                            <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="8s" repeatCount="indefinite" />
-                                        </path>
-                                        <defs>
-                                            <linearGradient id="sparkFill" x1="0" y1="0" x2="24" y2="24">
-                                                <stop offset="0%" stopColor="#c4b5fd" stopOpacity="0.3" />
-                                                <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.15" />
-                                            </linearGradient>
-                                            <linearGradient id="sparkStroke" x1="0" y1="0" x2="24" y2="24">
-                                                <stop offset="0%" stopColor="#a78bfa" />
-                                                <stop offset="100%" stopColor="#38bdf8" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-                                </div>
+                    {/* ── Premium Ask Bar ── */}
+                    <div className="px-4 pb-4 pt-2">
+                        {/* Outer animated gradient border */}
+                        <div className="relative rounded-[20px] p-[1.5px] overflow-hidden" style={{ background: 'linear-gradient(90deg, #8b5cf6, #38bdf8, #ec4899, #8b5cf6)', backgroundSize: '200% 100%', animation: 'gradientSlide 4s linear infinite' }}>
+                            {/* Inner container */}
+                            <div className="rounded-[19px] flex items-center gap-2 pl-4 pr-2 py-2" style={{
+                                background: isDark
+                                    ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
+                                    : '#ffffff',
+                            }}>
                                 <input
                                     ref={inputRef}
                                     value={input}
                                     onChange={e => setInput(e.target.value)}
                                     onKeyDown={onKeyDown}
-                                    placeholder="Ask me anything..."
-                                    className="flex-1 bg-transparent outline-none min-w-0 font-medium placeholder:text-slate-600"
-                                    style={{ fontSize: 14, color: '#f1f5f9', caretColor: '#a855f7', letterSpacing: '0.01em' }}
+                                    placeholder="Message KnoblyAI..."
+                                    className="flex-1 bg-transparent outline-none min-w-0"
+                                    style={{
+                                        fontSize: 14,
+                                        fontWeight: 500,
+                                        color: isDark ? '#e2e8f0' : '#1e293b',
+                                        caretColor: '#a855f7',
+                                    }}
                                 />
+
+                                {/* Send Button */}
                                 <button
                                     onClick={() => send()}
                                     disabled={!input.trim() || loading}
@@ -403,27 +406,28 @@ export default function KnoblyAI() {
                                     style={{
                                         width: 38,
                                         height: 38,
-                                        borderRadius: '50%',
+                                        borderRadius: 14,
                                         background: input.trim() && !loading
-                                            ? 'linear-gradient(135deg, #a855f7, #6366f1, #38bdf8)'
-                                            : 'rgba(30,41,59,0.6)',
-                                        color: input.trim() && !loading ? '#fff' : '#475569',
-                                        cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
+                                            ? 'linear-gradient(135deg, #8b5cf6, #6366f1, #38bdf8)'
+                                            : isDark ? 'rgba(51,65,85,0.6)' : 'rgba(226,232,240,0.8)',
+                                        color: input.trim() && !loading ? '#fff' : isDark ? '#64748b' : '#94a3b8',
+                                        cursor: input.trim() && !loading ? 'pointer' : 'default',
                                         boxShadow: input.trim() && !loading
-                                            ? '0 4px 20px rgba(168,85,247,0.5), inset 0 2px 4px rgba(255,255,255,0.25)'
-                                            : 'inset 0 2px 4px rgba(0,0,0,0.3)',
-                                        transform: input.trim() && !loading ? 'scale(1.08)' : 'scale(1)',
+                                            ? '0 0 20px rgba(139,92,246,0.4), 0 4px 12px rgba(99,102,241,0.3)'
+                                            : 'none',
+                                        transform: input.trim() && !loading ? 'scale(1)' : 'scale(0.88)',
                                     }}
+                                    onMouseEnter={e => { if (input.trim() && !loading) { (e.currentTarget).style.transform = 'scale(1.1) translateY(-1px)'; (e.currentTarget).style.boxShadow = '0 0 28px rgba(139,92,246,0.5), 0 6px 20px rgba(99,102,241,0.4)'; } }}
+                                    onMouseLeave={e => { if (input.trim() && !loading) { (e.currentTarget).style.transform = 'scale(1)'; (e.currentTarget).style.boxShadow = '0 0 20px rgba(139,92,246,0.4), 0 4px 12px rgba(99,102,241,0.3)'; } }}
                                 >
-                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: input.trim() ? 'translate(1px, -1px)' : 'none', transition: 'transform 0.2s' }}>
-                                        <line x1="22" y1="2" x2="11" y2="13" />
-                                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ transform: input.trim() && !loading ? 'rotate(0deg)' : 'rotate(90deg)', transition: 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}>
+                                        <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
                                     </svg>
                                 </button>
                             </div>
                         </div>
-                        <div style={{ textAlign: 'center', marginTop: 8, fontSize: 9, color: '#334155', letterSpacing: '0.05em' }}>
-                            ✨ Powered by KnoblyAI · Ask anything
+                        <div style={{ textAlign: 'center', marginTop: 8, fontSize: 9, fontWeight: 500, color: isDark ? '#475569' : '#94a3b8', letterSpacing: '0.06em' }}>
+                            POWERED BY KNOBLYAI
                         </div>
                     </div>
                 </div>
