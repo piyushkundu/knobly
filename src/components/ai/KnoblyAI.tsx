@@ -168,7 +168,7 @@ export default function KnoblyAI() {
         <>
             {/* ═══════════════════ FLOATING TRIGGER (hidden on desktop home, visible on mobile home) ═══════════════════ */}
             <div
-                className={`fixed bottom-5 right-5 z-[9999] select-none ${isHomePage ? 'xl:hidden' : ''}`}
+                className={`fixed bottom-20 sm:bottom-5 right-5 z-[9999] select-none ${isHomePage ? 'xl:hidden' : ''}`}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
             >
