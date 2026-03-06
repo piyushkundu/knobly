@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import KnoblyAI from "@/components/ai/KnoblyAI";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://Knobly Web.vercel.app'),
+  metadataBase: new URL('https://knoblyweb.in'),
   title: {
     default: 'Knobly Web — O-Level & Python Learning Platform | Free Notes, MCQ, Cyber Security',
     template: '%s | Knobly Web',
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://Knobly Web.vercel.app',
+    url: 'https://knoblyweb.in',
     siteName: 'Knobly Web',
     title: 'Knobly Web — O-Level & Python Learning Platform',
     description: 'Free O-Level IT Tools, Python Programming, Cyber Security notes, MCQ tests, and study materials. Best learning platform for NIELIT O-Level exam preparation.',
@@ -67,7 +68,7 @@ export const metadata: Metadata = {
     google: 'your-google-verification-code',
   },
   alternates: {
-    canonical: 'https://Knobly Web.vercel.app',
+    canonical: 'https://knoblyweb.in',
   },
   category: 'education',
 };
@@ -101,6 +102,14 @@ export default function RootLayout({
         <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.35.0/dist/tabler-icons.min.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+        {/* Google Analytics */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-J2KSCP5508" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-J2KSCP5508');`}
+        </Script>
       </head>
       <body className="antialiased" suppressHydrationWarning>
         <ThemeProvider>
