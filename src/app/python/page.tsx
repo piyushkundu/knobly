@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, Home, BookOpen, Code2, GitBranch, FunctionSquare, FileText, BarChart3, List, Circle, ChevronRight, Sparkles, GraduationCap, Zap, LayoutDashboard, StickyNote, Brain, Keyboard } from 'lucide-react';
+import { ArrowLeft, Home, BookOpen, Code2, GitBranch, FunctionSquare, FileText, BarChart3, List, Circle, ChevronRight, Sparkles, GraduationCap, Zap, LayoutDashboard, StickyNote, Brain, Keyboard, PenLine } from 'lucide-react';
 
 const quickLinks = [
     { label: 'Home', href: '/', icon: <Home size={13} /> },
@@ -190,6 +190,29 @@ export default function PythonPage() {
                         </Link>
                     ))}
                 </div>
+
+                {/* ═══ HANDWRITTEN NOTES — Single Card ═══ */}
+                <Link href="/python/handwritten-notes" className="group block mt-8 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:-translate-y-1" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #0f3460 40%, #533483 100%)', boxShadow: '0 4px 24px rgba(83,52,131,0.25)' }}>
+                    <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #fbbf24 0%, transparent 70%)', transform: 'translate(20%, -30%)' }} />
+                    <div className="flex items-center gap-5 p-5 md:p-6">
+                        <div className="hidden sm:block w-20 h-20 rounded-xl overflow-hidden flex-shrink-0" style={{ border: '2px solid rgba(255,255,255,0.1)' }}>
+                            <img src="/images/python_notes.png" alt="Python Notes" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                                <PenLine size={12} style={{ color: '#fbbf24' }} />
+                                <span className="text-[9px] uppercase tracking-[0.25em] font-bold" style={{ color: '#fbbf24' }}>O-Level M3-R5</span>
+                            </div>
+                            <h3 className="text-base md:text-lg font-extrabold mb-1" style={{ color: '#ffffff' }}>
+                                ✍️ Python Handwritten Notes
+                            </h3>
+                            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                                11 Chapters • 275+ Pages • Free PDF Download
+                            </p>
+                        </div>
+                        <ChevronRight size={20} className="flex-shrink-0 transition-transform group-hover:translate-x-1" style={{ color: 'rgba(255,255,255,0.4)' }} />
+                    </div>
+                </Link>
 
                 {/* ── Footer note ── */}
                 <div className="mt-8 text-center py-4">

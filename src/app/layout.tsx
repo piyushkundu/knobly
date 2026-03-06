@@ -5,14 +5,71 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import KnoblyAI from "@/components/ai/KnoblyAI";
 
 export const metadata: Metadata = {
-  title: "Knobly OS | Ultimate Edition",
-  description: "Knobly OS - Your futuristic learning platform with integrated tools and secure exam mode",
+  metadataBase: new URL('https://knoblyos.vercel.app'),
+  title: {
+    default: 'KnoblyOS — O-Level & Python Learning Platform | Free Notes, MCQ, Cyber Security',
+    template: '%s | KnoblyOS',
+  },
+  description: 'KnoblyOS — India ka best free learning platform for O-Level IT Tools (M1-R5), Python Programming (M3-R5), Cyber Security, Web Design, HTML/CSS/JS, MCQ practice, handwritten notes, aur exam preparation.',
+  keywords: [
+    'KnoblyOS', 'O-Level', 'NIELIT', 'Python programming', 'IT Tools', 'M1-R5', 'M3-R5',
+    'cyber security', 'web design', 'HTML', 'CSS', 'JavaScript', 'MCQ', 'free notes',
+    'handwritten notes', 'exam preparation', 'O-Level notes', 'Python notes', 'CCC exam',
+    'computer course', 'online learning', 'free study material', 'O-Level syllabus',
+    'Python tutorial Hindi', 'IT tools notes', 'O-Level Python', 'NIELIT O-Level',
+  ],
+  authors: [{ name: 'KnoblyOS Team' }],
+  creator: 'KnoblyOS',
+  publisher: 'KnoblyOS',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_IN',
+    url: 'https://knoblyos.vercel.app',
+    siteName: 'KnoblyOS',
+    title: 'KnoblyOS — O-Level & Python Learning Platform',
+    description: 'Free O-Level IT Tools, Python Programming, Cyber Security notes, MCQ tests, and study materials. Best learning platform for NIELIT O-Level exam preparation.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'KnoblyOS — Learning Platform',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'KnoblyOS — O-Level & Python Learning Platform',
+    description: 'Free O-Level IT Tools, Python, Cyber Security notes & MCQ tests.',
+    images: ['/og-image.png'],
+  },
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', type: 'image/x-icon' },
+    ],
+    apple: [
+      { url: '/favicon.svg' },
     ],
   },
+  manifest: '/manifest.json',
+  verification: {
+    google: 'your-google-verification-code',
+  },
+  alternates: {
+    canonical: 'https://knoblyos.vercel.app',
+  },
+  category: 'education',
 };
 
 export default function RootLayout({
