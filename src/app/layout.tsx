@@ -103,12 +103,12 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.35.0/dist/tabler-icons.min.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
         {/* Google Analytics */}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-J2KSCP5508" strategy="afterInteractive" />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-LWC7XK46E6" strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">
           {`window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-J2KSCP5508');`}
+            gtag('config', 'G-LWC7XK46E6');`}
         </Script>
       </head>
       <body className="antialiased" suppressHydrationWarning>
