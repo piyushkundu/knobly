@@ -384,7 +384,7 @@ export default function PythonFundamentals() {
 
                     <Sec id="strings" title="String Operations" icon={<Code2 size={16} className="text-sky-500" />}>
                         <Def>🔤 <strong>String</strong> text data hoti hai. Python mein strings par bahut saare operations kar sakte ho — length nikalo, uppercase karo, kuch dhundho, replace karo!</Def>
-                        <CB code={`name = "Knobly OS"\n\n# Length (kitne characters hain)\nprint(len(name))          # 9\n\n# Uppercase / Lowercase\nprint(name.upper())       # KNOBLY OS\nprint(name.lower())       # knobly os\n\n# Slicing (hissa nikalo)\nprint(name[0:6])          # Knobly (index 0 se 5 tak)\nprint(name[-2:])          # OS (last 2 characters)\n\n# Replace (badal do)\nprint(name.replace("OS", "System"))  # Knobly System\n\n# Check karo kuch hai ya nahi\nprint("Knobly" in name)   # True ✅\nprint("Python" in name)   # False ❌\n\n# Split (tod do)\nwords = "apple,banana,mango".split(",")\nprint(words)  # ['apple', 'banana', 'mango']`} />
+                        <CB code={`name = "Knobly Web"\n\n# Length (kitne characters hain)\nprint(len(name))          # 9\n\n# Uppercase / Lowercase\nprint(name.upper())       # Knobly Web\nprint(name.lower())       # Knobly Web\n\n# Slicing (hissa nikalo)\nprint(name[0:6])          # Knobly (index 0 se 5 tak)\nprint(name[-2:])          # OS (last 2 characters)\n\n# Replace (badal do)\nprint(name.replace("OS", "System"))  # Knobly System\n\n# Check karo kuch hai ya nahi\nprint("Knobly" in name)   # True ✅\nprint("Python" in name)   # False ❌\n\n# Split (tod do)\nwords = "apple,banana,mango".split(",")\nprint(words)  # ['apple', 'banana', 'mango']`} />
                     </Sec>
 
                     {/* ═══ MCQ QUIZ ═══ */}

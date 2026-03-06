@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Dashboard | Knobly OS',
+    title: 'Dashboard | Knobly Web',
     description: 'Test management dashboard - view tests, scores, and leaderboard',
 };
 

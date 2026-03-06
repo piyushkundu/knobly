@@ -423,7 +423,7 @@ export default function HomePage() {
 
   const renameSoon = () => {
     closeAllContextMenus();
-    alert('Rename feature coming soon in a future build of Knobly OS.');
+    alert('Rename feature coming soon in a future build of Knobly Web.');
   };
 
   const isInFavourites = (app: KnoblyApp | null) => {
@@ -720,7 +720,7 @@ export default function HomePage() {
                 <div className={`flex items-start gap-3 px-3 py-2 rounded-xl border ${isDark ? 'bg-cyan-500/5 border-cyan-500/10' : 'bg-cyan-50 border-cyan-100'}`}>
                   <i className="ph-fill ph-info text-cyan-500 text-base mt-0.5" />
                   <div>
-                    <div className={`text-xs font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Welcome to Knobly OS!</div>
+                    <div className={`text-xs font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Welcome to Knobly Web!</div>
                     <div className={`text-[10px] mt-0.5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Explore courses, practice MCQs, and learn with KnoblyAI assistant.</div>
                   </div>
                 </div>
@@ -749,7 +749,7 @@ export default function HomePage() {
               <div className="flex items-center justify-between gap-2 shrink-0">
                 <div>
                   <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-1">Settings</div>
-                  <div className="text-xs md:text-sm text-gray-200">Personalize Knobly OS</div>
+                  <div className="text-xs md:text-sm text-gray-200">Personalize Knobly Web</div>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] md:text-[11px] text-gray-400 uppercase tracking-[0.18em]">Performance</span>
@@ -903,7 +903,7 @@ export default function HomePage() {
               <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
                 <div>
                   <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-1">System Stats</div>
-                  <div className="text-xs md:text-sm text-gray-200">Overview of your Knobly OS usage</div>
+                  <div className="text-xs md:text-sm text-gray-200">Overview of your Knobly Web usage</div>
                 </div>
                 <div className="text-right text-[10px] text-gray-400 uppercase tracking-[0.18em]">
                   Uptime<br />
@@ -1025,7 +1025,7 @@ export default function HomePage() {
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
                   <i className="ph-fill ph-youtube-logo text-lg" />
                 </div>
-                <div className="font-bold text-[11px] text-gray-200">Knobly OS</div>
+                <div className="font-bold text-[11px] text-gray-200">Knobly Web</div>
               </div>
               <div className="yt-cta-join text-[9px] font-bold">JOIN</div>
             </a>

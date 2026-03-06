@@ -5,22 +5,22 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import KnoblyAI from "@/components/ai/KnoblyAI";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://knoblyos.vercel.app'),
+  metadataBase: new URL('https://Knobly Web.vercel.app'),
   title: {
-    default: 'KnoblyOS — O-Level & Python Learning Platform | Free Notes, MCQ, Cyber Security',
-    template: '%s | KnoblyOS',
+    default: 'Knobly Web — O-Level & Python Learning Platform | Free Notes, MCQ, Cyber Security',
+    template: '%s | Knobly Web',
   },
-  description: 'KnoblyOS — India ka best free learning platform for O-Level IT Tools (M1-R5), Python Programming (M3-R5), Cyber Security, Web Design, HTML/CSS/JS, MCQ practice, handwritten notes, aur exam preparation.',
+  description: 'Knobly Web — India ka best free learning platform for O-Level IT Tools (M1-R5), Python Programming (M3-R5), Cyber Security, Web Design, HTML/CSS/JS, MCQ practice, handwritten notes, aur exam preparation.',
   keywords: [
-    'KnoblyOS', 'O-Level', 'NIELIT', 'Python programming', 'IT Tools', 'M1-R5', 'M3-R5',
+    'Knobly Web', 'O-Level', 'NIELIT', 'Python programming', 'IT Tools', 'M1-R5', 'M3-R5',
     'cyber security', 'web design', 'HTML', 'CSS', 'JavaScript', 'MCQ', 'free notes',
     'handwritten notes', 'exam preparation', 'O-Level notes', 'Python notes', 'CCC exam',
     'computer course', 'online learning', 'free study material', 'O-Level syllabus',
     'Python tutorial Hindi', 'IT tools notes', 'O-Level Python', 'NIELIT O-Level',
   ],
-  authors: [{ name: 'KnoblyOS Team' }],
-  creator: 'KnoblyOS',
-  publisher: 'KnoblyOS',
+  authors: [{ name: 'Knobly Web Team' }],
+  creator: 'Knobly Web',
+  publisher: 'Knobly Web',
   robots: {
     index: true,
     follow: true,
@@ -35,22 +35,22 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://knoblyos.vercel.app',
-    siteName: 'KnoblyOS',
-    title: 'KnoblyOS — O-Level & Python Learning Platform',
+    url: 'https://Knobly Web.vercel.app',
+    siteName: 'Knobly Web',
+    title: 'Knobly Web — O-Level & Python Learning Platform',
     description: 'Free O-Level IT Tools, Python Programming, Cyber Security notes, MCQ tests, and study materials. Best learning platform for NIELIT O-Level exam preparation.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'KnoblyOS — Learning Platform',
+        alt: 'Knobly Web — Learning Platform',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'KnoblyOS — O-Level & Python Learning Platform',
+    title: 'Knobly Web — O-Level & Python Learning Platform',
     description: 'Free O-Level IT Tools, Python, Cyber Security notes & MCQ tests.',
     images: ['/og-image.png'],
   },
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     google: 'your-google-verification-code',
   },
   alternates: {
-    canonical: 'https://knoblyos.vercel.app',
+    canonical: 'https://Knobly Web.vercel.app',
   },
   category: 'education',
 };

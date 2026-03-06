@@ -122,7 +122,7 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
                             transition={{ duration: 0.5, delay: 0.1 }}
                         >
                             <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.35em] text-gray-400">
-                                Knobly OS
+                                Knobly Web
                             </span>
                             <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.5em] text-gray-600">
                                 Ultimate Edition

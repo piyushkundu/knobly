@@ -140,7 +140,7 @@ export default function HandwrittenNotesPage() {
                 {/* Footer */}
                 <div className="text-center py-8">
                     <p className="text-sm font-semibold" style={{ color: '#475569' }}>✍️ All notes are handwritten for easy understanding</p>
-                    <p className="text-xs mt-1" style={{ color: '#94a3b8' }}>© 2025 KnoblyOS | O-Level Python M3-R5</p>
+                    <p className="text-xs mt-1" style={{ color: '#94a3b8' }}>© 2025 Knobly Web | O-Level Python M3-R5</p>
                 </div>
             </main>
         </div>

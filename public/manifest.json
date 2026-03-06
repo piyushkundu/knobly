@@ -1,6 +1,6 @@
 {
-    "name": "KnoblyOS",
-    "short_name": "KnoblyOS",
+    "name": "Knobly Web",
+    "short_name": "Knobly Web",
     "description": "O-Level & Python Learning Platform — Free Notes, MCQ, Cyber Security",
     "start_url": "/",
     "display": "standalone",

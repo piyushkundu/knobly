@@ -167,7 +167,7 @@ export default function NotesPage() {
                 {/* ── Footer ── */}
                 <div className="text-center py-8">
                     <p className="text-sm font-semibold" style={{ color: '#475569' }}>📖 Notes updated for 2025 exam pattern</p>
-                    <p className="text-xs mt-1" style={{ color: '#94a3b8' }}>© 2025 KnoblyOS | O-Level Study Material</p>
+                    <p className="text-xs mt-1" style={{ color: '#94a3b8' }}>© 2025 Knobly Web | O-Level Study Material</p>
                 </div>
             </main>
         </div>
