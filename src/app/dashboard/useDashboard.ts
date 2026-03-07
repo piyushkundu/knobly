@@ -167,19 +167,25 @@ export function useDashboard() {
             let board: LeaderRow[] = [];
 
             if (states.length > 0) {
-                // Build from exam_user_state
-                board = states.map((s: any) => {
-                    const prof = profileMap[s.user_id] || {};
-                    return {
-                        id: s.id,
-                        user_id: s.user_id,
-                        full_name: prof.full_name || prof.email || 'Unknown',
-                        current_level: s.current_level || 1,
-                        total_xp: s.total_xp || 0,
-                        track_rank: 0,
-                        exam_track: s.track_id || prof.exam_track || 'OLEVEL',
-                    };
+                // Deduplicate: keep highest XP entry per user_id
+                const userMap: Record<string, LeaderRow> = {};
+                states.forEach((s: any) => {
+                    const uid = s.user_id;
+                    if (!uid) return;
+                    if (!userMap[uid] || (s.total_xp || 0) > (userMap[uid].total_xp || 0)) {
+                        const prof = profileMap[uid] || {};
+                        userMap[uid] = {
+                            id: s.id,
+                            user_id: uid,
+                            full_name: prof.full_name || prof.email || 'Unknown',
+                            current_level: s.current_level || 1,
+                            total_xp: s.total_xp || 0,
+                            track_rank: 0,
+                            exam_track: s.track_id || prof.exam_track || 'OLEVEL',
+                        };
+                    }
                 });
+                board = Object.values(userMap);
             } else {
                 // Fallback: build from profiles if exam_user_state is empty
                 board = profileSnap.docs.map(d => {

@@ -90,17 +90,24 @@ export function useSuperAdmin() {
         const qSnap = await safeDocs('exam_questions');
         setStats({ users: u.length, tests: t.length, questions: qSnap ? qSnap.size : 0, apps: appsArr.length });
 
-        // Build leaderboard from exam_user_state + profiles
+        // Build leaderboard from exam_user_state + profiles (deduplicated by user_id)
         const xpSnap = await safeDocs('exam_user_state');
         const xpArr = snapToArr(xpSnap);
         const profileMap: Record<string, any> = {};
         u.forEach((p: any) => { profileMap[p.id] = p; });
         let board: any[] = [];
         if (xpArr.length > 0) {
-            board = xpArr.map((s: any) => {
-                const prof = profileMap[s.user_id] || {};
-                return { id: s.user_id, full_name: prof.full_name || prof.email || 'Unknown', email: prof.email || '', total_xp: s.total_xp || 0, current_level: s.current_level || 1, exam_track: s.track_id || prof.exam_track || 'OLEVEL', stateDocId: s.id };
+            // Deduplicate: keep highest XP entry per user_id
+            const userMap: Record<string, any> = {};
+            xpArr.forEach((s: any) => {
+                const uid = s.user_id;
+                if (!uid) return;
+                if (!userMap[uid] || (s.total_xp || 0) > (userMap[uid].total_xp || 0)) {
+                    const prof = profileMap[uid] || {};
+                    userMap[uid] = { id: uid, full_name: prof.full_name || prof.email || 'Unknown', email: prof.email || '', total_xp: s.total_xp || 0, current_level: s.current_level || 1, exam_track: s.track_id || prof.exam_track || 'OLEVEL', stateDocId: s.id };
+                }
             });
+            board = Object.values(userMap);
         } else {
             board = u.map((p: any) => ({ id: p.id, full_name: p.full_name || p.email || 'Unknown', email: p.email || '', total_xp: 0, current_level: 1, exam_track: p.exam_track || 'OLEVEL', stateDocId: null }));
         }
