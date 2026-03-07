@@ -133,7 +133,8 @@ export function useDashboard() {
             tests.forEach(t => {
                 const lvl = allLvls.find(l => l.id === t.level_id) || {} as any;
                 const levelNo = lvl.level_no || 1;
-                const reqXp = t.required_xp ?? lvl.required_xp ?? (t.level_id ? (100 + (levelNo - 1) * 50) : 0);
+                // No level_id = always unlocked (0 XP). With level_id = use level's required_xp or formula
+                const reqXp = !t.level_id ? 0 : (t.required_xp ?? lvl.required_xp ?? (100 + (levelNo - 1) * 50));
                 const obj = { ...t, level_no: levelNo, level_title: lvl.title, required_xp: reqXp };
                 if (xp >= reqXp) unlocked.push(obj); else locked.push(obj);
             });
