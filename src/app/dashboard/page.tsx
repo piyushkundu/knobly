@@ -35,139 +35,128 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ background: '#0c1222' }}>
-
-            {/* ── COLORFUL BACKGROUND LIGHTS ── */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                {/* Top-left: Purple/violet blob */}
-                <div className="absolute" style={{ top: '-5%', left: '-5%', width: '45%', height: '45%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-                {/* Top-right: Cyan/teal blob */}
-                <div className="absolute" style={{ top: '5%', right: '-10%', width: '40%', height: '40%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-                {/* Middle-left: Pink blob */}
-                <div className="absolute" style={{ top: '35%', left: '-8%', width: '35%', height: '35%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.15) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-                {/* Middle-right: Blue blob */}
-                <div className="absolute" style={{ top: '40%', right: '5%', width: '30%', height: '30%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-                {/* Bottom: Orange/amber blob */}
-                <div className="absolute" style={{ bottom: '-5%', left: '30%', width: '40%', height: '35%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-                {/* Bottom-left: Green blob */}
-                <div className="absolute" style={{ bottom: '10%', left: '-5%', width: '30%', height: '30%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(52,211,153,0.12) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-            </div>
+        <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(180deg, #f1f5f9 0%, #e8edf5 50%, #f8fafc 100%)' }}>
 
             {/* ── HEADER ── */}
-            <header className="sticky top-0 z-20" style={{ background: 'rgba(12,18,34,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+            <header className="sticky top-0 z-30" style={{ background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(24px)', borderBottom: '1px solid #e2e8f0' }}>
+                <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-xl flex items-center justify-center text-sm font-bold" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff' }}>K</div>
+                        <div className="h-9 w-9 rounded-xl flex items-center justify-center text-sm font-bold shadow-sm" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff' }}>K</div>
                         <div>
                             <div className="flex items-center gap-2">
-                                <h1 className="text-sm font-semibold" style={{ color: '#e2e8f0' }}>Dashboard</h1>
-                                <span className="px-1.5 py-0.5 rounded text-[9px] font-medium uppercase" style={{ background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.3)', color: '#c4b5fd', letterSpacing: '0.1em' }}>
+                                <h1 className="text-sm font-bold" style={{ color: '#0f172a' }}>Dashboard</h1>
+                                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase" style={{ background: 'linear-gradient(135deg, #ede9fe, #e0e7ff)', border: '1px solid #c7d2fe', color: '#6366f1', letterSpacing: '0.1em' }}>
                                     O-Level
                                 </span>
                             </div>
-                            <p className="text-[10px]" style={{ color: '#64748b' }}>Tests · Points · Leaderboard</p>
+                            <p className="text-[10px] font-medium" style={{ color: '#94a3b8' }}>Tests · Points · Leaderboard</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Link href="/" className="hidden sm:inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-lg transition hover:bg-white/5" style={{ color: '#94a3b8' }}>
+                        <Link href="/" className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1.5 rounded-lg transition-all hover:bg-gray-100" style={{ color: '#64748b' }}>
                             <ArrowLeft size={12} /> Home
                         </Link>
                         {d.user ? (
                             <div className="flex items-center gap-2.5">
                                 <div className="hidden sm:block text-right">
-                                    <div className="text-[11px] font-medium" style={{ color: '#e2e8f0' }}>{d.profile?.full_name || d.user.displayName || 'Student'}</div>
-                                    <div className="text-[10px]" style={{ color: '#64748b' }}>Lv {d.userState?.current_level || 1} · {xp} pts</div>
+                                    <div className="text-[11px] font-semibold" style={{ color: '#0f172a' }}>{d.profile?.full_name || d.user.displayName || 'Student'}</div>
+                                    <div className="text-[10px] font-medium" style={{ color: '#94a3b8' }}>Lv {d.userState?.current_level || 1} · {xp} pts</div>
                                 </div>
-                                <div className="h-8 w-8 rounded-full flex items-center justify-center text-[11px] font-semibold uppercase" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff' }}>
+                                <div className="h-9 w-9 rounded-full flex items-center justify-center text-[11px] font-bold uppercase shadow-md" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff' }}>
                                     {d.avatarInitials}
                                 </div>
                             </div>
                         ) : (
-                            <div className="text-[11px]" style={{ color: '#94a3b8' }}>Login from Knobly to see dashboard</div>
+                            <div className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>Login to see dashboard</div>
                         )}
                     </div>
                 </div>
+                <div className="h-[2px]" style={{ background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4, #10b981, #f59e0b)' }} />
             </header>
 
             {/* ── MAIN ── */}
-            <main className="flex-1 relative z-10">
-                <div className="max-w-5xl mx-auto px-4 py-4 space-y-4">
+            <main className="flex-1">
+                <div className="max-w-6xl mx-auto px-4 py-5 space-y-5">
 
-                    {/* ═══ TOP: Progress + Stats ═══ */}
-                    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4">
+                    {/* ═══ PROGRESS + STATS ═══ */}
+                    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-5">
                         {/* Progress card */}
-                        <div className="rounded-2xl p-4 sm:p-5 flex gap-4" style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 0 30px rgba(139,92,246,0.08)' }}>
+                        <div className="rounded-2xl p-5 sm:p-6 flex gap-5 shadow-sm" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
                             {/* Level circle */}
                             <div className="flex flex-col items-center">
-                                <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.08)', border: '2px solid rgba(139,92,246,0.35)' }}>
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-[9px] uppercase font-medium" style={{ color: '#a78bfa', letterSpacing: '0.15em' }}>Level</span>
-                                        <span className="text-2xl font-bold" style={{ color: '#f1f5f9' }}>{d.userState?.current_level || 1}</span>
+                                <div className="relative">
+                                    <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ede9fe, #e0e7ff)', border: '3px solid #c7d2fe', boxShadow: '0 4px 20px rgba(99,102,241,0.15)' }}>
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-[9px] uppercase font-bold" style={{ color: '#8b5cf6', letterSpacing: '0.15em' }}>Level</span>
+                                            <span className="text-3xl font-extrabold" style={{ color: '#4f46e5' }}>{d.userState?.current_level || 1}</span>
+                                        </div>
+                                    </div>
+                                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2">
+                                        <span className="text-[9px] font-bold px-3 py-0.5 rounded-full shadow-sm" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff' }}>{trackLabel}</span>
                                     </div>
                                 </div>
-                                <span className="mt-2 text-[9px] font-medium px-2.5 py-0.5 rounded-full" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.25)', color: '#c4b5fd' }}>{trackLabel}</span>
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <h2 className="text-sm font-semibold" style={{ color: '#f1f5f9' }}>{trackLabel} Test Journey</h2>
-                                <p className="text-[11px] mt-0.5" style={{ color: '#94a3b8' }}>Complete tests, earn Points, climb the leaderboard.</p>
-                                <div className="mt-3">
-                                    <div className="flex justify-between text-[10px] mb-1">
-                                        <span style={{ color: '#94a3b8' }}>Points progress</span>
-                                        <span className="font-medium" style={{ color: '#c4b5fd' }}>{xp} pts</span>
+                            <div className="flex-1 min-w-0 pt-1">
+                                <h2 className="text-base font-bold" style={{ color: '#0f172a' }}>{trackLabel} Test Journey</h2>
+                                <p className="text-[11px] mt-0.5 font-medium" style={{ color: '#94a3b8' }}>Complete tests, earn Points, climb the leaderboard.</p>
+                                <div className="mt-4">
+                                    <div className="flex justify-between text-[10px] mb-1.5">
+                                        <span className="font-medium" style={{ color: '#64748b' }}>Points progress</span>
+                                        <span className="font-bold" style={{ color: '#6366f1' }}>{xp} pts</span>
                                     </div>
-                                    <div className="h-2.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
-                                        <div className="h-full rounded-full transition-all duration-700" style={{ width: `${d.xpProgressPercent}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4)' }} />
+                                    <div className="h-3 rounded-full overflow-hidden" style={{ background: '#f1f5f9' }}>
+                                        <div className="h-full rounded-full transition-all duration-700" style={{ width: `${d.xpProgressPercent}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4)', boxShadow: '0 0 12px rgba(99,102,241,0.3)' }} />
                                     </div>
-                                    <div className="flex justify-between text-[9px] mt-1" style={{ color: '#64748b' }}>
+                                    <div className="flex justify-between text-[9px] mt-1.5" style={{ color: '#94a3b8' }}>
                                         <span>Next: ~{d.nextLevelXp} pts</span>
-                                        <span style={{ color: d.xpToNextLevel > 0 ? '#64748b' : '#34d399' }}>{d.xpToNextLevel > 0 ? `${d.xpToNextLevel} remaining` : 'Ready to level up!'}</span>
+                                        <span style={{ color: d.xpToNextLevel > 0 ? '#94a3b8' : '#10b981', fontWeight: 600 }}>{d.xpToNextLevel > 0 ? `${d.xpToNextLevel} remaining` : '🎉 Ready to level up!'}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         {/* Stats */}
-                        <div className="grid grid-cols-3 lg:grid-cols-1 gap-2.5 lg:w-40">
+                        <div className="grid grid-cols-3 lg:grid-cols-1 gap-3 lg:w-44">
                             {[
-                                { label: 'Tests Done', value: d.stats.testsCompleted, icon: <CheckCircle size={15} />, color: '#34d399', glow: 'rgba(52,211,153,0.1)' },
-                                { label: 'Avg Score', value: `${d.stats.avgScore.toFixed(0)}%`, icon: <TrendingUp size={15} />, color: '#6366f1', glow: 'rgba(99,102,241,0.1)' },
-                                { label: 'Accuracy', value: `${d.stats.avgAccuracy.toFixed(0)}%`, icon: <Target size={15} />, color: '#ec4899', glow: 'rgba(236,72,153,0.1)' },
+                                { label: 'Tests Done', value: d.stats.testsCompleted, icon: <CheckCircle size={16} />, color: '#10b981', bg: '#ecfdf5', border: '#a7f3d0' },
+                                { label: 'Avg Score', value: `${d.stats.avgScore.toFixed(0)}%`, icon: <TrendingUp size={16} />, color: '#6366f1', bg: '#eef2ff', border: '#c7d2fe' },
+                                { label: 'Accuracy', value: `${d.stats.avgAccuracy.toFixed(0)}%`, icon: <Target size={16} />, color: '#ec4899', bg: '#fdf2f8', border: '#fbcfe8' },
                             ].map((s, i) => (
-                                <div key={i} className="rounded-2xl px-3 py-3 flex items-center gap-2.5 transition hover:scale-[1.02]" style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: `0 0 25px ${s.glow}` }}>
-                                    <div className="h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${s.color}15`, color: s.color }}>
+                                <div key={i} className="rounded-2xl px-3.5 py-3.5 flex items-center gap-3 transition-all hover:scale-[1.02] hover:-translate-y-0.5 shadow-sm" style={{ background: '#ffffff', border: `1px solid ${s.border}` }}>
+                                    <div className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm" style={{ background: s.bg, color: s.color }}>
                                         {s.icon}
                                     </div>
                                     <div>
-                                        <div className="text-base font-bold" style={{ color: '#f1f5f9' }}>{s.value}</div>
-                                        <div className="text-[9px]" style={{ color: '#94a3b8' }}>{s.label}</div>
+                                        <div className="text-lg font-extrabold" style={{ color: '#0f172a' }}>{s.value}</div>
+                                        <div className="text-[9px] font-medium" style={{ color: '#94a3b8' }}>{s.label}</div>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-
-
-                    {/* ═══ MIDDLE: Tests + Right column ═══ */}
-                    <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4">
+                    {/* ═══ TESTS + RIGHT ═══ */}
+                    <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5">
 
                         {/* LEFT: Tests */}
-                        <div className="rounded-2xl p-4 flex flex-col" style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 0 30px rgba(6,182,212,0.06)' }}>
-                            <div className="flex items-center justify-between mb-2">
-                                <h2 className="text-sm font-semibold flex items-center gap-1.5" style={{ color: '#e2e8f0' }}>
-                                    <Play size={15} style={{ color: '#6366f1' }} /> Tests
+                        <div className="rounded-2xl p-5 flex flex-col shadow-sm" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
+                            <div className="flex items-center justify-between mb-3">
+                                <h2 className="text-sm font-bold flex items-center gap-2" style={{ color: '#0f172a' }}>
+                                    <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: '#eef2ff', color: '#6366f1' }}><Play size={13} /></div>
+                                    Tests
                                 </h2>
                             </div>
                             {/* Subject tabs */}
-                            <div className="flex gap-1.5 overflow-x-auto pb-2 mb-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div className="flex gap-1.5 overflow-x-auto pb-2.5 mb-3" style={{ borderBottom: '1px solid #f1f5f9' }}>
                                 {subjects.map(sub => {
                                     const isActive = activeSubject === sub.id;
                                     return (
                                         <button key={sub.id} onClick={() => setActiveSubject(sub.id)}
-                                            className="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition"
+                                            className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-semibold transition-all"
                                             style={{
-                                                background: isActive ? `${sub.color}18` : 'transparent',
-                                                border: isActive ? `1px solid ${sub.color}50` : '1px solid transparent',
-                                                color: isActive ? sub.color : '#64748b',
+                                                background: isActive ? sub.color : '#f8fafc',
+                                                border: isActive ? `1px solid ${sub.color}` : '1px solid #e2e8f0',
+                                                color: isActive ? '#ffffff' : '#64748b',
+                                                boxShadow: isActive ? `0 2px 8px ${sub.color}30` : 'none',
                                             }}>
                                             {sub.icon} {sub.label}
                                         </button>
@@ -176,63 +165,63 @@ export default function DashboardPage() {
                             </div>
                             <div className="flex-1 min-h-0 flex flex-col gap-2">
                                 {d.isLoadingMain ? (
-                                    <div className="flex-1 flex items-center justify-center text-[11px]" style={{ color: '#64748b' }}><Loader2 size={14} className="animate-spin mr-2" />Loading…</div>
+                                    <div className="flex-1 flex items-center justify-center text-[11px] font-medium" style={{ color: '#94a3b8' }}><Loader2 size={14} className="animate-spin mr-2" />Loading…</div>
                                 ) : !d.user ? (
-                                    <div className="flex-1 flex items-center justify-center text-[11px] text-center" style={{ color: '#64748b' }}>Login to see your tests.</div>
+                                    <div className="flex-1 flex items-center justify-center text-[11px] text-center font-medium" style={{ color: '#94a3b8' }}>Login to see your tests.</div>
                                 ) : d.availableTests.length === 0 && d.lockedTests.length === 0 && d.simpleTests.length === 0 ? (
-                                    <div className="flex-1 flex items-center justify-center text-[11px] text-center" style={{ color: '#64748b' }}>No tests configured yet.</div>
+                                    <div className="flex-1 flex items-center justify-center text-[11px] text-center font-medium" style={{ color: '#94a3b8' }}>No tests configured yet.</div>
                                 ) : (
-                                    <div className="space-y-1.5 flex-1 overflow-y-auto pr-1 max-h-80">
+                                    <div className="space-y-2 flex-1 overflow-y-auto pr-1 max-h-80">
                                         {filterBySubject(d.availableTests).length > 0 && (
-                                            <div className="space-y-1.5">
-                                                <span className="text-[9px] uppercase font-medium" style={{ color: '#64748b', letterSpacing: '0.1em' }}>Unlocked{activeSubject !== 'all' ? ` · ${subjects.find(s => s.id === activeSubject)?.label}` : ''}</span>
+                                            <div className="space-y-2">
+                                                <span className="text-[9px] uppercase font-bold" style={{ color: '#10b981', letterSpacing: '0.12em' }}>✅ Unlocked{activeSubject !== 'all' ? ` · ${subjects.find(s => s.id === activeSubject)?.label}` : ''}</span>
                                                 {filterBySubject(d.availableTests).map(test => (
                                                     <TestCard key={test.id} test={test} onStart={() => window.location.href = `/test/${test.id}`} />
                                                 ))}
                                             </div>
                                         )}
                                         {filterBySubject(d.lockedTests).length > 0 && (
-                                            <div className="pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                                                <span className="text-[9px] uppercase font-medium" style={{ color: '#475569', letterSpacing: '0.1em' }}>Locked</span>
+                                            <div className="pt-2" style={{ borderTop: '1px solid #f1f5f9' }}>
+                                                <span className="text-[9px] uppercase font-bold" style={{ color: '#94a3b8', letterSpacing: '0.12em' }}>🔒 Locked</span>
                                                 {filterBySubject(d.lockedTests).map(test => (
-                                                    <div key={test.id} className="rounded-lg px-3 py-2 flex items-center gap-3 mt-1.5" style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.04)' }}>
-                                                        <Lock size={12} style={{ color: '#475569' }} />
+                                                    <div key={test.id} className="rounded-xl px-3.5 py-2.5 flex items-center gap-3 mt-2" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                                                        <Lock size={13} style={{ color: '#cbd5e1' }} />
                                                         <div className="flex-1 min-w-0">
-                                                            <h4 className="text-[11px] font-medium truncate" style={{ color: '#94a3b8' }}>{test.title}</h4>
-                                                            <p className="text-[9px]" style={{ color: '#475569' }}>Unlock at Level {test.level_no || 1} · ~{test.required_xp || 0} pts</p>
+                                                            <h4 className="text-[11px] font-semibold truncate" style={{ color: '#64748b' }}>{test.title}</h4>
+                                                            <p className="text-[9px] font-medium" style={{ color: '#94a3b8' }}>Unlock at Level {test.level_no || 1} · ~{test.required_xp || 0} pts</p>
                                                         </div>
                                                     </div>
                                                 ))}
                                             </div>
                                         )}
                                         {d.availableTests.length === 0 && d.lockedTests.length === 0 && d.simpleTests.length > 0 && (
-                                            <div className="space-y-1.5">
-                                                <span className="text-[9px] uppercase font-medium" style={{ color: '#64748b', letterSpacing: '0.1em' }}>Available{activeSubject !== 'all' ? ` · ${subjects.find(s => s.id === activeSubject)?.label}` : ''}</span>
+                                            <div className="space-y-2">
+                                                <span className="text-[9px] uppercase font-bold" style={{ color: '#6366f1', letterSpacing: '0.12em' }}>📋 Available{activeSubject !== 'all' ? ` · ${subjects.find(s => s.id === activeSubject)?.label}` : ''}</span>
                                                 {filterBySubject(d.simpleTests.filter(t => t.is_active)).map((test: any) => (
-                                                    <div key={test.id} className="rounded-xl overflow-hidden" style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                                                        <div className="p-3 flex items-start gap-3">
-                                                            <div className="mt-0.5 h-8 w-8 flex items-center justify-center rounded-lg text-[10px] font-semibold flex-shrink-0" style={{ background: 'rgba(99,102,241,0.12)', color: '#818cf8' }}>T</div>
+                                                    <div key={test.id} className="rounded-xl overflow-hidden transition-all hover:shadow-md" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
+                                                        <div className="p-3.5 flex items-start gap-3">
+                                                            <div className="mt-0.5 h-9 w-9 flex items-center justify-center rounded-xl text-[10px] font-bold flex-shrink-0" style={{ background: '#eef2ff', color: '#6366f1', border: '1px solid #c7d2fe' }}>T</div>
                                                             <div className="flex-1 min-w-0">
                                                                 <div className="flex items-center gap-2">
-                                                                    <h4 className="text-[11px] font-medium truncate" style={{ color: '#e2e8f0' }}>{test.title}</h4>
-                                                                    {test.category && <span className="px-1.5 py-0.5 rounded text-[8px] uppercase" style={{ background: 'rgba(255,255,255,0.06)', color: '#94a3b8' }}>{test.category}</span>}
+                                                                    <h4 className="text-[12px] font-bold truncate" style={{ color: '#0f172a' }}>{test.title}</h4>
+                                                                    {test.category && <span className="px-1.5 py-0.5 rounded-full text-[8px] font-semibold uppercase" style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>{test.category}</span>}
                                                                 </div>
-                                                                <div className="mt-1 flex items-center gap-2 text-[10px]" style={{ color: '#64748b' }}>
+                                                                <div className="mt-1.5 flex items-center gap-2.5 text-[10px] font-medium" style={{ color: '#94a3b8' }}>
                                                                     <span className="inline-flex items-center gap-1"><Clock size={10} />{test.duration_minutes}m</span>
                                                                     <span className="inline-flex items-center gap-1"><Target size={10} />{test.questions?.length || 0}Q</span>
-                                                                    <span className="inline-flex items-center gap-1" style={{ color: '#34d399' }}><Zap size={10} />{test.total_points}pts</span>
+                                                                    <span className="inline-flex items-center gap-1" style={{ color: '#10b981' }}><Zap size={10} />{test.total_points}pts</span>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div className="px-3 pb-2.5 flex justify-end">
-                                                            <Link href={`/test/${test.id}`} className="px-3 py-1 rounded-lg text-[10px] font-medium inline-flex items-center gap-1 transition" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff' }}>
-                                                                <Play size={11} />Start
+                                                        <div className="px-3.5 pb-3 flex justify-end">
+                                                            <Link href={`/test/${test.id}`} className="px-4 py-1.5 rounded-xl text-[10px] font-bold inline-flex items-center gap-1.5 transition-all hover:shadow-lg hover:scale-[1.02] text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                                                                <Play size={11} />Start Test
                                                             </Link>
                                                         </div>
                                                     </div>
                                                 ))}
                                                 {filterBySubject(d.simpleTests.filter(t => t.is_active)).length === 0 && (
-                                                    <div className="text-center py-3 text-[10px]" style={{ color: '#475569' }}>No tests for this subject.</div>
+                                                    <div className="text-center py-4 text-[10px] font-medium" style={{ color: '#94a3b8' }}>No tests for this subject.</div>
                                                 )}
                                             </div>
                                         )}
@@ -242,27 +231,27 @@ export default function DashboardPage() {
                         </div>
 
                         {/* RIGHT: Live + Leaderboard */}
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-5">
                             {/* Live tests */}
-                            <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(20px)', border: '1px solid rgba(52,211,153,0.15)', boxShadow: '0 0 30px rgba(52,211,153,0.06)' }}>
-                                <div className="flex items-center justify-between mb-2.5">
-                                    <h3 className="text-xs font-semibold flex items-center gap-2" style={{ color: '#e2e8f0' }}>
-                                        <span className="relative flex h-2 w-2"><span className="absolute inset-0 rounded-full animate-ping" style={{ background: '#34d399', opacity: 0.5 }} /><span className="h-2 w-2 rounded-full" style={{ background: '#34d399' }} /></span>
+                            <div className="rounded-2xl p-5 shadow-sm" style={{ background: '#ffffff', border: '1px solid #a7f3d0' }}>
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="text-xs font-bold flex items-center gap-2" style={{ color: '#0f172a' }}>
+                                        <span className="relative flex h-2.5 w-2.5"><span className="absolute inset-0 rounded-full animate-ping" style={{ background: '#10b981', opacity: 0.4 }} /><span className="h-2.5 w-2.5 rounded-full" style={{ background: '#10b981' }} /></span>
                                         Live & Upcoming
                                     </h3>
-                                    <span className="text-[9px] font-medium" style={{ color: '#34d399' }}>Real-time</span>
+                                    <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{ background: '#ecfdf5', color: '#10b981', border: '1px solid #a7f3d0' }}>Real-time</span>
                                 </div>
                                 {d.liveTests.length === 0 ? (
-                                    <p className="text-[10px]" style={{ color: '#64748b' }}>No live tests right now.</p>
+                                    <p className="text-[10px] font-medium text-center py-2" style={{ color: '#94a3b8' }}>No live tests right now.</p>
                                 ) : (
                                     <div className="space-y-2 max-h-44 overflow-y-auto">
                                         {d.liveTests.map(test => (
-                                            <div key={test.id} className="rounded-lg px-3 py-2 flex items-center justify-between" style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(52,211,153,0.12)' }}>
+                                            <div key={test.id} className="rounded-xl px-3.5 py-2.5 flex items-center justify-between" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
                                                 <div>
-                                                    <h4 className="text-[11px] font-medium" style={{ color: '#e2e8f0' }}>{test.title}</h4>
-                                                    <div className="text-[9px] mt-0.5" style={{ color: '#64748b' }}>{d.formatDateTime(test.live_start)} – {d.formatDateTime(test.live_end)}</div>
+                                                    <h4 className="text-[11px] font-bold" style={{ color: '#0f172a' }}>{test.title}</h4>
+                                                    <div className="text-[9px] mt-0.5 font-medium" style={{ color: '#94a3b8' }}>{d.formatDateTime(test.live_start)} – {d.formatDateTime(test.live_end)}</div>
                                                 </div>
-                                                <Link href={`/test/${test.id}`} className="px-2.5 py-1 rounded-lg text-[10px] font-medium transition flex items-center gap-1" style={{ background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.3)', color: '#34d399' }}>
+                                                <Link href={`/test/${test.id}`} className="px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all flex items-center gap-1 text-white hover:shadow-lg" style={{ background: '#10b981' }}>
                                                     <Play size={10} />Join
                                                 </Link>
                                             </div>
@@ -272,33 +261,33 @@ export default function DashboardPage() {
                             </div>
 
                             {/* Leaderboard */}
-                            <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(20px)', border: '1px solid rgba(251,191,36,0.12)', boxShadow: '0 0 30px rgba(251,191,36,0.05)' }}>
-                                <div className="flex items-center justify-between mb-2.5">
-                                    <h3 className="text-xs font-semibold flex items-center gap-1.5" style={{ color: '#e2e8f0' }}>
-                                        <Trophy size={14} style={{ color: '#fbbf24' }} /> Leaderboard
+                            <div className="rounded-2xl p-5 shadow-sm" style={{ background: '#ffffff', border: '1px solid #fde68a' }}>
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="text-xs font-bold flex items-center gap-2" style={{ color: '#0f172a' }}>
+                                        <Trophy size={15} style={{ color: '#f59e0b' }} /> Leaderboard
                                     </h3>
-                                    <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.2)', color: '#fcd34d' }}>O-Level</span>
+                                    <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{ background: '#fffbeb', color: '#f59e0b', border: '1px solid #fde68a' }}>O-Level</span>
                                 </div>
                                 {d.leaderboard.length === 0 ? (
-                                    <p className="text-[10px] text-center py-3" style={{ color: '#64748b' }}>No rankings yet.</p>
+                                    <p className="text-[10px] font-medium text-center py-3" style={{ color: '#94a3b8' }}>No rankings yet.</p>
                                 ) : (
-                                    <div className="space-y-1 max-h-52 overflow-y-auto">
+                                    <div className="space-y-1.5 max-h-52 overflow-y-auto">
                                         {d.leaderboard.map((row, idx) => (
-                                            <div key={row.id} className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5" style={{
-                                                background: idx === 0 ? 'rgba(251,191,36,0.06)' : 'transparent',
-                                                border: idx === 0 ? '1px solid rgba(251,191,36,0.15)' : '1px solid transparent',
+                                            <div key={row.id} className="flex items-center gap-3 rounded-xl px-3 py-2 transition-all hover:shadow-sm" style={{
+                                                background: idx === 0 ? '#fffbeb' : idx < 3 ? '#fefce8' : '#ffffff',
+                                                border: idx === 0 ? '1px solid #fde68a' : '1px solid #f1f5f9',
                                             }}>
-                                                <div className="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0" style={{
-                                                    background: idx === 0 ? 'linear-gradient(135deg, #fbbf24, #f59e0b)' : idx === 1 ? 'linear-gradient(135deg, #cbd5e1, #94a3b8)' : idx === 2 ? 'linear-gradient(135deg, #f59e0b, #b45309)' : 'rgba(255,255,255,0.06)',
-                                                    color: idx < 3 ? '#0f172a' : '#94a3b8',
+                                                <div className="h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 shadow-sm" style={{
+                                                    background: idx === 0 ? 'linear-gradient(135deg, #fbbf24, #f59e0b)' : idx === 1 ? 'linear-gradient(135deg, #e2e8f0, #cbd5e1)' : idx === 2 ? 'linear-gradient(135deg, #f59e0b, #d97706)' : '#f1f5f9',
+                                                    color: idx < 3 ? '#ffffff' : '#64748b',
                                                 }}>
                                                     {idx < 3 ? <Crown size={12} /> : idx + 1}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <span className="text-[11px] font-medium truncate block" style={{ color: '#e2e8f0' }}>{row.full_name || 'Player'}</span>
-                                                    <span className="text-[9px]" style={{ color: '#64748b' }}>Lv{row.current_level} · {row.total_xp} pts</span>
+                                                    <span className="text-[11px] font-bold truncate block" style={{ color: '#0f172a' }}>{row.full_name || 'Player'}</span>
+                                                    <span className="text-[9px] font-medium" style={{ color: '#94a3b8' }}>Lv{row.current_level} · {row.total_xp} pts</span>
                                                 </div>
-                                                <span className="text-[9px] font-medium" style={{ color: idx === 0 ? '#fbbf24' : '#475569' }}>#{row.track_rank}</span>
+                                                <span className="text-[10px] font-bold" style={{ color: idx === 0 ? '#f59e0b' : '#cbd5e1' }}>#{row.track_rank}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -308,40 +297,42 @@ export default function DashboardPage() {
                     </div>
 
                     {/* ═══ HISTORY ═══ */}
-                    <div className="rounded-2xl p-4 mb-4" style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 0 30px rgba(236,72,153,0.05)' }}>
-                        <div className="flex items-center justify-between mb-2.5">
-                            <h3 className="text-xs font-semibold flex items-center gap-1.5" style={{ color: '#e2e8f0' }}>
-                                <Clock size={14} style={{ color: '#06b6d4' }} /> Recent Attempts
+                    <div className="rounded-2xl p-5 mb-4 shadow-sm" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
+                        <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-xs font-bold flex items-center gap-2" style={{ color: '#0f172a' }}>
+                                <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: '#ecfeff', color: '#06b6d4' }}><Clock size={13} /></div>
+                                Recent Attempts
                             </h3>
-                            <button onClick={() => d.reloadAll()} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] transition hover:bg-white/5" style={{ background: 'rgba(255,255,255,0.04)', color: '#94a3b8' }}>
+                            <button onClick={() => d.reloadAll()} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-semibold transition-all hover:shadow-sm" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', color: '#64748b' }}>
                                 <RefreshCw size={11} />Refresh
                             </button>
                         </div>
                         {d.attemptHistory.length === 0 && d.mySimpleResults.length === 0 ? (
-                            <p className="text-[10px] text-center py-3" style={{ color: '#64748b' }}>No attempts yet. Complete a test to see results here.</p>
+                            <p className="text-[10px] font-medium text-center py-4" style={{ color: '#94a3b8' }}>No attempts yet. Complete a test to see results here.</p>
                         ) : (
-                            <div className="space-y-1.5 max-h-52 overflow-y-auto">
+                            <div className="space-y-2 max-h-52 overflow-y-auto">
                                 {(d.attemptHistory.length > 0 ? d.attemptHistory : d.mySimpleResults.map((r: any) => ({
                                     id: r.id, test_title: d.simpleTests.find((t: any) => t.id === r.test_id)?.title || 'Test',
                                     total_marks: r.total_points || 0, score: r.score || 0, accuracy: r.total_points ? Math.round((r.score / r.total_points) * 100) : 0,
                                     status: 'SUBMITTED', durationLabel: '-', submitted_at: r.completed_at,
                                 }))).map((row: any) => (
-                                    <div key={row.id} className="flex items-center justify-between gap-3 rounded-lg px-3 py-2" style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                                    <div key={row.id} className="flex items-center justify-between gap-3 rounded-xl px-4 py-3 transition-all hover:shadow-sm" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-1.5">
-                                                <h4 className="text-[11px] font-medium truncate" style={{ color: '#e2e8f0' }}>{row.test_title}</h4>
-                                                <span className="text-[8px] px-1 py-0.5 rounded font-medium" style={{
-                                                    background: row.status === 'SUBMITTED' ? 'rgba(52,211,153,0.12)' : 'rgba(251,191,36,0.12)',
-                                                    color: row.status === 'SUBMITTED' ? '#34d399' : '#fbbf24',
-                                                }}>{row.status === 'AUTO_SUBMITTED' ? 'AUTO' : 'DONE'}</span>
+                                            <div className="flex items-center gap-2">
+                                                <h4 className="text-[12px] font-bold truncate" style={{ color: '#0f172a' }}>{row.test_title}</h4>
+                                                <span className="text-[8px] px-1.5 py-0.5 rounded-full font-bold" style={{
+                                                    background: row.status === 'SUBMITTED' ? '#ecfdf5' : '#fffbeb',
+                                                    color: row.status === 'SUBMITTED' ? '#10b981' : '#f59e0b',
+                                                    border: row.status === 'SUBMITTED' ? '1px solid #a7f3d0' : '1px solid #fde68a',
+                                                }}>{row.status === 'AUTO_SUBMITTED' ? 'AUTO' : '✅ DONE'}</span>
                                             </div>
-                                            <div className="flex items-center gap-2 text-[9px] mt-0.5" style={{ color: '#64748b' }}>
-                                                <span>{row.score}/{row.total_marks}</span>
+                                            <div className="flex items-center gap-3 text-[10px] mt-1 font-medium" style={{ color: '#94a3b8' }}>
+                                                <span className="font-semibold" style={{ color: '#6366f1' }}>{row.score}/{row.total_marks}</span>
                                                 <span>{(row.accuracy || 0).toFixed ? (row.accuracy || 0).toFixed(0) : row.accuracy}%</span>
                                                 <span>{d.formatDateTime(row.submitted_at || row.started_at)}</span>
                                             </div>
                                         </div>
-                                        <Link href={`/review/${row.id}`} className="px-2 py-1 rounded-lg text-[10px] font-medium flex items-center gap-1 transition hover:bg-white/5" style={{ background: 'rgba(255,255,255,0.04)', color: '#94a3b8' }}>
+                                        <Link href={`/review/${row.id}`} className="px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center gap-1.5 transition-all hover:shadow-sm" style={{ background: '#eef2ff', border: '1px solid #c7d2fe', color: '#6366f1' }}>
                                             <Eye size={11} />Review
                                         </Link>
                                     </div>
@@ -353,15 +344,14 @@ export default function DashboardPage() {
             </main>
 
             {/* ── FOOTER ── */}
-            <footer className="relative z-10" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', background: 'rgba(12,18,34,0.8)', backdropFilter: 'blur(12px)' }}>
-                <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between text-[10px]" style={{ color: '#475569' }}>
+            <footer style={{ borderTop: '1px solid #e2e8f0', background: '#ffffff' }}>
+                <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between text-[10px] font-medium" style={{ color: '#94a3b8' }}>
                     <span>Powered by Firebase</span>
-                    <Link href="/" className="flex items-center gap-1 transition" style={{ color: '#64748b' }}>
+                    <Link href="/" className="flex items-center gap-1.5 transition-all hover:text-indigo-500" style={{ color: '#64748b' }}>
                         <ArrowLeft size={10} /> Back to Knobly
                     </Link>
                 </div>
             </footer>
-
 
         </div>
     );
@@ -370,28 +360,28 @@ export default function DashboardPage() {
 /* ── Test Card ── */
 function TestCard({ test, onStart }: { test: any; onStart: () => void }) {
     return (
-        <div className="rounded-xl overflow-hidden" style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <div className="p-3 flex items-start gap-3">
-                <div className="mt-0.5 h-8 w-8 flex items-center justify-center rounded-lg text-[10px] font-semibold flex-shrink-0" style={{ background: 'rgba(99,102,241,0.12)', color: '#818cf8' }}>
+        <div className="rounded-xl overflow-hidden transition-all hover:shadow-md" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
+            <div className="p-3.5 flex items-start gap-3">
+                <div className="mt-0.5 h-9 w-9 flex items-center justify-center rounded-xl text-[10px] font-bold flex-shrink-0" style={{ background: '#eef2ff', color: '#6366f1', border: '1px solid #c7d2fe' }}>
                     Lv{test.level_no || 1}
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                        <h4 className="text-[11px] font-medium truncate" style={{ color: '#e2e8f0' }}>{test.title}</h4>
+                        <h4 className="text-[12px] font-bold truncate" style={{ color: '#0f172a' }}>{test.title}</h4>
                         {test.mode === 'PRACTICE'
-                            ? <span className="px-1.5 py-0.5 rounded text-[8px] font-medium" style={{ background: 'rgba(255,255,255,0.06)', color: '#94a3b8' }}>Practice</span>
-                            : <span className="px-1.5 py-0.5 rounded text-[8px] font-medium flex items-center gap-1" style={{ background: 'rgba(244,63,94,0.1)', color: '#f87171' }}><span className="h-1 w-1 rounded-full animate-pulse" style={{ background: '#f43f5e' }} />Live</span>}
+                            ? <span className="px-2 py-0.5 rounded-full text-[8px] font-bold" style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>Practice</span>
+                            : <span className="px-2 py-0.5 rounded-full text-[8px] font-bold flex items-center gap-1" style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca' }}><span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: '#ef4444' }} />Live</span>}
                     </div>
-                    <div className="mt-1 flex items-center gap-2 text-[10px]" style={{ color: '#64748b' }}>
+                    <div className="mt-1.5 flex items-center gap-2.5 text-[10px] font-medium" style={{ color: '#94a3b8' }}>
                         <span className="inline-flex items-center gap-1"><Clock size={10} />{test.duration_minutes}m</span>
                         <span className="inline-flex items-center gap-1"><Target size={10} />{test.total_marks}mk</span>
-                        <span className="inline-flex items-center gap-1" style={{ color: '#34d399' }}><Zap size={10} />{test.xp_reward}pts</span>
+                        <span className="inline-flex items-center gap-1" style={{ color: '#10b981' }}><Zap size={10} />{test.xp_reward}pts</span>
                     </div>
                 </div>
             </div>
-            <div className="px-3 pb-2.5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                <span className="text-[9px] truncate" style={{ color: '#475569' }}>{test.level_title || 'Level test'}</span>
-                <button onClick={onStart} className="px-3 py-1 rounded-lg text-[10px] font-medium inline-flex items-center gap-1 transition" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff' }}>
+            <div className="px-3.5 pb-3 flex items-center justify-between" style={{ borderTop: '1px solid #f1f5f9' }}>
+                <span className="text-[9px] truncate font-medium" style={{ color: '#94a3b8' }}>{test.level_title || 'Level test'}</span>
+                <button onClick={onStart} className="px-4 py-1.5 rounded-xl text-[10px] font-bold inline-flex items-center gap-1.5 transition-all hover:shadow-lg hover:scale-[1.02] text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
                     <Play size={11} />Start
                 </button>
             </div>
