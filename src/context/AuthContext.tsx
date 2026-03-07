@@ -63,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             displayName: fullName,
             photoURL: avatar || undefined,
         });
+        // Save to users collection
         await setDoc(doc(db, 'users', cred.user.uid), {
             email,
             displayName: fullName,
@@ -71,6 +72,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             isAdmin: false,
             created_at: serverTimestamp(),
         });
+        // Also save to profiles collection (used by dashboard & superadmin)
+        await setDoc(doc(db, 'profiles', cred.user.uid), {
+            email,
+            full_name: fullName,
+            username,
+            avatar_url: avatar || '',
+            role: 'user',
+            exam_track: 'OLEVEL',
+            created_at: serverTimestamp(),
+        });
+        // Initialize exam_user_state for XP tracking
+        try {
+            await setDoc(doc(db, 'exam_user_state', cred.user.uid), {
+                user_id: cred.user.uid,
+                track_id: 'OLEVEL',
+                total_xp: 0,
+                current_level: 1,
+                created_at: serverTimestamp(),
+            });
+        } catch (_) { }
     };
 
     const logout = async () => {
@@ -80,15 +101,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const loginWithGoogle = async () => {
         const provider = new GoogleAuthProvider();
         const result = await signInWithPopup(auth, provider);
-        const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+        const uid = result.user.uid;
+
+        // Check if user already exists in users collection
+        const userDoc = await getDoc(doc(db, 'users', uid));
         if (!userDoc.exists()) {
-            await setDoc(doc(db, 'users', result.user.uid), {
+            await setDoc(doc(db, 'users', uid), {
                 email: result.user.email,
                 displayName: result.user.displayName,
                 photoURL: result.user.photoURL,
                 isAdmin: false,
                 created_at: serverTimestamp(),
             });
+        }
+        // Check if profile exists, create if not
+        const profileDoc = await getDoc(doc(db, 'profiles', uid));
+        if (!profileDoc.exists()) {
+            await setDoc(doc(db, 'profiles', uid), {
+                email: result.user.email,
+                full_name: result.user.displayName || '',
+                username: result.user.email?.split('@')[0] || '',
+                avatar_url: result.user.photoURL || '',
+                role: 'user',
+                exam_track: 'OLEVEL',
+                created_at: serverTimestamp(),
+            });
+            // Initialize exam_user_state
+            try {
+                await setDoc(doc(db, 'exam_user_state', uid), {
+                    user_id: uid,
+                    track_id: 'OLEVEL',
+                    total_xp: 0,
+                    current_level: 1,
+                    created_at: serverTimestamp(),
+                });
+            } catch (_) { }
         }
     };
 
