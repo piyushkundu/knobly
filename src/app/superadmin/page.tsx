@@ -28,7 +28,7 @@ export default function SuperAdminPage() {
     const [loginPass, setLoginPass] = useState('');
     const [sideOpen, setSideOpen] = useState(false);
 
-    const emptyTest = { id: null as any, title: '', track_id: 'OLEVEL', mode: 'PRACTICE', duration_minutes: 30, total_marks: 20, xp_reward: 50, live_start: '', live_end: '', is_active: true, category: '' };
+    const emptyTest = { id: null as any, title: '', track_id: 'OLEVEL', mode: 'PRACTICE', duration_minutes: 30, total_marks: 20, xp_reward: 50, live_start: '', live_end: '', is_active: true, category: '', level_id: '' };
     const [testForm, setTestForm] = useState(emptyTest);
     const [saving, setSaving] = useState(false);
     const [selTestId, setSelTestId] = useState('');
@@ -203,12 +203,16 @@ export default function SuperAdminPage() {
                                     </button>
                                     <div className="flex-1 overflow-y-auto space-y-2 pr-1 max-h-[65vh]">
                                         {d.tests.map(t => (
-                                            <div key={t.id} onClick={() => setTestForm({ ...t })} className={`${card} p-3.5 cursor-pointer transition-all group relative hover:shadow-md ${testForm.id === t.id ? 'ring-2 ring-indigo-500 border-indigo-200' : ''}`}>
+                                            <div key={t.id} onClick={() => setTestForm({ ...t, level_id: t.level_id || '' })} className={`${card} p-3.5 cursor-pointer transition-all group relative hover:shadow-md ${testForm.id === t.id ? 'ring-2 ring-indigo-500 border-indigo-200' : ''}`}>
                                                 <div className="flex justify-between items-start mb-1">
                                                     <h4 className="font-bold text-gray-900 text-xs truncate w-3/4">{t.title}</h4>
                                                     <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${t.mode === 'LIVE' ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-500'}`}>{t.mode}</span>
                                                 </div>
                                                 <div className="text-[10px] text-gray-400 font-medium">{t.track_id} • {t.total_marks}mk • {t.duration_minutes}m</div>
+                                                <div className="flex gap-1 mt-1 flex-wrap">
+                                                    {t.category && <span className="text-[8px] bg-indigo-50 text-indigo-500 px-1.5 py-0.5 rounded-full font-bold">{t.category}</span>}
+                                                    <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-bold ${t.is_active ? 'bg-emerald-50 text-emerald-500' : 'bg-gray-100 text-gray-400'}`}>{t.is_active ? 'Active' : 'Hidden'}</span>
+                                                </div>
                                                 <button onClick={e => { e.stopPropagation(); if (confirm('Delete test?')) d.deleteTest(t.id); }} className="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"><Trash2 size={12} /></button>
                                             </div>
                                         ))}
@@ -218,15 +222,42 @@ export default function SuperAdminPage() {
                                     <h3 className="text-sm font-black text-gray-900 mb-4 flex items-center gap-2"><Pencil size={14} className="text-indigo-500" /> {testForm.id ? 'Edit Test' : 'New Test'}</h3>
                                     <div className="space-y-3">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                            <div className="md:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Title</label><input value={testForm.title} onChange={e => setTestForm({ ...testForm, title: e.target.value })} className={inp} /></div>
+                                            <div className="md:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Title</label><input value={testForm.title} onChange={e => setTestForm({ ...testForm, title: e.target.value })} className={inp} placeholder="e.g. Chapter 6: Python Basics Test" /></div>
                                             <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Track</label><select value={testForm.track_id} onChange={e => setTestForm({ ...testForm, track_id: e.target.value })} className={inp}><option value="OLEVEL">OLEVEL</option><option value="CCC">CCC</option></select></div>
                                             <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Mode</label><select value={testForm.mode} onChange={e => setTestForm({ ...testForm, mode: e.target.value })} className={inp}><option value="PRACTICE">PRACTICE</option><option value="LIVE">LIVE</option></select></div>
-                                            <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Category</label><input value={testForm.category || ''} onChange={e => setTestForm({ ...testForm, category: e.target.value })} className={inp} placeholder="e.g. Python" /></div>
+                                            <div>
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Category (Dashboard Filter)</label>
+                                                <select value={testForm.category || ''} onChange={e => setTestForm({ ...testForm, category: e.target.value })} className={inp}>
+                                                    <option value="">-- Select Category --</option>
+                                                    <option value="IT Tools">IT Tools</option>
+                                                    <option value="Web Design">Web Design</option>
+                                                    <option value="Python">Python</option>
+                                                    <option value="IoT">IoT</option>
+                                                    <option value="Networking">Networking</option>
+                                                    <option value="Cyber Security">Cyber Security</option>
+                                                    <option value="M.S. Office">M.S. Office</option>
+                                                    <option value="Operating System">Operating System</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Assign to Level</label>
+                                                <select value={testForm.level_id || ''} onChange={e => setTestForm({ ...testForm, level_id: e.target.value })} className={inp}>
+                                                    <option value="">No Level (Always visible)</option>
+                                                    {d.levels.map((l: any) => <option key={l.id} value={l.id}>Lv {l.level_no}: {l.title} ({l.track_id})</option>)}
+                                                </select>
+                                            </div>
                                         </div>
                                         <div className="grid grid-cols-3 gap-3">
                                             <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Minutes</label><input value={testForm.duration_minutes} onChange={e => setTestForm({ ...testForm, duration_minutes: Number(e.target.value) })} type="number" className={inp} /></div>
                                             <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Marks</label><input value={testForm.total_marks} onChange={e => setTestForm({ ...testForm, total_marks: Number(e.target.value) })} type="number" className={inp} /></div>
                                             <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">XP Reward</label><input value={testForm.xp_reward} onChange={e => setTestForm({ ...testForm, xp_reward: Number(e.target.value) })} type="number" className={inp} /></div>
+                                        </div>
+                                        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase">Show on Dashboard</label>
+                                            <button onClick={() => setTestForm({ ...testForm, is_active: !testForm.is_active })} className={`w-10 h-5 rounded-full transition-all relative ${testForm.is_active ? 'bg-emerald-500' : 'bg-gray-300'}`}>
+                                                <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all shadow-sm ${testForm.is_active ? 'right-0.5' : 'left-0.5'}`} />
+                                            </button>
+                                            <span className={`text-[10px] font-bold ${testForm.is_active ? 'text-emerald-600' : 'text-gray-400'}`}>{testForm.is_active ? 'Active ✓' : 'Hidden'}</span>
                                         </div>
                                         {testForm.mode === 'LIVE' && (
                                             <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl grid grid-cols-1 md:grid-cols-2 gap-3">
