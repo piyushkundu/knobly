@@ -132,18 +132,65 @@ export default function SuperAdminPage() {
 
                         {/* ═══ DASHBOARD ═══ */}
                         {tab === 'dashboard' && (
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                                {[
-                                    { label: 'Total Users', value: d.stats.users, color: '#6366f1', bg: '#eef2ff', icon: <Users size={18} /> },
-                                    { label: 'Total Tests', value: d.stats.tests, color: '#10b981', bg: '#ecfdf5', icon: <FlaskConical size={18} /> },
-                                    { label: 'Questions', value: d.stats.questions, color: '#8b5cf6', bg: '#f5f3ff', icon: <HelpCircle size={18} /> },
-                                    { label: 'Total Apps', value: d.stats.apps, color: '#f59e0b', bg: '#fffbeb', icon: <Globe size={18} /> },
-                                ].map((s, i) => (
-                                    <div key={i} className={`${card} p-5 flex items-center gap-4 hover:shadow-md transition-all hover:-translate-y-0.5`}>
-                                        <div className="h-12 w-12 rounded-xl flex items-center justify-center shadow-sm" style={{ background: s.bg, color: s.color }}>{s.icon}</div>
-                                        <div><div className="text-2xl font-black text-gray-900">{s.value}</div><div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{s.label}</div></div>
+                            <div className="space-y-5">
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {[
+                                        { label: 'Total Users', value: d.stats.users, color: '#6366f1', bg: '#eef2ff', icon: <Users size={18} /> },
+                                        { label: 'Total Tests', value: d.stats.tests, color: '#10b981', bg: '#ecfdf5', icon: <FlaskConical size={18} /> },
+                                        { label: 'Questions', value: d.stats.questions, color: '#8b5cf6', bg: '#f5f3ff', icon: <HelpCircle size={18} /> },
+                                        { label: 'Total Apps', value: d.stats.apps, color: '#f59e0b', bg: '#fffbeb', icon: <Globe size={18} /> },
+                                    ].map((s, i) => (
+                                        <div key={i} className={`${card} p-5 flex items-center gap-4 hover:shadow-md transition-all hover:-translate-y-0.5`}>
+                                            <div className="h-12 w-12 rounded-xl flex items-center justify-center shadow-sm" style={{ background: s.bg, color: s.color }}>{s.icon}</div>
+                                            <div><div className="text-2xl font-black text-gray-900">{s.value}</div><div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{s.label}</div></div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Leaderboard */}
+                                <div className={`${card} rounded-2xl overflow-hidden`}>
+                                    <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #fffbeb, #fef3c7)', borderBottom: '1px solid #fde68a' }}>
+                                        <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#92400e' }}>
+                                            <Crown size={16} style={{ color: '#f59e0b' }} /> Leaderboard — {d.leaderboard.length} Users
+                                        </h3>
+                                        <span className="text-[9px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>🏆 XP RANKINGS</span>
                                     </div>
-                                ))}
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left text-sm min-w-[700px]">
+                                            <thead className="bg-gray-50 text-gray-400 text-[10px] uppercase border-b border-gray-100">
+                                                <tr><th className="p-3 w-14 text-center">Rank</th><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3 text-center">XP</th><th className="p-3 text-center">Level</th><th className="p-3 text-center">Track</th><th className="p-3 w-20 text-center">Action</th></tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-50">
+                                                {d.leaderboard.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-gray-400 text-xs">No users in leaderboard.</td></tr>}
+                                                {d.leaderboard.map((row: any) => (
+                                                    <tr key={row.id} className="hover:bg-gray-50/50 transition group">
+                                                        <td className="p-3 text-center">
+                                                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black mx-auto ${row.rank === 1 ? 'text-white' : row.rank === 2 ? 'text-white' : row.rank === 3 ? 'text-white' : 'bg-gray-100 text-gray-500'}`}
+                                                                style={row.rank === 1 ? { background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' } : row.rank === 2 ? { background: 'linear-gradient(135deg, #e2e8f0, #94a3b8)' } : row.rank === 3 ? { background: 'linear-gradient(135deg, #f59e0b, #b45309)' } : {}}>
+                                                                {row.rank <= 3 ? <Crown size={12} /> : row.rank}
+                                                            </div>
+                                                        </td>
+                                                        <td className="p-3 font-bold text-gray-900 text-xs">{row.full_name}</td>
+                                                        <td className="p-3 text-[11px] text-gray-400">{row.email}</td>
+                                                        <td className="p-3 text-center font-black text-amber-600">{row.total_xp}</td>
+                                                        <td className="p-3 text-center"><span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold">Lv {row.current_level}</span></td>
+                                                        <td className="p-3 text-center"><span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold">{row.exam_track}</span></td>
+                                                        <td className="p-3 text-center">
+                                                            {row.id !== d.user?.uid ? (
+                                                                <button onClick={() => { if (confirm(`Delete ${row.full_name}? This removes profile, XP data, and badges.`)) d.deleteLeaderboardUser(row.id, row.stateDocId); }}
+                                                                    className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg opacity-40 group-hover:opacity-100 transition">
+                                                                    <Trash2 size={13} />
+                                                                </button>
+                                                            ) : (
+                                                                <span className="text-[8px] bg-indigo-50 text-indigo-500 px-2 py-0.5 rounded-full font-bold">YOU</span>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         )}
 

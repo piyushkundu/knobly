@@ -20,6 +20,7 @@ export function useSuperAdmin() {
     const [notifications, setNotifications] = useState<any[]>([]);
     const [apps, setApps] = useState<any[]>([]);
     const [videos, setVideos] = useState<any[]>([]);
+    const [leaderboard, setLeaderboard] = useState<any[]>([]);
 
     // Auth
     useEffect(() => {
@@ -88,6 +89,25 @@ export function useSuperAdmin() {
 
         const qSnap = await safeDocs('exam_questions');
         setStats({ users: u.length, tests: t.length, questions: qSnap ? qSnap.size : 0, apps: appsArr.length });
+
+        // Build leaderboard from exam_user_state + profiles
+        const xpSnap = await safeDocs('exam_user_state');
+        const xpArr = snapToArr(xpSnap);
+        const profileMap: Record<string, any> = {};
+        u.forEach((p: any) => { profileMap[p.id] = p; });
+        let board: any[] = [];
+        if (xpArr.length > 0) {
+            board = xpArr.map((s: any) => {
+                const prof = profileMap[s.user_id] || {};
+                return { id: s.user_id, full_name: prof.full_name || prof.email || 'Unknown', email: prof.email || '', total_xp: s.total_xp || 0, current_level: s.current_level || 1, exam_track: s.track_id || prof.exam_track || 'OLEVEL', stateDocId: s.id };
+            });
+        } else {
+            board = u.map((p: any) => ({ id: p.id, full_name: p.full_name || p.email || 'Unknown', email: p.email || '', total_xp: 0, current_level: 1, exam_track: p.exam_track || 'OLEVEL', stateDocId: null }));
+        }
+        board.sort((a: any, b: any) => (b.total_xp || 0) - (a.total_xp || 0));
+        board.forEach((r: any, i: number) => { r.rank = i + 1; });
+        setLeaderboard(board);
+
         setSyncing(false);
     }, []);
 
@@ -181,6 +201,13 @@ export function useSuperAdmin() {
 
     // User CRUD
     const deleteUser = async (uid: string) => { await deleteDoc(doc(db, 'profiles', uid)); refreshAll(); };
+    const deleteLeaderboardUser = async (uid: string, stateDocId?: string) => {
+        try { await deleteDoc(doc(db, 'profiles', uid)); } catch (_) { }
+        if (stateDocId) { try { await deleteDoc(doc(db, 'exam_user_state', stateDocId)); } catch (_) { } }
+        // Also remove their badges
+        try { const bSnap = await getDocs(query(collection(db, 'exam_user_badges'), where('user_id', '==', uid))); const batch = writeBatch(db); bSnap.forEach(d => batch.delete(d.ref)); await batch.commit(); } catch (_) { }
+        refreshAll();
+    };
     const getUserProfile = async (u: any) => {
         const xpSnap = await getDocs(query(collection(db, 'exam_user_state'), where('user_id', '==', u.id)));
         let xp = 0; if (!xpSnap.empty) xp = xpSnap.docs[0].data().total_xp;
@@ -229,12 +256,12 @@ export function useSuperAdmin() {
 
     return {
         user, isAdmin, loading, syncing, authError, stats,
-        tests, questions, users, levels, badges, results, notifications, apps, videos,
+        tests, questions, users, levels, badges, results, notifications, apps, videos, leaderboard,
         login, logout, refreshAll,
         saveTest, deleteTest,
         loadQuestions, saveQuestion, deleteQuestion, getOptionsForQuestion, importQuestions,
         loadResults, viewAttemptDetail,
-        deleteUser, getUserProfile,
+        deleteUser, deleteLeaderboardUser, getUserProfile,
         saveLevel, deleteLevel, saveBadge, deleteBadge,
         sendNotification, deleteNotification,
         deployApp, deleteApp, publishVideo, deleteVideo,
