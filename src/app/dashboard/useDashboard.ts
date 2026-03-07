@@ -155,9 +155,51 @@ export function useDashboard() {
 
     async function loadLeaderboard(p?: Profile | null) {
         try {
-            const snap = await getDocs(collection(db, 'exam_leaderboard'));
-            const board = snap.docs.map(d => ({ id: d.id, ...d.data() } as LeaderRow));
-            board.sort((a, b) => (a.track_rank || 0) - (b.track_rank || 0));
+            // Build leaderboard from exam_user_state + profiles
+            const stateSnap = await getDocs(collection(db, 'exam_user_state'));
+            const states = stateSnap.docs.map(d => ({ id: d.id, ...d.data() } as any));
+
+            // Load all profiles for name lookup
+            const profileSnap = await getDocs(collection(db, 'profiles'));
+            const profileMap: Record<string, any> = {};
+            profileSnap.docs.forEach(d => { profileMap[d.id] = { id: d.id, ...d.data() }; });
+
+            let board: LeaderRow[] = [];
+
+            if (states.length > 0) {
+                // Build from exam_user_state
+                board = states.map((s: any) => {
+                    const prof = profileMap[s.user_id] || {};
+                    return {
+                        id: s.id,
+                        user_id: s.user_id,
+                        full_name: prof.full_name || prof.email || 'Unknown',
+                        current_level: s.current_level || 1,
+                        total_xp: s.total_xp || 0,
+                        track_rank: 0,
+                        exam_track: s.track_id || prof.exam_track || 'OLEVEL',
+                    };
+                });
+            } else {
+                // Fallback: build from profiles if exam_user_state is empty
+                board = profileSnap.docs.map(d => {
+                    const data = d.data();
+                    return {
+                        id: d.id,
+                        user_id: d.id,
+                        full_name: data.full_name || data.email || 'Unknown',
+                        current_level: 1,
+                        total_xp: data.total_xp || 0,
+                        track_rank: 0,
+                        exam_track: data.exam_track || 'OLEVEL',
+                    };
+                });
+            }
+
+            // Sort by XP descending and assign ranks
+            board.sort((a, b) => (b.total_xp || 0) - (a.total_xp || 0));
+            board.forEach((row, i) => { row.track_rank = i + 1; });
+
             setLeaderboard(board.slice(0, 20));
         } catch (e) { console.error('loadLeaderboard error:', e); }
     }
