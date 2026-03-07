@@ -44,30 +44,50 @@ export function useSuperAdmin() {
     };
     const logout = async () => { await signOut(auth); };
 
-    // Data Loading
+    // Helper: try ordered query first, fallback to unordered
+    const safeDocs = async (col: string, ...orderings: any[]) => {
+        try {
+            if (orderings.length > 0) {
+                return await getDocs(query(collection(db, col), ...orderings));
+            }
+            return await getDocs(collection(db, col));
+        } catch (e) {
+            console.warn(`[SuperAdmin] Ordered query failed for ${col}, trying unordered`, e);
+            try { return await getDocs(collection(db, col)); }
+            catch (e2) { console.error(`[SuperAdmin] Failed to load ${col}`, e2); return null; }
+        }
+    };
+    const snapToArr = (snap: any) => snap ? snap.docs.map((d: any) => ({ id: d.id, ...d.data() })) : [];
+
+    // Data Loading — each collection independent
     const refreshAll = useCallback(async () => {
         setSyncing(true);
-        try {
-            const [pSnap, tSnap, lSnap, bSnap, nSnap, aSnap, vSnap, qSnap] = await Promise.all([
-                getDocs(query(collection(db, 'profiles'), orderBy('created_at', 'desc'))),
-                getDocs(query(collection(db, 'exam_tests'), orderBy('created_at', 'desc'))),
-                getDocs(query(collection(db, 'exam_levels'), orderBy('track_id'), orderBy('level_no'))),
-                getDocs(collection(db, 'exam_badges')),
-                getDocs(query(collection(db, 'notifications'), orderBy('created_at', 'desc'))),
-                getDocs(query(collection(db, 'apps'), orderBy('created_at', 'desc'))),
-                getDocs(query(collection(db, 'videos'), orderBy('created_at', 'desc'))),
-                getDocs(collection(db, 'exam_questions')),
-            ]);
-            const u = pSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-            const t = tSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-            setUsers(u); setTests(t);
-            setLevels(lSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-            setBadges(bSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-            setNotifications(nSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-            setApps(aSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-            setVideos(vSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-            setStats({ users: u.length, tests: t.length, questions: qSnap.size, apps: aSnap.size });
-        } catch (e) { console.error(e); }
+        const pSnap = await safeDocs('profiles');
+        const u = snapToArr(pSnap);
+        setUsers(u);
+
+        const tSnap = await safeDocs('exam_tests');
+        const t = snapToArr(tSnap);
+        setTests(t);
+
+        const lSnap = await safeDocs('exam_levels');
+        setLevels(snapToArr(lSnap));
+
+        const bSnap = await safeDocs('exam_badges');
+        setBadges(snapToArr(bSnap));
+
+        const nSnap = await safeDocs('notifications');
+        setNotifications(snapToArr(nSnap));
+
+        const aSnap = await safeDocs('apps');
+        const appsArr = snapToArr(aSnap);
+        setApps(appsArr);
+
+        const vSnap = await safeDocs('videos');
+        setVideos(snapToArr(vSnap));
+
+        const qSnap = await safeDocs('exam_questions');
+        setStats({ users: u.length, tests: t.length, questions: qSnap ? qSnap.size : 0, apps: appsArr.length });
         setSyncing(false);
     }, []);
 
@@ -130,13 +150,18 @@ export function useSuperAdmin() {
 
     // Results
     const loadResults = async (testId?: string, userId?: string) => {
-        let q = query(collection(db, 'exam_attempts'), orderBy('started_at', 'desc'), limit(50));
-        // Note: compound queries with where + orderBy need Firestore indexes
-        const snap = await getDocs(q);
-        let r = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        if (testId) r = r.filter((a: any) => a.test_id === testId);
-        if (userId) r = r.filter((a: any) => a.user_id === userId);
-        setResults(r);
+        try {
+            let snap;
+            try {
+                snap = await getDocs(query(collection(db, 'exam_attempts'), orderBy('started_at', 'desc'), limit(50)));
+            } catch {
+                snap = await getDocs(collection(db, 'exam_attempts'));
+            }
+            let r = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            if (testId) r = r.filter((a: any) => a.test_id === testId);
+            if (userId) r = r.filter((a: any) => a.user_id === userId);
+            setResults(r);
+        } catch (e) { console.error('[SuperAdmin] loadResults failed', e); }
     };
     const viewAttemptDetail = async (attempt: any) => {
         const rSnap = await getDocs(query(collection(db, 'exam_responses'), where('attempt_id', '==', attempt.id)));
