@@ -31,7 +31,8 @@ export default function DashboardPage() {
         return tests.filter((t: any) => {
             const cat = (t.category || '').toLowerCase().replace(/[\s_]+/g, '-');
             const titleMatch = (t.title || '').toLowerCase().replace(/[\s_]+/g, '-');
-            return cat === activeSubject || cat.includes(activeSubject) || titleMatch.includes(activeSubject);
+            const catExact = (t.category || '').toLowerCase();
+            return cat === activeSubject || catExact === activeSubject || cat.includes(activeSubject) || titleMatch.includes(activeSubject);
         });
     };
 
@@ -124,8 +125,8 @@ export default function DashboardPage() {
                         <span className="text-xs font-bold" style={{ color: '#0f172a' }}>⚡ Points Progress</span>
                         <span className="text-xs font-black" style={{ color: '#6366f1' }}>{xp} / {d.nextLevelXp} pts</span>
                     </div>
-                    <div className="h-4 rounded-full overflow-hidden" style={{ background: '#f1f5f9' }}>
-                        <div className="h-full rounded-full transition-all duration-1000 relative" style={{ width: `${Math.max(d.xpProgressPercent, 2)}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa)', boxShadow: '0 0 20px rgba(99,102,241,0.4)' }}>
+                    <div className="h-4 rounded-full overflow-hidden" style={{ background: '#f1f5f9' }} suppressHydrationWarning>
+                        <div suppressHydrationWarning className="h-full rounded-full transition-all duration-1000 relative" style={{ width: `${Math.max(d.xpProgressPercent, 2)}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa)', boxShadow: '0 0 20px rgba(99,102,241,0.4)' }}>
                             <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%)' }} />
                         </div>
                     </div>

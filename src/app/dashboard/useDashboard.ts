@@ -124,16 +124,20 @@ export function useDashboard() {
 
     async function loadTests(p?: Profile | null, lvls?: Level[]) {
         try {
-            const q = query(collection(db, 'exam_tests'), where('is_active', '==', true));
-            const snap = await getDocs(q);
-            const tests = snap.docs.map(d => ({ id: d.id, ...d.data() } as ExamTest));
+            let snap;
+            try {
+                snap = await getDocs(query(collection(db, 'exam_tests'), where('is_active', '==', true)));
+            } catch {
+                // Fallback: load all tests and filter client-side
+                snap = await getDocs(collection(db, 'exam_tests'));
+            }
+            const tests = snap.docs.map(d => ({ id: d.id, ...d.data() } as ExamTest)).filter(t => t.is_active !== false);
             const xp = userState?.total_xp || userState?.total_points || 0;
             const allLvls = lvls || levels;
             const unlocked: ExamTest[] = [], locked: ExamTest[] = [];
             tests.forEach(t => {
                 const lvl = allLvls.find(l => l.id === t.level_id) || {} as any;
                 const levelNo = lvl.level_no || 1;
-                // No level_id = always unlocked (0 XP). With level_id = use level's required_xp or formula
                 const reqXp = !t.level_id ? 0 : (t.required_xp ?? lvl.required_xp ?? (100 + (levelNo - 1) * 50));
                 const obj = { ...t, level_no: levelNo, level_title: lvl.title, required_xp: reqXp };
                 if (xp >= reqXp) unlocked.push(obj); else locked.push(obj);
@@ -146,9 +150,13 @@ export function useDashboard() {
 
     async function loadLiveTests(p?: Profile | null) {
         try {
-            const q = query(collection(db, 'exam_tests'), where('mode', '==', 'LIVE'), where('is_active', '==', true));
-            const snap = await getDocs(q);
-            const all = snap.docs.map(d => ({ id: d.id, ...d.data() } as ExamTest));
+            let snap;
+            try {
+                snap = await getDocs(query(collection(db, 'exam_tests'), where('mode', '==', 'LIVE'), where('is_active', '==', true)));
+            } catch {
+                snap = await getDocs(collection(db, 'exam_tests'));
+            }
+            const all = snap.docs.map(d => ({ id: d.id, ...d.data() } as ExamTest)).filter(t => t.mode === 'LIVE' && t.is_active !== false);
             const now = new Date();
             setLiveTests(all.filter(t => t.live_end && new Date(t.live_end) > now).sort((a, b) => new Date(a.live_start || '').getTime() - new Date(b.live_start || '').getTime()));
         } catch (e) { console.error('loadLiveTests error:', e); }
@@ -265,8 +273,9 @@ export function useDashboard() {
     // Also load simpler Next.js collections for fallback
     async function loadSimpleTests() {
         try {
-            const q = query(collection(db, 'tests'), orderBy('created_at', 'desc'));
-            const snap = await getDocs(q);
+            let snap;
+            try { snap = await getDocs(query(collection(db, 'tests'), orderBy('created_at', 'desc'))); }
+            catch { snap = await getDocs(collection(db, 'tests')); }
             setSimpleTests(snap.docs.map(d => ({ id: d.id, ...d.data() })));
         } catch (e) { console.warn('Simple tests load error:', e); }
     }
@@ -297,18 +306,16 @@ export function useDashboard() {
 
     async function initData() {
         if (!user) return;
-        try {
-            const p = await loadProfile();
-            await loadUserState();
-            await loadLevels(p);
-            await loadTests(p);
-            await loadLiveTests(p);
-            await loadLeaderboard(p);
-            await loadBadges();
-            await loadAttempts();
-            await loadSimpleTests();
-            await loadSimpleResults();
-        } catch (e) { console.error(e); }
+        const p = await loadProfile();
+        await loadUserState();
+        try { await loadLevels(p); } catch (e) { console.error('initData:levels', e); }
+        try { await loadTests(p); } catch (e) { console.error('initData:tests', e); }
+        try { await loadLiveTests(p); } catch (e) { console.error('initData:live', e); }
+        try { await loadLeaderboard(p); } catch (e) { console.error('initData:leaderboard', e); }
+        try { await loadBadges(); } catch (e) { console.error('initData:badges', e); }
+        try { await loadAttempts(); } catch (e) { console.error('initData:attempts', e); }
+        try { await loadSimpleTests(); } catch (e) { console.error('initData:simpleTests', e); }
+        try { await loadSimpleResults(); } catch (e) { console.error('initData:simpleResults', e); }
         setIsLoadingMain(false);
     }
 
