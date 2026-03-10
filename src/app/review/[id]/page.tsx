@@ -11,7 +11,7 @@ import Link from 'next/link';
 interface Option { id: string; option_text: string; is_correct: boolean; question_id: string; }
 interface Question { id: string; question_text: string; question_type: string; marks: number; chapter?: string; difficulty?: string; explanation?: string; exam_options: Option[]; created_at?: any; }
 interface Attempt { id: string; test_id: string; user_id: string; score?: number; accuracy?: number; status: string; started_at?: string; submitted_at?: string; }
-interface TestData { id: string; title: string; duration_minutes: number; total_marks: number; track_id?: string; }
+interface TestData { id: string; title: string; duration_minutes: number; total_marks: number; total_points?: number; track_id?: string; }
 
 function getCleanOptionText(text: string): string {
     if (!text) return '';
@@ -32,7 +32,7 @@ export default function ReviewPage() {
     const [testData, setTestData] = useState<TestData | null>(null);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [responses, setResponses] = useState<Record<string, any>>({});
-    const [stats, setStats] = useState({ correct: 0, wrong: 0, totalMarks: 0, timeTaken: '' });
+    const [stats, setStats] = useState({ correct: 0, wrong: 0, totalPoints: 0, pointsEarned: 0, timeTaken: '' });
     const [filter, setFilter] = useState<'all' | 'correct' | 'wrong'>('all');
 
     useEffect(() => {
@@ -89,9 +89,9 @@ export default function ReviewPage() {
                 setQuestions(qs);
 
                 // 5) Compute stats
-                let correct = 0, wrong = 0, totalMarks = 0;
+                let correct = 0, wrong = 0;
+                const totalQ = qs.length || 1;
                 qs.forEach(q => {
-                    totalMarks += q.marks || 1;
                     const type = (q.question_type || '').toUpperCase();
                     const isObj = type === 'MCQ' || type === 'TF';
                     const resp = respMap[q.id];
@@ -103,12 +103,16 @@ export default function ReviewPage() {
                         wrong++;
                     }
                 });
+                // Calculate proportional points: Total Points / Total Questions * correct
+                const testTotalPoints = tData?.total_points || (tData as any)?.xp_reward || tData?.total_marks || totalQ;
+                const pointsPerQ = testTotalPoints / totalQ;
+                const totalPoints = Math.round(correct * pointsPerQ);
                 let timeTaken = '';
                 if (att.started_at && att.submitted_at) {
                     const diff = Math.max(1, Math.round((new Date(att.submitted_at).getTime() - new Date(att.started_at).getTime()) / 60000));
                     timeTaken = `~${diff} min`;
                 }
-                setStats({ correct, wrong, totalMarks, timeTaken });
+                setStats({ correct, wrong, totalPoints: testTotalPoints, pointsEarned: totalPoints, timeTaken });
             } catch (err) {
                 console.error('[Review] Load error:', err);
             }
@@ -207,12 +211,12 @@ export default function ReviewPage() {
                     {/* Score */}
                     <div className="rounded-2xl p-4 sm:p-5" style={{ background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#94a3b8' }}>Score</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#94a3b8' }}>Points Earned</span>
                             <span style={{ fontSize: '18px' }}>📊</span>
                         </div>
                         <div className="flex items-baseline gap-1">
-                            <span className="text-2xl sm:text-3xl font-black" style={{ color: '#0f172a' }}>{score}</span>
-                            <span className="text-sm" style={{ color: '#94a3b8' }}>/ {stats.totalMarks}</span>
+                            <span className="text-2xl sm:text-3xl font-black" style={{ color: '#0f172a' }}>{stats.pointsEarned}</span>
+                            <span className="text-sm" style={{ color: '#94a3b8' }}>/ {stats.totalPoints}</span>
                         </div>
                         <p className="text-[10px] mt-1" style={{ color: '#94a3b8' }}>
                             {accuracy >= 80 ? 'Excellent performance!' : accuracy >= 50 ? 'Good, keep improving!' : 'Keep practicing!'}

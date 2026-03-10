@@ -4,7 +4,7 @@ import { useSuperAdmin } from './useSuperAdmin';
 import {
     LayoutDashboard, FlaskConical, HelpCircle, BarChart3, Users, Medal, Bell,
     Plus, Trash2, Pencil, Play, Lock, X, Eye, RefreshCw, Upload, Send,
-    Globe, Youtube, ChevronRight, LogOut, Shield, Loader2, Search, Save, Crown, Menu
+    Globe, Youtube, ChevronRight, LogOut, Shield, Loader2, Search, Save, Crown, Menu, FolderOpen
 } from 'lucide-react';
 
 const TABS = [
@@ -15,6 +15,7 @@ const TABS = [
     { id: 'users', label: 'Users', icon: <Users size={15} />, color: '#f59e0b' },
     { id: 'gamification', label: 'Levels & Badges', icon: <Medal size={15} />, color: '#ec4899' },
     { id: 'resources', label: 'Resources', icon: <Bell size={15} />, color: '#ef4444' },
+    { id: 'categories', label: 'Categories', icon: <FolderOpen size={15} />, color: '#0ea5e9' },
 ];
 
 const inp = "w-full p-2.5 rounded-xl text-sm bg-white border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition shadow-sm";
@@ -28,7 +29,7 @@ export default function SuperAdminPage() {
     const [loginPass, setLoginPass] = useState('');
     const [sideOpen, setSideOpen] = useState(false);
 
-    const emptyTest = { id: null as any, title: '', track_id: 'OLEVEL', mode: 'PRACTICE', duration_minutes: 30, total_marks: 20, xp_reward: 50, live_start: '', live_end: '', is_active: true, category: '', level_id: '' };
+    const emptyTest = { id: null as any, title: '', track_id: 'OLEVEL', mode: 'PRACTICE', duration_minutes: 30, total_marks: 20, xp_reward: 100, live_start: '', live_end: '', is_active: true, category: '', level_id: '' };
     const [testForm, setTestForm] = useState(emptyTest);
     const [saving, setSaving] = useState(false);
     const [selTestId, setSelTestId] = useState('');
@@ -50,6 +51,13 @@ export default function SuperAdminPage() {
     const [notifLink, setNotifLink] = useState('');
     const [appForm, setAppForm] = useState({ name: '', link: '', icon: '' });
     const [videoForm, setVideoForm] = useState({ id: '', title: '' });
+    const [catForm, setCatForm] = useState({ name: '', emoji: '\ud83d\udcda', color: '#6366f1', bgColor: '#eef2ff', textColor: '#4f46e5' });
+    const [editCatId, setEditCatId] = useState<string | null>(null);
+    const [showIconPicker, setShowIconPicker] = useState(false);
+
+    // Build dynamic catColors from Firestore categories
+    const catColors: Record<string, string> = {};
+    d.categories.forEach((c: any) => { catColors[c.name] = c.color || '#94a3b8'; });
 
     // ── LOGIN SCREEN ──
     if (!d.user || !d.isAdmin) return (
@@ -95,8 +103,8 @@ export default function SuperAdminPage() {
                     <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
                         {TABS.map(t => (
                             <button key={t.id} onClick={() => { setTab(t.id); setSideOpen(false); if (t.id === 'results') d.loadResults(); }}
-                                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${tab === t.id ? 'text-white shadow-md' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`}
-                                style={tab === t.id ? { background: t.color } : {}}>
+                                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${tab === t.id ? 'shadow-md' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`}
+                                style={tab === t.id ? { background: t.color, color: '#ffffff' } : {}}>
                                 {t.icon} {t.label}
                             </button>
                         ))}
@@ -153,12 +161,12 @@ export default function SuperAdminPage() {
                                         <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#92400e' }}>
                                             <Crown size={16} style={{ color: '#f59e0b' }} /> Leaderboard — {d.leaderboard.length} Users
                                         </h3>
-                                        <span className="text-[9px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>🏆 XP RANKINGS</span>
+                                        <span className="text-[9px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>🏆 POINT RANKINGS</span>
                                     </div>
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-left text-sm min-w-[700px]">
                                             <thead className="bg-gray-50 text-gray-400 text-[10px] uppercase border-b border-gray-100">
-                                                <tr><th className="p-3 w-14 text-center">Rank</th><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3 text-center">XP</th><th className="p-3 text-center">Level</th><th className="p-3 text-center">Track</th><th className="p-3 w-20 text-center">Action</th></tr>
+                                                <tr><th className="p-3 w-14 text-center">Rank</th><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3 text-center">Points</th><th className="p-3 text-center">Level</th><th className="p-3 text-center">Track</th><th className="p-3 w-20 text-center">Action</th></tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-50">
                                                 {d.leaderboard.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-gray-400 text-xs">No users in leaderboard.</td></tr>}
@@ -177,7 +185,7 @@ export default function SuperAdminPage() {
                                                         <td className="p-3 text-center"><span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold">{row.exam_track}</span></td>
                                                         <td className="p-3 text-center">
                                                             {row.id !== d.user?.uid ? (
-                                                                <button onClick={() => { if (confirm(`Delete ${row.full_name}? This removes profile, XP data, and badges.`)) d.deleteLeaderboardUser(row.id, row.stateDocId); }}
+                                                                <button onClick={() => { if (confirm(`Delete ${row.full_name}? This removes profile, points data, and badges.`)) d.deleteLeaderboardUser(row.id, row.stateDocId); }}
                                                                     className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg opacity-40 group-hover:opacity-100 transition">
                                                                     <Trash2 size={13} />
                                                                 </button>
@@ -198,49 +206,61 @@ export default function SuperAdminPage() {
                         {tab === 'tests' && (
                             <div className="flex flex-col lg:flex-row gap-5 h-full">
                                 <div className="w-full lg:w-1/3 flex flex-col gap-2">
-                                    <button onClick={() => setTestForm(emptyTest)} className="w-full py-3 rounded-xl border-2 border-dashed border-gray-200 text-gray-400 hover:text-indigo-500 hover:border-indigo-300 text-xs font-bold flex items-center justify-center gap-2 transition bg-white">
+                                    <button onClick={() => setTestForm(emptyTest)} className="w-full py-3.5 rounded-2xl border-2 border-dashed transition-all hover:shadow-md hover:scale-[1.01] text-xs font-bold flex items-center justify-center gap-2 bg-white" style={{ borderColor: '#c7d2fe', color: '#6366f1' }}
+                                        onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#6366f1'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#6366f1'; e.currentTarget.style.borderColor = '#c7d2fe'; }}>
                                         <Plus size={14} /> Create New Test
                                     </button>
-                                    <div className="flex-1 overflow-y-auto space-y-2 pr-1 max-h-[65vh]">
-                                        {d.tests.map(t => (
-                                            <div key={t.id} onClick={() => setTestForm({ ...t, level_id: t.level_id || '' })} className={`${card} p-3.5 cursor-pointer transition-all group relative hover:shadow-md ${testForm.id === t.id ? 'ring-2 ring-indigo-500 border-indigo-200' : ''}`}>
-                                                <div className="flex justify-between items-start mb-1">
-                                                    <h4 className="font-bold text-gray-900 text-xs truncate w-3/4">{t.title}</h4>
-                                                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${t.mode === 'LIVE' ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-500'}`}>{t.mode}</span>
+                                    <div className="flex-1 overflow-y-auto space-y-2.5 pr-1 max-h-[65vh]">
+                                        {d.tests.map(t => {
+                                            const catColor = catColors[t.category] || '#94a3b8';
+                                            return (
+                                                <div key={t.id} onClick={() => setTestForm({ ...t, level_id: t.level_id || '' })} className={`${card} overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:scale-[1.01] relative ${testForm.id === t.id ? 'ring-2 ring-indigo-500 shadow-lg' : ''}`}>
+                                                    {/* Left accent bar */}
+                                                    <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl" style={{ background: catColor }} />
+                                                    <div className="p-3.5 pl-4">
+                                                        <div className="flex justify-between items-start mb-1.5">
+                                                            <h4 className="font-black text-gray-900 text-xs truncate pr-16">{t.title}</h4>
+                                                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                                                                <span className={`text-[8px] px-2 py-0.5 rounded-full font-bold ${t.mode === 'LIVE' ? 'text-white' : 'bg-emerald-50 text-emerald-600'}`} style={t.mode === 'LIVE' ? { background: 'linear-gradient(135deg, #ef4444, #dc2626)' } : {}}>{t.mode}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-[10px] text-gray-400 font-semibold mb-1.5">{t.track_id} • {t.duration_minutes} min • {t.total_marks} Q • {t.xp_reward} pts</div>
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex gap-1.5 flex-wrap">
+                                                                {t.category && <span className="text-[8px] px-2 py-0.5 rounded-full font-bold" style={{ background: `${catColor}15`, color: catColor, border: `1px solid ${catColor}30` }}>{t.category}</span>}
+                                                                <span className={`text-[8px] px-2 py-0.5 rounded-full font-bold ${t.is_active ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-gray-100 text-gray-400 border border-gray-200'}`}>{t.is_active ? '● Active' : '○ Hidden'}</span>
+                                                            </div>
+                                                            <button onClick={e => { e.stopPropagation(); if (confirm(`Delete "${t.title}"?`)) d.deleteTest(t.id); }} className="text-red-400 hover:text-white hover:bg-red-500 p-1.5 rounded-lg transition-all" title="Delete Test"><Trash2 size={13} /></button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="text-[10px] text-gray-400 font-medium">{t.track_id} • {t.total_marks}mk • {t.duration_minutes}m</div>
-                                                <div className="flex gap-1 mt-1 flex-wrap">
-                                                    {t.category && <span className="text-[8px] bg-indigo-50 text-indigo-500 px-1.5 py-0.5 rounded-full font-bold">{t.category}</span>}
-                                                    <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-bold ${t.is_active ? 'bg-emerald-50 text-emerald-500' : 'bg-gray-100 text-gray-400'}`}>{t.is_active ? 'Active' : 'Hidden'}</span>
-                                                </div>
-                                                <button onClick={e => { e.stopPropagation(); if (confirm('Delete test?')) d.deleteTest(t.id); }} className="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"><Trash2 size={12} /></button>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 </div>
-                                <div className={`w-full lg:w-2/3 ${card} p-5 overflow-y-auto`}>
-                                    <h3 className="text-sm font-black text-gray-900 mb-4 flex items-center gap-2"><Pencil size={14} className="text-indigo-500" /> {testForm.id ? 'Edit Test' : 'New Test'}</h3>
-                                    <div className="space-y-3">
+                                <div className={`w-full lg:w-2/3 ${card} p-5 overflow-y-auto rounded-2xl`}>
+                                    <div className="flex items-center gap-3 mb-5 pb-3" style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <div className="h-8 w-8 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff' }}><Pencil size={14} /></div>
+                                        <h3 className="text-sm font-black text-gray-900">{testForm.id ? 'Edit Test' : 'New Test'}</h3>
+                                        {testForm.id && <span className="text-[8px] bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full font-bold border border-amber-200">EDITING</span>}
+                                    </div>
+                                    <div className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                            <div className="md:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Title</label><input value={testForm.title} onChange={e => setTestForm({ ...testForm, title: e.target.value })} className={inp} placeholder="e.g. Chapter 6: Python Basics Test" /></div>
+                                            <div className="md:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Test Title</label><input value={testForm.title} onChange={e => setTestForm({ ...testForm, title: e.target.value })} className={inp} placeholder="e.g. Chapter 6: Python Basics Test" /></div>
                                             <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Track</label><select value={testForm.track_id} onChange={e => setTestForm({ ...testForm, track_id: e.target.value })} className={inp}><option value="OLEVEL">OLEVEL</option><option value="CCC">CCC</option></select></div>
                                             <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Mode</label><select value={testForm.mode} onChange={e => setTestForm({ ...testForm, mode: e.target.value })} className={inp}><option value="PRACTICE">PRACTICE</option><option value="LIVE">LIVE</option></select></div>
                                             <div>
-                                                <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Category (Dashboard Filter)</label>
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">📂 Category (Dashboard Filter)</label>
                                                 <select value={testForm.category || ''} onChange={e => setTestForm({ ...testForm, category: e.target.value })} className={inp}>
                                                     <option value="">-- Select Category --</option>
-                                                    <option value="IT Tools">IT Tools</option>
-                                                    <option value="Web Design">Web Design</option>
-                                                    <option value="Python">Python</option>
-                                                    <option value="IoT">IoT</option>
-                                                    <option value="Networking">Networking</option>
-                                                    <option value="Cyber Security">Cyber Security</option>
-                                                    <option value="M.S. Office">M.S. Office</option>
-                                                    <option value="Operating System">Operating System</option>
+                                                    {d.categories.map((c: any) => (
+                                                        <option key={c.id} value={c.name}>{c.emoji} {c.name}</option>
+                                                    ))}
                                                 </select>
                                             </div>
                                             <div>
-                                                <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Assign to Level</label>
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">📊 Assign to Level</label>
                                                 <select value={testForm.level_id || ''} onChange={e => setTestForm({ ...testForm, level_id: e.target.value })} className={inp}>
                                                     <option value="">No Level (Always visible)</option>
                                                     {d.levels.map((l: any) => <option key={l.id} value={l.id}>Lv {l.level_no}: {l.title} ({l.track_id})</option>)}
@@ -248,27 +268,32 @@ export default function SuperAdminPage() {
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-3 gap-3">
-                                            <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Minutes</label><input value={testForm.duration_minutes} onChange={e => setTestForm({ ...testForm, duration_minutes: Number(e.target.value) })} type="number" className={inp} /></div>
-                                            <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Marks</label><input value={testForm.total_marks} onChange={e => setTestForm({ ...testForm, total_marks: Number(e.target.value) })} type="number" className={inp} /></div>
-                                            <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">XP Reward</label><input value={testForm.xp_reward} onChange={e => setTestForm({ ...testForm, xp_reward: Number(e.target.value) })} type="number" className={inp} /></div>
+                                            <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">⏱ Duration (Min)</label><input value={testForm.duration_minutes} onChange={e => setTestForm({ ...testForm, duration_minutes: Number(e.target.value) })} type="number" className={inp} /></div>
+                                            <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">📝 Total Questions</label><input value={testForm.total_marks} onChange={e => setTestForm({ ...testForm, total_marks: Number(e.target.value) })} type="number" className={inp} /></div>
+                                            <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">⭐ Total Points</label><input value={testForm.xp_reward} onChange={e => setTestForm({ ...testForm, xp_reward: Number(e.target.value) })} type="number" className={inp} /></div>
                                         </div>
-                                        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
-                                            <label className="text-[10px] font-bold text-gray-400 uppercase">Show on Dashboard</label>
+                                        <div className="flex items-start gap-2 p-2.5 rounded-lg" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+                                            <span className="text-xs mt-0.5">💡</span>
+                                            <p className="text-[10px] font-medium" style={{ color: '#166534' }}>Points per question = Total Points ÷ Total Questions. Example: 100 pts ÷ 20 Q = 5 pts per correct answer.</p>
+                                        </div>
+                                        <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: testForm.is_active ? '#ecfdf5' : '#f9fafb', border: `1px solid ${testForm.is_active ? '#a7f3d0' : '#e5e7eb'}` }}>
+                                            <label className="text-[10px] font-bold uppercase" style={{ color: testForm.is_active ? '#059669' : '#9ca3af' }}>Show on Dashboard</label>
                                             <button onClick={() => setTestForm({ ...testForm, is_active: !testForm.is_active })} className={`w-10 h-5 rounded-full transition-all relative ${testForm.is_active ? 'bg-emerald-500' : 'bg-gray-300'}`}>
                                                 <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all shadow-sm ${testForm.is_active ? 'right-0.5' : 'left-0.5'}`} />
                                             </button>
-                                            <span className={`text-[10px] font-bold ${testForm.is_active ? 'text-emerald-600' : 'text-gray-400'}`}>{testForm.is_active ? 'Active ✓' : 'Hidden'}</span>
+                                            <span className={`text-[10px] font-bold ${testForm.is_active ? 'text-emerald-600' : 'text-gray-400'}`}>{testForm.is_active ? '● Active' : '○ Hidden'}</span>
                                         </div>
                                         {testForm.mode === 'LIVE' && (
-                                            <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                <div><label className="text-[10px] font-bold text-amber-600 uppercase block mb-1">Live Start</label><input value={testForm.live_start || ''} onChange={e => setTestForm({ ...testForm, live_start: e.target.value })} type="datetime-local" className={inp} /></div>
-                                                <div><label className="text-[10px] font-bold text-amber-600 uppercase block mb-1">Live End</label><input value={testForm.live_end || ''} onChange={e => setTestForm({ ...testForm, live_end: e.target.value })} type="datetime-local" className={inp} /></div>
+                                            <div className="p-4 rounded-xl grid grid-cols-1 md:grid-cols-2 gap-3" style={{ background: '#fffbeb', border: '1px solid #fde68a' }}>
+                                                <div><label className="text-[10px] font-bold text-amber-600 uppercase block mb-1">🔴 Live Start</label><input value={testForm.live_start || ''} onChange={e => setTestForm({ ...testForm, live_start: e.target.value })} type="datetime-local" className={inp} /></div>
+                                                <div><label className="text-[10px] font-bold text-amber-600 uppercase block mb-1">🔴 Live End</label><input value={testForm.live_end || ''} onChange={e => setTestForm({ ...testForm, live_end: e.target.value })} type="datetime-local" className={inp} /></div>
                                             </div>
                                         )}
-                                        <div className="flex justify-end gap-3 pt-2">
-                                            {testForm.id && <button onClick={() => setTestForm(emptyTest)} className={`${btn} text-gray-400 hover:text-gray-900`}>Cancel</button>}
-                                            <button onClick={async () => { setSaving(true); await d.saveTest(testForm); setTestForm(emptyTest); setSaving(false); }} disabled={saving} className={`${btn} text-white flex items-center gap-2 shadow-lg`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
-                                                {saving && <Loader2 size={12} className="animate-spin" />} {testForm.id ? 'Update' : 'Create'}
+                                        <div className="flex justify-end gap-3 pt-3" style={{ borderTop: '1px solid #f1f5f9' }}>
+                                            {testForm.id && <button onClick={() => setTestForm(emptyTest)} className={`${btn} bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-900`}>Cancel</button>}
+                                            {testForm.id && <button onClick={() => { if (confirm(`Delete "${testForm.title}"?`)) { d.deleteTest(testForm.id); setTestForm(emptyTest); } }} className={`${btn} bg-red-50 text-red-500 hover:bg-red-500 hover:text-white border border-red-200`}>Delete Test</button>}
+                                            <button onClick={async () => { setSaving(true); await d.saveTest(testForm); setTestForm(emptyTest); setSaving(false); }} disabled={saving} className={`${btn} flex items-center gap-2 shadow-lg`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}>
+                                                {saving && <Loader2 size={12} className="animate-spin" />} {testForm.id ? '✓ Update Test' : '+ Create Test'}
                                             </button>
                                         </div>
                                     </div>
@@ -306,7 +331,7 @@ export default function SuperAdminPage() {
                                 {selTestId && (
                                     <div className={`${card} rounded-2xl overflow-hidden overflow-x-auto`}>
                                         <table className="w-full text-left text-sm min-w-[600px]">
-                                            <thead className="bg-gray-50 text-gray-400 text-xs uppercase border-b border-gray-100"><tr><th className="p-3 w-10 text-center">#</th><th className="p-3">Question Text</th><th className="p-3 w-24">Type</th><th className="p-3 w-20 text-center">Marks</th><th className="p-3 w-28 text-center">Actions</th></tr></thead>
+                                            <thead className="bg-gray-50 text-gray-400 text-xs uppercase border-b border-gray-100"><tr><th className="p-3 w-10 text-center">#</th><th className="p-3">Question Text</th><th className="p-3 w-24">Type</th><th className="p-3 w-20 text-center">Points</th><th className="p-3 w-28 text-center">Actions</th></tr></thead>
                                             <tbody className="divide-y divide-gray-50">
                                                 {d.questions.length === 0 && <tr><td colSpan={5} className="p-8 text-center text-gray-400 text-xs">No questions. Add or import.</td></tr>}
                                                 {d.questions.map((q: any, i) => (
@@ -314,7 +339,7 @@ export default function SuperAdminPage() {
                                                         <td className="p-3 text-center text-gray-400 font-bold">{i + 1}</td>
                                                         <td className="p-3 text-gray-700 truncate max-w-lg">{q.question_text}</td>
                                                         <td className="p-3"><span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold">{q.question_type}</span></td>
-                                                        <td className="p-3 text-center font-bold text-gray-900">{q.marks}</td>
+                                                        <td className="p-3 text-center font-bold text-gray-900">1</td>
                                                         <td className="p-3 text-center flex justify-center gap-2">
                                                             <button onClick={async () => { const opts = await d.getOptionsForQuestion(q.id); setQForm({ id: q.id, text: q.question_text, type: q.question_type, marks: q.marks, difficulty: q.difficulty, options: opts.map((o: any) => ({ text: o.option_text, is_correct: o.is_correct })) }); setShowQModal(true); }} className="text-blue-500 hover:text-blue-700 p-1 rounded-lg hover:bg-blue-50"><Pencil size={13} /></button>
                                                             <button onClick={() => { if (confirm('Delete?')) d.deleteQuestion(q.id, selTestId); }} className="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50"><Trash2 size={13} /></button>
@@ -335,11 +360,11 @@ export default function SuperAdminPage() {
                                     <span className="text-xs font-bold text-indigo-500 uppercase">Filters:</span>
                                     <select value={resTestId} onChange={e => setResTestId(e.target.value)} className={`${inp} md:w-56`}><option value="">All Tests</option>{d.tests.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}</select>
                                     <select value={resUserId} onChange={e => setResUserId(e.target.value)} className={`${inp} md:w-56`}><option value="">All Users</option>{d.users.map(u => <option key={u.id} value={u.id}>{u.full_name}</option>)}</select>
-                                    <button onClick={() => d.loadResults(resTestId, resUserId)} className={`${btn} text-white shadow-md`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>Apply</button>
+                                    <button onClick={() => d.loadResults(resTestId, resUserId)} className={`${btn} shadow-md`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}>Apply</button>
                                 </div>
                                 <div className={`${card} rounded-2xl overflow-hidden overflow-x-auto`}>
                                     <table className="w-full text-left text-sm min-w-[700px]">
-                                        <thead className="bg-gray-50 text-gray-400 text-xs uppercase border-b border-gray-100"><tr><th className="p-3">Student</th><th className="p-3">Test</th><th className="p-3 text-center">Score</th><th className="p-3 text-center">Acc%</th><th className="p-3 text-center">XP</th><th className="p-3 text-center">Status</th><th className="p-3 text-center">Detail</th></tr></thead>
+                                        <thead className="bg-gray-50 text-gray-400 text-xs uppercase border-b border-gray-100"><tr><th className="p-3">Student</th><th className="p-3">Test</th><th className="p-3 text-center">Score</th><th className="p-3 text-center">Acc%</th><th className="p-3 text-center">Points</th><th className="p-3 text-center">Status</th><th className="p-3 text-center">Detail</th></tr></thead>
                                         <tbody className="divide-y divide-gray-50">
                                             {d.results.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-gray-400 text-xs">No results.</td></tr>}
                                             {d.results.map((r: any) => (
@@ -389,54 +414,95 @@ export default function SuperAdminPage() {
 
                         {/* ═══ GAMIFICATION ═══ */}
                         {tab === 'gamification' && (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                                <div className="space-y-3">
-                                    <h3 className="text-sm font-black text-indigo-600 uppercase tracking-wider border-b border-gray-200 pb-2">Levels</h3>
-                                    <div className={`${card} p-4 space-y-3`}>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <input value={levelForm.level_no} onChange={e => setLevelForm({ ...levelForm, level_no: e.target.value })} type="number" placeholder="Lvl No" className={inp} />
-                                            <input value={levelForm.required_xp} onChange={e => setLevelForm({ ...levelForm, required_xp: e.target.value })} type="number" placeholder="Req XP" className={inp} />
-                                            <input value={levelForm.title} onChange={e => setLevelForm({ ...levelForm, title: e.target.value })} placeholder="Title (e.g. Novice)" className={`${inp} col-span-2`} />
-                                            <select value={levelForm.track_id} onChange={e => setLevelForm({ ...levelForm, track_id: e.target.value })} className={`${inp} col-span-2`}><option value="OLEVEL">OLEVEL</option><option value="CCC">CCC</option></select>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            {editLevelId && <button onClick={() => { setEditLevelId(null); setLevelForm({ track_id: 'OLEVEL', level_no: '', required_xp: '', title: '' }); }} className={`${btn} w-1/3 bg-gray-100 text-gray-600`}>Cancel</button>}
-                                            <button onClick={async () => { await d.saveLevel(levelForm, editLevelId || undefined); setEditLevelId(null); setLevelForm({ track_id: 'OLEVEL', level_no: '', required_xp: '', title: '' }); }} className={`${btn} flex-1 text-white`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>{editLevelId ? 'Update' : 'Add Level'}</button>
-                                        </div>
+                            <div className="space-y-5">
+                                {/* ── Rank Badges Reference ── */}
+                                <div className={`${card} rounded-2xl overflow-hidden`}>
+                                    <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', borderBottom: '1px solid #ddd6fe' }}>
+                                        <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#4c1d95' }}>
+                                            <div className="h-7 w-7 rounded-lg flex items-center justify-center text-white" style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}><Crown size={13} /></div>
+                                            Rank Badges System
+                                        </h3>
+                                        <span className="text-[9px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6366f1)' }}>AUTO ASSIGNED</span>
                                     </div>
-                                    <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
-                                        {d.levels.map((l: any) => (
-                                            <div key={l.id} className={`${card} p-3 flex justify-between items-center text-xs group hover:shadow-md transition`}>
-                                                <div><span className="font-bold text-gray-900">Lv {l.level_no}: {l.title}</span><div className="text-[10px] text-gray-400">{l.track_id} • {l.required_xp} XP</div></div>
-                                                <div className="flex gap-1 opacity-40 group-hover:opacity-100 transition">
-                                                    <button onClick={() => { setEditLevelId(l.id); setLevelForm(l); }} className="text-blue-500 hover:bg-blue-50 p-1.5 rounded-lg"><Pencil size={12} /></button>
-                                                    <button onClick={() => { if (confirm('Delete?')) d.deleteLevel(l.id); }} className="text-red-400 hover:bg-red-50 p-1.5 rounded-lg"><Trash2 size={12} /></button>
+                                    <div className="p-4">
+                                        <p className="text-[11px] text-gray-500 mb-3 font-medium">Ranks are <strong>automatically assigned</strong> based on user points. No manual setup needed.</p>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                                            {[
+                                                { icon: '🥉', name: 'Bronze', pts: '0', color: '#cd7f32', bg: '#fef3c7' },
+                                                { icon: '🥈', name: 'Silver', pts: '50', color: '#94a3b8', bg: '#f1f5f9' },
+                                                { icon: '🥇', name: 'Gold', pts: '150', color: '#f59e0b', bg: '#fffbeb' },
+                                                { icon: '💎', name: 'Platinum', pts: '300', color: '#06b6d4', bg: '#ecfeff' },
+                                                { icon: '💠', name: 'Diamond', pts: '500', color: '#8b5cf6', bg: '#f5f3ff' },
+                                                { icon: '👑', name: 'Legend', pts: '800+', color: '#ef4444', bg: '#fef2f2' },
+                                            ].map((r, i) => (
+                                                <div key={i} className="text-center p-3 rounded-xl transition-all hover:shadow-md hover:scale-[1.02]" style={{ background: r.bg, border: `1px solid ${r.color}25` }}>
+                                                    <span className="text-2xl block mb-1">{r.icon}</span>
+                                                    <div className="text-[11px] font-black" style={{ color: r.color }}>{r.name}</div>
+                                                    <div className="text-[9px] font-bold text-gray-400 mt-0.5">{r.pts} pts</div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
+                                        <div className="mt-3 flex items-start gap-2 p-2.5 rounded-lg" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
+                                            <span className="text-xs mt-0.5">👑</span>
+                                            <p className="text-[10px] font-medium" style={{ color: '#991b1b' }}>
+                                                <strong>Legend is exclusive!</strong> Only the #1 ranked player with ≥800 points gets Legend. All others stay at Diamond max.
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="space-y-3">
-                                    <h3 className="text-sm font-black text-emerald-600 uppercase tracking-wider border-b border-gray-200 pb-2">Badges</h3>
-                                    <div className={`${card} p-4 space-y-3`}>
-                                        <input value={badgeForm.badge_name} onChange={e => setBadgeForm({ ...badgeForm, badge_name: e.target.value })} placeholder="Badge Name" className={inp} />
-                                        <input value={badgeForm.badge_icon} onChange={e => setBadgeForm({ ...badgeForm, badge_icon: e.target.value })} placeholder="Icon (e.g. ph-medal)" className={inp} />
-                                        <textarea value={badgeForm.description} onChange={e => setBadgeForm({ ...badgeForm, description: e.target.value })} placeholder="Description" className={`${inp} h-14 resize-none`} />
-                                        <input value={badgeForm.xp_reward} onChange={e => setBadgeForm({ ...badgeForm, xp_reward: e.target.value })} type="number" placeholder="XP Reward" className={inp} />
-                                        <div className="flex gap-2">
-                                            {editBadgeId && <button onClick={() => { setEditBadgeId(null); setBadgeForm({ badge_name: '', badge_icon: '', xp_reward: '', description: '' }); }} className={`${btn} w-1/3 bg-gray-100 text-gray-600`}>Cancel</button>}
-                                            <button onClick={async () => { await d.saveBadge(badgeForm, editBadgeId || undefined); setEditBadgeId(null); setBadgeForm({ badge_name: '', badge_icon: '', xp_reward: '', description: '' }); }} className={`${btn} flex-1 text-white`} style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>{editBadgeId ? 'Update' : 'Add Badge'}</button>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                    {/* ── Levels ── */}
+                                    <div className="space-y-3">
+                                        <h3 className="text-sm font-black text-indigo-600 uppercase tracking-wider border-b border-gray-200 pb-2">Levels</h3>
+                                        <div className={`${card} p-4 space-y-3`}>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <input value={levelForm.level_no} onChange={e => setLevelForm({ ...levelForm, level_no: e.target.value })} type="number" placeholder="Lvl No" className={inp} />
+                                                <input value={levelForm.required_xp} onChange={e => setLevelForm({ ...levelForm, required_xp: e.target.value })} type="number" placeholder="Required Points" className={inp} />
+                                                <input value={levelForm.title} onChange={e => setLevelForm({ ...levelForm, title: e.target.value })} placeholder="Title (e.g. Novice)" className={`${inp} col-span-2`} />
+                                                <select value={levelForm.track_id} onChange={e => setLevelForm({ ...levelForm, track_id: e.target.value })} className={`${inp} col-span-2`}><option value="OLEVEL">OLEVEL</option><option value="CCC">CCC</option></select>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                {editLevelId && <button onClick={() => { setEditLevelId(null); setLevelForm({ track_id: 'OLEVEL', level_no: '', required_xp: '', title: '' }); }} className={`${btn} w-1/3 bg-gray-100 text-gray-600`}>Cancel</button>}
+                                                <button onClick={async () => { await d.saveLevel(levelForm, editLevelId || undefined); setEditLevelId(null); setLevelForm({ track_id: 'OLEVEL', level_no: '', required_xp: '', title: '' }); }} className={`${btn} flex-1`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}>{editLevelId ? 'Update' : 'Add Level'}</button>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+                                            {d.levels.map((l: any) => (
+                                                <div key={l.id} className={`${card} p-3 flex justify-between items-center text-xs group hover:shadow-md transition`}>
+                                                    <div><span className="font-bold text-gray-900">Lv {l.level_no}: {l.title}</span><div className="text-[10px] text-gray-400">{l.track_id} • {l.required_xp} Points</div></div>
+                                                    <div className="flex gap-1 opacity-40 group-hover:opacity-100 transition">
+                                                        <button onClick={() => { setEditLevelId(l.id); setLevelForm(l); }} className="text-blue-500 hover:bg-blue-50 p-1.5 rounded-lg"><Pencil size={12} /></button>
+                                                        <button onClick={() => { if (confirm('Delete?')) d.deleteLevel(l.id); }} className="text-red-400 hover:bg-red-50 p-1.5 rounded-lg"><Trash2 size={12} /></button>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
-                                        {d.badges.map((b: any) => (
-                                            <div key={b.id} onClick={() => { setEditBadgeId(b.id); setBadgeForm(b); }} className={`${card} p-3 cursor-pointer group hover:shadow-md transition relative`}>
-                                                <div className="flex justify-between"><Medal size={16} className="text-emerald-500" /><span className="text-[9px] bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full font-bold">+{b.xp_reward} XP</span></div>
-                                                <div className="font-bold text-xs text-gray-900 mt-1 truncate">{b.badge_name}</div>
-                                                <div className="text-[10px] text-gray-400 truncate">{b.description || 'No description'}</div>
-                                                <button onClick={e => { e.stopPropagation(); if (confirm('Delete?')) d.deleteBadge(b.id); }} className="absolute top-2 right-2 text-red-400 opacity-0 group-hover:opacity-100 hover:bg-red-50 p-1 rounded-lg transition"><Trash2 size={11} /></button>
+
+                                    {/* ── Badges ── */}
+                                    <div className="space-y-3">
+                                        <h3 className="text-sm font-black text-emerald-600 uppercase tracking-wider border-b border-gray-200 pb-2">Achievement Badges</h3>
+                                        <div className={`${card} p-4 space-y-3`}>
+                                            <input value={badgeForm.badge_name} onChange={e => setBadgeForm({ ...badgeForm, badge_name: e.target.value })} placeholder="Badge Name" className={inp} />
+                                            <input value={badgeForm.badge_icon} onChange={e => setBadgeForm({ ...badgeForm, badge_icon: e.target.value })} placeholder="Icon (e.g. ph-medal)" className={inp} />
+                                            <textarea value={badgeForm.description} onChange={e => setBadgeForm({ ...badgeForm, description: e.target.value })} placeholder="Description" className={`${inp} h-14 resize-none`} />
+                                            <input value={badgeForm.xp_reward} onChange={e => setBadgeForm({ ...badgeForm, xp_reward: e.target.value })} type="number" placeholder="Points Reward" className={inp} />
+                                            <div className="flex gap-2">
+                                                {editBadgeId && <button onClick={() => { setEditBadgeId(null); setBadgeForm({ badge_name: '', badge_icon: '', xp_reward: '', description: '' }); }} className={`${btn} w-1/3 bg-gray-100 text-gray-600`}>Cancel</button>}
+                                                <button onClick={async () => { await d.saveBadge(badgeForm, editBadgeId || undefined); setEditBadgeId(null); setBadgeForm({ badge_name: '', badge_icon: '', xp_reward: '', description: '' }); }} className={`${btn} flex-1`} style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: '#ffffff' }}>{editBadgeId ? 'Update' : 'Add Badge'}</button>
                                             </div>
-                                        ))}
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
+                                            {d.badges.map((b: any) => (
+                                                <div key={b.id} onClick={() => { setEditBadgeId(b.id); setBadgeForm(b); }} className={`${card} p-3 cursor-pointer group hover:shadow-md transition relative`}>
+                                                    <div className="flex justify-between"><Medal size={16} className="text-emerald-500" /><span className="text-[9px] bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full font-bold">+{b.xp_reward} pts</span></div>
+                                                    <div className="font-bold text-xs text-gray-900 mt-1 truncate">{b.badge_name}</div>
+                                                    <div className="text-[10px] text-gray-400 truncate">{b.description || 'No description'}</div>
+                                                    <button onClick={e => { e.stopPropagation(); if (confirm('Delete?')) d.deleteBadge(b.id); }} className="absolute top-2 right-2 text-red-400 opacity-0 group-hover:opacity-100 hover:bg-red-50 p-1 rounded-lg transition"><Trash2 size={11} /></button>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -447,7 +513,7 @@ export default function SuperAdminPage() {
                             <div className="space-y-5">
                                 <div className={`${card} p-5`}>
                                     <h3 className="text-sm font-black text-blue-600 mb-3 flex items-center gap-2"><Bell size={15} /> Broadcast Notification</h3>
-                                    <div className="flex gap-3"><input value={notifMsg} onChange={e => setNotifMsg(e.target.value)} placeholder="Message..." className={`${inp} flex-1`} /><input value={notifLink} onChange={e => setNotifLink(e.target.value)} placeholder="Link (opt)" className={`${inp} w-1/3 hidden md:block`} /><button onClick={async () => { if (!notifMsg) return; await d.sendNotification(notifMsg, notifLink); setNotifMsg(''); setNotifLink(''); alert('Sent!'); }} className={`${btn} text-white shadow-md`} style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}><Send size={12} className="inline mr-1" />Send</button></div>
+                                    <div className="flex gap-3"><input value={notifMsg} onChange={e => setNotifMsg(e.target.value)} placeholder="Message..." className={`${inp} flex-1`} /><input value={notifLink} onChange={e => setNotifLink(e.target.value)} placeholder="Link (opt)" className={`${inp} w-1/3 hidden md:block`} /><button onClick={async () => { if (!notifMsg) return; await d.sendNotification(notifMsg, notifLink); setNotifMsg(''); setNotifLink(''); alert('Sent!'); }} className={`${btn} shadow-md`} style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: '#ffffff' }}><Send size={12} className="inline mr-1" />Send</button></div>
                                     <div className="mt-3 max-h-32 overflow-y-auto space-y-1">
                                         {d.notifications.length === 0 && <div className="text-xs text-gray-400 italic">No notifications.</div>}
                                         {d.notifications.map(n => (
@@ -465,7 +531,7 @@ export default function SuperAdminPage() {
                                         <input value={appForm.link} onChange={e => setAppForm({ ...appForm, link: e.target.value })} placeholder="URL" className={`${inp} md:col-span-2`} />
                                         <input value={appForm.icon} onChange={e => setAppForm({ ...appForm, icon: e.target.value })} placeholder="Icon" className={inp} />
                                     </div>
-                                    <button onClick={async () => { await d.deployApp(appForm.name, appForm.link, appForm.icon); setAppForm({ name: '', link: '', icon: '' }); }} className={`${btn} mt-3 text-white`} style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>Deploy</button>
+                                    <button onClick={async () => { await d.deployApp(appForm.name, appForm.link, appForm.icon); setAppForm({ name: '', link: '', icon: '' }); }} className={`${btn} mt-3`} style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#ffffff' }}>Deploy</button>
                                     <div className="mt-3 flex flex-wrap gap-2">
                                         {d.apps.map(a => (<div key={a.id} className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 flex items-center gap-2"><Globe size={13} className="text-amber-500" /><span className="text-xs text-gray-900 font-medium">{a.name}</span><button onClick={() => d.deleteApp(a.id)} className="text-red-400 ml-1 hover:text-red-600"><X size={12} /></button></div>))}
                                     </div>
@@ -475,7 +541,7 @@ export default function SuperAdminPage() {
                                     <div className="flex gap-3">
                                         <input value={videoForm.id} onChange={e => setVideoForm({ ...videoForm, id: e.target.value })} placeholder="Video ID" className={`${inp} w-32`} />
                                         <input value={videoForm.title} onChange={e => setVideoForm({ ...videoForm, title: e.target.value })} placeholder="Title" className={`${inp} flex-1`} />
-                                        <button onClick={async () => { await d.publishVideo(videoForm.id, videoForm.title); setVideoForm({ id: '', title: '' }); }} className={`${btn} text-white`} style={{ background: '#ef4444' }}><Youtube size={12} className="inline mr-1" />Publish</button>
+                                        <button onClick={async () => { await d.publishVideo(videoForm.id, videoForm.title); setVideoForm({ id: '', title: '' }); }} className={`${btn}`} style={{ background: '#ef4444', color: '#ffffff' }}><Youtube size={12} className="inline mr-1" />Publish</button>
                                     </div>
                                     <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
                                         {d.videos.map(v => (<div key={v.id} className="flex items-center gap-3 bg-gray-50 p-2.5 rounded-xl hover:bg-gray-100 transition"><img src={`https://img.youtube.com/vi/${v.youtube_id}/default.jpg`} className="w-12 h-9 object-cover rounded-lg" alt="" /><div className="flex-1 min-w-0 text-xs text-gray-900 font-medium truncate">{v.title}</div><button onClick={() => d.deleteVideo(v.id)} className="text-red-400 p-1 hover:text-red-600"><Trash2 size={13} /></button></div>))}
@@ -483,6 +549,184 @@ export default function SuperAdminPage() {
                                 </div>
                             </div>
                         )}
+
+                        {/* ═══ CATEGORIES ═══ */}
+                        {tab === 'categories' && (() => {
+                            const ICONS = [
+                                // 🐍 Python / Coding
+                                '🐍', '💻', '⌨️', '🖥️', '👨‍💻', '👩‍💻', '🧑‍💻', '📟', '🔣', '🔢',
+                                // 🎨 Web Design / UI
+                                '🎨', '🌐', '🖌️', '✏️', '🎭', '📐', '📏', '🖼️', '🎆', '💅',
+                                // 📡 IoT / Hardware
+                                '📡', '🔌', '💡', '🔋', '📠', '🖨️', '🔩', '⚙️', '🛠️', '🔧',
+                                // 🤖 AI / Machine Learning
+                                '🤖', '🧠', '🧬', '🔬', '🧪', '📊', '📈', '📉', '🎯', '🔮',
+                                // 🌐 Networking
+                                '🌍', '🛜', '📶', '📤', '📥', '🔗', '🧭', '📲', '📳', '🔄',
+                                // 🔒 Cyber Security
+                                '🔒', '🛡️', '🔑', '🔐', '🚫', '⚠️', '🔍', '🕵️', '👁️', '🧱',
+                                // 📊 MS Office / Productivity
+                                '📊', '📄', '📝', '📋', '📎', '📌', '📁', '📂', '📑', '🗂️',
+                                // 💻 Operating System
+                                '🖥️', '💾', '💿', '📀', '🗃️', '🗄️', '🖱️', '🖲️', '🔲', '⬛',
+                                // ☁️ Cloud / Database
+                                '☁️', '🗄️', '📦', '🏗️', '🔧', '⛓️', '🧊', '💎', '🚀', '⭐',
+                                // 📱 Mobile / Apps
+                                '📱', '📲', '🤳', '📸', '🎥', '🎬', '📺', '🔔', '💬', '📧',
+                                // 🎮 Gaming / Fun
+                                '🎮', '🕹️', '👾', '🏆', '🥇', '🎪', '🎵', '🎶', '🎤', '🪄',
+                                // 📚 Education / General
+                                '📚', '📖', '🎓', '🏫', '✅', '❌', '⚡', '🔥', '❤️', '🌟'
+                            ];
+                            const PRESET_COLORS = [
+                                '#6366f1', '#8b5cf6', '#ec4899', '#ef4444', '#f59e0b', '#10b981',
+                                '#06b6d4', '#0ea5e9', '#3b82f6', '#f97316', '#84cc16', '#14b8a6',
+                                '#e11d48', '#9333ea', '#0891b2', '#65a30d', '#d946ef', '#475569'
+                            ];
+                            const emptyCat = { name: '', emoji: '📚', color: '#6366f1', bgColor: '#eef2ff', textColor: '#4f46e5' };
+                            return (
+                                <div className="space-y-5">
+                                    <div className={`${card} p-5`}>
+                                        <h3 className="text-sm font-black text-gray-900 mb-4 flex items-center gap-2"><FolderOpen size={16} style={{ color: '#0ea5e9' }} /> {editCatId ? '✏️ Edit Category' : '➕ Add New Category'}</h3>
+
+                                        {/* Name */}
+                                        <div className="mb-4">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Category Name</label>
+                                            <input value={catForm.name} onChange={e => setCatForm({ ...catForm, name: e.target.value })} placeholder="e.g. Python, Web Design, IoT..." className={inp} />
+                                        </div>
+
+                                        {/* Icon Picker */}
+                                        <div className="mb-4">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Select Icon</label>
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl border-2 border-dashed border-gray-200" style={{ background: catForm.bgColor }}>{catForm.emoji}</div>
+                                                <button onClick={() => setShowIconPicker(!showIconPicker)} className={`${btn} text-xs`} style={{ background: showIconPicker ? '#6366f1' : '#f1f5f9', color: showIconPicker ? '#fff' : '#475569' }}>
+                                                    {showIconPicker ? 'Close Icons' : '🎯 Choose Icon'}
+                                                </button>
+                                                <input value={catForm.emoji} onChange={e => setCatForm({ ...catForm, emoji: e.target.value })} placeholder="Or type emoji" className={`${inp} w-24`} />
+                                            </div>
+                                            {showIconPicker && (
+                                                <div className="grid grid-cols-10 gap-1.5 p-3 rounded-xl bg-gray-50 border border-gray-200 max-h-40 overflow-y-auto">
+                                                    {ICONS.map((ic, i) => (
+                                                        <button key={i} onClick={() => { setCatForm({ ...catForm, emoji: ic }); setShowIconPicker(false); }}
+                                                            className={`w-9 h-9 rounded-lg flex items-center justify-center text-lg hover:bg-white hover:shadow-md transition ${catForm.emoji === ic ? 'ring-2 ring-indigo-500 bg-white shadow-md' : ''}`}>
+                                                            {ic}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Colors Row */}
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                            {/* Badge Color */}
+                                            <div>
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">🎨 Badge / Tab Color</label>
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <input type="color" value={catForm.color} onChange={e => setCatForm({ ...catForm, color: e.target.value })} className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer" />
+                                                    <input value={catForm.color} onChange={e => setCatForm({ ...catForm, color: e.target.value })} className={`${inp} flex-1`} />
+                                                </div>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {PRESET_COLORS.map(c => (
+                                                        <button key={c} onClick={() => setCatForm({ ...catForm, color: c })} className={`w-5 h-5 rounded-full border-2 transition hover:scale-125 ${catForm.color === c ? 'border-gray-900 scale-110' : 'border-transparent'}`} style={{ background: c }} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            {/* Background Color */}
+                                            <div>
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">🖼️ Background Color</label>
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <input type="color" value={catForm.bgColor} onChange={e => setCatForm({ ...catForm, bgColor: e.target.value })} className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer" />
+                                                    <input value={catForm.bgColor} onChange={e => setCatForm({ ...catForm, bgColor: e.target.value })} className={`${inp} flex-1`} />
+                                                </div>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {['#eef2ff', '#faf5ff', '#fce7f3', '#fee2e2', '#fef3c7', '#ecfdf5', '#e0f2fe', '#f0f9ff', '#f8fafc', '#f1f5f9', '#fff7ed', '#f0fdf4', '#fdf2f8', '#ede9fe', '#e0e7ff', '#cffafe', '#d1fae5', '#fef9c3'].map(c => (
+                                                        <button key={c} onClick={() => setCatForm({ ...catForm, bgColor: c })} className={`w-5 h-5 rounded-full border-2 transition hover:scale-125 ${catForm.bgColor === c ? 'border-gray-900 scale-110' : 'border-gray-300'}`} style={{ background: c }} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            {/* Text Color */}
+                                            <div>
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">✍️ Text Color</label>
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <input type="color" value={catForm.textColor} onChange={e => setCatForm({ ...catForm, textColor: e.target.value })} className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer" />
+                                                    <input value={catForm.textColor} onChange={e => setCatForm({ ...catForm, textColor: e.target.value })} className={`${inp} flex-1`} />
+                                                </div>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {['#4f46e5', '#7c3aed', '#db2777', '#dc2626', '#d97706', '#059669', '#0891b2', '#0284c7', '#1e40af', '#ea580c', '#65a30d', '#0d9488', '#be123c', '#7e22ce', '#0e7490', '#4d7c0f', '#c026d3', '#334155'].map(c => (
+                                                        <button key={c} onClick={() => setCatForm({ ...catForm, textColor: c })} className={`w-5 h-5 rounded-full border-2 transition hover:scale-125 ${catForm.textColor === c ? 'border-gray-900 scale-110' : 'border-transparent'}`} style={{ background: c }} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Live Preview */}
+                                        <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 mb-4">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase block mb-3">👁️ LIVE PREVIEW</label>
+                                            <div className="flex flex-wrap items-center gap-3">
+                                                {/* Badge style */}
+                                                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: `${catForm.color}15`, color: catForm.color, border: `1.5px solid ${catForm.color}30` }}>{catForm.emoji} {catForm.name || 'Category'}</div>
+                                                {/* Dashboard tab style */}
+                                                <div className="px-3.5 py-2 rounded-xl text-[11px] font-bold" style={{ background: catForm.color, color: '#ffffff', boxShadow: `0 4px 14px ${catForm.color}35` }}>{catForm.emoji} {catForm.name || 'Tab'}</div>
+                                                {/* Card icon style */}
+                                                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ background: catForm.bgColor, color: catForm.textColor, border: `1.5px solid ${catForm.color}30` }}>{catForm.emoji}</div>
+                                                {/* Full card preview */}
+                                                <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: catForm.bgColor, border: `1px solid ${catForm.color}25` }}>
+                                                    <span className="text-base">{catForm.emoji}</span>
+                                                    <span className="text-xs font-bold" style={{ color: catForm.textColor }}>{catForm.name || 'Category Name'}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="flex gap-2">
+                                            {editCatId && <button onClick={() => { setEditCatId(null); setCatForm(emptyCat); }} className={`${btn} bg-gray-100 text-gray-500`}>✖ Cancel</button>}
+                                            <button onClick={async () => {
+                                                if (!catForm.name.trim()) return alert('Category name is required');
+                                                await d.saveCategory({ name: catForm.name.trim(), emoji: catForm.emoji, color: catForm.color, bgColor: catForm.bgColor, textColor: catForm.textColor, order: d.categories.length }, editCatId || undefined);
+                                                setCatForm(emptyCat); setEditCatId(null);
+                                            }} className={`${btn} shadow-md`} style={{ background: 'linear-gradient(135deg, #0ea5e9, #0284c7)', color: '#ffffff' }}>
+                                                {editCatId ? <><Save size={12} className="inline mr-1" /> Update Category</> : <><Plus size={12} className="inline mr-1" /> Add Category</>}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Category Cards Grid */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                        {d.categories.length === 0 && <div className="col-span-full text-center py-12 text-gray-400 text-sm">📂 No categories yet. Add one above!</div>}
+                                        {d.categories.map((c: any) => (
+                                            <div key={c.id} className={`${card} p-4 hover:shadow-lg transition-all group`}>
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{ background: c.bgColor || `${c.color}15`, color: c.textColor || c.color, border: `1.5px solid ${(c.color || '#6366f1')}25` }}>{c.emoji || '📚'}</div>
+                                                        <div>
+                                                            <div className="font-bold text-gray-900 text-sm">{c.name}</div>
+                                                            <div className="flex items-center gap-1.5 mt-0.5">
+                                                                <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: c.color || '#6366f1' }} />
+                                                                <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: c.bgColor || '#eef2ff' }} />
+                                                                <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: c.textColor || '#4f46e5' }} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-1">
+                                                        <button onClick={() => { setEditCatId(c.id); setCatForm({ name: c.name, emoji: c.emoji || '📚', color: c.color || '#6366f1', bgColor: c.bgColor || '#eef2ff', textColor: c.textColor || '#4f46e5' }); }} className="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50"><Pencil size={13} /></button>
+                                                        <button onClick={() => { if (confirm(`Delete "${c.name}"?`)) d.deleteCategory(c.id); }} className="p-1.5 rounded-lg text-red-400 hover:bg-red-50"><Trash2 size={13} /></button>
+                                                    </div>
+                                                </div>
+                                                {/* Mini preview of how it looks */}
+                                                <div className="flex items-center gap-2">
+                                                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold" style={{ background: `${c.color}15`, color: c.color, border: `1px solid ${c.color}30` }}>{c.emoji} {c.name}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="flex items-start gap-2 p-3 rounded-xl" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+                                        <span className="text-sm mt-0.5">💡</span>
+                                        <p className="text-[11px] font-medium" style={{ color: '#166534' }}>Categories you add here will appear in the Test Engine dropdown and Dashboard filter tabs. Changes are instant!</p>
+                                    </div>
+                                </div>
+                            );
+                        })()}
                     </div>
                 </main>
             </div>
@@ -514,7 +758,7 @@ export default function SuperAdminPage() {
                             )}
                             <div className="flex justify-end gap-3 mt-4">
                                 <button onClick={() => setShowQModal(false)} className={`${btn} text-gray-400`}>Cancel</button>
-                                <button onClick={async () => { await d.saveQuestion(selTestId, qForm); setShowQModal(false); }} className={`${btn} text-white`} style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>Save</button>
+                                <button onClick={async () => { await d.saveQuestion(selTestId, qForm); setShowQModal(false); }} className={`${btn}`} style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: '#ffffff' }}>Save</button>
                             </div>
                         </div>
                     </div>
@@ -557,7 +801,7 @@ export default function SuperAdminPage() {
                             <div className="w-20 h-20 rounded-2xl mx-auto mb-3 flex items-center justify-center text-2xl font-bold text-white shadow-lg" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>{profileModal.full_name?.substring(0, 1)}</div>
                             <h3 className="text-xl font-black text-gray-900">{profileModal.full_name}</h3>
                             <div className="text-xs text-gray-400 font-mono">{profileModal.email}</div>
-                            <div className="mt-2 text-indigo-600 font-black text-lg">{profileModal.total_xp || 0} XP</div>
+                            <div className="mt-2 text-indigo-600 font-black text-lg">{profileModal.total_xp || 0} Points</div>
                         </div>
                         <div><div className="text-[10px] text-gray-400 uppercase font-bold mb-2">Badges</div>
                             <div className="flex flex-wrap gap-2">

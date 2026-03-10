@@ -46,6 +46,10 @@ export default function KnoblyAI() {
     const router = useRouter();
     const pathname = usePathname();
     const isHomePage = pathname === '/';
+    const isTestPage = pathname?.startsWith('/test/');
+
+    // Hide AI completely on test pages
+    if (isTestPage) return null;
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');

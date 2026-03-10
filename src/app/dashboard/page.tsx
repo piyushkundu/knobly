@@ -13,13 +13,7 @@ import {
     Monitor, Globe, Cpu, BookOpen, Crown, TrendingUp, Star
 } from 'lucide-react';
 
-const subjects = [
-    { id: 'all', label: 'All', icon: <BookOpen size={13} style={{ color: 'inherit' }} />, color: '#6366f1' },
-    { id: 'it-tools', label: 'IT Tools', icon: <Monitor size={13} style={{ color: 'inherit' }} />, color: '#8b5cf6' },
-    { id: 'web-design', label: 'Web Design', icon: <Globe size={13} style={{ color: 'inherit' }} />, color: '#06b6d4' },
-    { id: 'python', label: 'Python', icon: <Code2 size={13} style={{ color: 'inherit' }} />, color: '#f59e0b' },
-    { id: 'iot', label: 'IoT', icon: <Cpu size={13} style={{ color: 'inherit' }} />, color: '#ec4899' },
-];
+
 
 export default function DashboardPage() {
     const d = useDashboard();
@@ -29,12 +23,16 @@ export default function DashboardPage() {
     const filterBySubject = (tests: any[]) => {
         if (activeSubject === 'all') return tests;
         return tests.filter((t: any) => {
-            const cat = (t.category || '').toLowerCase().replace(/[\s_]+/g, '-');
-            const titleMatch = (t.title || '').toLowerCase().replace(/[\s_]+/g, '-');
-            const catExact = (t.category || '').toLowerCase();
-            return cat === activeSubject || catExact === activeSubject || cat.includes(activeSubject) || titleMatch.includes(activeSubject);
+            const catName = (t.category || '').toLowerCase();
+            return catName === activeSubject.toLowerCase();
         });
     };
+
+    // Build dynamic category tabs from Firestore
+    const dynamicSubjects = [
+        { id: 'all', label: 'All', emoji: '📚', color: '#6366f1' },
+        ...d.categories.map((c: any) => ({ id: c.name, label: c.name, emoji: c.emoji || '📚', color: c.color || '#6366f1' })),
+    ];
 
     // Auth Guard — if not logged in, show login
     const { loading: authLoading } = useAuth();
@@ -205,20 +203,20 @@ export default function DashboardPage() {
                                 <h2 className="text-base font-black" style={{ color: '#0f172a' }}>Available Tests</h2>
                             </div>
                             {/* Subject tabs */}
-                            <div className="flex gap-2 overflow-x-auto pb-1">
-                                {subjects.map(sub => {
+                            <div className="flex flex-wrap gap-2 pb-1">
+                                {dynamicSubjects.map(sub => {
                                     const isActive = activeSubject === sub.id;
                                     return (
                                         <button key={sub.id} onClick={() => setActiveSubject(sub.id)}
-                                            className="flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[11px] font-bold transition-all"
+                                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-[11px] font-bold transition-all hover:shadow-md"
                                             style={{
-                                                background: isActive ? sub.color : '#f8fafc',
-                                                border: isActive ? `1px solid ${sub.color}` : '1px solid #e2e8f0',
+                                                background: isActive ? `linear-gradient(135deg, ${sub.color}, ${sub.color}dd)` : '#f8fafc',
+                                                border: isActive ? `1.5px solid ${sub.color}` : '1.5px solid #e2e8f0',
                                                 color: isActive ? '#ffffff' : '#475569',
-                                                boxShadow: isActive ? `0 4px 14px ${sub.color}35` : 'none',
-                                                transform: isActive ? 'scale(1.05)' : 'scale(1)',
+                                                boxShadow: isActive ? `0 4px 14px ${sub.color}35` : '0 1px 3px rgba(0,0,0,0.04)',
+                                                transform: isActive ? 'scale(1.03)' : 'scale(1)',
                                             }}>
-                                            {sub.icon} {sub.label}
+                                            {sub.emoji} {sub.label}
                                         </button>
                                     );
                                 })}
@@ -434,7 +432,7 @@ export default function DashboardPage() {
                             <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
                                 {(d.attemptHistory.length > 0 ? d.attemptHistory : d.mySimpleResults.map((r: any) => ({
                                     id: r.id, test_title: d.simpleTests.find((t: any) => t.id === r.test_id)?.title || 'Test',
-                                    total_marks: r.total_points || 0, score: r.score || 0, accuracy: r.total_points ? Math.round((r.score / r.total_points) * 100) : 0,
+                                    total_marks: r.total_points || r.score || 0, score: r.score || 0, accuracy: r.total_points ? Math.round((r.score / r.total_points) * 100) : 0,
                                     status: 'SUBMITTED', durationLabel: '-', submitted_at: r.completed_at,
                                 }))).map((row: any) => {
                                     const isAuto = row.status === 'AUTO_SUBMITTED';
@@ -446,7 +444,7 @@ export default function DashboardPage() {
                                             <div className="flex items-center gap-3 pl-4 pr-3 py-3">
                                                 <div className="h-11 w-11 rounded-xl flex flex-col items-center justify-center flex-shrink-0" style={{ background: `linear-gradient(135deg, ${accColor}15, ${accColor}25)`, border: `1.5px solid ${accColor}35` }}>
                                                     <span className="text-[13px] font-black" style={{ color: accColor }}>{row.score}</span>
-                                                    <span className="text-[7px] font-bold" style={{ color: `${accColor}99` }}>/{row.total_marks}</span>
+                                                    <span className="text-[7px] font-bold" style={{ color: `${accColor}99` }}>/{row.total_marks} pts</span>
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2">
@@ -577,8 +575,8 @@ function TestCard({ test, attempted, onStart }: { test: any; attempted?: boolean
                     </div>
                     <div className="mt-2 flex items-center gap-2 text-[10px] font-semibold" style={{ color: '#94a3b8' }}>
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Clock size={10} />{test.duration_minutes}m</span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Target size={10} />{test.total_marks}mk</span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#ecfdf5', color: '#10b981' }}><Zap size={10} />{test.xp_reward}pts</span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Target size={10} />{test.total_marks || test.total_points || 0}Q</span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#ecfdf5', color: '#10b981' }}><Zap size={10} />{test.xp_reward || test.total_marks || 0} pts</span>
                     </div>
                 </div>
             </div>

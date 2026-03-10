@@ -168,7 +168,7 @@ export default function AdminPage() {
                                                     <span className={`text-[9px] px-1.5 py-0.5 rounded border uppercase ${t.mode === 'LIVE' ? 'text-rose-400 border-rose-400/30' : 'text-emerald-400 border-emerald-400/30'}`}>{t.mode}</span>
                                                 </div>
                                                 <div className="text-[10px] text-gray-500 flex gap-2">
-                                                    <span>{t.track_id}</span> • <span>{t.total_marks} Marks</span> • <span>{t.duration_minutes}m</span>
+                                                    <span>{t.track_id}</span> • <span>{t.total_marks} Q</span> • <span>{t.duration_minutes}m</span>
                                                 </div>
                                                 <button onClick={(e) => { e.stopPropagation(); a.deleteTest(t.id); }} className="absolute top-2 right-2 text-gray-600 hover:text-red-500 md:opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 size={14} /></button>
                                             </div>
@@ -203,8 +203,8 @@ export default function AdminPage() {
                                         </div>
                                         <div className="grid grid-cols-3 gap-3 md:gap-4">
                                             <div><label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">Mins</label><input type="number" value={a.currentTest.duration_minutes} onChange={e => a.setCurrentTest({ ...a.currentTest, duration_minutes: +e.target.value })} className={inputCls} /></div>
-                                            <div><label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">Marks</label><input type="number" value={a.currentTest.total_marks} onChange={e => a.setCurrentTest({ ...a.currentTest, total_marks: +e.target.value })} className={inputCls} /></div>
-                                            <div><label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">XP</label><input type="number" value={a.currentTest.xp_reward} onChange={e => a.setCurrentTest({ ...a.currentTest, xp_reward: +e.target.value })} className={inputCls} /></div>
+                                            <div><label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">Questions</label><input type="number" value={a.currentTest.total_marks} onChange={e => a.setCurrentTest({ ...a.currentTest, total_marks: +e.target.value })} className={inputCls} /></div>
+                                            <div><label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">Total Points</label><input type="number" value={a.currentTest.xp_reward} onChange={e => a.setCurrentTest({ ...a.currentTest, xp_reward: +e.target.value })} className={inputCls} /></div>
                                         </div>
                                         <div>
                                             <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">Category (Subject)</label>
@@ -271,7 +271,7 @@ export default function AdminPage() {
                                         <table className="w-full text-left text-sm min-w-[600px]">
                                             <thead style={{ background: 'rgba(255,255,255,0.03)' }}>
                                                 <tr className="text-gray-400 text-xs uppercase">
-                                                    <th className="p-3 w-10 text-center">#</th><th className="p-3">Question Text</th><th className="p-3 w-24">Type</th><th className="p-3 w-20 text-center">Marks</th><th className="p-3 w-32 text-center">Actions</th>
+                                                    <th className="p-3 w-10 text-center">#</th><th className="p-3">Question Text</th><th className="p-3 w-24">Type</th><th className="p-3 w-20 text-center">Points</th><th className="p-3 w-32 text-center">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-white/5">
@@ -281,7 +281,7 @@ export default function AdminPage() {
                                                         <td className="p-3 text-center text-gray-500">{idx + 1}</td>
                                                         <td className="p-3 truncate max-w-lg">{q.question_text}</td>
                                                         <td className="p-3 text-xs"><span className="px-2 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.1)' }}>{q.question_type}</span></td>
-                                                        <td className="p-3 text-center font-mono">{q.marks}</td>
+                                                        <td className="p-3 text-center font-mono">1</td>
                                                         <td className="p-3 text-center flex justify-center gap-2">
                                                             <button onClick={() => a.editQuestion(q)} className="text-blue-400 hover:text-white"><Pencil size={14} /></button>
                                                             <button onClick={() => a.deleteQuestion(q.id)} className="text-red-400 hover:text-white"><Trash2 size={14} /></button>
@@ -312,7 +312,7 @@ export default function AdminPage() {
                                 </div>
                                 <div className="rounded-xl overflow-hidden min-h-[300px] overflow-x-auto" style={glass}>
                                     <table className="w-full text-left text-sm min-w-[700px]">
-                                        <thead style={{ background: 'rgba(255,255,255,0.03)' }}><tr className="text-gray-400 text-xs uppercase"><th className="p-3">Student</th><th className="p-3">Test</th><th className="p-3 text-center">Score</th><th className="p-3 text-center">Acc %</th><th className="p-3 text-center">XP</th><th className="p-3 text-center">Status</th><th className="p-3 text-center">Detail</th></tr></thead>
+                                        <thead style={{ background: 'rgba(255,255,255,0.03)' }}><tr className="text-gray-400 text-xs uppercase"><th className="p-3">Student</th><th className="p-3">Test</th><th className="p-3 text-center">Points</th><th className="p-3 text-center">Acc %</th><th className="p-3 text-center">Earned</th><th className="p-3 text-center">Status</th><th className="p-3 text-center">Detail</th></tr></thead>
                                         <tbody className="divide-y divide-white/5">
                                             {a.results.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-gray-500 text-xs">No results found.</td></tr>}
                                             {a.results.map((r: any) => (
@@ -321,7 +321,7 @@ export default function AdminPage() {
                                                     <td className="p-3 text-xs text-gray-400">{a.getTestName(r.test_id)}</td>
                                                     <td className="p-3 text-center font-bold text-emerald-400">{r.score}</td>
                                                     <td className="p-3 text-center font-mono">{r.accuracy}%</td>
-                                                    <td className="p-3 text-center text-amber-400">+{r.xp_earned}</td>
+                                                    <td className="p-3 text-center text-amber-400">+{r.xp_earned || r.points_earned || 0} pts</td>
                                                     <td className="p-3 text-center"><span className={`text-[9px] uppercase px-2 py-0.5 rounded border ${r.status === 'COMPLETED' ? 'border-emerald-500/30 text-emerald-400' : 'border-blue-500/30 text-blue-400'}`}>{r.status}</span></td>
                                                     <td className="p-3 text-center"><button onClick={() => a.viewAttemptDetail(r)} className="text-xs px-2 py-1 rounded" style={{ background: 'rgba(255,255,255,0.1)' }}>VIEW</button></td>
                                                 </tr>
@@ -374,7 +374,7 @@ export default function AdminPage() {
                                     <div className="p-4 rounded-xl space-y-3" style={{ ...glass, borderColor: a.editingLevelId ? 'rgba(245,158,11,0.5)' : undefined }}>
                                         <div className="grid grid-cols-2 gap-2">
                                             <input value={a.levelForm.level_no} onChange={e => a.setLevelForm({ ...a.levelForm, level_no: e.target.value })} type="number" placeholder="Lvl No" className={inputCls} />
-                                            <input value={a.levelForm.required_xp} onChange={e => a.setLevelForm({ ...a.levelForm, required_xp: e.target.value })} type="number" placeholder="Req XP" className={inputCls} />
+                                            <input value={a.levelForm.required_xp} onChange={e => a.setLevelForm({ ...a.levelForm, required_xp: e.target.value })} type="number" placeholder="Req Points" className={inputCls} />
                                             <input value={a.levelForm.title} onChange={e => a.setLevelForm({ ...a.levelForm, title: e.target.value })} placeholder="Title (e.g. Novice)" className={`${inputCls} col-span-2`} />
                                         </div>
                                         <div className="flex gap-2">
@@ -385,7 +385,7 @@ export default function AdminPage() {
                                     <div className="space-y-2 max-h-80 md:max-h-96 overflow-y-auto pr-2">
                                         {a.levels.map((l: any) => (
                                             <div key={l.id} className="p-3 rounded flex justify-between items-center text-xs group hover:border-amber-500/30 transition-colors" style={glass}>
-                                                <div><span className="font-bold text-white">Lv {l.level_no}: {l.title}</span><div className="text-[10px] text-gray-500">{l.track_id} • {l.required_xp} XP</div></div>
+                                                <div><span className="font-bold text-white">Lv {l.level_no}: {l.title}</span><div className="text-[10px] text-gray-500">{l.track_id} • {l.required_xp} Points</div></div>
                                                 <div className="flex gap-2 md:opacity-60 group-hover:opacity-100">
                                                     <button onClick={() => a.editLevel(l)} className="text-blue-400 hover:text-white p-1"><Pencil size={14} /></button>
                                                     <button onClick={() => a.deleteLevel(l.id)} className="text-red-400 hover:text-white p-1"><Trash2 size={14} /></button>
@@ -405,7 +405,7 @@ export default function AdminPage() {
                                         <input value={a.badgeForm.badge_icon} onChange={e => a.setBadgeForm({ ...a.badgeForm, badge_icon: e.target.value })} placeholder="Icon Class (ph-medal)" className={inputCls} />
                                         <textarea value={a.badgeForm.description} onChange={e => a.setBadgeForm({ ...a.badgeForm, description: e.target.value })} placeholder="Description (Optional)" className={`${inputCls} h-16 resize-none`} />
                                         <div className="flex gap-2 items-center">
-                                            <label className="text-[10px] text-gray-400">XP Reward:</label>
+                                            <label className="text-[10px] text-gray-400">Points Reward:</label>
                                             <input value={a.badgeForm.xp_reward} onChange={e => a.setBadgeForm({ ...a.badgeForm, xp_reward: e.target.value })} type="number" placeholder="0" className={`${inputCls} flex-1`} />
                                         </div>
                                         <div className="flex gap-2 pt-2">
@@ -419,7 +419,7 @@ export default function AdminPage() {
                                             <div key={b.id} onClick={() => a.editBadge(b)} className="p-3 rounded flex flex-col gap-1 relative group cursor-pointer hover:bg-white/10 transition-colors" style={{ ...glass, border: '1px solid transparent' }}>
                                                 <div className="flex items-start justify-between">
                                                     <Medal size={20} className="text-emerald-400" />
-                                                    <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: 'rgba(16,185,129,0.1)', color: '#6ee7b7', border: '1px solid rgba(16,185,129,0.2)' }}>+{b.xp_reward} XP</span>
+                                                    <span className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: 'rgba(16,185,129,0.1)', color: '#6ee7b7', border: '1px solid rgba(16,185,129,0.2)' }}>+{b.xp_reward} pts</span>
                                                 </div>
                                                 <div className="font-bold text-xs text-white mt-1 truncate">{b.badge_name}</div>
                                                 <div className="text-[10px] text-gray-400 leading-tight line-clamp-2 h-8">{b.description || 'No description'}</div>
@@ -581,7 +581,7 @@ export default function AdminPage() {
                             </div>
                             <h3 className="text-xl font-bold text-white">{a.currentProfile.full_name}</h3>
                             <div className="text-xs text-gray-400 font-mono">{a.currentProfile.email}</div>
-                            <div className="mt-2 text-amber-500 font-bold">{a.currentProfile.total_xp || 0} XP</div>
+                            <div className="mt-2 text-amber-500 font-bold">{a.currentProfile.total_xp || 0} Points</div>
                         </div>
                         <div className="space-y-4">
                             <div>

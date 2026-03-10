@@ -21,6 +21,7 @@ export function useSuperAdmin() {
     const [apps, setApps] = useState<any[]>([]);
     const [videos, setVideos] = useState<any[]>([]);
     const [leaderboard, setLeaderboard] = useState<any[]>([]);
+    const [categories, setCategories] = useState<any[]>([]);
 
     // Auth
     useEffect(() => {
@@ -90,6 +91,11 @@ export function useSuperAdmin() {
         const qSnap = await safeDocs('exam_questions');
         setStats({ users: u.length, tests: t.length, questions: qSnap ? qSnap.size : 0, apps: appsArr.length });
 
+        // Load categories
+        const catSnap = await safeDocs('exam_categories');
+        const cats = snapToArr(catSnap).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+        setCategories(cats);
+
         // Build leaderboard from exam_user_state + profiles (deduplicated by user_id)
         const xpSnap = await safeDocs('exam_user_state');
         const xpArr = snapToArr(xpSnap);
@@ -97,14 +103,14 @@ export function useSuperAdmin() {
         u.forEach((p: any) => { profileMap[p.id] = p; });
         let board: any[] = [];
         if (xpArr.length > 0) {
-            // Deduplicate: keep highest XP entry per user_id
+            // Deduplicate: keep highest points entry per user_id
             const userMap: Record<string, any> = {};
             xpArr.forEach((s: any) => {
                 const uid = s.user_id;
                 if (!uid) return;
-                if (!userMap[uid] || (s.total_xp || 0) > (userMap[uid].total_xp || 0)) {
+                if (!userMap[uid] || (s.total_points || s.total_xp || 0) > (userMap[uid].total_xp || 0)) {
                     const prof = profileMap[uid] || {};
-                    userMap[uid] = { id: uid, full_name: prof.full_name || prof.email || 'Unknown', email: prof.email || '', total_xp: s.total_xp || 0, current_level: s.current_level || 1, exam_track: s.track_id || prof.exam_track || 'OLEVEL', stateDocId: s.id };
+                    userMap[uid] = { id: uid, full_name: prof.full_name || prof.email || 'Unknown', email: prof.email || '', total_xp: s.total_points || s.total_xp || 0, current_level: s.current_level || 1, exam_track: s.track_id || prof.exam_track || 'OLEVEL', stateDocId: s.id };
                 }
             });
             board = Object.values(userMap);
@@ -217,7 +223,7 @@ export function useSuperAdmin() {
     };
     const getUserProfile = async (u: any) => {
         const xpSnap = await getDocs(query(collection(db, 'exam_user_state'), where('user_id', '==', u.id)));
-        let xp = 0; if (!xpSnap.empty) xp = xpSnap.docs[0].data().total_xp;
+        let xp = 0; if (!xpSnap.empty) { const data = xpSnap.docs[0].data(); xp = data.total_points || data.total_xp || 0; }
         const bSnap = await getDocs(query(collection(db, 'exam_user_badges'), where('user_id', '==', u.id)));
         const badgeIds = bSnap.docs.map(d => d.data().badge_id);
         const badgeNames = badgeIds.map(bid => badges.find(b => b.id === bid)?.badge_name || bid);
@@ -261,9 +267,17 @@ export function useSuperAdmin() {
     };
     const deleteVideo = async (id: string) => { await deleteDoc(doc(db, 'videos', id)); refreshAll(); };
 
+    // Categories CRUD
+    const saveCategory = async (data: any, editId?: string) => {
+        if (editId) { await updateDoc(doc(db, 'exam_categories', editId), data); }
+        else { await addDoc(collection(db, 'exam_categories'), { ...data, created_at: serverTimestamp() }); }
+        refreshAll();
+    };
+    const deleteCategory = async (id: string) => { await deleteDoc(doc(db, 'exam_categories', id)); refreshAll(); };
+
     return {
         user, isAdmin, loading, syncing, authError, stats,
-        tests, questions, users, levels, badges, results, notifications, apps, videos, leaderboard,
+        tests, questions, users, levels, badges, results, notifications, apps, videos, leaderboard, categories,
         login, logout, refreshAll,
         saveTest, deleteTest,
         loadQuestions, saveQuestion, deleteQuestion, getOptionsForQuestion, importQuestions,
@@ -272,5 +286,6 @@ export function useSuperAdmin() {
         saveLevel, deleteLevel, saveBadge, deleteBadge,
         sendNotification, deleteNotification,
         deployApp, deleteApp, publishVideo, deleteVideo,
+        saveCategory, deleteCategory,
     };
 }

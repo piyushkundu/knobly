@@ -398,14 +398,17 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
             if (!resp || !resp.option_id) return;
             const correctOpt = (q.exam_options || []).find(o => o.is_correct);
             if (correctOpt && correctOpt.id === resp.option_id) {
-                score += (q.marks || 1);
+                score++;
                 correctCount++;
             }
         });
 
         const totalQ = questions.length || 1;
         const accuracy = Math.round((correctCount / totalQ) * 100);
-        const pointsEarned = correctCount;
+        // Points per question = Total Points (xp_reward) / Total Questions
+        const totalPoints = testData.xp_reward || totalQ;
+        const pointsPerQ = totalPoints / totalQ;
+        const pointsEarned = Math.round(correctCount * pointsPerQ);
 
         await updateDoc(doc(db, 'exam_attempts', attempt.id), {
             status: type,
@@ -413,6 +416,7 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
             score,
             accuracy,
             points_earned: pointsEarned,
+            xp_earned: pointsEarned,
         });
 
         // Award points ONLY on first attempt for this test
@@ -431,8 +435,14 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                 const stateSnap = await getDocs(qState);
                 if (!stateSnap.empty) {
                     const stDoc = stateSnap.docs[0];
+                    const currentData = stDoc.data();
+                    // Read existing points from either field (whichever has the value)
+                    const currentTotal = currentData.total_points || currentData.total_xp || 0;
+                    const newTotal = currentTotal + pointsEarned;
+                    // Sync BOTH fields so no points are ever lost
                     await updateDoc(stDoc.ref, {
-                        total_points: (stDoc.data().total_points || 0) + pointsEarned
+                        total_points: newTotal,
+                        total_xp: newTotal
                     });
                 }
             }
@@ -624,7 +634,7 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                         <div className="p-6">
                             <div className="grid grid-cols-2 gap-3 mb-5">
                                 {[
-                                    { label: 'Score', value: `${resultData.score}/${resultData.total}`, color: '#6366f1' },
+                                    { label: 'Points', value: `${resultData.pointsEarned}/${testData?.xp_reward || resultData.total}`, color: '#6366f1' },
                                     { label: 'Accuracy', value: `${resultData.accuracy}%`, color: resultData.accuracy >= 70 ? '#10b981' : '#f59e0b' },
                                     { label: '🪙 Points', value: `+${resultData.pointsEarned}`, color: '#f59e0b' },
                                     { label: 'Status', value: resultData.statusType === 'AUTO_SUBMITTED' ? 'Auto' : 'Done', color: resultData.statusType === 'AUTO_SUBMITTED' ? '#ef4444' : '#10b981' },
@@ -672,8 +682,8 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                                         <div className="text-[9px] font-bold uppercase" style={{ color: '#94a3b8' }}>Questions</div>
                                     </div>
                                     <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                                        <div className="text-base font-black" style={{ color: '#f59e0b' }}>+{testData?.xp_reward || 0}</div>
-                                        <div className="text-[9px] font-bold uppercase" style={{ color: '#94a3b8' }}>XP Reward</div>
+                                        <div className="text-base font-black" style={{ color: '#f59e0b' }}>{testData?.xp_reward || questions.length}</div>
+                                        <div className="text-[9px] font-bold uppercase" style={{ color: '#94a3b8' }}>Total Points</div>
                                     </div>
                                 </div>
                             </div>
@@ -757,7 +767,7 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold" style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
-                                    ⭐ {currentQ.marks || 1} mark{(currentQ.marks || 1) > 1 ? 's' : ''}
+                                    ⭐ {testData ? Math.round((testData.xp_reward || questions.length) / (questions.length || 1)) : 1} pts
                                 </span>
                             </div>
                         </div>

@@ -88,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 user_id: cred.user.uid,
                 track_id: 'OLEVEL',
                 total_xp: 0,
+                total_points: 0,
                 current_level: 1,
                 created_at: serverTimestamp(),
             });
@@ -132,6 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     user_id: uid,
                     track_id: 'OLEVEL',
                     total_xp: 0,
+                    total_points: 0,
                     current_level: 1,
                     created_at: serverTimestamp(),
                 });

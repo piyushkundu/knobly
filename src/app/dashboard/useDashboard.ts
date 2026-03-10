@@ -46,6 +46,7 @@ export function useDashboard() {
     const [simpleTests, setSimpleTests] = useState<any[]>([]);
     const [simpleResults, setSimpleResults] = useState<any[]>([]);
     const [attemptedTestIds, setAttemptedTestIds] = useState<Set<string>>(new Set());
+    const [categories, setCategories] = useState<any[]>([]);
 
     const avatarInitials = useMemo(() => {
         const name = profile?.full_name || user?.displayName || '';
@@ -297,7 +298,7 @@ export function useDashboard() {
             const hist = recentAttempts.map((row: any) => {
                 const t = testMap[row.test_id] || { title: 'Unknown Test' };
                 return {
-                    id: row.id, test_title: t.title, total_marks: t.total_marks || row.score || 0,
+                    id: row.id, test_title: t.title, total_marks: t.total_marks || t.total_points || row.score || 0,
                     durationLabel: t.duration_minutes ? `${t.duration_minutes} min` : '-',
                     status: row.status, score: row.score, accuracy: row.accuracy || 0,
                     submitted_at: row.submitted_at, started_at: row.started_at,
@@ -317,8 +318,8 @@ export function useDashboard() {
         let totalScore = 0, totalAcc = 0, correct = 0, wrong = 0;
         hist.forEach(r => {
             totalScore += r.score || 0; totalAcc += r.accuracy || 0;
-            const m = r.total_marks || 0; const c = Math.round((r.accuracy / 100) * m);
-            correct += c; wrong += Math.max(0, m - c);
+            const totalPts = r.total_marks || 0; const c = Math.round((r.accuracy / 100) * totalPts);
+            correct += c; wrong += Math.max(0, totalPts - c);
         });
         const n = hist.length;
         setStats({ testsCompleted: n, avgScore: n ? totalScore / n : 0, avgAccuracy: n ? totalAcc / n : 0, totalCorrect: correct, totalWrong: wrong });
@@ -375,6 +376,7 @@ export function useDashboard() {
             loadAttempts(),
             loadSimpleTests(),
             loadSimpleResults(),
+            loadCategories(),
         ]);
         setIsLoadingMain(false);
     }
@@ -387,6 +389,14 @@ export function useDashboard() {
 
     useEffect(() => { if (user && !authLoading) initData(); }, [user, authLoading]);
 
+    async function loadCategories() {
+        try {
+            const snap = await getDocs(collection(db, 'exam_categories'));
+            const cats = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+            setCategories(cats);
+        } catch (e) { console.error('loadCategories error:', e); }
+    }
+
     const mySimpleResults = useMemo(() => simpleResults.filter(r => r.user_id === user?.uid), [simpleResults, user]);
 
     return {
@@ -395,6 +405,6 @@ export function useDashboard() {
         isLoadingMain, stats, avatarInitials, totalPoints, currentRank, nextRank, rankProgressPercent, pointsToNextRank, RANKS, getRankForPoints, isLegendUser,
         unlockedTestsForLevel, lockedTestsForLevel, formatDateTime,
         activeTest, setActiveTest, setTrack, trackSaving, trackError, reloadAll,
-        simpleTests, mySimpleResults,
+        simpleTests, mySimpleResults, categories,
     };
 }
