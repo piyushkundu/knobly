@@ -117,7 +117,7 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
 
     // UI State
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-    const [resultData, setResultData] = useState<{ score: number, total: number, accuracy: number, xpEarned: number, statusType: string } | null>(null);
+    const [resultData, setResultData] = useState<{ score: number, total: number, accuracy: number, pointsEarned: number, statusType: string } | null>(null);
 
     const shortInputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -129,8 +129,11 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
 
         const init = async () => {
             try {
-                // 1. Load Test
-                const docSnap = await getDoc(doc(db, 'exam_tests', testId));
+                // 1. Load Test + Questions in parallel
+                const [docSnap, qSnap] = await Promise.all([
+                    getDoc(doc(db, 'exam_tests', testId)),
+                    getDocs(query(collection(db, 'exam_questions'), where('test_id', '==', testId)))
+                ]);
                 if (!docSnap.exists()) {
                     setLoading(false);
                     return;
@@ -138,30 +141,39 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                 const tData = { id: docSnap.id, ...docSnap.data() } as TestData;
                 setTestData(tData);
 
-                // 2. Load Questions
-                const qSnap = await getDocs(query(collection(db, 'exam_questions'), where('test_id', '==', testId)));
-                const loadedQ: QuestionData[] = [];
-                for (const d of qSnap.docs) {
-                    const quest = { id: d.id, ...d.data() } as QuestionData;
-                    const optsSnap = await getDocs(query(collection(db, 'exam_options'), where('question_id', '==', quest.id)));
-                    quest.exam_options = optsSnap.docs.map(o => ({ id: o.id, ...o.data() } as Option));
-                    if (quest.exam_options.length > 0) {
-                        quest.exam_options = shuffleArray(quest.exam_options);
+                // 2. Load ALL options for ALL questions in ONE query
+                const questionIds = qSnap.docs.map(d => d.id);
+                let allOptions: Option[] = [];
+                if (questionIds.length > 0) {
+                    const batches: string[][] = [];
+                    for (let i = 0; i < questionIds.length; i += 30) {
+                        batches.push(questionIds.slice(i, i + 30));
                     }
-                    loadedQ.push(quest);
+                    const optResults = await Promise.all(
+                        batches.map(batch => getDocs(query(collection(db, 'exam_options'), where('question_id', 'in', batch))))
+                    );
+                    optResults.forEach(snap => {
+                        snap.docs.forEach(o => allOptions.push({ id: o.id, ...o.data() } as Option));
+                    });
                 }
+
+                // 3. Map options to questions
+                const optionsByQuestion: Record<string, Option[]> = {};
+                allOptions.forEach(o => {
+                    const qid = (o as any).question_id;
+                    if (!optionsByQuestion[qid]) optionsByQuestion[qid] = [];
+                    optionsByQuestion[qid].push(o);
+                });
+
+                const loadedQ: QuestionData[] = qSnap.docs.map(d => {
+                    const quest = { id: d.id, ...d.data() } as QuestionData;
+                    quest.exam_options = shuffleArray(optionsByQuestion[quest.id] || []);
+                    return quest;
+                });
                 setQuestions(shuffleArray(loadedQ));
 
-                // 3. Create Attempt
+                // Set timer from test data (attempt is created on Start click)
                 const duration = Math.max(1, tData.duration_minutes || 60);
-                const attRef = await addDoc(collection(db, 'exam_attempts'), {
-                    user_id: user.uid,
-                    test_id: testId,
-                    started_at: new Date().toISOString(),
-                    status: 'IN_PROGRESS',
-                    created_at: serverTimestamp()
-                });
-                setAttempt({ id: attRef.id });
                 setTimeLeft(duration * 60);
 
             } catch (err) {
@@ -393,24 +405,36 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
 
         const totalQ = questions.length || 1;
         const accuracy = Math.round((correctCount / totalQ) * 100);
-        const xpEarned = testData.xp_reward || 0;
+        const pointsEarned = correctCount;
 
         await updateDoc(doc(db, 'exam_attempts', attempt.id), {
             status: type,
             submitted_at: new Date().toISOString(),
             score,
             accuracy,
-            xp_earned: xpEarned,
+            points_earned: pointsEarned,
         });
 
-        if (xpEarned > 0 && user) {
-            const qState = query(collection(db, 'exam_user_state'), where('user_id', '==', user.uid));
-            const stateSnap = await getDocs(qState);
-            if (!stateSnap.empty) {
-                const stDoc = stateSnap.docs[0];
-                await updateDoc(stDoc.ref, {
-                    total_xp: (stDoc.data().total_xp || 0) + xpEarned
-                });
+        // Award points ONLY on first attempt for this test
+        if (pointsEarned > 0 && user) {
+            const priorQ = query(
+                collection(db, 'exam_attempts'),
+                where('user_id', '==', user.uid),
+                where('test_id', '==', testData.id),
+                where('status', 'in', ['SUBMITTED', 'AUTO_SUBMITTED'])
+            );
+            const priorSnap = await getDocs(priorQ);
+            const isFirstAttempt = priorSnap.docs.filter(d => d.id !== attempt.id).length === 0;
+
+            if (isFirstAttempt) {
+                const qState = query(collection(db, 'exam_user_state'), where('user_id', '==', user.uid));
+                const stateSnap = await getDocs(qState);
+                if (!stateSnap.empty) {
+                    const stDoc = stateSnap.docs[0];
+                    await updateDoc(stDoc.ref, {
+                        total_points: (stDoc.data().total_points || 0) + pointsEarned
+                    });
+                }
             }
         }
 
@@ -418,23 +442,24 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
             try { await exitFullscreenAny(); } catch (e) { }
         }
 
-        setResultData({ score, total: totalQ, accuracy, xpEarned, statusType: type });
+        setResultData({ score, total: totalQ, accuracy, pointsEarned, statusType: type });
     };
 
     // --------------------------------------------------
     // RENDER HELPERS
     // --------------------------------------------------
     if (loading) {
-        return <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-400">Loading...</div>;
+        return <div className="min-h-screen flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)' }}><div className="animate-spin h-8 w-8 rounded-full border-3 border-indigo-200 border-t-indigo-500 mb-3"></div><span className="text-sm font-medium" style={{ color: '#6366f1' }}>Loading exam...</span></div>;
     }
 
     if (!testData || questions.length === 0) {
         return (
-            <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-                <div className="max-w-md w-full text-center space-y-4">
-                    <h1 className="text-xl text-white font-bold">Exam Invalid</h1>
-                    <p className="text-slate-400">This exam could not be loaded or has no questions.</p>
-                    <button onClick={() => router.push('/dashboard')} className="px-4 py-2 bg-sky-500/20 text-sky-300 rounded-xl hover:bg-sky-500/30 transition">Return to Dashboard</button>
+            <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)' }}>
+                <div className="max-w-md w-full text-center space-y-4 rounded-3xl p-8" style={{ background: '#ffffff', boxShadow: '0 8px 40px rgba(0,0,0,0.08)', border: '1px solid #e2e8f0' }}>
+                    <div className="h-16 w-16 rounded-2xl mx-auto flex items-center justify-center mb-2" style={{ background: '#fef2f2', border: '2px solid #fecaca' }}><span className="text-2xl">❌</span></div>
+                    <h1 className="text-xl font-black" style={{ color: '#0f172a' }}>Exam Invalid</h1>
+                    <p className="text-sm font-medium" style={{ color: '#64748b' }}>This exam could not be loaded or has no questions.</p>
+                    <button onClick={() => router.push('/dashboard')} className="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition hover:scale-[1.02]" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 14px rgba(99,102,241,0.35)' }}>Return to Dashboard</button>
                 </div>
             </div>
         );
@@ -444,142 +469,141 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
     const existingResp = responsesMap[currentQ.id] || {};
 
     const getPaletteClass = (qId: string, idx: number) => {
-        if (idx === currentIndex) return "bg-sky-500/90 border-sky-300 text-white shadow-k-glow";
+        if (idx === currentIndex) return "bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-200";
         const ans = responsesMap[qId];
         if (ans && (ans.option_id || (ans.short_answer && ans.short_answer.trim() !== ''))) {
-            return "bg-emerald-500/80 border-emerald-300 text-white";
+            return "bg-emerald-500 border-emerald-400 text-white";
         }
         if (visitedSet.has(qId)) {
-            return "bg-amber-500/80 border-amber-300 text-white";
+            return "bg-amber-400 border-amber-300 text-white";
         }
-        return "bg-slate-800 border-slate-700 text-slate-400";
+        return "bg-gray-100 border-gray-200 text-gray-500";
     };
 
     const isTimerPulse = timeLeft !== null && timeLeft < 60 && !examFinished;
 
+    // Click to re-enter fullscreen when user clicks anywhere
+    const handleContainerClick = () => {
+        if (examStarted && !examFinished && !isFullscreenAny()) {
+            try {
+                const el = document.documentElement as any;
+                if (el.requestFullscreen) el.requestFullscreen().catch(() => { });
+                else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+                else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+                else if (el.msRequestFullscreen) el.msRequestFullscreen();
+            } catch (e) { }
+        }
+    };
+
+    // Create attempt when user clicks Start (deferred from init for faster load)
+    const createAttemptAndStart = async () => {
+        if (!user || !testData) return;
+        try {
+            const attRef = await addDoc(collection(db, 'exam_attempts'), {
+                user_id: user.uid,
+                test_id: testId,
+                started_at: new Date().toISOString(),
+                status: 'IN_PROGRESS',
+                created_at: serverTimestamp()
+            });
+            setAttempt({ id: attRef.id });
+        } catch (e) { console.error('Attempt create error:', e); }
+        try {
+            const el = document.documentElement as any;
+            if (el.requestFullscreen) el.requestFullscreen().catch(() => { });
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+            else if (el.msRequestFullscreen) el.msRequestFullscreen();
+        } catch (e) { }
+        setExamStarted(true);
+    };
+
     return (
-        <div className="min-h-screen text-slate-100 overflow-x-hidden selection:bg-rose-500/30 selection:text-rose-200">
-            <Script src="https://unpkg.com/@phosphor-icons/web" strategy="lazyOnload" />
+        <div className="min-h-screen overflow-x-hidden" data-exam-page="true" style={{ background: '#f0f2f5' }} onClick={handleContainerClick}>
 
-            {/* Background elements (matching HTML exactly) */}
-            <div className="fixed inset-0 -z-10">
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"></div>
-                <div className="absolute inset-0 bg-k-grid bg-[size:42px_42px] opacity-[0.32] mix-blend-soft-light" style={{ backgroundImage: 'var(--background-image-k-grid)' }}></div>
-                <div className="absolute -top-24 -left-10 h-72 w-72 bg-sky-500/25 blur-3xl rounded-full"></div>
-                <div className="absolute -bottom-28 -right-12 h-80 w-80 bg-rose-500/25 blur-3xl rounded-full"></div>
-            </div>
-
-            {/* Warning Overlay - clicking anywhere tries to re-enter fullscreen */}
+            {/* Warning Overlay */}
             {warningMsg && (
-                <div
-                    className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/80 backdrop-blur-md px-4 cursor-pointer"
-                    title="Click anywhere to return to exam"
-                    onClick={() => {
-                        try {
-                            if (!isFullscreenAny()) {
-                                const el = document.documentElement as any;
-                                if (el.requestFullscreen) el.requestFullscreen().catch(() => { });
-                                else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-                                else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
-                                else if (el.msRequestFullscreen) el.msRequestFullscreen();
-                            }
-                        } catch (e) { }
-                        setWarningMsg(null);
-                    }}
-                >
-                    <div className="w-full max-w-sm rounded-3xl border border-rose-400/80 bg-gradient-to-br from-rose-900 via-slate-950 to-rose-900 shadow-[0_0_32px_rgba(248,113,113,0.6)] px-5 py-6 flex flex-col items-center text-center">
-                        <div className="flex items-center justify-center gap-2 mb-3">
-                            <div className="h-10 w-10 rounded-full bg-rose-500/20 flex items-center justify-center animate-pulse">
-                                <i className="ph ph-warning-octagon text-3xl text-rose-400"></i>
+                <div className="fixed inset-0 z-[60] flex items-center justify-center px-4" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)' }}
+                    onClick={(e) => { e.stopPropagation(); try { if (!isFullscreenAny()) { const el = document.documentElement as any; if (el.requestFullscreen) el.requestFullscreen().catch(() => { }); else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen(); } } catch (e) { } setWarningMsg(null); }}>
+                    <div className="w-full max-w-sm rounded-3xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 25px 60px rgba(0,0,0,0.2)' }}>
+                        <div className="p-5 text-center" style={{ background: 'linear-gradient(135deg, #fef2f2, #fee2e2)', borderBottom: '1px solid #fecaca' }}>
+                            <div className="h-14 w-14 rounded-2xl mx-auto flex items-center justify-center mb-3" style={{ background: '#fee2e2', border: '2px solid #fca5a5' }}>
+                                <span className="text-2xl">⚠️</span>
                             </div>
+                            <h3 className="text-sm font-black uppercase tracking-wider" style={{ color: '#dc2626' }}>Security Breach</h3>
+                            <p className="text-base font-bold mt-1" style={{ color: '#0f172a' }}>{warningMsg.title}</p>
+                            <p className="text-xs mt-1" style={{ color: '#991b1b' }}>{warningMsg.desc}</p>
                         </div>
-                        <h3 className="text-sm uppercase tracking-[0.2em] text-rose-300 font-bold mb-1">Security Breach</h3>
-                        <p className="text-lg font-semibold text-white mb-1">{warningMsg.title}</p>
-                        <p className="text-xs text-rose-200 max-w-[250px] leading-relaxed">{warningMsg.desc}</p>
-                        <div className="mt-4 w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-rose-500 w-full animate-[shrinkX_5s_linear_forwards] origin-left"></div>
+                        <div className="p-4">
+                            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#fee2e2' }}>
+                                <div className="h-full rounded-full animate-[shrinkX_5s_linear_forwards] origin-left" style={{ background: '#ef4444' }}></div>
+                            </div>
+                            <p className="mt-2 text-center text-[10px] font-bold" style={{ color: '#ef4444' }}>Warning {warningCount} of {MAX_WARNINGS}</p>
                         </div>
-                        <p className="mt-3 text-[11px] font-mono text-rose-400">Warning {warningCount} of {MAX_WARNINGS}</p>
                     </div>
                 </div>
             )}
 
             {/* Confirm Overlay */}
             {confirmMsg && (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm px-4">
-                    <div className="w-full max-w-xs sm:max-w-sm rounded-3xl border border-white/10 bg-slate-900 shadow-2xl p-5 transform transition-all">
-                        <div className="flex flex-col items-center text-center gap-3">
-                            <div className="h-12 w-12 rounded-2xl bg-slate-800 flex items-center justify-center border border-slate-700">
-                                <i className="ph ph-question text-2xl text-sky-400"></i>
+                <div className="fixed inset-0 z-[70] flex items-center justify-center px-4" style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }} onClick={e => e.stopPropagation()}>
+                    <div className="w-full max-w-sm rounded-3xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 25px 60px rgba(0,0,0,0.2)' }}>
+                        <div className="p-6 text-center">
+                            <div className="h-14 w-14 rounded-2xl mx-auto flex items-center justify-center mb-3" style={{ background: '#eef2ff', border: '2px solid #c7d2fe' }}>
+                                <span className="text-2xl">❓</span>
                             </div>
-                            <div>
-                                <h3 className="text-base font-semibold text-white">{confirmMsg.title}</h3>
-                                <p className="text-xs text-slate-400 mt-1">{confirmMsg.text}</p>
-                            </div>
-                            <div className="grid grid-cols-2 gap-3 w-full mt-2">
-                                <button onClick={() => setConfirmMsg(null)} className="w-full py-2 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition">Cancel</button>
-                                <button onClick={() => { confirmMsg.onConfirm(); setConfirmMsg(null); }} className="w-full py-2 rounded-xl border border-sky-500/50 bg-sky-500/20 text-sky-100 text-xs font-medium hover:bg-sky-500/30 transition shadow-lg">Yes, Proceed</button>
-                            </div>
+                            <h3 className="text-base font-bold" style={{ color: '#0f172a' }}>{confirmMsg.title}</h3>
+                            <p className="text-xs mt-1" style={{ color: '#64748b' }}>{confirmMsg.text}</p>
+                        </div>
+                        <div className="px-6 pb-6 grid grid-cols-2 gap-3">
+                            <button onClick={() => setConfirmMsg(null)} className="py-2.5 rounded-xl text-xs font-bold transition hover:bg-gray-100" style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>Cancel</button>
+                            <button onClick={() => { confirmMsg.onConfirm(); setConfirmMsg(null); }} className="py-2.5 rounded-xl text-xs font-bold text-white transition hover:scale-[1.02]" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 14px rgba(99,102,241,0.35)' }}>Yes, Proceed</button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Mobile Drawer Overlay */}
+            {/* Mobile Drawer */}
             {mobileDrawerOpen && (
-                <div className="fixed inset-0 z-50 lg:hidden">
-                    <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={() => setMobileDrawerOpen(false)}></div>
-                    <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-[320px] bg-slate-900 border-l border-white/10 flex flex-col shadow-2xl animate-fade-in-right">
-                        <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between bg-slate-950">
-                            <h2 className="text-sm font-semibold flex items-center gap-2">
-                                <i className="ph ph-squares-four text-sky-400"></i> Palette & Info
-                            </h2>
-                            <button onClick={() => setMobileDrawerOpen(false)} className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 hover:text-white">
-                                <i className="ph ph-x"></i>
-                            </button>
+                <div className="fixed inset-0 z-50 lg:hidden" onClick={e => e.stopPropagation()}>
+                    <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.3)' }} onClick={() => setMobileDrawerOpen(false)}></div>
+                    <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-[320px] flex flex-col shadow-2xl animate-fade-in-right" style={{ background: '#ffffff', borderLeft: '1px solid #e2e8f0' }}>
+                        <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
+                            <h2 className="text-sm font-bold flex items-center gap-2" style={{ color: '#0f172a' }}>📋 Palette & Info</h2>
+                            <button onClick={() => setMobileDrawerOpen(false)} className="h-8 w-8 rounded-full flex items-center justify-center" style={{ background: '#f1f5f9', color: '#64748b' }}>✕</button>
                         </div>
-                        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-5">
                             <div>
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Questions</span>
-                                </div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider block mb-2" style={{ color: '#94a3b8' }}>Questions</span>
                                 <div className="grid grid-cols-5 gap-2">
                                     {questions.map((q, idx) => (
                                         <button key={q.id} onClick={() => { setCurrentIndex(idx); setVisitedSet(v => new Set(v).add(q.id)); setMobileDrawerOpen(false); }}
-                                            className={`h-9 w-9 rounded-lg flex items-center justify-center text-xs border transition font-medium ${getPaletteClass(q.id, idx)}`}>
+                                            className={`h-9 w-9 rounded-lg flex items-center justify-center text-xs border transition font-bold ${getPaletteClass(q.id, idx)}`}>
                                             {idx + 1}
                                         </button>
                                     ))}
                                 </div>
                             </div>
-                            <div className="bg-slate-800/50 rounded-xl p-3 border border-white/5 space-y-2 text-[11px]">
-                                <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-emerald-500"></span><span className="text-slate-300">Answered</span></div>
-                                <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-amber-500"></span><span className="text-slate-300">Visited</span></div>
-                                <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-sky-500"></span><span className="text-slate-300">Current</span></div>
-                                <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-slate-600"></span><span className="text-slate-400">Not Visited</span></div>
+                            <div className="rounded-xl p-3 space-y-1.5" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                                <div className="flex items-center gap-2 text-[10px] font-medium" style={{ color: '#64748b' }}><span className="h-3 w-3 rounded-md bg-emerald-500"></span>Answered</div>
+                                <div className="flex items-center gap-2 text-[10px] font-medium" style={{ color: '#64748b' }}><span className="h-3 w-3 rounded-md bg-amber-400"></span>Visited</div>
+                                <div className="flex items-center gap-2 text-[10px] font-medium" style={{ color: '#64748b' }}><span className="h-3 w-3 rounded-md bg-indigo-500"></span>Current</div>
+                                <div className="flex items-center gap-2 text-[10px] font-medium" style={{ color: '#64748b' }}><span className="h-3 w-3 rounded-md" style={{ background: '#e2e8f0' }}></span>Not Visited</div>
                             </div>
-                            <div>
-                                <span className="text-xs font-medium text-rose-400 uppercase tracking-wider block mb-2">Security Status</span>
-                                <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <span className="text-xs text-rose-200">Warnings Issued</span>
-                                        <span className="text-sm font-bold text-rose-400">{warningCount} / {MAX_WARNINGS}</span>
-                                    </div>
-                                    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                                        <div className="h-full bg-rose-500 transition-all duration-300" style={{ width: `${(warningCount / MAX_WARNINGS) * 100}%` }}></div>
-                                    </div>
-                                    <p className="text-[10px] text-rose-300/70 mt-2 leading-tight">If you reach {MAX_WARNINGS} warnings, the exam will auto-submit.</p>
+                            <div className="rounded-xl p-3" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[10px] font-bold" style={{ color: '#dc2626' }}>⚠️ Warnings</span>
+                                    <span className="text-sm font-black" style={{ color: '#dc2626' }}>{warningCount}/{MAX_WARNINGS}</span>
+                                </div>
+                                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#fee2e2' }}>
+                                    <div className="h-full rounded-full transition-all" style={{ width: `${(warningCount / MAX_WARNINGS) * 100}%`, background: '#ef4444' }}></div>
                                 </div>
                             </div>
                         </div>
-                        <div className="p-4 border-t border-white/10 bg-slate-950 flex flex-col gap-2">
-                            <p className="text-[10px] text-slate-500 text-center mb-1">Use the top button to submit.</p>
-                            <button onClick={() => {
-                                setConfirmMsg({
-                                    title: 'Exit Exam?', text: 'Timer continues if you leave.', onConfirm: () => router.push('/dashboard')
-                                });
-                            }} className="w-full py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-xs font-medium flex items-center justify-center gap-2 hover:bg-slate-700 active:scale-95 transition">
-                                <i className="ph ph-arrow-u-up-left text-sm"></i> Back to Dashboard
+                        <div className="p-4" style={{ borderTop: '1px solid #e2e8f0', background: '#f8fafc' }}>
+                            <button onClick={() => { setConfirmMsg({ title: 'Exit Exam?', text: 'Timer continues if you leave.', onConfirm: () => router.push('/dashboard') }); }}
+                                className="w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition" style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                                ← Back to Dashboard
                             </button>
                         </div>
                     </div>
@@ -588,280 +612,295 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
 
             {/* Results Overlay */}
             {resultData && (
-                <div className="fixed inset-0 z-[80] bg-slate-950/95 backdrop-blur-md flex items-center justify-center px-3 sm:px-5 py-4">
-                    <div className="w-full max-w-2xl max-h-[90vh] rounded-3xl border border-white/15 bg-slate-900/95 shadow-2xl overflow-hidden flex flex-col">
-                        <header className="px-5 py-4 border-b border-white/10 flex items-center justify-between gap-3 bg-slate-950/95">
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-emerald-400 to-sky-400 flex items-center justify-center text-slate-950 font-semibold text-lg" style={{ boxShadow: 'var(--shadow-k-neon)' }}>K</div>
-                                <div className="leading-tight">
-                                    <h2 className="text-lg font-semibold flex items-center gap-2">Exam Submitted</h2>
-                                    <p className="text-[11px] text-slate-400">Your results are ready.</p>
-                                </div>
+                <div className="fixed inset-0 z-[80] flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4338ca 60%, #6366f1 100%)' }} onClick={e => e.stopPropagation()}>
+                    <div className="w-full max-w-lg rounded-3xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 25px 60px rgba(0,0,0,0.3)' }}>
+                        <div className="px-6 pt-6 pb-4 text-center" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', borderBottom: '1px solid #c7d2fe' }}>
+                            <div className="h-16 w-16 rounded-full mx-auto flex items-center justify-center mb-3 text-3xl" style={{ background: resultData.accuracy >= 70 ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)', boxShadow: '0 8px 25px rgba(0,0,0,0.15)' }}>
+                                {resultData.accuracy >= 70 ? '🏆' : '📊'}
                             </div>
-                        </header>
-                        <main className="flex-1 p-5 overflow-y-auto scrollbar-thin">
-                            <div className="flex flex-col gap-5">
-                                <div className="rounded-2xl border border-white/12 bg-slate-950/50 px-4 py-4">
-                                    <h3 className="text-sm font-semibold flex items-center gap-2 mb-3"><i className="ph ph-chart-bar text-lg text-sky-300"></i> Performance Summary</h3>
-                                    <div className="grid grid-cols-2 gap-3 text-xs">
-                                        <div className="rounded-xl bg-slate-900 border border-slate-700 px-3 py-3 text-center">
-                                            <div className="text-[10px] text-slate-400 uppercase tracking-wide">Score</div>
-                                            <div className="text-2xl font-bold text-white mt-1">{resultData.score}<span className="text-base text-slate-500 font-normal">/{resultData.total}</span></div>
-                                        </div>
-                                        <div className="rounded-xl bg-slate-900 border border-slate-700 px-3 py-3 text-center">
-                                            <div className="text-[10px] text-slate-400 uppercase tracking-wide">Accuracy</div>
-                                            <div className={`text-2xl font-bold mt-1 ${resultData.accuracy >= 70 ? 'text-emerald-400' : 'text-amber-400'}`}>{resultData.accuracy}%</div>
-                                        </div>
-                                        <div className="rounded-xl bg-slate-900 border border-slate-700 px-3 py-3 text-center">
-                                            <div className="text-[10px] text-slate-400 uppercase tracking-wide">XP Earned</div>
-                                            <div className="text-2xl font-bold text-sky-400 mt-1">+{resultData.xpEarned}</div>
-                                        </div>
-                                        <div className="rounded-xl bg-slate-900 border border-slate-700 px-3 py-3 text-center">
-                                            <div className="text-[10px] text-slate-400 uppercase tracking-wide">Status</div>
-                                            <div className={`text-xs font-bold mt-2 uppercase tracking-wider ${resultData.statusType === 'AUTO_SUBMITTED' ? 'text-rose-400' : 'text-emerald-400'}`}>{resultData.statusType.replace('_', ' ')}</div>
-                                        </div>
+                            <h2 className="text-xl font-black" style={{ color: '#0f172a' }}>Exam {resultData.statusType === 'AUTO_SUBMITTED' ? 'Auto-Submitted' : 'Submitted'}</h2>
+                            <p className="text-xs font-medium mt-1" style={{ color: '#64748b' }}>Your results are ready</p>
+                        </div>
+                        <div className="p-6">
+                            <div className="grid grid-cols-2 gap-3 mb-5">
+                                {[
+                                    { label: 'Score', value: `${resultData.score}/${resultData.total}`, color: '#6366f1' },
+                                    { label: 'Accuracy', value: `${resultData.accuracy}%`, color: resultData.accuracy >= 70 ? '#10b981' : '#f59e0b' },
+                                    { label: '🪙 Points', value: `+${resultData.pointsEarned}`, color: '#f59e0b' },
+                                    { label: 'Status', value: resultData.statusType === 'AUTO_SUBMITTED' ? 'Auto' : 'Done', color: resultData.statusType === 'AUTO_SUBMITTED' ? '#ef4444' : '#10b981' },
+                                ].map((s, i) => (
+                                    <div key={i} className="text-center rounded-2xl p-3" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                                        <div className="text-[9px] font-bold uppercase tracking-wider" style={{ color: '#94a3b8' }}>{s.label}</div>
+                                        <div className="text-xl font-black mt-1" style={{ color: s.color }}>{s.value}</div>
                                     </div>
-                                </div>
-                                <div className="flex flex-col gap-3">
-                                    <button onClick={() => router.push(`/review/${attempt?.id || ''}`)} className="w-full py-3 rounded-xl bg-sky-500/20 border border-sky-500/50 text-sky-100 font-medium flex items-center justify-center gap-2 hover:bg-sky-500/30 transition shadow-lg">
-                                        <i className="ph ph-list-magnifying-glass text-lg"></i> Review Full Analysis & Answers
-                                    </button>
-                                    <button onClick={() => router.push('/dashboard')} className="w-full py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-medium flex items-center justify-center gap-2 hover:bg-slate-700 transition">
-                                        <i className="ph ph-house text-lg"></i> Back to Dashboard
-                                    </button>
-                                </div>
+                                ))}
                             </div>
-                        </main>
+                            <div className="space-y-2">
+                                <button onClick={() => router.push(`/review/${attempt?.id || ''}`)} className="w-full py-3 rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2 transition hover:scale-[1.02]" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 8px 25px rgba(99,102,241,0.35)' }}>
+                                    📋 Review Full Analysis
+                                </button>
+                                <button onClick={() => router.push('/dashboard')} className="w-full py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition hover:bg-gray-100" style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                                    ← Back to Dashboard
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
 
             {/* Start Overlay */}
             {!examStarted && !examFinished && (
-                <div className="fixed inset-0 z-30 flex items-center justify-center bg-slate-950/90 backdrop-blur-xl px-4">
-                    <div className="w-full max-w-md rounded-3xl border border-white/15 bg-slate-900/95 p-5 shadow-2xl">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-sky-400 to-emerald-400 flex items-center justify-center text-slate-950 font-semibold" style={{ boxShadow: 'var(--shadow-k-neon)' }}>K</div>
-                            <div className="leading-tight">
-                                <h2 className="text-lg font-semibold text-white">Secure Exam Mode</h2>
-                                <p className="text-[11px] text-slate-400">Strict anti-cheat protocols are active.</p>
+                <div className="fixed inset-0 z-30 flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4338ca 60%, #6366f1 100%)' }} onClick={e => e.stopPropagation()}>
+                    <div className="w-full max-w-md rounded-3xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 25px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1)' }}>
+                        <div className="px-6 pt-6 pb-4">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="h-11 w-11 rounded-2xl flex items-center justify-center text-white font-black text-lg" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 14px rgba(99,102,241,0.4)' }}>K</div>
+                                <div>
+                                    <h2 className="text-lg font-black" style={{ color: '#0f172a' }}>Secure Exam Mode</h2>
+                                    <p className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>Anti-cheat protocols are active</p>
+                                </div>
+                            </div>
+                            <div className="rounded-2xl p-4 mb-4" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', border: '1px solid #c7d2fe' }}>
+                                <h3 className="text-sm font-bold mb-2" style={{ color: '#3730a3' }}>{testData?.title || 'Exam'}</h3>
+                                <div className="grid grid-cols-3 gap-2">
+                                    <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
+                                        <div className="text-base font-black" style={{ color: '#6366f1' }}>{testData?.duration_minutes || 30}</div>
+                                        <div className="text-[9px] font-bold uppercase" style={{ color: '#94a3b8' }}>Minutes</div>
+                                    </div>
+                                    <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
+                                        <div className="text-base font-black" style={{ color: '#10b981' }}>{questions.length}</div>
+                                        <div className="text-[9px] font-bold uppercase" style={{ color: '#94a3b8' }}>Questions</div>
+                                    </div>
+                                    <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
+                                        <div className="text-base font-black" style={{ color: '#f59e0b' }}>+{testData?.xp_reward || 0}</div>
+                                        <div className="text-[9px] font-bold uppercase" style={{ color: '#94a3b8' }}>XP Reward</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 mb-4">
-                            <ul className="text-[11px] text-rose-100 space-y-2">
-                                <li className="flex items-start gap-2"><i className="ph ph-prohibit text-sm text-rose-400 mt-0.5"></i><span><strong>Right click & Copy</strong> are disabled.</span></li>
-                                <li className="flex items-start gap-2"><i className="ph ph-arrows-out-simple text-sm text-rose-400 mt-0.5"></i><span><strong>Exiting fullscreen</strong> triggers a warning.</span></li>
-                                <li className="flex items-start gap-2"><i className="ph ph-browsers text-sm text-rose-400 mt-0.5"></i><span><strong>Switching tabs</strong> triggers a warning.</span></li>
-                            </ul>
+                        <div className="px-6 pb-4">
+                            <div className="rounded-xl p-3" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
+                                <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#dc2626' }}>⚠️ Exam Rules</p>
+                                <ul className="space-y-1.5">
+                                    {['Right click & Copy/Paste are **disabled**', 'Exiting fullscreen triggers a **warning**', 'Switching tabs triggers a **warning**', '**3 warnings** = auto-submit'].map((r, i) => (
+                                        <li key={i} className="flex items-center gap-2 text-[11px] font-medium" style={{ color: '#991b1b' }}>
+                                            <span className="h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: '#ef4444' }}></span>
+                                            <span dangerouslySetInnerHTML={{ __html: r.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
-                        <button onClick={() => {
-                            // Call fullscreen directly from the click handler (user gesture)
-                            try {
-                                const el = document.documentElement as any;
-                                if (el.requestFullscreen) el.requestFullscreen().catch(() => { });
-                                else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-                                else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
-                                else if (el.msRequestFullscreen) el.msRequestFullscreen();
-                            } catch (e) { }
-                            setExamStarted(true);
-                        }} className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-sky-400/80 bg-sky-500/20 text-[13px] text-sky-50 hover:bg-sky-500/30 active:scale-[0.97] transition font-semibold tracking-wide shadow-lg">
-                            <i className="ph ph-play-circle text-lg"></i> Enter Fullscreen & Start
-                        </button>
-                        <p className="mt-3 text-center text-[10px] text-slate-500">By clicking Start, you agree to the monitoring rules.</p>
+                        <div className="px-6 pb-6">
+                            <button onClick={createAttemptAndStart} className="w-full py-3.5 rounded-2xl text-white text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', boxShadow: '0 8px 25px rgba(109,40,217,0.4)' }}>
+                                ▶ Enter Fullscreen & Start Exam
+                            </button>
+                            <p className="mt-3 text-center text-[10px] font-medium" style={{ color: '#94a3b8' }}>By clicking Start, you agree to the monitoring rules.</p>
+                        </div>
                     </div>
                 </div>
             )}
 
-            {/* Main Exam Shell */}
-            <div className={`min-h-screen flex items-center justify-center px-2 sm:px-5 py-2 sm:py-4 ${!examStarted || examFinished ? 'blur-sm pointer-events-none' : ''}`}>
-                <div className="w-full max-w-6xl max-h-[96vh] sm:max-h-[94vh] rounded-[20px] sm:rounded-[26px] border border-white/15 bg-slate-900/95 backdrop-blur-2xl shadow-2xl flex flex-col overflow-hidden">
-                    {/* Header */}
-                    <header className="flex items-center justify-between gap-2 sm:gap-3 px-3 sm:px-5 py-2 sm:py-2.5 border-b border-white/10 bg-slate-950/95">
-                        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                            <div className="hidden sm:flex items-center gap-1.5">
-                                <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80"></span>
-                                <span className="h-2.5 w-2.5 rounded-full bg-amber-400/80"></span>
-                                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80"></span>
-                            </div>
-                            <div className="h-7 w-px bg-slate-700/70 mx-1 hidden sm:block"></div>
-                            <div className="flex items-center gap-2 min-w-0">
-                                <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-sky-400 to-emerald-400 flex items-center justify-center text-slate-950 font-semibold text-sm sm:text-lg flex-shrink-0" style={{ boxShadow: 'var(--shadow-k-neon)' }}>K</div>
-                                <div className="leading-tight min-w-0">
-                                    <div className="flex items-center gap-2 min-w-0">
-                                        <h1 className="truncate max-w-[120px] sm:max-w-xs text-[13px] sm:text-base font-semibold tracking-tight">{testData.title || 'Live Exam'}</h1>
-                                        <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] border border-sky-400/60 bg-slate-900/90 text-sky-200 uppercase tracking-[0.16em]">
-                                            Track {testData.track_id ? `: ${testData.track_id}` : ''}
-                                        </span>
-                                    </div>
-                                    <p className="hidden sm:block text-[11px] text-slate-400">Secure exam · Autosave · Level based XP</p>
-                                </div>
-                            </div>
+            {/* ═══ MAIN EXAM SHELL — FUTURISTIC FULLSCREEN ═══ */}
+            <div className={`fixed inset-0 flex flex-col ${!examStarted || examFinished ? 'blur-sm pointer-events-none' : ''}`} style={{ background: '#f0f2f7' }}>
+
+                {/* ── Header ── */}
+                <header className="exam-header flex items-center justify-between gap-2 sm:gap-4 px-4 sm:px-6 py-2.5 sm:py-3 flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3730a3, #6d28d9, #7c3aed)', boxShadow: '0 4px 20px rgba(109,40,217,0.45)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                    <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-10 w-10 rounded-xl flex items-center justify-center text-base font-black flex-shrink-0" style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.25)', boxShadow: '0 0 14px rgba(139,92,246,0.35)' }}>K</div>
+                        <div className="min-w-0">
+                            <h1 className="truncate max-w-[160px] sm:max-w-sm text-[14px] sm:text-lg font-black tracking-wide" style={{ color: '#ffffff' }}>{testData.title || 'Exam'}</h1>
+                            <p className="hidden sm:block text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.7)' }}>🔒 Secure Exam · {testData.track_id}</p>
                         </div>
-                        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                            <div className="hidden md:flex flex-col items-end text-[10px] leading-tight">
-                                <span className="inline-flex items-center gap-1 text-slate-300"><i className="ph ph-shield-check text-xs text-emerald-300"></i> Anti-cheat active</span>
-                                <span className={`text-slate-500 ${warningCount > 0 ? (warningCount >= 2 ? 'text-rose-400 font-bold' : 'text-amber-400 font-bold') : ''}`}>Warnings: {warningCount} / {MAX_WARNINGS}</span>
-                            </div>
-                            <div className="flex items-center gap-2 rounded-xl sm:rounded-2xl border border-sky-400/70 bg-sky-500/15 px-2.5 sm:px-3 py-1 sm:py-1.5 min-w-[90px] sm:min-w-[110px]" style={{ boxShadow: 'var(--shadow-k-glow)' }}>
-                                <div className="flex flex-col items-end leading-tight w-full">
-                                    <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.1em] text-sky-200">Time left</span>
-                                    <span className={`text-base sm:text-xl font-semibold tabular-nums ${isTimerPulse ? 'text-rose-400 animate-pulse' : 'text-white'}`}>
-                                        {timeLeft !== null ? formatTimer(timeLeft) : '--:--'}
-                                    </span>
-                                </div>
-                                <span className="h-6 w-6 sm:h-7 sm:w-7 rounded-full border border-sky-300/80 flex items-center justify-center flex-shrink-0">
-                                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                    </div>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                        {/* Warnings */}
+                        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px]" style={{ background: warningCount > 0 ? 'rgba(251,191,36,0.25)' : 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                            <span style={{ color: '#ffffff' }}>🛡️</span>
+                            <span className="font-bold" style={{ color: '#ffffff' }}>{warningCount}/{MAX_WARNINGS}</span>
+                        </div>
+                        {/* Timer — PREMIUM */}
+                        <div className="flex items-center gap-3 rounded-2xl px-4 sm:px-5 py-2" style={{ background: isTimerPulse ? 'rgba(239,68,68,0.2)' : 'rgba(0,0,0,0.2)', border: isTimerPulse ? '1px solid rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.15)', boxShadow: isTimerPulse ? '0 0 20px rgba(239,68,68,0.25)' : '0 0 12px rgba(0,0,0,0.15)' }}>
+                            <div className="flex flex-col items-end">
+                                <span className="text-[8px] uppercase tracking-[0.2em] font-bold" style={{ color: 'rgba(255,255,255,0.5)' }}>TIME</span>
+                                <span className={`text-xl sm:text-2xl font-black tabular-nums tracking-wider`} style={{ color: isTimerPulse ? '#fca5a5' : '#ffffff', textShadow: isTimerPulse ? '0 0 12px rgba(239,68,68,0.5)' : '0 0 8px rgba(255,255,255,0.2)' }}>
+                                    {timeLeft !== null ? formatTimer(timeLeft) : '--:--'}
                                 </span>
                             </div>
-                            <button onClick={() => setConfirmMsg({ title: 'Submit Exam?', text: 'Are you sure you want to finish?', onConfirm: () => finalizeSubmit('SUBMITTED') })}
-                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl text-[11px] font-medium border border-rose-400/80 bg-rose-500/20 text-rose-50 hover:bg-rose-500/30 active:scale-[0.97] transition">
-                                <i className="ph ph-check-circle text-xs"></i> Submit
-                            </button>
+                            <div className="relative flex-shrink-0">
+                                <span className="block h-3 w-3 rounded-full animate-pulse" style={{ background: isTimerPulse ? '#ef4444' : '#4ade80', boxShadow: `0 0 10px ${isTimerPulse ? '#ef4444' : '#4ade80'}` }}></span>
+                                <span className="absolute inset-0 rounded-full animate-ping opacity-30" style={{ background: isTimerPulse ? '#ef4444' : '#4ade80' }}></span>
+                            </div>
                         </div>
-                    </header>
+                        {/* Submit — RED */}
+                        <button onClick={() => setConfirmMsg({ title: 'Submit Exam?', text: 'Are you sure you want to finish?', onConfirm: () => finalizeSubmit('SUBMITTED') })}
+                            className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[12px] font-bold transition-all hover:scale-105 active:scale-95" style={{ background: 'linear-gradient(135deg, #dc2626, #ef4444)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 4px 14px rgba(220,38,38,0.35)' }}>
+                            ✓ Submit
+                        </button>
+                    </div>
+                </header>
 
-                    {/* Content */}
-                    <main className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-4 p-2 sm:p-4 lg:p-5 overflow-hidden">
-                        {/* Left */}
-                        <section className="w-full lg:w-[65%] flex flex-col gap-3 sm:gap-4 overflow-hidden h-full">
-                            <div className="flex-shrink-0 rounded-2xl border border-white/12 bg-slate-950/95 px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-3 shadow-lg">
-                                <div className="flex items-center gap-2 sm:gap-3">
-                                    <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl sm:rounded-2xl bg-gradient-to-br from-sky-500/25 to-emerald-400/40 flex items-center justify-center text-sky-100 border border-sky-400/70">
-                                        <i className="ph ph-target text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <div className="text-xs sm:text-sm font-medium text-slate-100">Question {currentIndex + 1} of {questions.length}</div>
-                                        <div className="text-[10px] text-slate-400 mt-0.5">
-                                            <span>{countAnswered()}</span> / <span>{questions.length}</span> answered
-                                        </div>
-                                    </div>
+                {/* ── Content Area — NO TOP TRACKER ── */}
+                <main className="flex-1 flex flex-col lg:flex-row gap-0 overflow-hidden">
+                    {/* Left: Question — ENLARGED */}
+                    <section className="w-full lg:w-[75%] flex flex-col overflow-hidden h-full" style={{ background: '#f8fafc' }}>
+                        {/* Question Header */}
+                        <div className="flex-shrink-0 px-5 sm:px-8 py-3.5 flex items-center justify-between" style={{ background: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>
+                            <div className="flex items-center gap-3">
+                                <div className="h-11 w-11 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', boxShadow: '0 2px 10px rgba(109,40,217,0.3)' }}>
+                                    <span className="text-base font-black text-white">{currentIndex + 1}</span>
+                                </div>
+                                <div>
+                                    <div className="text-base font-bold" style={{ color: '#0f172a' }}>Question {currentIndex + 1} <span className="font-medium" style={{ color: '#94a3b8' }}>/ {questions.length}</span></div>
+                                    <div className="text-[11px] font-semibold" style={{ color: '#10b981' }}>✓ {countAnswered()} answered</div>
                                 </div>
                             </div>
+                            <div className="flex items-center gap-2">
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold" style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
+                                    ⭐ {currentQ.marks || 1} mark{(currentQ.marks || 1) > 1 ? 's' : ''}
+                                </span>
+                            </div>
+                        </div>
 
-                            <div className="flex-1 min-h-0 rounded-2xl border border-white/12 bg-slate-950/95 px-3.5 sm:px-5 py-4 sm:py-5 shadow-xl overflow-y-auto flex flex-col">
-                                <div className="flex items-start justify-between gap-2 flex-shrink-0">
-                                    <div>
-                                        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] bg-slate-900 border border-slate-700 text-slate-300 uppercase tracking-[0.16em]">
-                                            Question {currentIndex + 1}
-                                        </div>
-                                        <h2 className="mt-2 text-[13px] sm:text-[15px] font-semibold leading-snug text-sky-200">
-                                            {currentQ.chapter ? `[${currentQ.chapter}]` : 'Question'}
-                                        </h2>
-                                    </div>
-                                    <div className="flex flex-col items-end text-[10px] text-slate-400 flex-shrink-0">
-                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200">
-                                            <i className="ph ph-star text-[11px] text-amber-300"></i>
-                                            <span>{currentQ.marks || 1} mark{(currentQ.marks || 1) > 1 ? 's' : ''}</span>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <p className="mt-3 text-[13px] sm:text-[15px] leading-relaxed text-white flex-shrink-0 font-medium">
+                        {/* Question Card — LARGER */}
+                        <div className="flex-1 min-h-0 overflow-y-auto px-5 sm:px-8 py-5 sm:py-6">
+                            <div className="max-w-4xl mx-auto">
+                                {currentQ.chapter && (
+                                    <p className="text-[12px] font-bold mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-white" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', boxShadow: '0 2px 8px rgba(109,40,217,0.25)' }}>📚 {currentQ.chapter}</p>
+                                )}
+                                <p className="text-[17px] sm:text-[18px] leading-relaxed font-semibold" style={{ color: '#0f172a' }}>
                                     {currentQ.question_text}
                                 </p>
 
-                                <div className="mt-4 space-y-2.5 pb-2">
-                                    {(currentQ.question_type === 'MCQ' || currentQ.question_type === 'TF') && (currentQ.exam_options || []).map(opt => {
+                                <div className="mt-6 space-y-3">
+                                    {(currentQ.question_type === 'MCQ' || currentQ.question_type === 'TF') && (currentQ.exam_options || []).map((opt, oi) => {
                                         const isSelected = existingResp.option_id === opt.id;
+                                        const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
                                         return (
                                             <button key={opt.id} onClick={() => handleOptionClick(currentQ.id, opt.id)}
-                                                className={`w-full text-left text-[13px] px-3.5 py-3 rounded-xl border transition flex items-start gap-3 group ${isSelected ? 'border-emerald-500/60 bg-emerald-500/10 text-emerald-100' : 'border-slate-700/80 bg-slate-900/40 hover:bg-slate-800 text-slate-300 hover:text-slate-100 active:scale-[0.98]'}`}>
-                                                <div className={`mt-[3px] h-4 w-4 rounded-full border flex items-center justify-center transition-colors flex-shrink-0 ${isSelected ? 'border-emerald-400 bg-emerald-500/20' : 'border-slate-500/60'}`}>
-                                                    <div className={`h-2 w-2 rounded-full transition-colors ${isSelected ? 'bg-emerald-400' : 'bg-transparent'}`}></div>
+                                                className="w-full text-left px-5 py-4 rounded-2xl transition-all duration-200 flex items-start gap-4 group active:scale-[0.99]"
+                                                style={isSelected
+                                                    ? { background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', border: '2px solid #7c3aed', color: '#ffffff', boxShadow: '0 4px 20px rgba(109,40,217,0.3)' }
+                                                    : { background: '#ffffff', border: '1.5px solid #e2e8f0', color: '#374151', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                                                <div className="mt-0.5 h-9 w-9 rounded-xl flex items-center justify-center text-[13px] font-black flex-shrink-0 transition-all"
+                                                    style={isSelected ? { background: 'rgba(255,255,255,0.25)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.4)' } : { background: '#f1f5f9', color: '#94a3b8', border: '1px solid #e2e8f0' }}>
+                                                    {letters[oi] || oi + 1}
                                                 </div>
-                                                <div className="flex-1">{opt.option_text}</div>
+                                                <div className="flex-1 pt-1.5 text-[14px] sm:text-[15px] font-medium">{opt.option_text}</div>
+                                                {isSelected && <span className="mt-1.5 text-xl text-white">✓</span>}
                                             </button>
                                         );
                                     })}
                                 </div>
                                 {currentQ.question_type === 'SHORT' && (
-                                    <div className="mt-4 pb-2">
-                                        <label className="text-[11px] text-slate-400 mb-1 inline-flex items-center gap-1">
-                                            <i className="ph ph-pencil-line text-xs"></i> Short answer
-                                        </label>
-                                        <textarea rows={3}
+                                    <div className="mt-6">
+                                        <label className="text-[12px] font-bold mb-2 block" style={{ color: '#64748b' }}>✏️ Your Answer</label>
+                                        <textarea rows={4}
                                             value={existingResp.short_answer || ''}
                                             onChange={(e) => handleShortAnswerChange(currentQ.id, e.target.value)}
-                                            className="w-full rounded-2xl bg-slate-900/80 border border-slate-700/90 px-3 py-2.5 text-[13px] outline-none focus:border-sky-400/80 text-white placeholder-slate-600"
+                                            className="w-full rounded-2xl px-5 py-4 text-[15px] outline-none transition focus:ring-2 focus:ring-purple-400"
+                                            style={{ background: '#ffffff', border: '1.5px solid #e2e8f0', color: '#0f172a', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
                                             placeholder="Type your answer here..." />
                                     </div>
                                 )}
+                            </div>
+                        </div>
 
-                                <div className="flex-1"></div>
+                        {/* Navigation Footer */}
+                        <div className="flex-shrink-0 px-5 sm:px-8 py-3.5 flex items-center justify-between gap-3" style={{ background: 'linear-gradient(180deg, #ffffff, #f8fafc)', borderTop: '1px solid #e2e8f0' }}>
+                            <button onClick={() => { if (currentIndex > 0) { setCurrentIndex(c => c - 1); setVisitedSet(v => new Set(v).add(questions[currentIndex - 1].id)); } }}
+                                disabled={currentIndex === 0}
+                                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-[13px] font-bold transition-all hover:bg-gray-50 active:scale-[0.97] disabled:opacity-30" style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                                ← Previous
+                            </button>
+                            <div className="flex items-center gap-2 text-[12px] font-bold" style={{ color: '#94a3b8' }}>
+                                <span>Q {currentIndex + 1} / {questions.length}</span>
+                                <span className="h-1 w-1 rounded-full" style={{ background: '#cbd5e1' }}></span>
+                                <span style={{ color: '#10b981' }}>{countAnswered()} done</span>
+                            </div>
+                            <button onClick={() => {
+                                if (currentIndex < questions.length - 1) {
+                                    setCurrentIndex(c => c + 1);
+                                    setVisitedSet(v => new Set(v).add(questions[currentIndex + 1].id));
+                                } else {
+                                    setConfirmMsg({ title: 'Submit Exam?', text: 'Are you sure you want to finish?', onConfirm: () => finalizeSubmit('SUBMITTED') });
+                                }
+                            }}
+                                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-[13px] font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.97]" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', boxShadow: '0 4px 18px rgba(109,40,217,0.35)' }}>
+                                {currentIndex === questions.length - 1 ? 'Finish ✓' : 'Next →'}
+                            </button>
+                        </div>
+                    </section>
 
-                                <div className="mt-4 flex-shrink-0 flex items-center justify-between gap-3 pt-3 border-t border-slate-800/80">
-                                    <button onClick={() => { if (currentIndex > 0) { setCurrentIndex(c => c - 1); setVisitedSet(v => new Set(v).add(questions[currentIndex - 1].id)); } }}
-                                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-700 bg-slate-900/80 text-[12px] text-slate-200 hover:bg-slate-800 active:scale-[0.97] transition">
-                                        <i className="ph ph-arrow-left text-xs"></i> Previous
+                    {/* Right: Palette Sidebar — COMPACT */}
+                    <aside className="hidden lg:flex w-full lg:w-[25%] flex-col overflow-hidden h-full" style={{ background: '#ffffff', borderLeft: '1px solid #e2e8f0' }}>
+                        {/* Palette Header */}
+                        <div className="flex-shrink-0 px-4 py-3 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', borderBottom: 'none' }}>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm">📋</span>
+                                <h3 className="text-sm font-bold text-white">Question Palette</h3>
+                            </div>
+                            <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full text-white" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)' }}>{countAnswered()}/{questions.length}</span>
+                        </div>
+                        {/* Progress bar */}
+                        <div className="flex-shrink-0 px-4 py-2" style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                            <div className="flex items-center justify-between text-[10px] font-bold mb-1">
+                                <span style={{ color: '#6d28d9' }}>Progress</span>
+                                <span style={{ color: '#0f172a' }}>{questions.length > 0 ? Math.round((countAnswered() / questions.length) * 100) : 0}%</span>
+                            </div>
+                            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#e2e8f0' }}>
+                                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${questions.length > 0 ? (countAnswered() / questions.length) * 100 : 0}%`, background: 'linear-gradient(90deg, #6d28d9, #7c3aed)', boxShadow: '0 0 8px rgba(109,40,217,0.4)' }}></div>
+                            </div>
+                        </div>
+                        {/* Grid */}
+                        <div className="flex-1 overflow-y-auto p-3">
+                            <div className="grid grid-cols-5 xl:grid-cols-6 gap-1.5">
+                                {questions.map((q, idx) => (
+                                    <button key={q.id} onClick={() => { setCurrentIndex(idx); setVisitedSet(v => new Set(v).add(q.id)); }}
+                                        className={`h-8 w-8 rounded-lg flex items-center justify-center text-[11px] border-2 transition-all font-bold hover:scale-110 ${getPaletteClass(q.id, idx)}`}>
+                                        {idx + 1}
                                     </button>
-                                    <span className="text-[11px] text-slate-400 font-mono">Q {currentIndex + 1}</span>
-                                    <button onClick={() => {
-                                        if (currentIndex < questions.length - 1) {
-                                            setCurrentIndex(c => c + 1);
-                                            setVisitedSet(v => new Set(v).add(questions[currentIndex + 1].id));
-                                        } else {
-                                            setConfirmMsg({ title: 'Submit Exam?', text: 'Are you sure you want to finish?', onConfirm: () => finalizeSubmit('SUBMITTED') });
-                                        }
-                                    }}
-                                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-sky-400/80 bg-sky-500/20 text-[12px] text-sky-50 hover:bg-sky-500/30 active:scale-[0.97] transition">
-                                        <span>{currentIndex === questions.length - 1 ? 'Finish' : 'Next'}</span>
-                                        <i className={`ph ${currentIndex === questions.length - 1 ? 'ph-check' : 'ph-arrow-right'} text-xs`}></i>
-                                    </button>
-                                </div>
+                                ))}
                             </div>
-                        </section>
-
-                        {/* Right: Palette */}
-                        <aside className="hidden lg:flex w-full lg:w-[35%] flex-col gap-3 sm:gap-4 overflow-hidden h-full">
-                            <div className="rounded-2xl border border-white/12 bg-slate-950/95 px-3.5 sm:px-4 py-3.5 flex flex-col shadow-lg flex-1 min-h-0 overflow-hidden">
-                                <div className="flex items-center justify-between mb-2 flex-shrink-0">
-                                    <div className="flex items-center gap-2">
-                                        <i className="ph ph-squares-four text-lg text-sky-300"></i>
-                                        <h3 className="text-sm font-semibold tracking-tight">Question palette</h3>
-                                    </div>
-                                </div>
-                                <div className="overflow-y-auto flex-1 pr-1 custom-scroll">
-                                    <div className="mt-1 grid grid-cols-5 xl:grid-cols-6 gap-1.5 text-[11px]">
-                                        {questions.map((q, idx) => (
-                                            <button key={q.id} onClick={() => { setCurrentIndex(idx); setVisitedSet(v => new Set(v).add(q.id)); }}
-                                                className={`h-9 w-9 lg:h-7 lg:w-7 rounded-lg flex items-center justify-center text-xs border transition font-medium ${getPaletteClass(q.id, idx)}`}>
-                                                {idx + 1}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="mt-3 flex-shrink-0 grid grid-cols-2 gap-2 text-[10px] text-slate-400 border-t border-slate-800/80 pt-2">
-                                    <div className="flex items-center gap-1"><span className="h-3 w-3 rounded-md bg-emerald-500/80"></span><span>Answered</span></div>
-                                    <div className="flex items-center gap-1"><span className="h-3 w-3 rounded-md bg-amber-400/80"></span><span>Visited</span></div>
-                                    <div className="flex items-center gap-1"><span className="h-3 w-3 rounded-md bg-sky-500/80"></span><span>Current</span></div>
-                                    <div className="flex items-center gap-1"><span className="h-3 w-3 rounded-md bg-slate-700"></span><span>Not visited</span></div>
-                                </div>
+                        </div>
+                        {/* Legend */}
+                        <div className="flex-shrink-0 px-4 py-2.5" style={{ borderTop: '1px solid #e2e8f0' }}>
+                            <div className="grid grid-cols-2 gap-1.5 text-[9px]">
+                                <div className="flex items-center gap-1.5 font-semibold" style={{ color: '#64748b' }}><span className="h-2.5 w-2.5 rounded" style={{ background: '#10b981' }}></span>Answered</div>
+                                <div className="flex items-center gap-1.5 font-semibold" style={{ color: '#64748b' }}><span className="h-2.5 w-2.5 rounded" style={{ background: '#fbbf24' }}></span>Visited</div>
+                                <div className="flex items-center gap-1.5 font-semibold" style={{ color: '#64748b' }}><span className="h-2.5 w-2.5 rounded" style={{ background: '#6d28d9' }}></span>Current</div>
+                                <div className="flex items-center gap-1.5 font-semibold" style={{ color: '#64748b' }}><span className="h-2.5 w-2.5 rounded" style={{ background: '#e2e8f0' }}></span>Unanswered</div>
                             </div>
-                            <div className="flex-shrink-0 rounded-2xl border border-white/12 bg-slate-950/95 px-3.5 sm:px-4 py-3.5 flex flex-col gap-3 shadow-lg text-[11px]">
-                                <div className="flex items-center gap-2">
-                                    <i className="ph ph-shield-warning text-lg text-emerald-300"></i>
-                                    <p className="text-slate-300 leading-snug"><strong>Anti-cheat enabled:</strong> Copy, Paste, Tab Switch, and Fullscreen exit are monitored.</p>
-                                </div>
-                                <button onClick={() => {
-                                    setConfirmMsg({ title: 'Exit Exam?', text: 'Timer continues if you leave.', onConfirm: () => router.push('/dashboard') });
-                                }} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-700 bg-slate-900 hover:bg-slate-800 text-[11px] text-slate-200 active:scale-[0.97] transition">
-                                    <i className="ph ph-arrow-bend-up-left text-xs"></i> Back to Dashboard
-                                </button>
+                        </div>
+                        {/* Actions */}
+                        <div className="flex-shrink-0 px-4 py-3 flex flex-col gap-2" style={{ borderTop: '1px solid #e2e8f0' }}>
+                            <div className="text-[10px] font-medium flex items-center gap-1.5" style={{ color: '#64748b' }}>
+                                <span>🛡️</span><strong style={{ color: '#0f172a' }}>Anti-cheat:</strong> Tab, Copy, Fullscreen
                             </div>
-                        </aside>
-                    </main>
-                </div>
+                            <button onClick={() => setConfirmMsg({ title: 'Submit Exam?', text: 'Are you sure you want to finish?', onConfirm: () => finalizeSubmit('SUBMITTED') })}
+                                className="w-full py-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02]" style={{ background: 'linear-gradient(135deg, #dc2626, #ef4444)', color: '#ffffff', boxShadow: '0 2px 10px rgba(220,38,38,0.35)' }}>
+                                ✓ Submit Exam
+                            </button>
+                            <button onClick={() => { setConfirmMsg({ title: 'Exit Exam?', text: 'Timer continues if you leave.', onConfirm: () => router.push('/dashboard') }); }}
+                                className="w-full py-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition hover:bg-gray-50" style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                                ← Dashboard
+                            </button>
+                        </div>
+                    </aside>
+                </main>
             </div>
 
             {/* Mobile floating trigger */}
             {examStarted && !examFinished && (
-                <div onClick={() => setMobileDrawerOpen(true)}
-                    className="lg:hidden fixed top-1/2 -translate-y-1/2 right-0 z-40 h-16 w-8 bg-white/10 backdrop-blur-md border border-white/20 border-r-0 flex items-center justify-center shadow-lg active:scale-95 transition-all duration-300 cursor-pointer group rounded-l-[50px] rounded-br-none" style={{ animation: 'var(--animate-drop-pulse)' }} title="Open Palette">
-                    <i className="ph ph-caret-left text-xl text-white group-hover:text-sky-300 ml-1"></i>
+                <div onClick={(e) => { e.stopPropagation(); setMobileDrawerOpen(true); }}
+                    className="lg:hidden fixed top-1/2 -translate-y-1/2 right-0 z-40 h-20 w-9 flex items-center justify-center cursor-pointer rounded-l-2xl" style={{ background: 'linear-gradient(180deg, #6d28d9, #7c3aed)', boxShadow: '0 0 20px rgba(109,40,217,0.4)' }} title="Open Palette">
+                    <div className="flex flex-col items-center gap-1">
+                        <span className="text-white text-xs font-bold">◀</span>
+                        <span className="text-white text-[8px] font-bold">{countAnswered()}/{questions.length}</span>
+                    </div>
                 </div>
             )}
 
-            {/* Custom keyframes for warning center progress bar shrink */}
             <style jsx global>{`
                 @keyframes shrinkX {
                     from { transform: scaleX(1); }
@@ -873,6 +912,36 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                 }
                 .animate-fade-in-right {
                     animation: fadeInRight 0.3s ease-out forwards;
+                }
+                /* ═══ CSS ISOLATION — MAXIMUM SPECIFICITY to override globals.css ═══ */
+                /* Double attribute selector [x][x] gives higher specificity than any single class rule */
+                [data-exam-page][data-exam-page] .exam-header,
+                [data-exam-page][data-exam-page] .exam-header * {
+                    color: #ffffff !important;
+                }
+                [data-exam-page][data-exam-page] .exam-header h1 {
+                    color: #ffffff !important;
+                }
+                [data-exam-page][data-exam-page] .exam-header p {
+                    color: rgba(255,255,255,0.7) !important;
+                }
+                /* Sidebar palette header (purple bg) */
+                [data-exam-page][data-exam-page] aside > div:first-child,
+                [data-exam-page][data-exam-page] aside > div:first-child * {
+                    color: #ffffff !important;
+                }
+                /* All text-white classes */
+                [data-exam-page][data-exam-page] .text-white {
+                    color: #ffffff !important;
+                }
+                /* Textarea inside exam page */
+                [data-exam-page][data-exam-page] textarea {
+                    background-color: #ffffff !important;
+                    color: #0f172a !important;
+                    border: 1.5px solid #e2e8f0 !important;
+                }
+                [data-exam-page][data-exam-page] textarea::placeholder {
+                    color: #94a3b8 !important;
                 }
             `}</style>
         </div>

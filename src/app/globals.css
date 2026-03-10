@@ -479,6 +479,16 @@ textarea::placeholder {
   height: 0;
 }
 
+/* Scrollbar hide utility */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* ──── DARK MODE: Glass Panel ──── */
 .glass-panel {
   background: radial-gradient(circle at 0% 0%, rgba(30, 41, 59, 0.7), rgba(2, 6, 23, 0.85));

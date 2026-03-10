@@ -239,6 +239,7 @@ export default function ControlStatements() {
                                 { label: '📝 while Loop Practice', desc: 'While Loop Questions', href: 'https://drive.google.com/file/d/1kEDXXt0gpKMEaGHKJUxp7MXUzgtX_x7_/view?usp=sharing', bg: '#ecfdf5', bc: '#a7f3d0', tc: '#166534' },
                                 { label: '📝 Practice Set 1', desc: 'Control Statements — Google Drive PDF', href: 'https://drive.google.com/file/d/12SbyovioK_dhr_CHK7XmX8FdjEs7ErVH/view?usp=sharing', bg: '#f5f3ff', bc: '#ddd6fe', tc: '#5b21b6' },
                                 { label: '📝 Practice Set 2', desc: 'Control Statements — Google Drive PDF', href: 'https://drive.google.com/file/d/1KjIDFp4zXaKrw6nDQOQ5QrSFsVRdPKdx/view?usp=sharing', bg: '#fdf2f8', bc: '#fbcfe8', tc: '#9d174d' },
+                                { label: '📝 Practice Set 3', desc: 'Python Programming Questions — 10 Questions', href: '/python-practice-set-3.png', bg: '#fff7ed', bc: '#fed7aa', tc: '#c2410c' },
                             ].map((item, i) => (
                                 <a key={i} href={item.href} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 hover:scale-[1.01] hover:shadow-lg" style={{ background: item.bg, border: `1px solid ${item.bc}` }}>
                                     <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-sm" style={{ background: item.tc }}>{i + 1}</div>

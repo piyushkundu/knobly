@@ -43,9 +43,9 @@ export function useDashboard() {
     const [activeTest, setActiveTest] = useState<ExamTest | null>(null);
     const [stats, setStats] = useState<Stats>({ testsCompleted: 0, avgScore: 0, avgAccuracy: 0, totalCorrect: 0, totalWrong: 0 });
 
-    // Also load from 'tests' + 'test_results' (the simpler Next.js collections)
     const [simpleTests, setSimpleTests] = useState<any[]>([]);
     const [simpleResults, setSimpleResults] = useState<any[]>([]);
+    const [attemptedTestIds, setAttemptedTestIds] = useState<Set<string>>(new Set());
 
     const avatarInitials = useMemo(() => {
         const name = profile?.full_name || user?.displayName || '';
@@ -54,26 +54,52 @@ export function useDashboard() {
         return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
     }, [profile, user]);
 
-    const nextLevelXp = useMemo(() => {
-        const level = userState?.current_level || 1;
-        return 100 + (level - 1) * 50;
-    }, [userState]);
+    /* ── Rank System ── */
+    const RANKS = [
+        { name: 'Bronze', icon: '🥉', minPoints: 0, color: '#cd7f32' },
+        { name: 'Silver', icon: '🥈', minPoints: 50, color: '#94a3b8' },
+        { name: 'Gold', icon: '🥇', minPoints: 150, color: '#f59e0b' },
+        { name: 'Platinum', icon: '💎', minPoints: 300, color: '#06b6d4' },
+        { name: 'Diamond', icon: '💠', minPoints: 500, color: '#8b5cf6' },
+        { name: 'Legend', icon: '👑', minPoints: 800, color: '#ef4444' },
+    ];
 
-    const xpProgressPercent = useMemo(() => {
-        const xp = userState?.total_xp || userState?.total_points || 0;
-        const pct = Math.round((xp / nextLevelXp) * 100);
-        return Math.min(100, isNaN(pct) ? 0 : pct);
-    }, [userState, nextLevelXp]);
+    const totalPoints = useMemo(() => userState?.total_points || userState?.total_xp || 0, [userState]);
 
-    const xpToNextLevel = useMemo(() => {
-        const xp = userState?.total_xp || userState?.total_points || 0;
-        return Math.max(0, nextLevelXp - xp);
-    }, [userState, nextLevelXp]);
+    const getRankForPoints = useCallback((pts: number, isLegend: boolean = false) => {
+        const maxIdx = isLegend ? RANKS.length - 1 : RANKS.length - 2; // Cap at Diamond unless Legend
+        for (let i = maxIdx; i >= 0; i--) {
+            if (pts >= RANKS[i].minPoints) return RANKS[i];
+        }
+        return RANKS[0];
+    }, []);
 
-    const lvlUnlocked = useCallback((lvl: Level) => {
-        const xp = userState?.total_xp || userState?.total_points || 0;
-        return xp >= (lvl.required_xp || 0);
-    }, [userState]);
+    const [isLegendUser, setIsLegendUser] = useState(false);
+
+    const currentRank = useMemo(() => {
+        const maxIdx = isLegendUser ? RANKS.length - 1 : RANKS.length - 2;
+        for (let i = maxIdx; i >= 0; i--) {
+            if (totalPoints >= RANKS[i].minPoints) return RANKS[i];
+        }
+        return RANKS[0];
+    }, [totalPoints, isLegendUser]);
+
+    const nextRank = useMemo(() => {
+        const idx = RANKS.findIndex(r => r.name === currentRank.name);
+        return idx < RANKS.length - 1 ? RANKS[idx + 1] : null;
+    }, [currentRank]);
+
+    const rankProgressPercent = useMemo(() => {
+        if (!nextRank) return 100;
+        const range = nextRank.minPoints - currentRank.minPoints;
+        const progress = totalPoints - currentRank.minPoints;
+        return Math.min(100, Math.round((progress / range) * 100));
+    }, [totalPoints, currentRank, nextRank]);
+
+    const pointsToNextRank = useMemo(() => {
+        if (!nextRank) return 0;
+        return Math.max(0, nextRank.minPoints - totalPoints);
+    }, [totalPoints, nextRank]);
 
     const unlockedTestsForLevel = useMemo(() =>
         availableTests.filter(t => t.level_id === activeLevelId), [availableTests, activeLevelId]);
@@ -164,31 +190,32 @@ export function useDashboard() {
 
     async function loadLeaderboard(p?: Profile | null) {
         try {
-            // Build leaderboard from exam_user_state + profiles
-            const stateSnap = await getDocs(collection(db, 'exam_user_state'));
+            // Load both collections in parallel
+            const [stateSnap, profileSnap] = await Promise.all([
+                getDocs(collection(db, 'exam_user_state')),
+                getDocs(collection(db, 'profiles'))
+            ]);
             const states = stateSnap.docs.map(d => ({ id: d.id, ...d.data() } as any));
-
-            // Load all profiles for name lookup
-            const profileSnap = await getDocs(collection(db, 'profiles'));
             const profileMap: Record<string, any> = {};
             profileSnap.docs.forEach(d => { profileMap[d.id] = { id: d.id, ...d.data() }; });
 
             let board: LeaderRow[] = [];
 
             if (states.length > 0) {
-                // Deduplicate: keep highest XP entry per user_id
+                // Deduplicate: keep highest points entry per user_id
                 const userMap: Record<string, LeaderRow> = {};
                 states.forEach((s: any) => {
                     const uid = s.user_id;
                     if (!uid) return;
-                    if (!userMap[uid] || (s.total_xp || 0) > (userMap[uid].total_xp || 0)) {
+                    const pts = s.total_points || s.total_xp || 0;
+                    if (!userMap[uid] || pts > (userMap[uid].total_xp || 0)) {
                         const prof = profileMap[uid] || {};
                         userMap[uid] = {
                             id: s.id,
                             user_id: uid,
                             full_name: prof.full_name || prof.email || 'Unknown',
                             current_level: s.current_level || 1,
-                            total_xp: s.total_xp || 0,
+                            total_xp: pts,
                             track_rank: 0,
                             exam_track: s.track_id || prof.exam_track || 'OLEVEL',
                         };
@@ -204,16 +231,25 @@ export function useDashboard() {
                         user_id: d.id,
                         full_name: data.full_name || data.email || 'Unknown',
                         current_level: 1,
-                        total_xp: data.total_xp || 0,
+                        total_xp: data.total_points || data.total_xp || 0,
                         track_rank: 0,
                         exam_track: data.exam_track || 'OLEVEL',
                     };
                 });
             }
 
-            // Sort by XP descending and assign ranks
+            // Sort by points descending and assign ranks
             board.sort((a, b) => (b.total_xp || 0) - (a.total_xp || 0));
             board.forEach((row, i) => { row.track_rank = i + 1; });
+
+            // Determine Legend: only #1 user with >= 800 points
+            const topUser = board[0];
+            const legendUserId = topUser && (topUser.total_xp || 0) >= 800 ? topUser.user_id : null;
+            if (user && legendUserId === user.uid) {
+                setIsLegendUser(true);
+            } else {
+                setIsLegendUser(false);
+            }
 
             setLeaderboard(board.slice(0, 20));
         } catch (e) { console.error('loadLeaderboard error:', e); }
@@ -244,8 +280,22 @@ export function useDashboard() {
             const recentAttempts = attempts.slice(0, 20);
             const testMap: Record<string, any> = {};
             [...availableTests, ...lockedTests].forEach(t => testMap[t.id] = t);
+
+            // Fetch titles for test_ids not in testMap
+            const missingIds = [...new Set(recentAttempts.map((r: any) => r.test_id).filter((id: string) => id && !testMap[id]))];
+            if (missingIds.length > 0) {
+                await Promise.all(missingIds.map(async (tid: string) => {
+                    try {
+                        const testSnap = await getDoc(doc(db, 'exam_tests', tid));
+                        if (testSnap.exists()) {
+                            testMap[tid] = { id: tid, ...testSnap.data() };
+                        }
+                    } catch (e) { /* skip */ }
+                }));
+            }
+
             const hist = recentAttempts.map((row: any) => {
-                const t = testMap[row.test_id] || { title: `Test #${row.test_id?.substring(0, 6) || '?'}...` };
+                const t = testMap[row.test_id] || { title: 'Unknown Test' };
                 return {
                     id: row.id, test_title: t.title, total_marks: t.total_marks || row.score || 0,
                     durationLabel: t.duration_minutes ? `${t.duration_minutes} min` : '-',
@@ -254,6 +304,10 @@ export function useDashboard() {
                 } as Attempt;
             });
             setAttemptHistory(hist);
+            // Build set of attempted test IDs
+            const attemptedIds = new Set<string>();
+            attempts.forEach((a: any) => { if (a.test_id && (a.status === 'SUBMITTED' || a.status === 'AUTO_SUBMITTED')) attemptedIds.add(a.test_id); });
+            setAttemptedTestIds(attemptedIds);
             calcStats(hist);
         } catch (e) { console.error('loadAttempts error:', e); }
     }
@@ -308,14 +362,20 @@ export function useDashboard() {
         if (!user) return;
         const p = await loadProfile();
         await loadUserState();
-        try { await loadLevels(p); } catch (e) { console.error('initData:levels', e); }
-        try { await loadTests(p); } catch (e) { console.error('initData:tests', e); }
-        try { await loadLiveTests(p); } catch (e) { console.error('initData:live', e); }
-        try { await loadLeaderboard(p); } catch (e) { console.error('initData:leaderboard', e); }
-        try { await loadBadges(); } catch (e) { console.error('initData:badges', e); }
-        try { await loadAttempts(); } catch (e) { console.error('initData:attempts', e); }
-        try { await loadSimpleTests(); } catch (e) { console.error('initData:simpleTests', e); }
-        try { await loadSimpleResults(); } catch (e) { console.error('initData:simpleResults', e); }
+        // Batch 1: independent queries that depend on profile
+        await Promise.allSettled([
+            loadLevels(p),
+            loadTests(p),
+            loadLiveTests(p),
+            loadLeaderboard(p),
+        ]);
+        // Batch 2: independent queries that don't depend on batch 1
+        await Promise.allSettled([
+            loadBadges(),
+            loadAttempts(),
+            loadSimpleTests(),
+            loadSimpleResults(),
+        ]);
         setIsLoadingMain(false);
     }
 
@@ -331,9 +391,9 @@ export function useDashboard() {
 
     return {
         user, authLoading, profile, userState, levels, activeLevelId, setActiveLevelId,
-        availableTests, lockedTests, liveTests, leaderboard, badges, attemptHistory,
-        isLoadingMain, stats, avatarInitials, nextLevelXp, xpProgressPercent, xpToNextLevel,
-        unlockedTestsForLevel, lockedTestsForLevel, lvlUnlocked, formatDateTime,
+        availableTests, lockedTests, liveTests, leaderboard, badges, attemptHistory, attemptedTestIds,
+        isLoadingMain, stats, avatarInitials, totalPoints, currentRank, nextRank, rankProgressPercent, pointsToNextRank, RANKS, getRankForPoints, isLegendUser,
+        unlockedTestsForLevel, lockedTestsForLevel, formatDateTime,
         activeTest, setActiveTest, setTrack, trackSaving, trackError, reloadAll,
         simpleTests, mySimpleResults,
     };

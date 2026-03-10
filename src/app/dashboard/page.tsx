@@ -2,29 +2,29 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import LoginModal from '@/components/auth/LoginModal';
 import { useDashboard } from './useDashboard';
 import {
     ArrowLeft, Home, Trophy, Clock, Target, Play, Lock, Unlock,
     BarChart3, Medal, Users, ChevronRight, Flame, Award, Eye,
     Radio, Zap, MapPin, CheckCircle, Compass, RefreshCw, X, ArrowRight,
-    Sparkles, LayoutDashboard, StickyNote, Code2, Brain, Keyboard, Loader2,
-    Monitor, Globe, Cpu, BookOpen, Crown, TrendingUp, Star, GraduationCap
+    LayoutDashboard, StickyNote, Code2, Brain, Keyboard, Loader2,
+    Monitor, Globe, Cpu, BookOpen, Crown, TrendingUp, Star
 } from 'lucide-react';
 
 const subjects = [
-    { id: 'all', label: 'All', icon: <BookOpen size={13} />, color: '#6366f1' },
-    { id: 'it-tools', label: 'IT Tools', icon: <Monitor size={13} />, color: '#8b5cf6' },
-    { id: 'web-design', label: 'Web Design', icon: <Globe size={13} />, color: '#06b6d4' },
-    { id: 'python', label: 'Python', icon: <Code2 size={13} />, color: '#f59e0b' },
-    { id: 'iot', label: 'IoT', icon: <Cpu size={13} />, color: '#ec4899' },
+    { id: 'all', label: 'All', icon: <BookOpen size={13} style={{ color: 'inherit' }} />, color: '#6366f1' },
+    { id: 'it-tools', label: 'IT Tools', icon: <Monitor size={13} style={{ color: 'inherit' }} />, color: '#8b5cf6' },
+    { id: 'web-design', label: 'Web Design', icon: <Globe size={13} style={{ color: 'inherit' }} />, color: '#06b6d4' },
+    { id: 'python', label: 'Python', icon: <Code2 size={13} style={{ color: 'inherit' }} />, color: '#f59e0b' },
+    { id: 'iot', label: 'IoT', icon: <Cpu size={13} style={{ color: 'inherit' }} />, color: '#ec4899' },
 ];
 
 export default function DashboardPage() {
     const d = useDashboard();
     const [activeSubject, setActiveSubject] = useState('all');
-    const xp = d.userState?.total_xp || d.userState?.total_points || 0;
-    const trackLabel = 'O-Level';
-    const level = d.userState?.current_level || 1;
+    const points = d.totalPoints;
 
     const filterBySubject = (tests: any[]) => {
         if (activeSubject === 'all') return tests;
@@ -36,77 +36,130 @@ export default function DashboardPage() {
         });
     };
 
+    // Auth Guard — if not logged in, show login
+    const { loading: authLoading } = useAuth();
+    if (!authLoading && !d.user) {
+        return (
+            <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #6366f1 100%)' }}>
+                <LoginModal isOpen={true} onClose={() => { }} />
+            </div>
+        );
+    }
+
+    if (authLoading) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center gap-3" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #6366f1 100%)' }}>
+                <div className="animate-spin h-8 w-8 rounded-full border-3 border-white/20 border-t-white"></div>
+                <span className="text-sm font-medium text-white/70">Loading...</span>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen" style={{ background: '#f0f2f5' }}>
 
             {/* ═══ PREMIUM HERO HEADER ═══ */}
-            <div style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 25%, #4338ca 50%, #6366f1 75%, #818cf8 100%)' }}>
-                {/* Top Nav */}
-                <div className="max-w-6xl mx-auto px-4 pt-4 pb-2 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Link href="/" className="h-8 w-8 rounded-lg flex items-center justify-center transition-all hover:scale-105" style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.15)' }}>
-                            <ArrowLeft size={14} style={{ color: 'rgba(255,255,255,0.8)' }} />
-                        </Link>
-                        <span className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.5)' }}>Home</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        {d.user ? (
-                            <div className="flex items-center gap-2.5">
-                                <div className="hidden sm:block text-right">
-                                    <div className="text-[11px] font-semibold" style={{ color: '#ffffff' }}>{d.profile?.full_name || d.user.displayName || 'Student'}</div>
-                                    <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.6)' }}>Level {level} · {xp} pts</div>
-                                </div>
-                                <div className="h-9 w-9 rounded-full flex items-center justify-center text-[11px] font-bold uppercase" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', border: '2px solid rgba(255,255,255,0.3)' }}>
-                                    {d.avatarInitials}
-                                </div>
-                            </div>
-                        ) : (
-                            <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.6)' }}>Login to see dashboard</span>
-                        )}
-                    </div>
-                </div>
+            {(() => {
+                const firstName = (d.profile?.full_name || d.user?.displayName || 'Champion').split(' ')[0];
+                const quotes = [
+                    `🔥 ${firstName}, champions are made when no one is watching!`,
+                    `💪 ${firstName}, your consistency today builds your success tomorrow!`,
+                    `🚀 ${firstName}, every test you take makes you stronger!`,
+                    `⚡ ${firstName}, legends aren't born — they're trained!`,
+                    `🌟 ${firstName}, your dedication is your superpower!`,
+                    `🎯 ${firstName}, aim high, work hard, and watch the magic happen!`,
+                ];
+                const quoteIndex = new Date().getDate() % quotes.length;
+                return (
+                    <div className="relative overflow-hidden" style={{ background: '#0f172a' }}>
+                        {/* Background image */}
+                        <div className="absolute inset-0" style={{ backgroundImage: 'url(/dashboard-hero-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.85 }} />
+                        {/* Dark overlay for text readability */}
+                        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(15,23,42,0.5) 0%, rgba(30,27,75,0.4) 40%, rgba(76,29,149,0.3) 70%, transparent 100%)' }} />
+                        {/* Bottom fade */}
+                        <div className="absolute bottom-0 left-0 right-0 h-20" style={{ background: 'linear-gradient(to top, #f0f2f5, transparent)' }} />
 
-                {/* Hero Content */}
-                <div className="max-w-6xl mx-auto px-4 pb-16 pt-4">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                        {/* Level Badge */}
-                        <div className="relative flex-shrink-0">
-                            <div className="h-28 w-28 rounded-2xl flex flex-col items-center justify-center" style={{ background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(20px)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
-                                <GraduationCap size={20} style={{ color: '#fbbf24', marginBottom: 4 }} />
-                                <span className="text-4xl font-black" style={{ color: '#ffffff', textShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>{level}</span>
-                                <span className="text-[8px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.6)' }}>LEVEL</span>
+                        {/* Top Nav */}
+                        <div className="relative max-w-6xl mx-auto px-4 pt-4 pb-2 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <Link href="/" className="h-8 w-8 rounded-lg flex items-center justify-center transition-all hover:scale-105" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)' }}>
+                                    <ArrowLeft size={14} style={{ color: 'rgba(255,255,255,0.8)' }} />
+                                </Link>
+                                <span className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.4)' }}>Home</span>
                             </div>
-                            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[9px] font-bold" style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)', color: '#1e1b4b', whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(251,191,36,0.4)' }}>
-                                O-Level
+                            <div className="flex items-center gap-3">
+                                {d.user ? (
+                                    <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
+                                        <div className="hidden sm:block text-right">
+                                            <div className="text-[11px] font-semibold" style={{ color: '#ffffff' }}>{d.profile?.full_name || d.user.displayName || 'Student'}</div>
+                                            <div className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.5)' }}>{d.currentRank.icon} {d.currentRank.name} · {points} pts</div>
+                                        </div>
+                                        <div className="h-9 w-9 rounded-full flex items-center justify-center text-[11px] font-bold uppercase" style={{ background: `linear-gradient(135deg, ${d.currentRank.color}, ${d.currentRank.color}cc)`, color: '#fff', boxShadow: `0 0 15px ${d.currentRank.color}50`, border: '2px solid rgba(255,255,255,0.3)' }}>
+                                            {d.avatarInitials}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.6)' }}>Login to see dashboard</span>
+                                )}
                             </div>
                         </div>
-                        <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <Sparkles size={14} style={{ color: '#fbbf24' }} />
-                                <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: '#fbbf24' }}>Dashboard</span>
+
+                        {/* Hero Content — Left aligned */}
+                        <div className="relative max-w-6xl mx-auto px-4 pb-20 pt-6">
+                            <div className="flex flex-col sm:flex-row items-center sm:items-center gap-6">
+                                {/* Colorful Rank Badge */}
+                                <div className="relative flex-shrink-0">
+                                    {/* Animated glow */}
+                                    <div className="absolute -inset-4 rounded-3xl animate-pulse" style={{ background: `radial-gradient(circle, ${d.currentRank.color}30 0%, transparent 65%)` }} />
+                                    <div className="relative h-28 w-28 rounded-2xl flex flex-col items-center justify-center" style={{
+                                        background: `linear-gradient(145deg, ${d.currentRank.color}30, ${d.currentRank.color}15)`,
+                                        border: `2px solid ${d.currentRank.color}50`,
+                                        backdropFilter: 'blur(20px)',
+                                        boxShadow: `0 8px 32px rgba(0,0,0,0.3), 0 0 40px ${d.currentRank.color}30, inset 0 1px 0 rgba(255,255,255,0.15), inset 0 0 20px ${d.currentRank.color}10`,
+                                    }}>
+                                        <span className="text-5xl mb-1" style={{ filter: `drop-shadow(0 0 15px ${d.currentRank.color}70)` }}>{d.currentRank.icon}</span>
+                                        <span className="text-[9px] font-black uppercase tracking-[0.2em]" style={{ color: '#ffffff', textShadow: `0 0 10px ${d.currentRank.color}60` }}>{d.currentRank.name}</span>
+                                    </div>
+                                    {/* Points pill */}
+                                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[10px] font-black" style={{
+                                        background: `linear-gradient(135deg, ${d.currentRank.color}, ${d.currentRank.color}dd)`,
+                                        color: '#ffffff', whiteSpace: 'nowrap',
+                                        boxShadow: `0 4px 15px ${d.currentRank.color}50, 0 0 20px ${d.currentRank.color}30`,
+                                        border: '2px solid rgba(255,255,255,0.25)', letterSpacing: '0.05em',
+                                    }}>
+                                        🪙 {points} Points
+                                    </div>
+                                </div>
+
+                                {/* Text Content — Left */}
+                                <div className="sm:text-left text-center">
+                                    <h1 className="text-3xl sm:text-4xl font-black mb-2" style={{ color: '#ffffff', textShadow: '0 2px 30px rgba(139,92,246,0.3)', letterSpacing: '-0.02em' }}>
+                                        ✨ Test Journey
+                                    </h1>
+                                    <p className="text-[13px] font-medium mb-2" style={{ color: 'rgba(255,255,255,0.85)', maxWidth: 450, lineHeight: '1.6' }}>
+                                        {quotes[quoteIndex]}
+                                    </p>
+                                    <p className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                                        Earn points · Climb ranks · Become a legend
+                                    </p>
+                                </div>
                             </div>
-                            <h1 className="text-2xl sm:text-3xl font-black mb-2" style={{ color: '#ffffff', textShadow: '0 2px 20px rgba(0,0,0,0.2)' }}>
-                                O-Level Test Journey
-                            </h1>
-                            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.7)', maxWidth: 400 }}>
-                                Complete tests, earn points, climb the leaderboard — track your entire progress here!
-                            </p>
                         </div>
                     </div>
-                </div>
-            </div>
+                );
+            })()}
 
             {/* ═══ FLOATING STATS CARDS ═══ */}
             <div className="max-w-6xl mx-auto px-4 -mt-10 relative z-10 mb-6">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {[
-                        { label: 'Points', value: xp, icon: <Zap size={18} />, gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)', shadow: 'rgba(99,102,241,0.3)' },
+                        { label: '🪙 Points', value: points, icon: <Zap size={18} />, gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', shadow: 'rgba(245,158,11,0.3)' },
                         { label: 'Tests Done', value: d.stats.testsCompleted, icon: <CheckCircle size={18} />, gradient: 'linear-gradient(135deg, #10b981, #059669)', shadow: 'rgba(16,185,129,0.3)' },
-                        { label: 'Avg Score', value: `${d.stats.avgScore.toFixed(0)}%`, icon: <TrendingUp size={18} />, gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', shadow: 'rgba(245,158,11,0.3)' },
+                        { label: 'Avg Score', value: `${d.stats.avgScore.toFixed(0)}%`, icon: <TrendingUp size={18} />, gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)', shadow: 'rgba(99,102,241,0.3)' },
                         { label: 'Accuracy', value: `${d.stats.avgAccuracy.toFixed(0)}%`, icon: <Target size={18} />, gradient: 'linear-gradient(135deg, #ec4899, #db2777)', shadow: 'rgba(236,72,153,0.3)' },
                     ].map((s, i) => (
                         <div key={i} className="rounded-2xl p-4 flex items-center gap-3 transition-all hover:scale-[1.03] hover:-translate-y-1" style={{ background: '#ffffff', boxShadow: `0 8px 30px ${s.shadow}, 0 2px 8px rgba(0,0,0,0.06)`, border: '1px solid rgba(255,255,255,0.8)' }}>
-                            <div className="h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0 text-white" style={{ background: s.gradient, boxShadow: `0 4px 12px ${s.shadow}` }}>
+                            <div className="h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: s.gradient, boxShadow: `0 4px 12px ${s.shadow}`, color: '#ffffff' }}>
                                 {s.icon}
                             </div>
                             <div>
@@ -118,21 +171,23 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* ═══ PROGRESS BAR ═══ */}
+            {/* ═══ RANK PROGRESS BAR ═══ */}
             <div className="max-w-6xl mx-auto px-4 mb-6">
-                <div className="rounded-2xl p-5" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', border: '1px solid #e8ecf1' }}>
+                <div className="rounded-2xl p-5" style={{ background: '#ffffff', boxShadow: `0 2px 12px rgba(0,0,0,0.04), 0 0 20px ${d.currentRank.color}15, 0 0 40px ${d.currentRank.color}08`, border: `1px solid ${d.currentRank.color}20` }}>
                     <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold" style={{ color: '#0f172a' }}>⚡ Points Progress</span>
-                        <span className="text-xs font-black" style={{ color: '#6366f1' }}>{xp} / {d.nextLevelXp} pts</span>
+                        <span className="text-xs font-bold flex items-center gap-1.5" style={{ color: '#0f172a' }}>{d.currentRank.icon} {d.currentRank.name} Rank</span>
+                        <span className="text-xs font-black" style={{ color: d.currentRank.color }}>{points} pts</span>
                     </div>
                     <div className="h-4 rounded-full overflow-hidden" style={{ background: '#f1f5f9' }} suppressHydrationWarning>
-                        <div suppressHydrationWarning className="h-full rounded-full transition-all duration-1000 relative" style={{ width: `${Math.max(d.xpProgressPercent, 2)}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa)', boxShadow: '0 0 20px rgba(99,102,241,0.4)' }}>
+                        <div suppressHydrationWarning className="h-full rounded-full transition-all duration-1000 relative" style={{ width: `${Math.max(d.rankProgressPercent, 2)}%`, background: `linear-gradient(90deg, ${d.currentRank.color}, ${d.currentRank.color}cc)`, boxShadow: `0 0 20px ${d.currentRank.color}40` }}>
                             <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%)' }} />
                         </div>
                     </div>
                     <div className="flex justify-between text-[10px] mt-1.5 font-medium" style={{ color: '#94a3b8' }}>
-                        <span>Level {level}</span>
-                        <span style={{ color: d.xpToNextLevel > 0 ? '#94a3b8' : '#10b981' }}>{d.xpToNextLevel > 0 ? `${d.xpToNextLevel} points to Level ${level + 1}` : '🎉 Ready to level up!'}</span>
+                        <span>{d.currentRank.icon} {d.currentRank.name}</span>
+                        <span style={{ color: d.pointsToNextRank > 0 ? '#94a3b8' : '#10b981' }}>
+                            {d.nextRank ? `${d.pointsToNextRank} pts to ${d.nextRank.icon} ${d.nextRank.name}` : '🎉 Max Rank Achieved!'}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -142,11 +197,11 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5">
 
                     {/* LEFT: Tests */}
-                    <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', border: '1px solid #e8ecf1' }}>
+                    <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04), 0 0 20px rgba(99,102,241,0.08), 0 0 40px rgba(99,102,241,0.04)', border: '1px solid rgba(99,102,241,0.12)' }}>
                         {/* Tests header */}
                         <div className="p-5 pb-3">
                             <div className="flex items-center gap-2 mb-4">
-                                <div className="h-8 w-8 rounded-xl flex items-center justify-center text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}><Play size={14} /></div>
+                                <div className="h-8 w-8 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}><Play size={14} /></div>
                                 <h2 className="text-base font-black" style={{ color: '#0f172a' }}>Available Tests</h2>
                             </div>
                             {/* Subject tabs */}
@@ -188,7 +243,7 @@ export default function DashboardPage() {
                                 ) : (
                                     <>
                                         {filterBySubject(d.availableTests).map(test => (
-                                            <TestCard key={test.id} test={test} onStart={() => window.location.href = `/test/${test.id}`} />
+                                            <TestCard key={test.id} test={test} attempted={d.attemptedTestIds.has(test.id)} onStart={() => window.location.href = `/test/${test.id}`} />
                                         ))}
                                         {filterBySubject(d.lockedTests).map(test => (
                                             <div key={test.id} className="rounded-xl px-4 py-3 flex items-center gap-3 opacity-60" style={{ background: '#f8fafc', border: '1px dashed #d1d5db' }}>
@@ -204,7 +259,7 @@ export default function DashboardPage() {
                                                 {filterBySubject(d.simpleTests.filter(t => t.is_active)).map((test: any) => (
                                                     <div key={test.id} className="rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5" style={{ background: '#ffffff', border: '1px solid #e8ecf1', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                                                         <div className="p-4 flex items-start gap-3">
-                                                            <div className="h-10 w-10 flex items-center justify-center rounded-xl text-[11px] font-black flex-shrink-0 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #818cf8)' }}>T</div>
+                                                            <div className="h-10 w-10 flex items-center justify-center rounded-xl text-[11px] font-black flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6366f1, #818cf8)', color: '#ffffff' }}>T</div>
                                                             <div className="flex-1 min-w-0">
                                                                 <div className="flex items-center gap-2">
                                                                     <h4 className="text-[13px] font-bold truncate" style={{ color: '#0f172a' }}>{test.title}</h4>
@@ -218,8 +273,8 @@ export default function DashboardPage() {
                                                             </div>
                                                         </div>
                                                         <div className="px-4 pb-3 flex justify-end">
-                                                            <Link href={`/test/${test.id}`} className="px-5 py-2 rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 transition-all hover:shadow-xl hover:scale-[1.03] text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 14px rgba(99,102,241,0.35)' }}>
-                                                                <Play size={12} />Start Test
+                                                            <Link href={`/test/${test.id}`} className="px-5 py-2 rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 transition-all hover:shadow-xl hover:scale-[1.03]" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 14px rgba(99,102,241,0.35)', color: '#ffffff' }}>
+                                                                <Play size={12} style={{ color: '#ffffff' }} />Start Test
                                                             </Link>
                                                         </div>
                                                     </div>
@@ -239,7 +294,7 @@ export default function DashboardPage() {
                     <div className="flex flex-col gap-5">
 
                         {/* Live & Upcoming */}
-                        <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', border: '1px solid #e8ecf1' }}>
+                        <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04), 0 0 20px rgba(16,185,129,0.08), 0 0 40px rgba(16,185,129,0.04)', border: '1px solid rgba(16,185,129,0.15)' }}>
                             <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #ecfdf5, #f0fdf4)', borderBottom: '1px solid #d1fae5' }}>
                                 <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#065f46' }}>
                                     <span className="relative flex h-2.5 w-2.5"><span className="absolute inset-0 rounded-full animate-ping" style={{ background: '#10b981', opacity: 0.5 }} /><span className="h-2.5 w-2.5 rounded-full" style={{ background: '#10b981' }} /></span>
@@ -271,39 +326,84 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Leaderboard */}
-                        <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', border: '1px solid #e8ecf1' }}>
-                            <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #fffbeb, #fef3c7)', borderBottom: '1px solid #fde68a' }}>
-                                <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#92400e' }}>
-                                    <Trophy size={16} style={{ color: '#f59e0b' }} /> Leaderboard
+                        <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.06), 0 0 25px rgba(245,158,11,0.1), 0 0 50px rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.15)' }}>
+                            {/* Header */}
+                            <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #fffbeb, #fef3c7, #fde68a)', borderBottom: '1px solid #fde68a' }}>
+                                <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#78350f' }}>
+                                    <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)', boxShadow: '0 2px 8px rgba(251,191,36,0.4)' }}>
+                                        <Trophy size={13} style={{ color: '#fff' }} />
+                                    </div>
+                                    Leaderboard
                                 </h3>
-                                <span className="text-[9px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>🏆 TOP</span>
+                                <div className="flex items-center gap-1">
+                                    <span className="text-[9px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', boxShadow: '0 2px 6px rgba(245,158,11,0.3)' }}>🏆 TOP RANKS</span>
+                                </div>
                             </div>
-                            <div className="p-4">
+                            <div className="p-3">
                                 {d.leaderboard.length === 0 ? (
-                                    <div className="text-center py-4">
-                                        <p className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>No rankings yet</p>
+                                    <div className="text-center py-6">
+                                        <span className="text-2xl mb-2 block">🏆</span>
+                                        <p className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>No rankings yet — be the first!</p>
                                     </div>
                                 ) : (
-                                    <div className="space-y-2 max-h-56 overflow-y-auto">
-                                        {d.leaderboard.map((row, idx) => (
-                                            <div key={row.id} className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all hover:shadow-sm" style={{
-                                                background: idx === 0 ? 'linear-gradient(135deg, #fffbeb, #fef3c7)' : '#fafafa',
-                                                border: idx === 0 ? '1px solid #fde68a' : '1px solid #f1f5f9',
-                                            }}>
-                                                <div className="h-8 w-8 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0" style={{
-                                                    background: idx === 0 ? 'linear-gradient(135deg, #fbbf24, #f59e0b)' : idx === 1 ? 'linear-gradient(135deg, #e2e8f0, #94a3b8)' : idx === 2 ? 'linear-gradient(135deg, #f59e0b, #b45309)' : '#f1f5f9',
-                                                    color: idx < 3 ? '#fff' : '#64748b',
-                                                    boxShadow: idx < 3 ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
+                                    <div className="space-y-2 max-h-72 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
+                                        {d.leaderboard.map((row, idx) => {
+                                            const isRowLegend = idx === 0 && (row.total_xp || 0) >= 800;
+                                            const rowRank = d.getRankForPoints(row.total_xp || 0, isRowLegend);
+                                            const isTop3 = idx < 3;
+                                            const pts = row.total_xp || 0;
+                                            return (
+                                                <div key={row.id} className="relative rounded-xl overflow-hidden transition-all hover:scale-[1.01] hover:shadow-md" style={{
+                                                    background: isTop3
+                                                        ? `linear-gradient(135deg, ${rowRank.color}08, ${rowRank.color}15)`
+                                                        : '#fafbfc',
+                                                    border: `1px solid ${rowRank.color}${isTop3 ? '35' : '20'}`,
+                                                    boxShadow: isTop3 ? `0 2px 12px ${rowRank.color}15` : 'none',
                                                 }}>
-                                                    {idx < 3 ? <Crown size={13} /> : idx + 1}
+                                                    {/* Rank color accent bar */}
+                                                    <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: `linear-gradient(180deg, ${rowRank.color}, ${rowRank.color}80)` }} />
+
+                                                    <div className="flex items-center gap-3 pl-4 pr-3 py-3">
+                                                        {/* Rank Position + Icon */}
+                                                        <div className="relative flex-shrink-0">
+                                                            <div className="h-10 w-10 rounded-xl flex items-center justify-center text-lg" style={{
+                                                                background: `linear-gradient(135deg, ${rowRank.color}20, ${rowRank.color}35)`,
+                                                                border: `1.5px solid ${rowRank.color}40`,
+                                                                boxShadow: isTop3 ? `0 0 12px ${rowRank.color}20` : 'none',
+                                                            }}>
+                                                                {rowRank.icon}
+                                                            </div>
+                                                            {/* Position badge */}
+                                                            <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full flex items-center justify-center text-[8px] font-black" style={{
+                                                                background: isTop3 ? `linear-gradient(135deg, ${rowRank.color}, ${rowRank.color}cc)` : '#e2e8f0',
+                                                                color: isTop3 ? '#fff' : '#64748b',
+                                                                boxShadow: isTop3 ? `0 2px 6px ${rowRank.color}40` : 'none',
+                                                                border: '2px solid #fff',
+                                                            }}>
+                                                                {idx + 1}
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Name + Rank */}
+                                                        <div className="flex-1 min-w-0">
+                                                            <span className="text-[12px] font-bold truncate block" style={{ color: '#0f172a' }}>{row.full_name || 'Player'}</span>
+                                                            <div className="flex items-center gap-2 mt-0.5">
+                                                                <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: rowRank.color }}>
+                                                                    {rowRank.name}
+                                                                </span>
+                                                                <span className="h-1 w-1 rounded-full" style={{ background: '#cbd5e1' }}></span>
+                                                                <span className="text-[9px] font-bold" style={{ color: '#f59e0b' }}>🪙 {pts}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Rank # */}
+                                                        <div className="text-right flex-shrink-0">
+                                                            <span className="text-[10px] font-black" style={{ color: rowRank.color }}>#{row.track_rank}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <span className="text-[12px] font-bold truncate block" style={{ color: '#0f172a' }}>{row.full_name || 'Player'}</span>
-                                                    <span className="text-[9px] font-medium" style={{ color: '#94a3b8' }}>Level {row.current_level} · {row.total_xp} pts</span>
-                                                </div>
-                                                <span className="text-[10px] font-black" style={{ color: idx === 0 ? '#f59e0b' : '#cbd5e1' }}>#{row.track_rank}</span>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </div>
@@ -312,50 +412,134 @@ export default function DashboardPage() {
                 </div>
 
                 {/* ═══ HISTORY ═══ */}
-                <div className="mt-5 rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', border: '1px solid #e8ecf1' }}>
+                <div className="mt-5 rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.06), 0 0 25px rgba(6,182,212,0.1), 0 0 50px rgba(6,182,212,0.05)', border: '1px solid rgba(6,182,212,0.15)' }}>
                     <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #f0f9ff, #ecfeff)', borderBottom: '1px solid #cffafe' }}>
                         <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#164e63' }}>
-                            <Clock size={15} style={{ color: '#06b6d4' }} /> Recent Attempts
+                            <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #06b6d4, #0891b2)', boxShadow: '0 2px 8px rgba(6,182,212,0.3)' }}>
+                                <Clock size={13} style={{ color: '#fff' }} />
+                            </div>
+                            Recent Attempts
                         </h3>
-                        <button onClick={() => d.reloadAll()} className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10px] font-bold transition-all hover:shadow-sm text-white" style={{ background: 'linear-gradient(135deg, #06b6d4, #0891b2)' }}>
+                        <button onClick={() => d.reloadAll()} className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10px] font-bold transition-all hover:shadow-md hover:scale-[1.03] text-white" style={{ background: 'linear-gradient(135deg, #06b6d4, #0891b2)', boxShadow: '0 2px 8px rgba(6,182,212,0.25)' }}>
                             <RefreshCw size={11} />Refresh
                         </button>
                     </div>
-                    <div className="p-4">
+                    <div className="p-3">
                         {d.attemptHistory.length === 0 && d.mySimpleResults.length === 0 ? (
-                            <div className="text-center py-6">
-                                <div className="h-12 w-12 rounded-2xl flex items-center justify-center mx-auto mb-2" style={{ background: '#f1f5f9' }}><BookOpen size={18} style={{ color: '#94a3b8' }} /></div>
+                            <div className="text-center py-8">
+                                <span className="text-3xl mb-2 block">📝</span>
                                 <p className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>No attempts yet. Complete a test to see results!</p>
                             </div>
                         ) : (
-                            <div className="space-y-2.5 max-h-60 overflow-y-auto">
+                            <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
                                 {(d.attemptHistory.length > 0 ? d.attemptHistory : d.mySimpleResults.map((r: any) => ({
                                     id: r.id, test_title: d.simpleTests.find((t: any) => t.id === r.test_id)?.title || 'Test',
                                     total_marks: r.total_points || 0, score: r.score || 0, accuracy: r.total_points ? Math.round((r.score / r.total_points) * 100) : 0,
                                     status: 'SUBMITTED', durationLabel: '-', submitted_at: r.completed_at,
-                                }))).map((row: any) => (
-                                    <div key={row.id} className="flex items-center justify-between gap-3 rounded-xl px-4 py-3 transition-all hover:shadow-md hover:-translate-y-0.5" style={{ background: '#fafafa', border: '1px solid #f1f5f9' }}>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2">
-                                                <h4 className="text-[12px] font-bold truncate" style={{ color: '#0f172a' }}>{row.test_title}</h4>
-                                                <span className="text-[8px] px-2 py-0.5 rounded-full font-bold" style={{
-                                                    background: row.status === 'SUBMITTED' ? '#ecfdf5' : '#fffbeb',
-                                                    color: row.status === 'SUBMITTED' ? '#10b981' : '#f59e0b',
-                                                }}>{row.status === 'AUTO_SUBMITTED' ? 'AUTO' : '✅ Done'}</span>
-                                            </div>
-                                            <div className="flex items-center gap-3 text-[10px] mt-1 font-semibold" style={{ color: '#94a3b8' }}>
-                                                <span className="font-bold" style={{ color: '#6366f1' }}>{row.score}/{row.total_marks}</span>
-                                                <span>{(row.accuracy || 0).toFixed ? (row.accuracy || 0).toFixed(0) : row.accuracy}%</span>
-                                                <span>{d.formatDateTime(row.submitted_at || row.started_at)}</span>
+                                }))).map((row: any) => {
+                                    const isAuto = row.status === 'AUTO_SUBMITTED';
+                                    const acc = row.accuracy || 0;
+                                    const accColor = acc >= 70 ? '#10b981' : acc >= 40 ? '#f59e0b' : '#ef4444';
+                                    return (
+                                        <div key={row.id} className="relative rounded-xl overflow-hidden transition-all hover:shadow-md hover:scale-[1.005]" style={{ background: '#fafbfc', border: '1px solid #f1f5f9' }}>
+                                            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: isAuto ? 'linear-gradient(180deg, #f59e0b, #d97706)' : 'linear-gradient(180deg, #10b981, #059669)' }} />
+                                            <div className="flex items-center gap-3 pl-4 pr-3 py-3">
+                                                <div className="h-11 w-11 rounded-xl flex flex-col items-center justify-center flex-shrink-0" style={{ background: `linear-gradient(135deg, ${accColor}15, ${accColor}25)`, border: `1.5px solid ${accColor}35` }}>
+                                                    <span className="text-[13px] font-black" style={{ color: accColor }}>{row.score}</span>
+                                                    <span className="text-[7px] font-bold" style={{ color: `${accColor}99` }}>/{row.total_marks}</span>
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2">
+                                                        <h4 className="text-[12px] font-bold truncate" style={{ color: '#0f172a' }}>{row.test_title}</h4>
+                                                        <span className="text-[8px] px-2 py-0.5 rounded-full font-bold flex-shrink-0" style={{ background: isAuto ? '#fffbeb' : '#ecfdf5', color: isAuto ? '#d97706' : '#059669', border: `1px solid ${isAuto ? '#fde68a' : '#a7f3d0'}` }}>
+                                                            {isAuto ? '⏱ Auto' : '✅ Done'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2.5 mt-1">
+                                                        <span className="text-[9px] font-bold" style={{ color: accColor }}>{acc.toFixed ? acc.toFixed(0) : acc}% accuracy</span>
+                                                        <span className="h-1 w-1 rounded-full" style={{ background: '#cbd5e1' }}></span>
+                                                        <span className="text-[9px] font-medium" style={{ color: '#94a3b8' }}>{d.formatDateTime(row.submitted_at || row.started_at)}</span>
+                                                    </div>
+                                                </div>
+                                                <Link href={`/review/${row.id}`} className="px-4 py-2 rounded-xl text-[10px] font-bold flex items-center gap-1.5 transition-all hover:shadow-lg hover:scale-[1.05] flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 3px 10px rgba(99,102,241,0.3)', color: '#ffffff' }}>
+                                                    <Eye size={12} style={{ color: '#ffffff' }} />Review
+                                                </Link>
                                             </div>
                                         </div>
-                                        <Link href={`/review/${row.id}`} className="px-3.5 py-1.5 rounded-xl text-[10px] font-bold flex items-center gap-1.5 transition-all hover:shadow-md text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
-                                            <Eye size={11} />Review
-                                        </Link>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
+                    </div>
+                </div>
+            </div>
+
+            {/* ═══ BADGE EXPLANATION ═══ */}
+            <div className="max-w-6xl mx-auto px-4 mb-6">
+                <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04), 0 0 20px rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.1)' }}>
+                    <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe, #e0e7ff)', borderBottom: '1px solid #ddd6fe' }}>
+                        <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#4c1d95' }}>
+                            <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', boxShadow: '0 2px 8px rgba(139,92,246,0.3)' }}>
+                                <span className="text-[13px]">🏅</span>
+                            </div>
+                            How Badges & Ranks Work
+                        </h3>
+                    </div>
+                    <div className="p-5">
+                        <p className="text-[12px] font-medium mb-4" style={{ color: '#475569', lineHeight: '1.7' }}>
+                            Earn points by completing tests! Each correct answer earns you points (only on your <strong>first attempt</strong>). As you collect points, you unlock higher rank badges:
+                        </p>
+                        <div className="rounded-xl overflow-hidden mb-4" style={{ border: '1px solid #e2e8f0' }}>
+                            <table className="w-full text-[11px]">
+                                <thead>
+                                    <tr style={{ background: '#f8fafc' }}>
+                                        <th className="text-left px-3 py-2.5 font-bold" style={{ color: '#475569', borderBottom: '1px solid #e2e8f0' }}>Badge</th>
+                                        <th className="text-left px-3 py-2.5 font-bold" style={{ color: '#475569', borderBottom: '1px solid #e2e8f0' }}>Rank</th>
+                                        <th className="text-left px-3 py-2.5 font-bold" style={{ color: '#475569', borderBottom: '1px solid #e2e8f0' }}>Points Required</th>
+                                        <th className="text-left px-3 py-2.5 font-bold hidden sm:table-cell" style={{ color: '#475569', borderBottom: '1px solid #e2e8f0' }}>Note</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {[
+                                        { icon: '🥉', name: 'Bronze', pts: '0', color: '#cd7f32', note: 'Starting rank for everyone' },
+                                        { icon: '🥈', name: 'Silver', pts: '50', color: '#94a3b8', note: 'Keep practicing!' },
+                                        { icon: '🥇', name: 'Gold', pts: '150', color: '#f59e0b', note: 'Great progress!' },
+                                        { icon: '💎', name: 'Platinum', pts: '300', color: '#06b6d4', note: 'You\'re a pro!' },
+                                        { icon: '💠', name: 'Diamond', pts: '500', color: '#8b5cf6', note: 'Elite performer' },
+                                        { icon: '👑', name: 'Legend', pts: '800+', color: '#ef4444', note: '⭐ Exclusive — Only #1 player!' },
+                                    ].map((r, i) => (
+                                        <tr key={i} style={{ borderBottom: i < 5 ? '1px solid #f1f5f9' : 'none', background: r.name === 'Legend' ? '#fef2f210' : 'transparent' }}>
+                                            <td className="px-3 py-2.5">
+                                                <span className="text-lg">{r.icon}</span>
+                                            </td>
+                                            <td className="px-3 py-2.5 font-bold" style={{ color: r.color }}>{r.name}</td>
+                                            <td className="px-3 py-2.5 font-semibold" style={{ color: '#64748b' }}>{r.pts} pts</td>
+                                            <td className="px-3 py-2.5 font-medium hidden sm:table-cell" style={{ color: '#94a3b8' }}>{r.note}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="space-y-2">
+                            <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: '#fffbeb', border: '1px solid #fde68a' }}>
+                                <span className="text-[13px] mt-0.5">⚡</span>
+                                <p className="text-[11px] font-medium" style={{ color: '#92400e', lineHeight: '1.6' }}>
+                                    <strong>Points are earned only on your first test attempt.</strong> Retaking a test does not add extra points. Your score equals the number of correct answers.
+                                </p>
+                            </div>
+                            <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
+                                <span className="text-[13px] mt-0.5">👑</span>
+                                <p className="text-[11px] font-medium" style={{ color: '#991b1b', lineHeight: '1.6' }}>
+                                    <strong>Legend badge is exclusive!</strong> Only the #1 ranked player with at least 800 points can hold the Legend title. All other players with 500+ points receive the Diamond badge.
+                                </p>
+                            </div>
+                            <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: '#ecfdf5', border: '1px solid #a7f3d0' }}>
+                                <span className="text-[13px] mt-0.5">🎯</span>
+                                <p className="text-[11px] font-medium" style={{ color: '#065f46', lineHeight: '1.6' }}>
+                                    <strong>Tip:</strong> Focus on accuracy! More correct answers = more points = higher rank. Practice regularly to climb the leaderboard!
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -374,19 +558,22 @@ export default function DashboardPage() {
 }
 
 /* ── Test Card ── */
-function TestCard({ test, onStart }: { test: any; onStart: () => void }) {
+function TestCard({ test, attempted, onStart }: { test: any; attempted?: boolean; onStart: () => void }) {
     return (
-        <div className="rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5" style={{ background: '#ffffff', border: '1px solid #e8ecf1', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div className="rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5" style={{ background: '#ffffff', border: attempted ? '1px solid #bbf7d0' : '1px solid #e8ecf1', boxShadow: attempted ? '0 2px 8px rgba(16,185,129,0.08)' : '0 2px 8px rgba(0,0,0,0.04)' }}>
             <div className="p-4 flex items-start gap-3">
-                <div className="h-10 w-10 flex items-center justify-center rounded-xl text-[10px] font-black flex-shrink-0 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #818cf8)', boxShadow: '0 4px 12px rgba(99,102,241,0.3)' }}>
-                    Lv{test.level_no || 1}
+                <div className="h-10 w-10 flex items-center justify-center rounded-xl text-[10px] font-black flex-shrink-0" style={{ background: attempted ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #6366f1, #818cf8)', boxShadow: attempted ? '0 4px 12px rgba(16,185,129,0.3)' : '0 4px 12px rgba(99,102,241,0.3)', color: '#ffffff' }}>
+                    {attempted ? '✓' : `Lv${test.level_no || 1}`}
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                         <h4 className="text-[13px] font-bold truncate" style={{ color: '#0f172a' }}>{test.title}</h4>
-                        {test.mode === 'PRACTICE'
-                            ? <span className="px-2 py-0.5 rounded-full text-[8px] font-bold" style={{ background: '#f1f5f9', color: '#64748b' }}>Practice</span>
-                            : <span className="px-2 py-0.5 rounded-full text-[8px] font-bold flex items-center gap-1 text-white" style={{ background: '#ef4444' }}><span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: '#fff' }} />LIVE</span>}
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                            {attempted && <span className="px-2 py-0.5 rounded-full text-[8px] font-bold" style={{ background: '#ecfdf5', color: '#059669' }}>Attempted ✓</span>}
+                            {test.mode === 'PRACTICE'
+                                ? <span className="px-2 py-0.5 rounded-full text-[8px] font-bold" style={{ background: '#f1f5f9', color: '#64748b' }}>Practice</span>
+                                : <span className="px-2 py-0.5 rounded-full text-[8px] font-bold flex items-center gap-1 text-white" style={{ background: '#ef4444' }}><span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: '#fff' }} />LIVE</span>}
+                        </div>
                     </div>
                     <div className="mt-2 flex items-center gap-2 text-[10px] font-semibold" style={{ color: '#94a3b8' }}>
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Clock size={10} />{test.duration_minutes}m</span>
@@ -396,9 +583,9 @@ function TestCard({ test, onStart }: { test: any; onStart: () => void }) {
                 </div>
             </div>
             <div className="px-4 pb-3 flex items-center justify-between" style={{ borderTop: '1px solid #f5f5f5' }}>
-                <span className="text-[9px] truncate font-medium" style={{ color: '#94a3b8' }}>{test.level_title || 'Level test'}</span>
-                <button onClick={onStart} className="px-5 py-2 rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 transition-all hover:shadow-xl hover:scale-[1.03] text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 14px rgba(99,102,241,0.35)' }}>
-                    <Play size={12} />Start
+                <span className="text-[9px] truncate font-medium" style={{ color: '#94a3b8' }}>{test.category || test.level_title || 'Level test'}</span>
+                <button onClick={onStart} className="px-5 py-2 rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 transition-all hover:shadow-xl hover:scale-[1.03]" style={{ background: attempted ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: attempted ? '0 4px 14px rgba(245,158,11,0.35)' : '0 4px 14px rgba(99,102,241,0.35)', color: '#ffffff' }}>
+                    <Play size={12} style={{ color: '#ffffff' }} />{attempted ? 'Try Again' : 'Start'}
                 </button>
             </div>
         </div>
