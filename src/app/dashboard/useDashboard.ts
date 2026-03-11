@@ -10,9 +10,9 @@ import {
 /* ── Interfaces ── */
 export interface Profile { id: string; full_name?: string; exam_track?: string;[k: string]: any; }
 export interface UserState { user_id: string; track_id?: string | null; current_level: number; total_xp: number; total_points?: number; streak_days: number;[k: string]: any; }
-export interface Level { id: string; level_no: number; title: string; description?: string; required_xp: number; track_id: string;[k: string]: any; }
+export interface Level { id: string; level_no: number; title: string; description?: string; required_xp: number; track_id?: string;[k: string]: any; }
 export interface ExamTest {
-    id: string; title: string; track_id: string; level_id?: string; level_no?: number; level_title?: string;
+    id: string; title: string; level_id?: string; level_no?: number; level_title?: string;
     required_xp?: number; mode: string; duration_minutes: number; total_marks: number; xp_reward: number;
     is_active: boolean; live_start?: string; live_end?: string; live_bonus_xp?: number;[k: string]: any;
 }
@@ -130,7 +130,7 @@ export function useDashboard() {
             const snap = await getDocs(q);
             if (snap.empty) {
                 const p = profile;
-                const newState: UserState = { user_id: user.uid, track_id: p?.exam_track || 'OLEVEL', current_level: 1, total_xp: 0, streak_days: 0 };
+                const newState: UserState = { user_id: user.uid, current_level: 1, total_xp: 0, streak_days: 0 };
                 await addDoc(collection(db, 'exam_user_state'), { ...newState, created_at: new Date().toISOString() });
                 setUserState(newState);
             } else {
@@ -218,7 +218,7 @@ export function useDashboard() {
                             current_level: s.current_level || 1,
                             total_xp: pts,
                             track_rank: 0,
-                            exam_track: s.track_id || prof.exam_track || 'OLEVEL',
+                            exam_track: '',
                         };
                     }
                 });
@@ -234,7 +234,7 @@ export function useDashboard() {
                         current_level: 1,
                         total_xp: data.total_points || data.total_xp || 0,
                         track_rank: 0,
-                        exam_track: data.exam_track || 'OLEVEL',
+                        exam_track: '',
                     };
                 });
             }
@@ -315,14 +315,21 @@ export function useDashboard() {
 
     function calcStats(hist: Attempt[]) {
         if (!hist.length) { setStats({ testsCompleted: 0, avgScore: 0, avgAccuracy: 0, totalCorrect: 0, totalWrong: 0 }); return; }
-        let totalScore = 0, totalAcc = 0, correct = 0, wrong = 0;
+        let totalScorePercent = 0, totalAcc = 0, correct = 0, wrong = 0;
         hist.forEach(r => {
-            totalScore += r.score || 0; totalAcc += r.accuracy || 0;
-            const totalPts = r.total_marks || 0; const c = Math.round((r.accuracy / 100) * totalPts);
+            const totalPts = r.total_marks || 1;
+            const scoreVal = r.score || 0;
+            // Convert score to percentage of total marks
+            const scorePercent = (scoreVal / totalPts) * 100;
+            totalScorePercent += scorePercent;
+            // Use accuracy if available, otherwise compute from score
+            const acc = r.accuracy || scorePercent;
+            totalAcc += acc;
+            const c = Math.round((acc / 100) * totalPts);
             correct += c; wrong += Math.max(0, totalPts - c);
         });
         const n = hist.length;
-        setStats({ testsCompleted: n, avgScore: n ? totalScore / n : 0, avgAccuracy: n ? totalAcc / n : 0, totalCorrect: correct, totalWrong: wrong });
+        setStats({ testsCompleted: n, avgScore: n ? totalScorePercent / n : 0, avgAccuracy: n ? totalAcc / n : 0, totalCorrect: correct, totalWrong: wrong });
     }
 
     // Also load simpler Next.js collections for fallback

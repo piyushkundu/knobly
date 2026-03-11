@@ -31,12 +31,14 @@ if (!firebaseConfig.apiKey && isServer) {
   auth = getAuth(app);
 
   try {
-    db = getApps().length <= 1 && !('_knobly_db' in globalThis)
-      ? initializeFirestore(app, { experimentalForceLongPolling: true, ignoreUndefinedProperties: true })
-      : getFirestore(app);
-    (globalThis as any)._knobly_db = true;
-  } catch {
+    // Try to get existing Firestore instance first (important for HMR/dev)
     db = getFirestore(app);
+  } catch {
+    try {
+      db = initializeFirestore(app, { experimentalForceLongPolling: true, ignoreUndefinedProperties: true });
+    } catch {
+      db = getFirestore(app);
+    }
   }
 }
 

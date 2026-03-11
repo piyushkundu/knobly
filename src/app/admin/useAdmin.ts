@@ -70,7 +70,7 @@ export function useAdmin() {
     const [videos, setVideos] = useState<any[]>([]);
 
     // Test Editor
-    const emptyTest = { id: null as string | null, title: '', track_id: 'OLEVEL', mode: 'PRACTICE', duration_minutes: 30, total_marks: 20, xp_reward: 50, live_start: '', live_end: '', is_active: true, category: '' };
+    const emptyTest = { id: null as string | null, title: '', mode: 'PRACTICE', duration_minutes: 30, total_marks: 20, xp_reward: 50, live_start: '', live_end: '', is_active: true, category: '' };
     const [currentTest, setCurrentTest] = useState({ ...emptyTest });
     const [saving, setSaving] = useState(false);
 
@@ -95,7 +95,7 @@ export function useAdmin() {
 
     // Gamification
     const [editingLevelId, setEditingLevelId] = useState<string | null>(null);
-    const [levelForm, setLevelForm] = useState({ track_id: 'OLEVEL', level_no: '', required_xp: '', title: '' });
+    const [levelForm, setLevelForm] = useState({ level_no: '', required_xp: '', title: '' });
     const [editingBadgeId, setEditingBadgeId] = useState<string | null>(null);
     const [badgeForm, setBadgeForm] = useState({ badge_name: '', badge_icon: '', xp_reward: '', description: '' });
 
@@ -468,8 +468,8 @@ export function useAdmin() {
     };
 
     // ═══════════════ GAMIFICATION ═══════════════
-    const editLevel = (l: any) => { setEditingLevelId(l.id); setLevelForm({ track_id: l.track_id || 'OLEVEL', level_no: l.level_no || '', required_xp: l.required_xp || '', title: l.title || '' }); };
-    const cancelLevelEdit = () => { setEditingLevelId(null); setLevelForm({ track_id: 'OLEVEL', level_no: '', required_xp: '', title: '' }); };
+    const editLevel = (l: any) => { setEditingLevelId(l.id); setLevelForm({ level_no: l.level_no || '', required_xp: l.required_xp || '', title: l.title || '' }); };
+    const cancelLevelEdit = () => { setEditingLevelId(null); setLevelForm({ level_no: '', required_xp: '', title: '' }); };
     const saveLevel = async () => {
         try {
             const data = { ...levelForm, level_no: Number(levelForm.level_no) || 0, required_xp: Number(levelForm.required_xp) || 0 };

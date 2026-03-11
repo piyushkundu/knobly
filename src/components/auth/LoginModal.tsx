@@ -44,7 +44,33 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             onClose();
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'An error occurred';
-            setError(message);
+            // Filter out Firestore internal errors (SDK bugs, not user errors)
+            if (message.includes('INTERNAL ASSERTION') || message.includes('Unexpected state')) {
+                // Retry once silently - often works on second attempt
+                try {
+                    if (isSignUp) {
+                        await signup(form.email, form.password, form.fullName, form.username, form.selectedAvatar);
+                    } else {
+                        await login(form.email, form.password);
+                    }
+                    onClose();
+                    return;
+                } catch (_) {
+                    setError('Connection error. Please try again.');
+                }
+            } else if (message.includes('auth/email-already-in-use')) {
+                setError('Ye email already registered hai. Login karo.');
+            } else if (message.includes('auth/invalid-credential') || message.includes('auth/wrong-password') || message.includes('auth/user-not-found')) {
+                setError('Email ya password galat hai. Check karo.');
+            } else if (message.includes('auth/weak-password')) {
+                setError('Password kam se kam 6 characters ka hona chahiye.');
+            } else if (message.includes('auth/invalid-email')) {
+                setError('Email format sahi nahi hai.');
+            } else if (message.includes('auth/too-many-requests')) {
+                setError('Bahut zyada attempts ho gaye. Thodi der baad try karo.');
+            } else {
+                setError(message);
+            }
         } finally {
             setLoading(false);
         }
@@ -58,7 +84,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             onClose();
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'An error occurred';
-            setError(message);
+            if (message.includes('INTERNAL ASSERTION') || message.includes('Unexpected state')) {
+                try {
+                    await loginWithGoogle();
+                    onClose();
+                    return;
+                } catch (_) {
+                    setError('Connection error. Please try again.');
+                }
+            } else if (message.includes('popup-closed-by-user')) {
+                setError('');
+            } else {
+                setError(message);
+            }
         } finally {
             setLoading(false);
         }
@@ -131,8 +169,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                                     alt="avatar"
                                                     onClick={() => setForm({ ...form, selectedAvatar: av })}
                                                     className={`w-10 h-10 rounded-full border-2 cursor-pointer transition-all hover:scale-110 bg-white/10 ${form.selectedAvatar === av
-                                                            ? 'border-cyan-400 shadow-[0_0_10px_#22d3ee]'
-                                                            : 'border-transparent opacity-60 hover:opacity-100'
+                                                        ? 'border-cyan-400 shadow-[0_0_10px_#22d3ee]'
+                                                        : 'border-transparent opacity-60 hover:opacity-100'
                                                         }`}
                                                 />
                                             ))}

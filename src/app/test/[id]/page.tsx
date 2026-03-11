@@ -14,7 +14,6 @@ import Script from 'next/script';
 interface TestData {
     id: string;
     title: string;
-    track_id: string;
     duration_minutes: number;
     xp_reward: number;
     [key: string]: any;
@@ -720,7 +719,7 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                         <div className="h-10 w-10 rounded-xl flex items-center justify-center text-base font-black flex-shrink-0" style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.25)', boxShadow: '0 0 14px rgba(139,92,246,0.35)' }}>K</div>
                         <div className="min-w-0">
                             <h1 className="truncate max-w-[160px] sm:max-w-sm text-[14px] sm:text-lg font-black tracking-wide" style={{ color: '#ffffff' }}>{testData.title || 'Exam'}</h1>
-                            <p className="hidden sm:block text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.7)' }}>🔒 Secure Exam · {testData.track_id}</p>
+                            <p className="hidden sm:block text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.7)' }}>🔒 Secure Exam</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">

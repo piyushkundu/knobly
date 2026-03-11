@@ -110,7 +110,7 @@ export function useSuperAdmin() {
                 if (!uid) return;
                 if (!userMap[uid] || (s.total_points || s.total_xp || 0) > (userMap[uid].total_xp || 0)) {
                     const prof = profileMap[uid] || {};
-                    userMap[uid] = { id: uid, full_name: prof.full_name || prof.email || 'Unknown', email: prof.email || '', total_xp: s.total_points || s.total_xp || 0, current_level: s.current_level || 1, exam_track: s.track_id || prof.exam_track || 'OLEVEL', stateDocId: s.id };
+                    userMap[uid] = { id: uid, full_name: prof.full_name || prof.email || 'Unknown', email: prof.email || '', total_xp: s.total_points || s.total_xp || 0, current_level: s.current_level || 1, stateDocId: s.id };
                 }
             });
             board = Object.values(userMap);
@@ -212,8 +212,28 @@ export function useSuperAdmin() {
         };
     };
 
-    // User CRUD
-    const deleteUser = async (uid: string) => { await deleteDoc(doc(db, 'profiles', uid)); refreshAll(); };
+    const deleteUser = async (uid: string) => {
+        try {
+            // Delete from profiles
+            try { await deleteDoc(doc(db, 'profiles', uid)); } catch (_) { }
+            // Delete from users collection
+            try { await deleteDoc(doc(db, 'users', uid)); } catch (_) { }
+            // Delete exam_user_state
+            try {
+                const stateSnap = await getDocs(query(collection(db, 'exam_user_state'), where('user_id', '==', uid)));
+                for (const d of stateSnap.docs) { await deleteDoc(d.ref); }
+            } catch (_) { }
+            // Delete user badges
+            try {
+                const badgeSnap = await getDocs(query(collection(db, 'exam_user_badges'), where('user_id', '==', uid)));
+                for (const d of badgeSnap.docs) { await deleteDoc(d.ref); }
+            } catch (_) { }
+            await refreshAll();
+        } catch (e: any) {
+            console.error('deleteUser error:', e);
+            alert('Error deleting user: ' + (e.message || ''));
+        }
+    };
     const deleteLeaderboardUser = async (uid: string, stateDocId?: string) => {
         try { await deleteDoc(doc(db, 'profiles', uid)); } catch (_) { }
         if (stateDocId) { try { await deleteDoc(doc(db, 'exam_user_state', stateDocId)); } catch (_) { } }

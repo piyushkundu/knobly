@@ -168,7 +168,7 @@ export default function AdminPage() {
                                                     <span className={`text-[9px] px-1.5 py-0.5 rounded border uppercase ${t.mode === 'LIVE' ? 'text-rose-400 border-rose-400/30' : 'text-emerald-400 border-emerald-400/30'}`}>{t.mode}</span>
                                                 </div>
                                                 <div className="text-[10px] text-gray-500 flex gap-2">
-                                                    <span>{t.track_id}</span> • <span>{t.total_marks} Q</span> • <span>{t.duration_minutes}m</span>
+                                                    <span>{t.total_marks} Q</span> • <span>{t.duration_minutes}m</span>
                                                 </div>
                                                 <button onClick={(e) => { e.stopPropagation(); a.deleteTest(t.id); }} className="absolute top-2 right-2 text-gray-600 hover:text-red-500 md:opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 size={14} /></button>
                                             </div>
@@ -186,12 +186,6 @@ export default function AdminPage() {
                                             <div className="md:col-span-2">
                                                 <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">Title</label>
                                                 <input value={a.currentTest.title} onChange={e => a.setCurrentTest({ ...a.currentTest, title: e.target.value })} className={inputCls} />
-                                            </div>
-                                            <div>
-                                                <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">Track</label>
-                                                <select value={a.currentTest.track_id} onChange={e => a.setCurrentTest({ ...a.currentTest, track_id: e.target.value })} className={inputCls}>
-                                                    <option value="OLEVEL">OLEVEL</option>
-                                                </select>
                                             </div>
                                             <div>
                                                 <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">Mode</label>
@@ -235,7 +229,7 @@ export default function AdminPage() {
                                         <HelpCircle size={24} style={{ color: '#f59e0b' }} />
                                         <select value={a.selectedTestId || ''} onChange={e => { a.setSelectedTestId(e.target.value || null); setTimeout(() => a.loadQuestions(e.target.value || undefined), 0); }} className={`${inputCls} md:w-96`}>
                                             <option value="">-- Select a Test --</option>
-                                            {a.tests.map((t: any) => <option key={t.id} value={t.id}>{t.title} ({t.track_id})</option>)}
+                                            {a.tests.map((t: any) => <option key={t.id} value={t.id}>{t.title}</option>)}
                                         </select>
                                     </div>
                                     {a.selectedTestId && (
@@ -385,7 +379,7 @@ export default function AdminPage() {
                                     <div className="space-y-2 max-h-80 md:max-h-96 overflow-y-auto pr-2">
                                         {a.levels.map((l: any) => (
                                             <div key={l.id} className="p-3 rounded flex justify-between items-center text-xs group hover:border-amber-500/30 transition-colors" style={glass}>
-                                                <div><span className="font-bold text-white">Lv {l.level_no}: {l.title}</span><div className="text-[10px] text-gray-500">{l.track_id} • {l.required_xp} Points</div></div>
+                                                <div><span className="font-bold text-white">Lv {l.level_no}: {l.title}</span><div className="text-[10px] text-gray-500">{l.required_xp} Points required</div></div>
                                                 <div className="flex gap-2 md:opacity-60 group-hover:opacity-100">
                                                     <button onClick={() => a.editLevel(l)} className="text-blue-400 hover:text-white p-1"><Pencil size={14} /></button>
                                                     <button onClick={() => a.deleteLevel(l.id)} className="text-red-400 hover:text-white p-1"><Trash2 size={14} /></button>

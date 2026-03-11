@@ -64,29 +64,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             photoURL: avatar || undefined,
         });
         // Save to users collection
-        await setDoc(doc(db, 'users', cred.user.uid), {
-            email,
-            displayName: fullName,
-            username,
-            photoURL: avatar,
-            isAdmin: false,
-            created_at: serverTimestamp(),
-        });
+        try {
+            await setDoc(doc(db, 'users', cred.user.uid), {
+                email,
+                displayName: fullName,
+                username,
+                photoURL: avatar,
+                isAdmin: false,
+                created_at: serverTimestamp(),
+            });
+        } catch (_) { console.warn('Could not create users doc'); }
         // Also save to profiles collection (used by dashboard & superadmin)
-        await setDoc(doc(db, 'profiles', cred.user.uid), {
-            email,
-            full_name: fullName,
-            username,
-            avatar_url: avatar || '',
-            role: 'user',
-            exam_track: 'OLEVEL',
-            created_at: serverTimestamp(),
-        });
+        try {
+            await setDoc(doc(db, 'profiles', cred.user.uid), {
+                email,
+                full_name: fullName,
+                username,
+                avatar_url: avatar || '',
+                role: 'user',
+                created_at: serverTimestamp(),
+            });
+        } catch (_) { console.warn('Could not create profile doc'); }
         // Initialize exam_user_state for XP tracking
         try {
             await setDoc(doc(db, 'exam_user_state', cred.user.uid), {
                 user_id: cred.user.uid,
-                track_id: 'OLEVEL',
                 total_xp: 0,
                 total_points: 0,
                 current_level: 1,
@@ -124,14 +126,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 username: result.user.email?.split('@')[0] || '',
                 avatar_url: result.user.photoURL || '',
                 role: 'user',
-                exam_track: 'OLEVEL',
                 created_at: serverTimestamp(),
             });
             // Initialize exam_user_state
             try {
                 await setDoc(doc(db, 'exam_user_state', uid), {
                     user_id: uid,
-                    track_id: 'OLEVEL',
                     total_xp: 0,
                     total_points: 0,
                     current_level: 1,

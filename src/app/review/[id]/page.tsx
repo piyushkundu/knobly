@@ -11,7 +11,7 @@ import Link from 'next/link';
 interface Option { id: string; option_text: string; is_correct: boolean; question_id: string; }
 interface Question { id: string; question_text: string; question_type: string; marks: number; chapter?: string; difficulty?: string; explanation?: string; exam_options: Option[]; created_at?: any; }
 interface Attempt { id: string; test_id: string; user_id: string; score?: number; accuracy?: number; status: string; started_at?: string; submitted_at?: string; }
-interface TestData { id: string; title: string; duration_minutes: number; total_marks: number; total_points?: number; track_id?: string; }
+interface TestData { id: string; title: string; duration_minutes: number; total_marks: number; total_points?: number; }
 
 function getCleanOptionText(text: string): string {
     if (!text) return '';

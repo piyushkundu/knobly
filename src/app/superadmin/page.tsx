@@ -29,7 +29,7 @@ export default function SuperAdminPage() {
     const [loginPass, setLoginPass] = useState('');
     const [sideOpen, setSideOpen] = useState(false);
 
-    const emptyTest = { id: null as any, title: '', track_id: 'OLEVEL', mode: 'PRACTICE', duration_minutes: 30, total_marks: 20, xp_reward: 100, live_start: '', live_end: '', is_active: true, category: '', level_id: '' };
+    const emptyTest = { id: null as any, title: '', mode: 'PRACTICE', duration_minutes: 30, total_marks: 20, xp_reward: 100, live_start: '', live_end: '', is_active: true, category: '', level_id: '' };
     const [testForm, setTestForm] = useState(emptyTest);
     const [saving, setSaving] = useState(false);
     const [selTestId, setSelTestId] = useState('');
@@ -43,7 +43,7 @@ export default function SuperAdminPage() {
     const [attemptDetail, setAttemptDetail] = useState<any>(null);
     const [userSearch, setUserSearch] = useState('');
     const [profileModal, setProfileModal] = useState<any>(null);
-    const [levelForm, setLevelForm] = useState({ track_id: 'OLEVEL', level_no: '', required_xp: '', title: '' });
+    const [levelForm, setLevelForm] = useState({ level_no: '', required_xp: '', title: '' });
     const [editLevelId, setEditLevelId] = useState<string | null>(null);
     const [badgeForm, setBadgeForm] = useState({ badge_name: '', badge_icon: '', xp_reward: '', description: '' });
     const [editBadgeId, setEditBadgeId] = useState<string | null>(null);
@@ -225,7 +225,7 @@ export default function SuperAdminPage() {
                                                                 <span className={`text-[8px] px-2 py-0.5 rounded-full font-bold ${t.mode === 'LIVE' ? 'text-white' : 'bg-emerald-50 text-emerald-600'}`} style={t.mode === 'LIVE' ? { background: 'linear-gradient(135deg, #ef4444, #dc2626)' } : {}}>{t.mode}</span>
                                                             </div>
                                                         </div>
-                                                        <div className="text-[10px] text-gray-400 font-semibold mb-1.5">{t.track_id} • {t.duration_minutes} min • {t.total_marks} Q • {t.xp_reward} pts</div>
+                                                        <div className="text-[10px] text-gray-400 font-semibold mb-1.5">{t.duration_minutes} min • {t.total_marks} Q • {t.xp_reward} pts</div>
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex gap-1.5 flex-wrap">
                                                                 {t.category && <span className="text-[8px] px-2 py-0.5 rounded-full font-bold" style={{ background: `${catColor}15`, color: catColor, border: `1px solid ${catColor}30` }}>{t.category}</span>}
@@ -248,7 +248,6 @@ export default function SuperAdminPage() {
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                             <div className="md:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Test Title</label><input value={testForm.title} onChange={e => setTestForm({ ...testForm, title: e.target.value })} className={inp} placeholder="e.g. Chapter 6: Python Basics Test" /></div>
-                                            <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Track</label><select value={testForm.track_id} onChange={e => setTestForm({ ...testForm, track_id: e.target.value })} className={inp}><option value="OLEVEL">OLEVEL</option><option value="CCC">CCC</option></select></div>
                                             <div><label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">Mode</label><select value={testForm.mode} onChange={e => setTestForm({ ...testForm, mode: e.target.value })} className={inp}><option value="PRACTICE">PRACTICE</option><option value="LIVE">LIVE</option></select></div>
                                             <div>
                                                 <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">📂 Category (Dashboard Filter)</label>
@@ -263,7 +262,7 @@ export default function SuperAdminPage() {
                                                 <label className="text-[10px] font-bold text-gray-400 uppercase block mb-1">📊 Assign to Level</label>
                                                 <select value={testForm.level_id || ''} onChange={e => setTestForm({ ...testForm, level_id: e.target.value })} className={inp}>
                                                     <option value="">No Level (Always visible)</option>
-                                                    {d.levels.map((l: any) => <option key={l.id} value={l.id}>Lv {l.level_no}: {l.title} ({l.track_id})</option>)}
+                                                    {d.levels.map((l: any) => <option key={l.id} value={l.id}>Lv {l.level_no}: {l.title}</option>)}
                                                 </select>
                                             </div>
                                         </div>
@@ -307,7 +306,7 @@ export default function SuperAdminPage() {
                                 <div className={`${card} p-4 flex flex-col md:flex-row md:items-center gap-3`}>
                                     <select value={selTestId} onChange={e => { setSelTestId(e.target.value); if (e.target.value) d.loadQuestions(e.target.value); }} className={`${inp} md:w-96`}>
                                         <option value="">-- Select a Test --</option>
-                                        {d.tests.map(t => <option key={t.id} value={t.id}>{t.title} ({t.track_id})</option>)}
+                                        {d.tests.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
                                     </select>
                                     {selTestId && <>
                                         <button onClick={() => { setQForm({ id: null, text: '', type: 'MCQ', marks: 1, difficulty: 'EASY', options: [{ text: '', is_correct: false }, { text: '', is_correct: false }] }); setShowQModal(true); }} className={`${btn} bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100`}><Plus size={12} className="inline mr-1" />Add</button>
@@ -397,8 +396,8 @@ export default function SuperAdminPage() {
                                                     <div className="font-bold text-gray-900 text-xs truncate">{u.full_name || 'No Name'}</div>
                                                     <div className="text-[10px] text-gray-400 truncate">{u.email}</div>
                                                     <div className="flex gap-1 mt-0.5">
-                                                        <span className="text-[8px] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded-full font-bold">{u.exam_track}</span>
-                                                        {u.role === 'admin' && <span className="text-[8px] bg-red-50 text-red-500 px-1.5 py-0.5 rounded-full font-bold">ADMIN</span>}
+                                                        {u.role === 'admin' && <span className="text-[8px] bg-red-50 text-red-500 px-1.5 py-0.5 rounded-full font-bold border border-red-200">ADMIN</span>}
+                                                        {u.role !== 'admin' && <span className="text-[8px] bg-blue-50 text-blue-500 px-1.5 py-0.5 rounded-full font-bold border border-blue-200">USER</span>}
                                                     </div>
                                                 </div>
                                             </div>
@@ -460,17 +459,16 @@ export default function SuperAdminPage() {
                                                 <input value={levelForm.level_no} onChange={e => setLevelForm({ ...levelForm, level_no: e.target.value })} type="number" placeholder="Lvl No" className={inp} />
                                                 <input value={levelForm.required_xp} onChange={e => setLevelForm({ ...levelForm, required_xp: e.target.value })} type="number" placeholder="Required Points" className={inp} />
                                                 <input value={levelForm.title} onChange={e => setLevelForm({ ...levelForm, title: e.target.value })} placeholder="Title (e.g. Novice)" className={`${inp} col-span-2`} />
-                                                <select value={levelForm.track_id} onChange={e => setLevelForm({ ...levelForm, track_id: e.target.value })} className={`${inp} col-span-2`}><option value="OLEVEL">OLEVEL</option><option value="CCC">CCC</option></select>
                                             </div>
                                             <div className="flex gap-2">
-                                                {editLevelId && <button onClick={() => { setEditLevelId(null); setLevelForm({ track_id: 'OLEVEL', level_no: '', required_xp: '', title: '' }); }} className={`${btn} w-1/3 bg-gray-100 text-gray-600`}>Cancel</button>}
-                                                <button onClick={async () => { await d.saveLevel(levelForm, editLevelId || undefined); setEditLevelId(null); setLevelForm({ track_id: 'OLEVEL', level_no: '', required_xp: '', title: '' }); }} className={`${btn} flex-1`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}>{editLevelId ? 'Update' : 'Add Level'}</button>
+                                                {editLevelId && <button onClick={() => { setEditLevelId(null); setLevelForm({ level_no: '', required_xp: '', title: '' }); }} className={`${btn} w-1/3 bg-gray-100 text-gray-600`}>Cancel</button>}
+                                                <button onClick={async () => { await d.saveLevel(levelForm, editLevelId || undefined); setEditLevelId(null); setLevelForm({ level_no: '', required_xp: '', title: '' }); }} className={`${btn} flex-1`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}>{editLevelId ? 'Update' : 'Add Level'}</button>
                                             </div>
                                         </div>
                                         <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
                                             {d.levels.map((l: any) => (
                                                 <div key={l.id} className={`${card} p-3 flex justify-between items-center text-xs group hover:shadow-md transition`}>
-                                                    <div><span className="font-bold text-gray-900">Lv {l.level_no}: {l.title}</span><div className="text-[10px] text-gray-400">{l.track_id} • {l.required_xp} Points</div></div>
+                                                    <div><span className="font-bold text-gray-900">Lv {l.level_no}: {l.title}</span><div className="text-[10px] text-gray-400">{l.required_xp} Points required</div></div>
                                                     <div className="flex gap-1 opacity-40 group-hover:opacity-100 transition">
                                                         <button onClick={() => { setEditLevelId(l.id); setLevelForm(l); }} className="text-blue-500 hover:bg-blue-50 p-1.5 rounded-lg"><Pencil size={12} /></button>
                                                         <button onClick={() => { if (confirm('Delete?')) d.deleteLevel(l.id); }} className="text-red-400 hover:bg-red-50 p-1.5 rounded-lg"><Trash2 size={12} /></button>
