@@ -545,7 +545,7 @@ export default function DashboardPage() {
             {/* ── FOOTER ── */}
             <footer style={{ background: '#ffffff', borderTop: '1px solid #e8ecf1' }}>
                 <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between text-[10px] font-semibold" style={{ color: '#94a3b8' }}>
-                    <span>© Knobly Web · Powered by Firebase</span>
+                    <span>© Knobly Web · Powered by knobly</span>
                     <Link href="/" className="flex items-center gap-1 transition-all hover:text-indigo-500" style={{ color: '#64748b' }}>
                         <ArrowLeft size={10} /> Back to Home
                     </Link>
