@@ -322,10 +322,7 @@ export function useAdmin() {
                 }
             });
             if (!options.find(o => o.is_correct) && options.length) options[0].is_correct = true;
-            let marks = 1;
-            const mLine = lines.find(l => l.toLowerCase().startsWith('marks:'));
-            if (mLine) marks = parseInt(mLine.split(':')[1]) || 1;
-            items.push({ question, options, marks, type: options.length ? 'MCQ' : 'SHORT' });
+            items.push({ question, options, type: options.length ? 'MCQ' : 'SHORT' });
         });
         setImportLogs(prev => [...prev, `Parsed ${items.length} questions. Uploading...`]);
         try {
@@ -335,7 +332,7 @@ export function useAdmin() {
                 const batch = writeBatch(db);
                 for (const item of chunk) {
                     const qRef = doc(collection(db, 'exam_questions'));
-                    batch.set(qRef, { test_id: selectedTestId, question_text: item.question, question_type: item.type || 'MCQ', marks: item.marks || 1, difficulty: 'EASY', created_at: serverTimestamp() });
+                    batch.set(qRef, { test_id: selectedTestId, question_text: item.question, question_type: item.type || 'MCQ', marks: 1, difficulty: 'EASY', created_at: serverTimestamp() });
                     if (item.options?.length) {
                         item.options.forEach((o: any) => {
                             const oRef = doc(collection(db, 'exam_options'));

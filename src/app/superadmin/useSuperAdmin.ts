@@ -102,12 +102,20 @@ export function useSuperAdmin() {
         const profileMap: Record<string, any> = {};
         u.forEach((p: any) => { profileMap[p.id] = p; });
         let board: any[] = [];
+        // Build a set of admin user IDs to exclude from leaderboard
+        // Check both profiles (role='admin') and users collection (isAdmin=true)
+        const adminIds = new Set<string>();
+        u.forEach((p: any) => { if (p.role === 'admin' || p.isAdmin) adminIds.add(p.id); });
+        // Also check users collection for isAdmin flag
+        const usersSnap = await safeDocs('users');
+        const usersArr = snapToArr(usersSnap);
+        usersArr.forEach((usr: any) => { if (usr.isAdmin === true) adminIds.add(usr.id); });
         if (xpArr.length > 0) {
             // Deduplicate: keep highest points entry per user_id
             const userMap: Record<string, any> = {};
             xpArr.forEach((s: any) => {
                 const uid = s.user_id;
-                if (!uid) return;
+                if (!uid || adminIds.has(uid)) return; // Skip admins
                 if (!userMap[uid] || (s.total_points || s.total_xp || 0) > (userMap[uid].total_xp || 0)) {
                     const prof = profileMap[uid] || {};
                     userMap[uid] = { id: uid, full_name: prof.full_name || prof.email || 'Unknown', email: prof.email || '', total_xp: s.total_points || s.total_xp || 0, current_level: s.current_level || 1, stateDocId: s.id };
@@ -115,7 +123,7 @@ export function useSuperAdmin() {
             });
             board = Object.values(userMap);
         } else {
-            board = u.map((p: any) => ({ id: p.id, full_name: p.full_name || p.email || 'Unknown', email: p.email || '', total_xp: 0, current_level: 1, exam_track: p.exam_track || 'OLEVEL', stateDocId: null }));
+            board = u.filter((p: any) => !adminIds.has(p.id)).map((p: any) => ({ id: p.id, full_name: p.full_name || p.email || 'Unknown', email: p.email || '', total_xp: 0, current_level: 1, stateDocId: null }));
         }
         board.sort((a: any, b: any) => (b.total_xp || 0) - (a.total_xp || 0));
         board.forEach((r: any, i: number) => { r.rank = i + 1; });
@@ -171,9 +179,9 @@ export function useSuperAdmin() {
             const options: any[] = [];
             lines.forEach(l => { if (/^[A-E][.)]/.test(l)) { let c = l.replace(/^[A-E][.)]\s*/, ""); let ic = false; if (c.includes('*')) { ic = true; c = c.replace('*', '').trim(); } options.push({ text: c, is_correct: ic }); } });
             if (!options.find(o => o.is_correct) && options.length) options[0].is_correct = true;
-            let marks = 1; const mLine = lines.find(l => l.toLowerCase().startsWith('marks:')); if (mLine) marks = parseInt(mLine.split(':')[1]) || 1;
+            // Points per question are auto-calculated from test total_points / total_questions
             const qRef = doc(collection(db, 'exam_questions'));
-            batch.set(qRef, { test_id: testId, question_text: question, question_type: options.length ? 'MCQ' : 'SHORT', marks, difficulty: 'EASY', created_at: serverTimestamp() });
+            batch.set(qRef, { test_id: testId, question_text: question, question_type: options.length ? 'MCQ' : 'SHORT', marks: 1, difficulty: 'EASY', created_at: serverTimestamp() });
             options.forEach(o => { batch.set(doc(collection(db, 'exam_options')), { question_id: qRef.id, option_text: o.text, is_correct: o.is_correct }); });
         });
         await batch.commit();

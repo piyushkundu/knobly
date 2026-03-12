@@ -166,10 +166,10 @@ export default function SuperAdminPage() {
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-left text-sm min-w-[700px]">
                                             <thead className="bg-gray-50 text-gray-400 text-[10px] uppercase border-b border-gray-100">
-                                                <tr><th className="p-3 w-14 text-center">Rank</th><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3 text-center">Points</th><th className="p-3 text-center">Level</th><th className="p-3 text-center">Track</th><th className="p-3 w-20 text-center">Action</th></tr>
+                                                <tr><th className="p-3 w-14 text-center">Rank</th><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3 text-center">Points</th><th className="p-3 text-center">Level</th><th className="p-3 w-28 text-center">Action</th></tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-50">
-                                                {d.leaderboard.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-gray-400 text-xs">No users in leaderboard.</td></tr>}
+                                                {d.leaderboard.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-gray-400 text-xs">No users in leaderboard.</td></tr>}
                                                 {d.leaderboard.map((row: any) => (
                                                     <tr key={row.id} className="hover:bg-gray-50/50 transition group">
                                                         <td className="p-3 text-center">
@@ -182,16 +182,14 @@ export default function SuperAdminPage() {
                                                         <td className="p-3 text-[11px] text-gray-400">{row.email}</td>
                                                         <td className="p-3 text-center font-black text-amber-600">{row.total_xp}</td>
                                                         <td className="p-3 text-center"><span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold">Lv {row.current_level}</span></td>
-                                                        <td className="p-3 text-center"><span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold">{row.exam_track}</span></td>
                                                         <td className="p-3 text-center">
-                                                            {row.id !== d.user?.uid ? (
+                                                            <div className="flex items-center justify-center gap-1.5">
+                                                                {row.id === d.user?.uid && <span className="text-[8px] bg-indigo-50 text-indigo-500 px-2 py-0.5 rounded-full font-bold border border-indigo-200">YOU</span>}
                                                                 <button onClick={() => { if (confirm(`Delete ${row.full_name}? This removes profile, points data, and badges.`)) d.deleteLeaderboardUser(row.id, row.stateDocId); }}
                                                                     className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg opacity-40 group-hover:opacity-100 transition">
                                                                     <Trash2 size={13} />
                                                                 </button>
-                                                            ) : (
-                                                                <span className="text-[8px] bg-indigo-50 text-indigo-500 px-2 py-0.5 rounded-full font-bold">YOU</span>
-                                                            )}
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 ))}
@@ -317,10 +315,13 @@ export default function SuperAdminPage() {
                                     <div className={`${card} p-4 border border-blue-200 grid grid-cols-1 md:grid-cols-2 gap-4`}>
                                         <div><h3 className="text-xs font-bold text-blue-600 uppercase mb-2">1. Paste Questions</h3><textarea value={importText} onChange={e => setImportText(e.target.value)} className={`${inp} h-48 font-mono text-xs`} placeholder="Paste formatted text..." /></div>
                                         <div>
-                                            <h3 className="text-xs font-bold text-emerald-600 uppercase mb-2">2. Format (A-D)</h3>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h3 className="text-xs font-bold text-emerald-600 uppercase">2. Format (A-D)</h3>
+                                                <button onClick={() => { navigator.clipboard.writeText("What is CPU?\nA. Monitor\nB. Processor*\nC. Mouse\nD. Keys\n\nWhat is RAM?\nA. Storage\nB. Memory*\nC. Display\nD. Speaker"); const btn = document.getElementById('copyFmtBtn'); if(btn) { btn.textContent = '✅ Copied!'; setTimeout(() => btn.textContent = '📋 Copy Format', 1500); } }} id="copyFmtBtn" className="text-[9px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 transition">📋 Copy Format</button>
+                                            </div>
                                             <div className="bg-gray-50 p-3 rounded-xl text-[10px] font-mono text-gray-600 border border-gray-200">
-                                                <div className="text-indigo-600">What is CPU?<br />A. Monitor<br />B. Processor*<br />C. Mouse<br />D. Keys<br />Marks: 1</div>
-                                                <div className="text-gray-400 mt-2 text-[9px]">* = Correct • Empty line between Qs</div>
+                                                <div className="text-indigo-600">What is CPU?<br />A. Monitor<br />B. Processor*<br />C. Mouse<br />D. Keys</div>
+                                                <div className="text-gray-400 mt-2 text-[9px]">* = Correct answer • Empty line between Qs<br />⚡ Points per Q = Total Points ÷ Total Questions (auto)</div>
                                             </div>
                                             <button onClick={async () => { setImportLog('Importing...'); const c = await d.importQuestions(selTestId, importText); setImportLog(`✅ Imported ${c} questions!`); setImportText(''); }} className="w-full mt-3 py-2.5 text-white font-bold rounded-xl text-xs shadow-md" style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}>Process & Import</button>
                                             {importLog && <div className="mt-2 text-[10px] font-mono text-emerald-600 bg-emerald-50 p-2 rounded-xl border border-emerald-200">{importLog}</div>}

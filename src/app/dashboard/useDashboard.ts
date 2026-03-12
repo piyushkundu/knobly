@@ -191,14 +191,20 @@ export function useDashboard() {
 
     async function loadLeaderboard(p?: Profile | null) {
         try {
-            // Load both collections in parallel
-            const [stateSnap, profileSnap] = await Promise.all([
+            // Load all needed collections in parallel
+            const [stateSnap, profileSnap, usersSnap] = await Promise.all([
                 getDocs(collection(db, 'exam_user_state')),
-                getDocs(collection(db, 'profiles'))
+                getDocs(collection(db, 'profiles')),
+                getDocs(collection(db, 'users'))
             ]);
             const states = stateSnap.docs.map(d => ({ id: d.id, ...d.data() } as any));
             const profileMap: Record<string, any> = {};
             profileSnap.docs.forEach(d => { profileMap[d.id] = { id: d.id, ...d.data() }; });
+
+            // Build admin IDs set — exclude admins from leaderboard
+            const adminIds = new Set<string>();
+            profileSnap.docs.forEach(d => { const data = d.data(); if (data.role === 'admin' || data.isAdmin) adminIds.add(d.id); });
+            usersSnap.docs.forEach(d => { const data = d.data(); if (data.isAdmin === true) adminIds.add(d.id); });
 
             let board: LeaderRow[] = [];
 
@@ -207,7 +213,7 @@ export function useDashboard() {
                 const userMap: Record<string, LeaderRow> = {};
                 states.forEach((s: any) => {
                     const uid = s.user_id;
-                    if (!uid) return;
+                    if (!uid || adminIds.has(uid)) return; // Skip admins
                     const pts = s.total_points || s.total_xp || 0;
                     if (!userMap[uid] || pts > (userMap[uid].total_xp || 0)) {
                         const prof = profileMap[uid] || {};
@@ -225,7 +231,9 @@ export function useDashboard() {
                 board = Object.values(userMap);
             } else {
                 // Fallback: build from profiles if exam_user_state is empty
-                board = profileSnap.docs.map(d => {
+                board = profileSnap.docs
+                    .filter(d => !adminIds.has(d.id)) // Skip admins
+                    .map(d => {
                     const data = d.data();
                     return {
                         id: d.id,

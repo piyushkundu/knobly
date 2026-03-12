@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, EmailAuthProvider, linkWithCredential } from 'firebase/auth';
+import { doc, getDoc, setDoc, serverTimestamp, query, collection, where, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 
 interface AuthContextType {
@@ -14,6 +14,9 @@ interface AuthContextType {
     logout: () => Promise<void>;
     loginWithGoogle: () => Promise<void>;
     resetPassword: (email: string) => Promise<void>;
+    createUserId: (userId: string, password: string) => Promise<void>;
+    loginWithUserId: (userId: string, password: string) => Promise<void>;
+    getUserIdForCurrentUser: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -145,8 +148,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await sendPasswordResetEmail(auth, email);
     };
 
+    // Create a unique User ID + password for Google-signed-in users
+    const createUserId = async (userId: string, password: string) => {
+        if (!user) throw new Error('You must be logged in.');
+        const cleanId = userId.trim().toLowerCase();
+        if (cleanId.length < 3) throw new Error('User ID kam se kam 3 characters ka hona chahiye.');
+        if (!/^[a-z0-9_]+$/.test(cleanId)) throw new Error('User ID mein sirf letters, numbers aur _ use karo.');
+        if (password.length < 6) throw new Error('Password kam se kam 6 characters ka hona chahiye.');
+
+        // Check uniqueness
+        const existingDoc = await getDoc(doc(db, 'usernames', cleanId));
+        if (existingDoc.exists()) throw new Error('Ye User ID pehle se kisi ne le liya hai. Doosra try karo.');
+
+        // Create a virtual email from the userId for Firebase Auth
+        const virtualEmail = `${cleanId}@knobly.id`;
+        const credential = EmailAuthProvider.credential(virtualEmail, password);
+
+        // Link email/password provider to current Google account
+        await linkWithCredential(user, credential);
+
+        // Save unique username mapping
+        await setDoc(doc(db, 'usernames', cleanId), {
+            uid: user.uid,
+            email: virtualEmail,
+            created_at: serverTimestamp(),
+        });
+
+        // Update profile with userId
+        try {
+            await setDoc(doc(db, 'profiles', user.uid), { knobly_user_id: cleanId }, { merge: true });
+        } catch (_) { }
+    };
+
+    // Login with User ID (resolves userId → email, then signs in)
+    const loginWithUserId = async (userId: string, password: string) => {
+        const cleanId = userId.trim().toLowerCase();
+        const usernameDoc = await getDoc(doc(db, 'usernames', cleanId));
+        if (!usernameDoc.exists()) throw new Error('Ye User ID exist nahi karta.');
+        const virtualEmail = usernameDoc.data().email;
+        await signInWithEmailAndPassword(auth, virtualEmail, password);
+    };
+
+    // Check if current user already has a User ID
+    const getUserIdForCurrentUser = async (): Promise<string | null> => {
+        if (!user) return null;
+        try {
+            const profileDoc = await getDoc(doc(db, 'profiles', user.uid));
+            if (profileDoc.exists() && profileDoc.data()?.knobly_user_id) {
+                return profileDoc.data().knobly_user_id;
+            }
+        } catch (_) { }
+        return null;
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isAdmin, loading, login, signup, logout, loginWithGoogle, resetPassword }}>
+        <AuthContext.Provider value={{ user, isAdmin, loading, login, signup, logout, loginWithGoogle, resetPassword, createUserId, loginWithUserId, getUserIdForCurrentUser }}>
             {children}
         </AuthContext.Provider>
     );

@@ -249,7 +249,7 @@ export default function AdminPage() {
                                         <div>
                                             <h3 className="text-xs font-bold text-emerald-400 uppercase mb-2">2. Format (A-D)</h3>
                                             <div className="p-3 rounded text-[10px] font-mono text-gray-300" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                                                <div style={{ color: '#f59e0b' }}>What is CPU?<br />A. Monitor<br />B. Processor*<br />C. Mouse<br />D. Keys<br />Marks: 1</div>
+                                                <div style={{ color: '#f59e0b' }}>What is CPU?<br />A. Monitor<br />B. Processor*<br />C. Mouse<br />D. Keys</div>
                                                 <ul className="list-disc ml-4 mt-2 space-y-1 text-gray-400"><li><code>*</code> = Correct Option</li><li>Empty line between Qs</li></ul>
                                             </div>
                                             <button onClick={a.parseAndImport} className="w-full mt-3 py-2.5 font-bold rounded text-xs text-white" style={{ background: '#2563eb' }}>PROCESS & IMPORT</button>

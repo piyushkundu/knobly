@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -20,10 +20,29 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
-    const { login, signup, loginWithGoogle, resetPassword } = useAuth();
+    const { user, login, signup, loginWithGoogle, resetPassword, loginWithUserId } = useAuth();
     const [isSignUp, setIsSignUp] = useState(false);
+    const [loginMode, setLoginMode] = useState<'email' | 'userid'>('email');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // Auto-close when user logs in (detected by Firebase auth state)
+    useEffect(() => {
+        if (user && isOpen) {
+            onClose();
+        }
+    }, [user, isOpen, onClose]);
+
+    // Reset form when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setForm({ fullName: '', email: '', password: '', username: '', selectedAvatar: '' });
+            setError('');
+            setIsSignUp(false);
+            setLoginMode('email');
+            setLoading(false);
+        }
+    }, [isOpen]);
     const [form, setForm] = useState({
         fullName: '',
         email: '',
@@ -116,6 +135,24 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         }
     };
 
+    const handleUserIdLogin = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            await loginWithUserId(form.username, form.password);
+            onClose();
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'An error occurred';
+            if (message.includes('auth/invalid-credential') || message.includes('auth/wrong-password')) {
+                setError('User ID ya password galat hai.');
+            } else {
+                setError(message);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -184,6 +221,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                             onChange={(e) => setForm({ ...form, fullName: e.target.value })}
                                             className="rounded-lg p-2.5 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
                                             placeholder="John Doe"
+                                            autoComplete="off"
                                         />
                                     </div>
                                     <div className="flex flex-col gap-1">
@@ -194,11 +232,55 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                             onChange={(e) => setForm({ ...form, username: e.target.value })}
                                             className="rounded-lg p-2.5 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
                                             placeholder="@johndoe"
+                                            autoComplete="off"
                                         />
                                     </div>
                                 </div>
                             )}
 
+                            {isSignUp ? null : (
+                                <div className="flex items-center gap-1 p-0.5 rounded-xl bg-white/5 border border-white/10">
+                                    <button onClick={() => { setLoginMode('email'); setError(''); }}
+                                        className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${loginMode === 'email' ? 'bg-cyan-500/20 text-cyan-400 shadow' : 'text-gray-500 hover:text-gray-300'}`}>
+                                        Email Login
+                                    </button>
+                                    <button onClick={() => { setLoginMode('userid'); setError(''); }}
+                                        className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${loginMode === 'userid' ? 'bg-cyan-500/20 text-cyan-400 shadow' : 'text-gray-500 hover:text-gray-300'}`}>
+                                        User ID Login
+                                    </button>
+                                </div>
+                            )}
+
+                            {!isSignUp && loginMode === 'userid' ? (
+                                /* User ID Login Mode */
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">User ID</label>
+                                        <div className="flex items-center gap-1 rounded-lg overflow-hidden border border-white/10 bg-black/40">
+                                            <span className="text-gray-500 text-xs pl-2.5">@</span>
+                                            <input
+                                                type="text"
+                                                value={form.username}
+                                                onChange={(e) => setForm({ ...form, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
+                                                className="flex-1 bg-transparent text-sm text-white p-2.5 focus:outline-none font-mono"
+                                                placeholder="my_username"
+                                                autoComplete="off"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Password</label>
+                                        <input
+                                            type="password"
+                                            value={form.password}
+                                            onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                            className="rounded-lg p-3 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                                            placeholder="••••••••"
+                                            autoComplete="new-password"
+                                        />
+                                    </div>
+                                </div>
+                            ) : (
                             <div className="flex flex-col gap-3">
                                 <div className="flex flex-col gap-1">
                                     <label className="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Email Address</label>
@@ -208,6 +290,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                                         className="rounded-lg p-3 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
                                         placeholder="user@knobly.os"
+                                        autoComplete="off"
                                     />
                                 </div>
                                 <div className="flex flex-col gap-1">
@@ -218,16 +301,18 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                         onChange={(e) => setForm({ ...form, password: e.target.value })}
                                         className="rounded-lg p-3 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
                                         placeholder="••••••••"
+                                        autoComplete="new-password"
                                     />
                                 </div>
                             </div>
+                            )}
 
                             <button
-                                onClick={handleSubmit}
+                                onClick={!isSignUp && loginMode === 'userid' ? handleUserIdLogin : handleSubmit}
                                 disabled={loading}
                                 className="mt-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-3 rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {loading ? 'PROCESSING...' : isSignUp ? 'REGISTER' : 'AUTHENTICATE'}
+                                {loading ? 'PROCESSING...' : isSignUp ? 'REGISTER' : loginMode === 'userid' ? 'LOGIN WITH USER ID' : 'AUTHENTICATE'}
                             </button>
 
                             <div className="flex items-center gap-3 my-2">

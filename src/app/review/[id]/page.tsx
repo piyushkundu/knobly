@@ -32,8 +32,8 @@ export default function ReviewPage() {
     const [testData, setTestData] = useState<TestData | null>(null);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [responses, setResponses] = useState<Record<string, any>>({});
-    const [stats, setStats] = useState({ correct: 0, wrong: 0, totalPoints: 0, pointsEarned: 0, timeTaken: '' });
-    const [filter, setFilter] = useState<'all' | 'correct' | 'wrong'>('all');
+    const [stats, setStats] = useState({ correct: 0, wrong: 0, skipped: 0, totalPoints: 0, pointsEarned: 0, timeTaken: '' });
+    const [filter, setFilter] = useState<'all' | 'correct' | 'wrong' | 'skip'>('all');
 
     useEffect(() => {
         if (!user || !attemptId) return;
@@ -89,7 +89,7 @@ export default function ReviewPage() {
                 setQuestions(qs);
 
                 // 5) Compute stats
-                let correct = 0, wrong = 0;
+                let correct = 0, wrong = 0, skipped = 0;
                 const totalQ = qs.length || 1;
                 qs.forEach(q => {
                     const type = (q.question_type || '').toUpperCase();
@@ -98,9 +98,11 @@ export default function ReviewPage() {
                     if (isObj) {
                         const correctOpt = q.exam_options.find(o => o.is_correct);
                         if (resp?.option_id && correctOpt && resp.option_id === correctOpt.id) correct++;
-                        else wrong++;
+                        else if (resp?.option_id) wrong++;
+                        else skipped++;
                     } else {
-                        wrong++;
+                        if (resp?.short_answer) wrong++;
+                        else skipped++;
                     }
                 });
                 // Calculate proportional points: Total Points / Total Questions * correct
@@ -112,7 +114,7 @@ export default function ReviewPage() {
                     const diff = Math.max(1, Math.round((new Date(att.submitted_at).getTime() - new Date(att.started_at).getTime()) / 60000));
                     timeTaken = `~${diff} min`;
                 }
-                setStats({ correct, wrong, totalPoints: testTotalPoints, pointsEarned: totalPoints, timeTaken });
+                setStats({ correct, wrong, skipped, totalPoints: testTotalPoints, pointsEarned: totalPoints, timeTaken });
             } catch (err) {
                 console.error('[Review] Load error:', err);
             }
@@ -207,7 +209,7 @@ export default function ReviewPage() {
             <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
 
                 {/* ── Stat Cards ── */}
-                <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <section className="grid grid-cols-2 md:grid-cols-5 gap-3">
                     {/* Score */}
                     <div className="rounded-2xl p-4 sm:p-5" style={{ background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
                         <div className="flex items-center justify-between mb-2">
@@ -245,14 +247,24 @@ export default function ReviewPage() {
                         <p className="text-[10px] mt-1" style={{ color: '#10b981' }}>Correct answers</p>
                     </div>
 
-                    {/* Wrong / Skipped */}
+                    {/* Wrong */}
                     <div className="rounded-2xl p-4 sm:p-5" style={{ background: '#fef2f2', border: '1px solid #fecaca', boxShadow: '0 2px 12px rgba(239,68,68,0.08)' }}>
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#ef4444' }}>Wrong / Skipped</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#ef4444' }}>Wrong</span>
                             <div className="h-7 w-7 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: '#ef4444', color: '#fff' }}>✗</div>
                         </div>
                         <div className="text-2xl sm:text-3xl font-black" style={{ color: '#dc2626' }}>{stats.wrong}</div>
-                        <p className="text-[10px] mt-1" style={{ color: '#ef4444' }}>Includes skipped questions</p>
+                        <p className="text-[10px] mt-1" style={{ color: '#ef4444' }}>Wrong answers</p>
+                    </div>
+
+                    {/* Skipped */}
+                    <div className="rounded-2xl p-4 sm:p-5" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#64748b' }}>Skipped</span>
+                            <div className="h-7 w-7 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: '#94a3b8', color: '#fff' }}>—</div>
+                        </div>
+                        <div className="text-2xl sm:text-3xl font-black" style={{ color: '#475569' }}>{stats.skipped}</div>
+                        <p className="text-[10px] mt-1" style={{ color: '#94a3b8' }}>Unanswered questions</p>
                     </div>
                 </section>
 
@@ -277,6 +289,7 @@ export default function ReviewPage() {
                                 { key: 'all' as const, label: 'All', count: questions.length, color: '#6366f1', bg: '#eef2ff' },
                                 { key: 'correct' as const, label: 'Correct', count: stats.correct, color: '#10b981', bg: '#ecfdf5' },
                                 { key: 'wrong' as const, label: 'Wrong', count: stats.wrong, color: '#ef4444', bg: '#fef2f2' },
+                                { key: 'skip' as const, label: 'Skipped', count: stats.skipped, color: '#64748b', bg: '#f1f5f9' },
                             ].map(f => (
                                 <button key={f.key} onClick={() => setFilter(f.key)}
                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all"
@@ -298,7 +311,8 @@ export default function ReviewPage() {
                         if (filter === 'all') return true;
                         const status = getStatus(q);
                         if (filter === 'correct') return status.label === 'Correct';
-                        return status.label === 'Wrong' || status.label === 'Skipped' || status.label === 'Review';
+                        if (filter === 'skip') return status.label === 'Skipped';
+                        return status.label === 'Wrong';
                     }).map((q, idx) => {
                         const status = getStatus(q);
                         const diff = getDiffStyle(q.difficulty || 'EASY');

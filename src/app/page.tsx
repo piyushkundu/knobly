@@ -24,6 +24,7 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
     { id: 'js', name: 'JS', type: 'Scripting', link: '/web-design/javascript', icon: 'ti ti-brand-javascript', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'Main' },
     { id: 'youtube', name: 'YouTube', type: 'Channel', link: 'https://youtube.com/@knobly1', icon: 'ph-bold ph-youtube-logo', color: 'text-red-500', borderClass: 'border-red', category: 'Main' },
     { id: 'notes', name: 'Notes', type: 'Utility', link: '/notes', icon: 'ti ti-notes', color: 'text-cyan-300', borderClass: 'border-cyan', category: 'Main' },
+    { id: 'test-journey', name: 'Test Journey', type: 'Dashboard', link: '/dashboard', icon: 'ph-bold ph-trophy', color: 'text-amber-400', borderClass: 'border-amber', category: 'Main' },
   ],
   OLevel: [
     { id: 'syllabus', name: 'Syllabus', type: 'Info', link: '/syllabus', icon: 'ph-bold ph-list-bullets', color: 'text-gray-300', borderClass: 'border-slate', category: 'OLevel' },
@@ -80,7 +81,7 @@ const ICON_LIBRARY = [
 
 export default function HomePage() {
   const router = useRouter();
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin, logout, createUserId, getUserIdForCurrentUser } = useAuth();
   const { isDark, toggleTheme, wallpaper, setWallpaper } = useTheme();
 
   // ── Boot (only first visit ever) ──
@@ -136,6 +137,22 @@ export default function HomePage() {
   const [userName, setUserName] = useState('');
   const [isEditingName, setIsEditingName] = useState(false);
   const [editNameVal, setEditNameVal] = useState('');
+
+  // ── User ID Creation ──
+  const [userIdInput, setUserIdInput] = useState('');
+  const [userIdPassword, setUserIdPassword] = useState('');
+  const [userIdStatus, setUserIdStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [userIdMsg, setUserIdMsg] = useState('');
+  const [existingUserId, setExistingUserId] = useState<string | null>(null);
+
+  // Check if user already has a User ID
+  useEffect(() => {
+    if (user) {
+      getUserIdForCurrentUser().then(id => setExistingUserId(id)).catch(() => {});
+    } else {
+      setExistingUserId(null);
+    }
+  }, [user, getUserIdForCurrentUser]);
 
   // ── Notes ──
   const [notesText, setNotesText] = useState('');
@@ -585,7 +602,7 @@ export default function HomePage() {
                   {isDark ? <i className="ph-bold ph-moon-stars text-xs md:text-sm text-cyan-300" /> : <i className="ph-bold ph-sun-dim text-xs md:text-sm text-yellow-500" />}
                 </button>
                 <button
-                  onClick={() => user ? logout() : setShowLoginModal(true)}
+                  onClick={() => user ? (() => { setActiveNav('settings'); setActiveSettingsTab('profile'); })() : setShowLoginModal(true)}
                   className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press overflow-hidden"
                 >
                   {user?.photoURL ? (
@@ -645,7 +662,7 @@ export default function HomePage() {
                     {isDark ? <i className="ph-bold ph-moon-stars text-xs md:text-sm text-cyan-300" /> : <i className="ph-bold ph-sun-dim text-xs md:text-sm text-yellow-500" />}
                   </button>
                   <button
-                    onClick={() => user ? logout() : setShowLoginModal(true)}
+                    onClick={() => user ? (() => { setActiveNav('settings'); setActiveSettingsTab('profile'); })() : setShowLoginModal(true)}
                     className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-white/10 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-all shadow-sm active-press overflow-hidden"
                   >
                     {user?.photoURL ? (
@@ -826,6 +843,85 @@ export default function HomePage() {
                           <span>Your account is active.</span>
                         </div>
                         <button onClick={logout} className="w-full py-2 bg-red-500/10 border border-red-500/50 text-red-400 rounded-lg font-bold hover:bg-red-500/20">Sign Out</button>
+
+                        {/* User ID Creation Section */}
+                        <div className="mt-4 border border-white/10 rounded-xl p-4 bg-white/5">
+                          <div className="text-[12px] font-bold uppercase tracking-[0.18em] text-cyan-400 mb-3 flex items-center gap-2">
+                            <i className="ph-bold ph-identification-card" /> User ID & Password
+                          </div>
+                          {existingUserId ? (
+                            <div className="flex flex-col gap-2">
+                              <div className="flex items-center gap-2 bg-emerald-900/20 border border-emerald-500/20 p-3 rounded-lg">
+                                <i className="ph-bold ph-check-circle text-emerald-400 text-lg" />
+                                <div>
+                                  <div className="text-emerald-300 text-xs font-bold">User ID Active</div>
+                                  <div className="text-white font-mono text-sm mt-0.5">@{existingUserId}</div>
+                                </div>
+                              </div>
+                              <p className="text-gray-400 text-[10px]">Aap is User ID aur password se bhi login kar sakte ho. Google se bhi login hota rahega.</p>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col gap-3">
+                              <p className="text-gray-400 text-[10px]">Apna unique User ID aur password banao. Isse aap Google ke alawa bhi login kar sakte ho.</p>
+                              <div className="flex flex-col gap-1">
+                                <label className="text-[9px] uppercase text-gray-400 tracking-wider font-bold">User ID</label>
+                                <div className="flex items-center gap-1 rounded-lg overflow-hidden border border-white/10 bg-black/40">
+                                  <span className="text-gray-500 text-xs pl-2.5">@</span>
+                                  <input
+                                    type="text"
+                                    value={userIdInput}
+                                    onChange={e => setUserIdInput(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+                                    className="flex-1 bg-transparent text-sm text-white p-2 focus:outline-none font-mono"
+                                    placeholder="my_username"
+                                    maxLength={20}
+                                    autoComplete="off"
+                                  />
+                                </div>
+                                <span className="text-[9px] text-gray-500">Sirf a-z, 0-9, _ allowed. Min 3 characters.</span>
+                              </div>
+                              <div className="flex flex-col gap-1">
+                                <label className="text-[9px] uppercase text-gray-400 tracking-wider font-bold">Password</label>
+                                <input
+                                  type="password"
+                                  value={userIdPassword}
+                                  onChange={e => setUserIdPassword(e.target.value)}
+                                  className="rounded-lg p-2 text-sm bg-black/40 text-white border border-white/10 focus:outline-none focus:border-cyan-400"
+                                  placeholder="Min 6 characters"
+                                  autoComplete="new-password"
+                                />
+                              </div>
+                              {userIdMsg && (
+                                <div className={`text-[10px] p-2 rounded-lg border ${
+                                  userIdStatus === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                                  : userIdStatus === 'success' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                                  : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                                }`}>{userIdMsg}</div>
+                              )}
+                              <button
+                                onClick={async () => {
+                                  setUserIdStatus('loading');
+                                  setUserIdMsg('Creating User ID...');
+                                  try {
+                                    await createUserId(userIdInput, userIdPassword);
+                                    setUserIdStatus('success');
+                                    setUserIdMsg('✅ User ID ban gaya! Ab aap is ID se bhi login kar sakte ho.');
+                                    setExistingUserId(userIdInput.trim().toLowerCase());
+                                    setUserIdInput('');
+                                    setUserIdPassword('');
+                                  } catch (err: any) {
+                                    setUserIdStatus('error');
+                                    setUserIdMsg(err.message || 'Error creating User ID');
+                                  }
+                                }}
+                                disabled={userIdStatus === 'loading' || userIdInput.length < 3 || userIdPassword.length < 6}
+                                className="w-full py-2.5 rounded-xl font-bold text-xs transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                style={{ background: 'linear-gradient(135deg, #06b6d4, #3b82f6)', color: '#fff' }}
+                              >
+                                {userIdStatus === 'loading' ? 'Creating...' : 'Create User ID'}
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
