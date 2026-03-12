@@ -4,7 +4,7 @@ import { useSuperAdmin } from './useSuperAdmin';
 import {
     LayoutDashboard, FlaskConical, HelpCircle, BarChart3, Users, Medal, Bell,
     Plus, Trash2, Pencil, Play, Lock, X, Eye, RefreshCw, Upload, Send,
-    Globe, Youtube, ChevronRight, LogOut, Shield, Loader2, Search, Save, Crown, Menu, FolderOpen
+    Globe, Youtube, ChevronRight, LogOut, Shield, Loader2, Search, Save, Crown, Menu, FolderOpen, Check
 } from 'lucide-react';
 
 const TABS = [
@@ -54,6 +54,8 @@ export default function SuperAdminPage() {
     const [catForm, setCatForm] = useState({ name: '', emoji: '\ud83d\udcda', color: '#6366f1', bgColor: '#eef2ff', textColor: '#4f46e5' });
     const [editCatId, setEditCatId] = useState<string | null>(null);
     const [showIconPicker, setShowIconPicker] = useState(false);
+    const [editingPointsId, setEditingPointsId] = useState<string | null>(null);
+    const [editingPointsVal, setEditingPointsVal] = useState('');
 
     // Build dynamic catColors from Firestore categories
     const catColors: Record<string, string> = {};
@@ -180,7 +182,34 @@ export default function SuperAdminPage() {
                                                         </td>
                                                         <td className="p-3 font-bold text-gray-900 text-xs">{row.full_name}</td>
                                                         <td className="p-3 text-[11px] text-gray-400">{row.email}</td>
-                                                        <td className="p-3 text-center font-black text-amber-600">{row.total_xp}</td>
+                                                        <td className="p-3 text-center">
+                                                            {editingPointsId === row.id ? (
+                                                                <div className="flex items-center justify-center gap-1">
+                                                                    <input
+                                                                        type="number"
+                                                                        value={editingPointsVal}
+                                                                        onChange={e => setEditingPointsVal(e.target.value)}
+                                                                        className="w-16 text-center text-xs font-bold border border-amber-300 rounded-lg px-1 py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 bg-amber-50 text-amber-700"
+                                                                        autoFocus
+                                                                        onKeyDown={e => {
+                                                                            if (e.key === 'Enter') { d.updateLeaderboardPoints(row.id, row.stateDocId, parseInt(editingPointsVal) || 0); setEditingPointsId(null); }
+                                                                            if (e.key === 'Escape') setEditingPointsId(null);
+                                                                        }}
+                                                                    />
+                                                                    <button onClick={() => { d.updateLeaderboardPoints(row.id, row.stateDocId, parseInt(editingPointsVal) || 0); setEditingPointsId(null); }}
+                                                                        className="text-emerald-500 hover:text-emerald-700 p-0.5"><Check size={14} /></button>
+                                                                    <button onClick={() => setEditingPointsId(null)}
+                                                                        className="text-gray-400 hover:text-red-500 p-0.5"><X size={14} /></button>
+                                                                </div>
+                                                            ) : (
+                                                                <button onClick={() => { setEditingPointsId(row.id); setEditingPointsVal(String(row.total_xp || 0)); }}
+                                                                    className="font-black text-amber-600 hover:bg-amber-50 hover:text-amber-700 px-2 py-0.5 rounded-lg transition cursor-pointer inline-flex items-center gap-1 group/pts"
+                                                                    title="Click to edit points">
+                                                                    {row.total_xp}
+                                                                    <Pencil size={10} className="opacity-0 group-hover/pts:opacity-60 transition" />
+                                                                </button>
+                                                            )}
+                                                        </td>
                                                         <td className="p-3 text-center"><span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold">Lv {row.current_level}</span></td>
                                                         <td className="p-3 text-center">
                                                             <div className="flex items-center justify-center gap-1.5">

@@ -249,6 +249,17 @@ export function useSuperAdmin() {
         try { const bSnap = await getDocs(query(collection(db, 'exam_user_badges'), where('user_id', '==', uid))); const batch = writeBatch(db); bSnap.forEach(d => batch.delete(d.ref)); await batch.commit(); } catch (_) { }
         refreshAll();
     };
+
+    // Update leaderboard user points
+    const updateLeaderboardPoints = async (uid: string, stateDocId: string | null, newPoints: number) => {
+        if (stateDocId) {
+            await updateDoc(doc(db, 'exam_user_state', stateDocId), { total_points: newPoints, total_xp: newPoints });
+        } else {
+            // Create new state doc
+            await addDoc(collection(db, 'exam_user_state'), { user_id: uid, total_points: newPoints, total_xp: newPoints, current_level: 1, created_at: serverTimestamp() });
+        }
+        refreshAll();
+    };
     const getUserProfile = async (u: any) => {
         const xpSnap = await getDocs(query(collection(db, 'exam_user_state'), where('user_id', '==', u.id)));
         let xp = 0; if (!xpSnap.empty) { const data = xpSnap.docs[0].data(); xp = data.total_points || data.total_xp || 0; }
@@ -310,7 +321,7 @@ export function useSuperAdmin() {
         saveTest, deleteTest,
         loadQuestions, saveQuestion, deleteQuestion, getOptionsForQuestion, importQuestions,
         loadResults, viewAttemptDetail,
-        deleteUser, deleteLeaderboardUser, getUserProfile,
+        deleteUser, deleteLeaderboardUser, updateLeaderboardPoints, getUserProfile,
         saveLevel, deleteLevel, saveBadge, deleteBadge,
         sendNotification, deleteNotification,
         deployApp, deleteApp, publishVideo, deleteVideo,
