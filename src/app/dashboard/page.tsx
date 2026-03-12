@@ -10,7 +10,7 @@ import {
     BarChart3, Medal, Users, ChevronRight, Flame, Award, Eye,
     Radio, Zap, MapPin, CheckCircle, Compass, RefreshCw, X, ArrowRight,
     LayoutDashboard, StickyNote, Code2, Brain, Keyboard, Loader2,
-    Monitor, Globe, Cpu, BookOpen, Crown, TrendingUp, Star
+    Monitor, Globe, Cpu, BookOpen, Crown, TrendingUp, Star, LogOut
 } from 'lucide-react';
 
 
@@ -35,7 +35,7 @@ export default function DashboardPage() {
     ];
 
     // Auth Guard — if not logged in, show login
-    const { loading: authLoading } = useAuth();
+    const { loading: authLoading, logout } = useAuth();
     if (!authLoading && !d.user) {
         return (
             <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #6366f1 100%)' }}>
@@ -85,7 +85,7 @@ export default function DashboardPage() {
                                 </Link>
                                 <span className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.4)' }}>Home</span>
                             </div>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2.5">
                                 {d.user ? (
                                     <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
                                         <div className="hidden sm:block text-right">
@@ -98,6 +98,12 @@ export default function DashboardPage() {
                                     </div>
                                 ) : (
                                     <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.6)' }}>Login to see dashboard</span>
+                                )}
+                                {d.user && (
+                                    <button onClick={logout} className="h-8 px-2.5 sm:px-3.5 rounded-lg flex items-center justify-center gap-1.5 transition-all hover:scale-105" style={{ background: '#ffffff', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 2px 10px rgba(0,0,0,0.2)' }} title="Logout">
+                                        <LogOut size={13} style={{ color: '#ef4444' }} />
+                                        <span className="hidden sm:inline text-[10px] font-bold" style={{ color: '#ef4444' }}>Logout</span>
+                                    </button>
                                 )}
                             </div>
                         </div>
@@ -352,14 +358,24 @@ export default function DashboardPage() {
                                             const pts = row.total_xp || 0;
                                             return (
                                                 <div key={row.id} className="relative rounded-xl overflow-hidden transition-all hover:scale-[1.01] hover:shadow-md" style={{
-                                                    background: isTop3
-                                                        ? `linear-gradient(135deg, ${rowRank.color}08, ${rowRank.color}15)`
+                                                    background: idx === 0
+                                                        ? 'linear-gradient(135deg, #fdf2f8, #fce7f3, #fbcfe8)'
+                                                        : idx === 1
+                                                        ? 'linear-gradient(135deg, #ecfdf5, #d1fae5, #a7f3d0)'
+                                                        : idx === 2
+                                                        ? 'linear-gradient(135deg, #f0f9ff, #e0f2fe, #bae6fd)'
                                                         : '#fafbfc',
-                                                    border: `1px solid ${rowRank.color}${isTop3 ? '35' : '20'}`,
-                                                    boxShadow: isTop3 ? `0 2px 12px ${rowRank.color}15` : 'none',
+                                                    border: idx === 0 ? '1.5px solid #ec4899'
+                                                        : idx === 1 ? '1.5px solid #10b981'
+                                                        : idx === 2 ? '1.5px solid #0ea5e9'
+                                                        : `1px solid ${rowRank.color}20`,
+                                                    boxShadow: idx === 0 ? '0 4px 20px rgba(236,72,153,0.2), 0 0 30px rgba(236,72,153,0.08)'
+                                                        : idx === 1 ? '0 4px 16px rgba(16,185,129,0.18), 0 0 25px rgba(16,185,129,0.06)'
+                                                        : idx === 2 ? '0 4px 16px rgba(14,165,233,0.18), 0 0 25px rgba(14,165,233,0.06)'
+                                                        : 'none',
                                                 }}>
                                                     {/* Rank color accent bar */}
-                                                    <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: `linear-gradient(180deg, ${rowRank.color}, ${rowRank.color}80)` }} />
+                                                    <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: idx === 0 ? 'linear-gradient(180deg, #ec4899, #db2777)' : idx === 1 ? 'linear-gradient(180deg, #10b981, #059669)' : idx === 2 ? 'linear-gradient(180deg, #0ea5e9, #0284c7)' : `linear-gradient(180deg, ${rowRank.color}, ${rowRank.color}80)` }} />
 
                                                     <div className="flex items-center gap-3 pl-4 pr-3 py-3">
                                                         {/* Rank Position + Icon */}
@@ -373,9 +389,15 @@ export default function DashboardPage() {
                                                             </div>
                                                             {/* Position badge */}
                                                             <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full flex items-center justify-center text-[8px] font-black" style={{
-                                                                background: isTop3 ? `linear-gradient(135deg, ${rowRank.color}, ${rowRank.color}cc)` : '#e2e8f0',
+                                                                background: idx === 0 ? 'linear-gradient(135deg, #ec4899, #db2777)'
+                                                                    : idx === 1 ? 'linear-gradient(135deg, #10b981, #059669)'
+                                                                    : idx === 2 ? 'linear-gradient(135deg, #0ea5e9, #0284c7)'
+                                                                    : isTop3 ? `linear-gradient(135deg, ${rowRank.color}, ${rowRank.color}cc)` : '#e2e8f0',
                                                                 color: isTop3 ? '#fff' : '#64748b',
-                                                                boxShadow: isTop3 ? `0 2px 6px ${rowRank.color}40` : 'none',
+                                                                boxShadow: idx === 0 ? '0 2px 8px rgba(236,72,153,0.5)'
+                                                                    : idx === 1 ? '0 2px 6px rgba(16,185,129,0.4)'
+                                                                    : idx === 2 ? '0 2px 6px rgba(14,165,233,0.4)'
+                                                                    : isTop3 ? `0 2px 6px ${rowRank.color}40` : 'none',
                                                                 border: '2px solid #fff',
                                                             }}>
                                                                 {idx + 1}
@@ -384,13 +406,13 @@ export default function DashboardPage() {
 
                                                         {/* Name + Rank */}
                                                         <div className="flex-1 min-w-0">
-                                                            <span className="text-[12px] font-bold truncate block" style={{ color: '#0f172a' }}>{row.full_name || 'Player'}</span>
+                                                            <span className="text-[12px] font-bold truncate block" style={{ color: idx === 0 ? '#9d174d' : idx === 1 ? '#065f46' : idx === 2 ? '#075985' : '#0f172a' }}>{row.full_name || 'Player'}</span>
                                                             <div className="flex items-center gap-2 mt-0.5">
-                                                                <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: rowRank.color }}>
-                                                                    {rowRank.name}
+                                                                <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: idx === 0 ? '#ec4899' : idx === 1 ? '#10b981' : idx === 2 ? '#0ea5e9' : rowRank.color }}>
+                                                                    {idx === 0 ? '🥇 ' : idx === 1 ? '🥈 ' : idx === 2 ? '🥉 ' : ''}{rowRank.name}
                                                                 </span>
                                                                 <span className="h-1 w-1 rounded-full" style={{ background: '#cbd5e1' }}></span>
-                                                                <span className="text-[9px] font-bold" style={{ color: '#f59e0b' }}>🪙 {pts}</span>
+                                                                <span className="text-[9px] font-bold" style={{ color: idx === 0 ? '#db2777' : idx === 1 ? '#059669' : idx === 2 ? '#0284c7' : '#f59e0b' }}>🪙 {pts}</span>
                                                             </div>
                                                         </div>
 

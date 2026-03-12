@@ -25,7 +25,7 @@ function getCleanOptionText(text: string): string {
 export default function ReviewPage() {
     const { id: attemptId } = useParams<{ id: string }>();
     const router = useRouter();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
 
     const [loading, setLoading] = useState(true);
     const [attempt, setAttempt] = useState<Attempt | null>(null);
@@ -197,10 +197,13 @@ export default function ReviewPage() {
                             <p className="text-[11px] truncate max-w-xs sm:max-w-lg" style={{ color: '#94a3b8' }}>{testData.title}</p>
                         </div>
                     </div>
-                    <div className="hidden sm:flex items-center gap-3 text-[11px]" style={{ color: '#94a3b8' }}>
-                        <span>⏱ {testData.duration_minutes} min paper</span>
-                        <span className="h-4 w-px" style={{ background: '#e2e8f0' }}></span>
-                        <span>⚡ {stats.timeTaken || 'Finished'}</span>
+                    <div className="flex items-center gap-3 text-[11px]" style={{ color: '#94a3b8' }}>
+                        <span className="hidden sm:inline">⏱ {testData.duration_minutes} min paper</span>
+                        <span className="hidden sm:inline h-4 w-px" style={{ background: '#e2e8f0' }}></span>
+                        <span className="hidden sm:inline">⚡ {stats.timeTaken || 'Finished'}</span>
+                        <button onClick={logout} className="h-8 px-2 sm:px-3 rounded-lg flex items-center justify-center gap-1.5 transition-all hover:scale-105 text-[10px] font-bold" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#ef4444' }} title="Logout">
+                            <span style={{ fontSize: '12px' }}>⏻</span> <span className="hidden sm:inline">Logout</span>
+                        </button>
                     </div>
                 </div>
             </header>
