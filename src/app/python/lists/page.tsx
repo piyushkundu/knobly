@@ -1,6 +1,7 @@
 'use client';
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Home, BookOpen, Copy, Check, LayoutDashboard, StickyNote, Code2, Brain, Keyboard as KBIcon, Sparkles, Zap, Hash, Menu, X, ChevronRight, List, ListOrdered, Scissors, Eye, Repeat, PlusCircle, MinusCircle, ArrowUpDown } from 'lucide-react';
 import ListsMCQ from '@/components/content/ListsMCQ';
 
@@ -45,6 +46,85 @@ function MethodCard({ name, desc, children, color }: { name: string; desc: strin
             </div>
             <div className="p-4">{children}</div>
         </div>
+    );
+}
+
+// ═══════════════════════════════════════════════
+//   PRACTICE SECTION with Set Selector + Images
+// ═══════════════════════════════════════════════
+const practiceSets: { setLabel: string; img: string; questions: { hi: string; en: string; hint: string; answer: string; }[]; }[] = [
+    {
+        setLabel: 'Set 1',
+        img: '/images/python_lists_practice_set1.png',
+        questions: [
+            { hi: 'दी गई सूची ["Guava", "Apple", "Banana", "Orange", "Pomegranate"] को उल्टी क्रम में प्रिंट करें।', en: 'Print the list in reverse order.', hint: '[::-1] slicing ya reverse() method use karo.', answer: 'fruits = ["Guava", "Apple", "Banana", "Orange", "Pomegranate"]\nprint(fruits[::-1])\n# OR\nfruits.reverse()\nprint(fruits)' },
+            { hi: 'एक खाली सूची बनाइए और उसमें उपयोगकर्ता से 5 संख्याएँ इनपुट लेकर जोड़िए। इसके बाद सूची के सभी तत्वों को प्रिंट करें।', en: 'Create an empty list and take 5 numbers as input from the user. Then print all elements.', hint: 'append() use karo har input ke baad.', answer: 'nums = []\nfor i in range(5):\n    n = int(input("Enter number: "))\n    nums.append(n)\nprint(nums)' },
+            { hi: 'दी गई सूची [10, 20, 30, 40, 50] से एक नई सूची बनाइए जिसमें सभी तत्वों को दुगुना (double) किया गया हो।', en: 'Create a new list from [10, 20, 30, 40, 50] where each element is doubled.', hint: 'List comprehension: [x*2 for x in nums]', answer: 'nums = [10, 20, 30, 40, 50]\ndoubled = [x * 2 for x in nums]\nprint(doubled)  # [20, 40, 60, 80, 100]' },
+            { hi: 'दी गई सूची [1,2,3,4,5] का योग (sum) और औसत (average) निकालिए।', en: 'Find the sum and average of the list [1,2,3,4,5].', hint: 'sum() aur len() built-in functions use karo.', answer: 'nums = [1, 2, 3, 4, 5]\ntotal = sum(nums)\navg = total / len(nums)\nprint("Sum:", total)     # 15\nprint("Average:", avg)  # 3.0' },
+            { hi: 'दी गई सूची [5,10,15,20,25] से एक नई सूची बनाइए जिसमें केवल odd numbers शामिल हों।', en: 'From [5,10,15,20,25], create a new list containing only odd numbers.', hint: 'x % 2 != 0 condition use karo.', answer: 'nums = [5, 10, 15, 20, 25]\nodds = [x for x in nums if x % 2 != 0]\nprint(odds)  # [5, 15, 25]' },
+            { hi: 'दी गई सूची [10,20,30,40,50] से दूसरे और चौथे तत्व को हटाकर नई सूची प्रिंट करें।', en: 'From [10,20,30,40,50], remove the second and fourth elements and print the new list.', hint: 'del ya pop() using correct indices. Pehle bada index remove karo.', answer: 'nums = [10, 20, 30, 40, 50]\ndel nums[3]  # pehle index 3 (40) hatao\ndel nums[1]  # phir index 1 (20) hatao\nprint(nums)  # [10, 30, 50]' },
+            { hi: 'दी गई सूची [1,2,3,4,5,6,7,8,9,10] से एक नई सूची बनाइए जिसमें केवल वे तत्व हों जो 3 से विभाजित होते हों।', en: 'From [1,2,3,4,5,6,7,8,9,10], create a new list containing only elements divisible by 3.', hint: 'x % 3 == 0 condition use karo.', answer: 'nums = [1,2,3,4,5,6,7,8,9,10]\ndiv3 = [x for x in nums if x % 3 == 0]\nprint(div3)  # [3, 6, 9]' },
+        ],
+    },
+    {
+        setLabel: 'Set 2',
+        img: '/images/python_lists_practice_set2.png',
+        questions: [
+            { hi: 'दी गई सूची [3, 1, 4, 1, 5, 9, 2, 6] को sort करके ascending और descending दोनों क्रम में प्रिंट करें।', en: 'Sort the list [3,1,4,1,5,9,2,6] in ascending and descending order.', hint: 'sort() aur sort(reverse=True) use karo.', answer: 'nums = [3, 1, 4, 1, 5, 9, 2, 6]\nnums.sort()\nprint("Ascending:", nums)\nnums.sort(reverse=True)\nprint("Descending:", nums)' },
+            { hi: 'दी गई सूची [10, 20, 30, 40, 50] में से maximum और minimum element खोजिए।', en: 'Find the maximum and minimum element in [10, 20, 30, 40, 50].', hint: 'max() aur min() built-in functions use karo.', answer: 'nums = [10, 20, 30, 40, 50]\nprint("Max:", max(nums))  # 50\nprint("Min:", min(nums))  # 10' },
+            { hi: 'एक सूची में से duplicate elements हटाकर unique elements की सूची बनाइए।', en: 'Remove duplicate elements from a list and create a list of unique elements.', hint: 'set() se duplicates remove ho jaate hain, phir list() se wapas banao.', answer: 'nums = [1, 2, 2, 3, 4, 4, 5]\nunique = list(set(nums))\nunique.sort()\nprint(unique)  # [1, 2, 3, 4, 5]' },
+            { hi: 'दी गई सूची ["Python", "Java", "C++", "JavaScript"] में "Java" का index खोजिए।', en: 'Find the index of "Java" in the list.', hint: 'index() method use karo.', answer: 'langs = ["Python", "Java", "C++", "JavaScript"]\npos = langs.index("Java")\nprint(pos)  # 1' },
+            { hi: 'दो सूचियों [1,2,3] और [4,5,6] को जोड़कर एक नई सूची बनाइए।', en: 'Combine the two lists [1,2,3] and [4,5,6] into one new list.', hint: '+ operator ya extend() use karo.', answer: 'a = [1, 2, 3]\nb = [4, 5, 6]\ncombined = a + b\nprint(combined)  # [1, 2, 3, 4, 5, 6]' },
+            { hi: 'दी गई सूची [1,2,3,4,5,6,7,8,9,10] से even numbers की नई list बनाइए।', en: 'Create a new list of even numbers from [1..10].', hint: 'x % 2 == 0 condition use karo list comprehension mein.', answer: 'nums = list(range(1, 11))\nevens = [x for x in nums if x % 2 == 0]\nprint(evens)  # [2, 4, 6, 8, 10]' },
+            { hi: 'दी गई सूची ["a","b","c","d","e"] को reverse() method से उल्टा करके print करें।', en: 'Reverse the list ["a","b","c","d","e"] using the reverse() method.', hint: 'reverse() in-place operation hai — original list change hoti hai.', answer: 'letters = ["a", "b", "c", "d", "e"]\nletters.reverse()\nprint(letters)  # [\'e\', \'d\', \'c\', \'b\', \'a\']' },
+        ],
+    },
+];
+
+function PracticeQCard({ q, idx, color }: { q: { hi: string; en: string; hint: string; answer: string }; idx: number; color: string }) {
+    return (
+        <div className="rounded-2xl overflow-hidden" style={{ background: '#fff', border: `1.5px solid ${color}30`, boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+            <div className="px-4 py-3 flex items-start gap-3">
+                <span className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black text-white" style={{ background: `linear-gradient(135deg, ${color}, ${color}bb)` }}>Q{idx + 1}</span>
+                <div>
+                    <p className="text-sm font-semibold leading-snug mb-0.5" style={{ color: '#1e293b' }}>{q.hi}</p>
+                    <p className="text-xs mt-1" style={{ color: '#64748b' }}>{q.en}</p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function PracticeSection() {
+    const [activeSet, setActiveSet] = useState(0);
+    const set = practiceSets[activeSet];
+    const setColors = ['#6366f1', '#8b5cf6'];
+    const color = setColors[activeSet];
+    return (
+        <section id="practice" className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20" style={{ background: '#fff', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02)' }}>
+            <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #f1f5f9' }}>
+                <ListOrdered size={16} className="text-violet-500" />
+                <h2 className="text-base md:text-lg font-extrabold flex-1" style={{ color: '#1e293b' }}>Practice Questions — Khud Karo! 💪</h2>
+            </div>
+            {/* Set Tabs */}
+            <div className="flex gap-2 mb-5">
+                {practiceSets.map((s, i) => (
+                    <button key={i} onClick={() => setActiveSet(i)} className="px-5 py-2 rounded-xl text-sm font-bold transition-all" style={{ background: activeSet === i ? `linear-gradient(135deg, ${setColors[i]}, ${setColors[i]}cc)` : '#f8fafc', color: activeSet === i ? '#fff' : '#64748b', border: `1.5px solid ${activeSet === i ? setColors[i] : '#e2e8f0'}`, boxShadow: activeSet === i ? `0 4px 12px ${setColors[i]}30` : 'none' }}>
+                        📚 {s.setLabel}
+                    </button>
+                ))}
+            </div>
+            {/* Practice Image */}
+            <div className="mb-5 rounded-2xl overflow-hidden" style={{ border: `1px solid ${color}20`, boxShadow: `0 4px 20px ${color}15` }}>
+                <Image src={set.img} alt={`Python Lists Practice ${set.setLabel}`} width={1000} height={600} className="w-full h-auto object-contain" unoptimized />
+            </div>
+            {/* Questions */}
+            <div className="space-y-3">
+                {set.questions.map((q, i) => (
+                    <PracticeQCard key={`${activeSet}-${i}`} q={q} idx={i} color={color} />
+                ))}
+            </div>
+        </section>
     );
 }
 
@@ -243,17 +323,7 @@ export default function ListsPage() {
                     </Sec>
 
                     {/* ═══ PRACTICE ═══ */}
-                    <Sec id="practice" title="Practice Questions — Khud Karo!" icon={<ListOrdered size={16} className="text-violet-500" />}>
-                        <p className="mb-3">In questions ka output pehle socho, phir code chalake check karo! 💪</p>
-                        <div className="space-y-3">
-                            {[{ q: 'List Slicing', h: '[start:stop] mein stop excluded hota hai!', code: 'nums = [10, 20, 30, 40, 50]\nprint(nums[1:4])    # ?\nprint(nums[:3])     # ?\nprint(nums[-2:])    # ?\nprint(nums[::-1])   # ?', bg: '#eef2ff', bc: '#c7d2fe', tc: '#4338ca' }, { q: 'List Methods', h: 'append end mein add karta hai, insert position par.', code: 'fruits = ["apple"]\nfruits.append("banana")\nfruits.insert(0, "mango")\nfruits.extend(["kiwi", "grape"])\nprint(fruits)  # ?\nprint(len(fruits))  # ?', bg: '#ecfdf5', bc: '#a7f3d0', tc: '#166534' }, { q: 'pop() vs remove()', h: 'pop index se kaam karta hai, remove value se.', code: 'nums = [10, 20, 30, 20, 40]\nnums.remove(20)    # Pehla 20 hatao\nresult = nums.pop(0)  # Index 0 nikalo\nprint(nums)    # ?\nprint(result)  # ?', bg: '#f5f3ff', bc: '#ddd6fe', tc: '#5b21b6' }, { q: 'List Comprehension', h: '[expression for item in iterable if condition]', code: 'nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nevens = [x for x in nums if x % 2 == 0]\nsquares = [x**2 for x in range(1, 6)]\nprint(evens)    # ?\nprint(squares)  # ?', bg: '#fdf2f8', bc: '#fbcfe8', tc: '#9d174d' }].map((item, i) => (
-                                <div key={i} className="rounded-2xl overflow-hidden" style={{ background: item.bg, border: `1px solid ${item.bc}` }}>
-                                    <div className="px-4 py-3 flex items-center gap-2" style={{ borderBottom: `1px solid ${item.bc}` }}><span className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black text-white" style={{ background: item.tc }}>{i + 1}</span><h4 className="font-bold text-sm" style={{ color: item.tc }}>{item.q}</h4></div>
-                                    <div className="p-4"><p className="text-sm mb-2" style={{ color: '#475569' }}>Output kya hoga? 🤔</p><CB code={item.code} /><p className="text-xs" style={{ color: '#94a3b8' }}>💡 <strong>Hint:</strong> {item.h}</p></div>
-                                </div>
-                            ))}
-                        </div>
-                    </Sec>
+                    <PracticeSection />
                 </main>
             </div>
         </div>
