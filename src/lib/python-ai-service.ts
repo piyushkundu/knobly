@@ -1,0 +1,189 @@
+import { AIExplanation } from '@/types/python';
+
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_API_KEY_ALT = process.env.GROQ_API_KEY_ALT;
+
+async function fetchWithFallback(url: string, options: RequestInit): Promise<Response> {
+  const primaryKey = GROQ_API_KEY;
+  const secondaryKey = GROQ_API_KEY_ALT;
+  
+  // Try with primary key first
+  let response = await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      'Authorization': `Bearer ${primaryKey}`,
+    }
+  });
+
+  // If failed (likely rate limit or quota), and we have a secondary key, try fallback
+  if (!response.ok && secondaryKey) {
+    console.warn('Primary Groq API Key failed. Attempting fallback...');
+    response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${secondaryKey}`,
+      }
+    });
+  }
+  
+  return response;
+}
+
+export async function explainError(code: string, error: string, language: 'en' | 'hi'): Promise<AIExplanation> {
+  const isHindi = language === 'hi';
+  
+  const systemPrompt = isHindi
+    ? `Tum ek Python expert aur teacher ho. User tumhe unka code aur error dega. 
+Dhyan se sirf 'Error' message ko padho aur batao ki error kis line number par hai aur uska asli matlab kya hai.
+Explanation thodi detail me do (2-3 lines me) taaki student ko samajh aaye ki galti kyun hui. Agar bracket band karna bhul gaye toh saaf batao ki kis line par bracket missing hai. 
+Agar error 'NameError: name is not defined' hai aur user ne koi spelling mistake ki hai ya aise hi koi text likh diya hai, toh usko correct karne ya REMOVE karne ko kaho. Apne paas se extra code matt likho ya naye variables mat banao agar zaroori na ho.
+!! STRICT RULE 1 !! Tumhara Pura Jawab SIRF Hindi ya Hinglish me hona chahiye. English me pura sentence mat likhna.
+!! STRICT RULE 2 !! Python ke technical terms jaise "indentation", "variable", "string", "loop", "syntax", "brackets", "function" ko bilkul translate MAT karna. Unko English word hi rehne dena.
+(Sahi Udaharan: "Line 2 par indentation missing hai", "is variable ko define karein", "print function me string band nahi hui")
+(Galat Udaharan: "dabav lagayein", "char ka upyog karein", "sutrdhar Missing hai")
+Sirf JSON do jisme ye chaar (4) keys hon: "error_type", "explanation", "how_to_fix", "corrected_code". In keys ki values me apna jawav (Hindi/Hinglish me) likho.`
+    : `You are an expert Python teacher. The user will provide their code and complete error traceback.
+READ EXACTLY WHAT THE ERROR SAYS. Explicitly mention the line number where the error occurred based on the traceback. Provide a helpful, clear explanation (2-3 sentences) of why the error happened and what it means, instead of just a brief summary.
+If the error is a 'NameError' or resembles a typo/random text entered into the code, suggest they either correct the spelling or REMOVE the invalid text completely. DO NOT invent new variables, assign random values, or write arbitrary code they didn't ask for. Fix ONLY what is explicitly broken.
+Reply with ONLY JSON containing exactly four keys: "error_type", "explanation", "how_to_fix", "corrected_code". Put your actual response in the values of these keys.`;
+
+  const userMessage = isHindi
+    ? `Code:
+${code}
+
+Error:
+${error}
+
+Is error ko completely analyze karo aur mujhe proper JSON me answer do. IMPORTANT: Answer strictly HINDI (Hinglish) me hi dena hai, English bilkul allow nahi hai, lekin technical words ko English me hi likhna (no literal Hindi translations of technical concepts):
+{"error_type": "", "explanation": "", "how_to_fix": "", "corrected_code": ""}`
+    : `Code:
+${code}
+
+Error Traceback:
+${error}
+
+Analyze the Error Traceback strictly! Do not guess. Fix ONLY what's broken in the code. Provide exactly this JSON structure with your custom answers:
+{"error_type": "", "explanation": "", "how_to_fix": "", "corrected_code": ""}`;
+
+  const response = await fetchWithFallback('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'llama-3.1-8b-instant',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage },
+      ],
+      temperature: 0.2,
+      max_tokens: 600,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error?.message || 'Failed to get AI explanation with both keys');
+  }
+
+  const data = await response.json();
+  const content = data.choices[0]?.message?.content;
+  
+  if (!content) {
+    throw new Error('No response from AI');
+  }
+
+  console.log('AI Response:', content);
+
+  try {
+    let jsonStr = content.trim();
+    jsonStr = jsonStr.replace(/```json/g, '').replace(/```/g, '');
+    
+    const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('No JSON found');
+    }
+    
+    jsonStr = jsonMatch[0];
+    jsonStr = jsonStr.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+    
+    const parsed = JSON.parse(jsonStr);
+    
+    return {
+      error_type: parsed.error_type || 'Error',
+      error_line: parsed.error_line?.toString() || '',
+      simple_explanation_english: isHindi ? '' : (parsed.explanation || ''),
+      simple_explanation_hindi: isHindi ? (parsed.explanation || '') : '',
+      why_error_happened: '',
+      how_to_fix: parsed.how_to_fix || '',
+      corrected_code: parsed.corrected_code || '',
+    };
+  } catch (parseErr) {
+    console.error('Parse error:', parseErr);
+    console.error('Raw:', content);
+    
+    return {
+      error_type: 'Error',
+      error_line: '',
+      simple_explanation_english: isHindi ? '' : 'Try again',
+      simple_explanation_hindi: isHindi ? 'Dubara try karo' : '',
+      why_error_happened: '',
+      how_to_fix: 'Click Get AI Help button',
+      corrected_code: code,
+    };
+  }
+}
+
+export async function generateCode(prompt: string, language: 'en' | 'hi'): Promise<string> {
+  const isHindi = language === 'hi';
+  
+  const systemPrompt = isHindi
+    ? `Tum ek expert Python programmer ho. User ek question poochega aur tumhe sirf aur sirf us point par execute hone wala Python code likhna hai. Is problem ko sabse simple tareeke se solve karo. Functions (\`def\` keyword) ka bilkul use mat karna jab tak user khud na bole, ya bhut zyada zaroori na ho. Code ke bahar koi text ya markdown backticks (\`\`\`) mat dena. Sirf plain text code return karo taaki use seedha editor mein run kiya ja sake.`
+    : `You are an expert Python programmer. The user will ask a programming question or request a script. You must return ONLY raw, executable Python code. Solve this in the simplest way possible. DO NOT use functions (\`def\` keyword) unless the user explicitly asks for one or it is strictly necessary. Do not include any explanations, markdown formatting (like \`\`\`python), or wrapping text. The response should be ready to run directly in an editor.`;
+
+  const userMessage = `Write python code for this: ${prompt}`;
+
+  const response = await fetchWithFallback('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'llama-3.1-8b-instant',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage },
+      ],
+      temperature: 0.2,
+      max_tokens: 1000,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error?.message || 'Failed to generate code with both keys');
+  }
+
+  const data = await response.json();
+  const content = data.choices[0]?.message?.content;
+  
+  if (!content) {
+    throw new Error('No response from AI');
+  }
+
+  // Clean the response if it incorrectly includes markdown block quotes
+  let cleanedContent = content.trim();
+  if (cleanedContent.startsWith('```python')) {
+    cleanedContent = cleanedContent.replace(/^```python\s*/i, '');
+  } else if (cleanedContent.startsWith('```')) {
+    cleanedContent = cleanedContent.replace(/^```\s*/, '');
+  }
+  
+  if (cleanedContent.endsWith('```')) {
+    cleanedContent = cleanedContent.replace(/\s*```$/, '');
+  }
+
+  return cleanedContent.trim();
+}
