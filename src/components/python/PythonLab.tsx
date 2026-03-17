@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Play, History, Sparkles, Code2, Zap, Sun, Moon, Trash2, ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PythonCodeEditor } from './PythonCodeEditor';
@@ -32,6 +32,7 @@ export function PythonLab() {
   const [output, setOutput] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [errorLine, setErrorLine] = useState<number | null>(null);
+  const [customInput, setCustomInput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [language, setLanguage] = useState<Language>('en');
   const [helpMode, setHelpMode] = useState<HelpMode>('manual');
@@ -40,6 +41,14 @@ export function PythonLab() {
   const [lastExecution, setLastExecution] = useState<{ code: string; error: string } | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [mobileTab, setMobileTab] = useState<'editor' | 'console'>('editor');
+  const [consoleTab, setConsoleTab] = useState<'output' | 'input'>('output');
+  // Interactive prompt state - using refs to avoid stale closures
+  const [terminalLines, setTerminalLines] = useState<Array<{ type: 'prompt' | 'input'; text: string }>>([]);
+  const [waitingForInput, setWaitingForInput] = useState(false);
+  const promptResolveRef = useRef<((inputs: string[]) => void) | null>(null);
+  const pendingPromptsRef = useRef<string[]>([]);
+  const promptIndexRef = useRef<number>(0);
+  const collectedInputsRef = useRef<string[]>([]);
   const router = useRouter();
 
   const { isLoading: isPyodideLoading, isReady: isPyodideReady, executeCode } = usePyodide();
@@ -63,6 +72,45 @@ export function PythonLab() {
     }
   }, []);
 
+  // Extract all input() calls and their prompt strings from code
+  const extractInputPrompts = (src: string): string[] => {
+    const prompts: string[] = [];
+    const regex = /\binput\s*\(\s*(?:f?["']([^"']*?)["']|([^)]*))?\s*\)/g;
+    let match;
+    while ((match = regex.exec(src)) !== null) {
+      const prompt = match[1] !== undefined ? match[1] : (match[2]?.trim() || '');
+      prompts.push(prompt);
+    }
+    return prompts;
+  };
+
+  // Stable callback using refs — no stale closure issues
+  const handlePromptSubmit = useCallback((value: string) => {
+    const idx = promptIndexRef.current;
+    const prompts = pendingPromptsRef.current;
+    collectedInputsRef.current = [...collectedInputsRef.current, value];
+
+    const nextIdx = idx + 1;
+
+    if (nextIdx < prompts.length) {
+      // Show next prompt
+      promptIndexRef.current = nextIdx;
+      setTerminalLines(prev => [
+        ...prev,
+        { type: 'input', text: value },
+        { type: 'prompt', text: prompts[nextIdx] },
+      ]);
+    } else {
+      // All inputs collected — resolve the promise so execution continues
+      setTerminalLines(prev => [...prev, { type: 'input', text: value }]);
+      setWaitingForInput(false);
+      if (promptResolveRef.current) {
+        promptResolveRef.current(collectedInputsRef.current);
+        promptResolveRef.current = null;
+      }
+    }
+  }, []);
+
   const handleThemeToggle = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
@@ -75,42 +123,82 @@ export function PythonLab() {
     localStorage.setItem('python-lab-language', lang);
   };
 
+  const runCodeWithInputs = useCallback(async (inputValues: string[]) => {
+    const inputStr = inputValues.join('\n');
+    const result = await executeCode(code, inputStr);
+
+    // Clear prompts BEFORE showing output so they don't duplicate
+    setTerminalLines([]);
+    setWaitingForInput(false);
+    setOutput(result.output);
+
+    if (result.error) {
+      setError(result.error);
+      setErrorLine(result.errorLine);
+      setLastExecution({ code, error: result.error });
+      if (helpMode === 'auto') {
+        await explainError(code, result.error, language);
+      }
+    } else {
+      setLastExecution(null);
+    }
+
+    await saveToHistory(code, result.output, result.error);
+    setIsRunning(false);
+  }, [code, executeCode, helpMode, language, explainError, saveToHistory]);
+
   const handleRun = useCallback(async () => {
     if (!isPyodideReady || isRunning) return;
 
     setIsRunning(true);
+    setConsoleTab('output');
     setOutput('');
     setError(null);
     setErrorLine(null);
     clearExplanation();
+    setTerminalLines([]);
+    setWaitingForInput(false);
+    setMobileTab('console');
+    // Reset refs
+    collectedInputsRef.current = [];
+    promptIndexRef.current = 0;
+    promptResolveRef.current = null;
 
-    try {
-      setMobileTab('console');
-      const result = await executeCode(code);
-      setOutput(result.output);
-      
-      if (result.error) {
-        setError(result.error);
-        setErrorLine(result.errorLine);
-        setLastExecution({ code, error: result.error });
-        
-        // Auto mode: automatically get AI explanation
-        if (helpMode === 'auto') {
-          await explainError(code, result.error, language);
-        }
-      } else {
-        setLastExecution(null);
+    const prompts = extractInputPrompts(code);
+
+    if (prompts.length > 0 && customInput.trim() === '') {
+      // Interactive mode: show prompts one by one in output panel
+      pendingPromptsRef.current = prompts;
+      promptIndexRef.current = 0;
+
+      setTerminalLines([{ type: 'prompt', text: prompts[0] }]);
+      setWaitingForInput(true);
+
+      // Wait for user to fill all prompts
+      const inputValues = await new Promise<string[]>((resolve) => {
+        promptResolveRef.current = resolve;
+      });
+
+      try {
+        await runCodeWithInputs(inputValues);
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : 'Execution failed';
+        setError(errorMsg);
+        setLastExecution({ code, error: errorMsg });
+        setIsRunning(false);
       }
-
-      await saveToHistory(code, result.output, result.error);
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Execution failed';
-      setError(errorMsg);
-      setLastExecution({ code, error: errorMsg });
-    } finally {
-      setIsRunning(false);
+    } else {
+      // Use customInput tab values or no input
+      try {
+        await runCodeWithInputs(customInput.trim() ? customInput.split('\n') : []);
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : 'Execution failed';
+        setError(errorMsg);
+        setLastExecution({ code, error: errorMsg });
+        setIsRunning(false);
+      }
     }
-  }, [code, isPyodideReady, isRunning, executeCode, helpMode, language, explainError, clearExplanation, saveToHistory]);
+  }, [code, customInput, isPyodideReady, isRunning, runCodeWithInputs, clearExplanation]);
 
   const handleGetAIHelp = useCallback(async () => {
     if (lastExecution) {
@@ -401,6 +489,13 @@ export function PythonLab() {
               language={language}
               explanation={explanation}
               aiError={aiError}
+              customInput={customInput}
+              onCustomInputChange={setCustomInput}
+              activeTab={consoleTab}
+              onTabChange={setConsoleTab}
+              terminalLines={terminalLines}
+              waitingForInput={waitingForInput}
+              onPromptSubmit={handlePromptSubmit}
             />
           </Card>
         </div>

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Terminal, Copy, Trash2, Check, Sparkles, Zap, Lightbulb, Wrench, FileCode, Wand2 } from 'lucide-react';
+import { Terminal, Copy, Trash2, Check, Sparkles, Zap, Lightbulb, Wrench, FileCode, Wand2, Keyboard } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/Button';
+import { cn } from '@/lib/python-utils';
 
 interface PythonConsoleProps {
   output: string;
@@ -24,6 +25,13 @@ interface PythonConsoleProps {
     corrected_code: string;
   } | null;
   aiError?: string | null;
+  customInput?: string;
+  onCustomInputChange?: (value: string) => void;
+  activeTab?: 'output' | 'input';
+  onTabChange?: (tab: 'output' | 'input') => void;
+  terminalLines?: Array<{ type: 'prompt' | 'input'; text: string }>;
+  waitingForInput?: boolean;
+  onPromptSubmit?: (value: string) => void;
 }
 
 export function PythonConsole({ 
@@ -36,22 +44,47 @@ export function PythonConsole({
   helpMode = 'manual', 
   language = 'en',
   explanation,
-  aiError 
+  aiError,
+  customInput,
+  onCustomInputChange,
+  activeTab = 'output',
+  onTabChange,
+  terminalLines = [],
+  waitingForInput = false,
+  onPromptSubmit
 }: PythonConsoleProps) {
   const consoleRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [copied, setCopied] = useState(false);
+  const [promptValue, setPromptValue] = useState('');
 
   useEffect(() => {
     if (consoleRef.current) {
       consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
     }
-  }, [output, error, explanation]);
+  }, [output, error, explanation, terminalLines, waitingForInput]);
+
+  useEffect(() => {
+    if (waitingForInput && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [waitingForInput, terminalLines.length]);
 
   const handleCopy = async () => {
     const text = output + (error ? '\n' + error : '');
     await navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handlePromptKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (onPromptSubmit) {
+        onPromptSubmit(promptValue);
+        setPromptValue('');
+      }
+    }
   };
 
   const handleApplyFix = () => {
@@ -80,13 +113,31 @@ export function PythonConsole({
 
   return (
     <div className="flex flex-col h-full bg-[var(--bg-primary)]">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-color)] bg-[var(--glass-bg)]">
-        <div className="flex items-center gap-2">
-          <Terminal className="w-4 h-4 text-cyan-400" />
-          <span className="text-sm font-medium text-slate-400">Output</span>
+      <div className="flex items-center justify-between px-4 border-b border-[var(--border-color)] bg-[var(--glass-bg)] h-[45px]">
+        <div className="flex items-center gap-6 h-full">
+          <button 
+            onClick={() => onTabChange?.('output')}
+            className={cn(
+              "flex items-center gap-2 h-full border-b-2 transition-colors", 
+              activeTab === 'output' ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-slate-200'
+            )}
+          >
+            <Terminal className="w-4 h-4" />
+            <span className="text-sm font-medium">Output</span>
+          </button>
+          <button 
+            onClick={() => onTabChange?.('input')}
+            className={cn(
+              "flex items-center gap-2 h-full border-b-2 transition-colors", 
+              activeTab === 'input' ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-slate-200'
+            )}
+          >
+            <Keyboard className="w-4 h-4" />
+            <span className="text-sm font-medium">Custom Input</span>
+          </button>
         </div>
         <div className="flex items-center gap-1">
-          {hasOutput && (
+          {activeTab === 'output' && hasOutput && (
             <>
               <Button variant="ghost" size="sm" onClick={handleCopy} title="Copy" className="text-slate-400 hover:text-white">
                 {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
@@ -99,8 +150,21 @@ export function PythonConsole({
         </div>
       </div>
 
-      <div ref={consoleRef} className="flex-1 overflow-auto p-4 pb-24 md:pb-4 custom-scroll bg-[var(--bg-primary)]">
-        {!hasOutput && !showExplanation ? (
+      <div ref={consoleRef} className="flex-1 overflow-auto p-4 pb-24 md:pb-4 custom-scroll bg-[var(--bg-primary)] flex flex-col">
+        {activeTab === 'input' ? (
+          <div className="h-full flex flex-col text-[var(--text-primary)] animate-in fade-in duration-200">
+            <div className="mb-3 flex items-start gap-2 text-sm text-[var(--text-muted)] bg-[var(--glass-bg)] p-3 rounded-lg border border-[var(--border-color)]">
+              <Lightbulb className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+              <p>Type the inputs for your program here. Each line acts as one input when your <code>input()</code> runs.</p>
+            </div>
+            <textarea
+              value={customInput}
+              onChange={(e) => onCustomInputChange?.(e.target.value)}
+              placeholder="Example values:\n10\nJohn Doe"
+              className="flex-1 w-full p-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] resize-none transition-colors"
+            />
+          </div>
+        ) : !hasOutput && !showExplanation && terminalLines.length === 0 ? (
           <div className="flex items-center justify-center h-full text-[var(--text-muted)]">
             <div className="text-center">
               <Zap className="w-8 h-8 mx-auto mb-2 opacity-30" />
@@ -117,6 +181,37 @@ export function PythonConsole({
               >
                 {output}
               </motion.div>
+            )}
+
+            {/* Interactive terminal prompt lines */}
+            {terminalLines.length > 0 && (
+              <div className="font-mono text-sm">
+                {terminalLines.map((line, i) => (
+                  <div key={i} className="leading-relaxed">
+                    {line.type === 'prompt' ? (
+                      <span className="text-cyan-400">{line.text}</span>
+                    ) : (
+                      <span className="text-[var(--accent-primary)]">{line.text}</span>
+                    )}
+                  </div>
+                ))}
+                {waitingForInput && (
+                  <div className="flex items-center mt-1">
+                    <span className="text-cyan-400 mr-1">›</span>
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={promptValue}
+                      onChange={(e) => setPromptValue(e.target.value)}
+                      onKeyDown={handlePromptKeyDown}
+                      className="flex-1 bg-transparent border-none outline-none text-[var(--accent-primary)] font-mono p-0 shadow-none focus:ring-0"
+                      placeholder="Type and press Enter..."
+                      autoComplete="off"
+                      spellCheck="false"
+                    />
+                  </div>
+                )}
+              </div>
             )}
 
             {error && (

@@ -7,6 +7,7 @@ import { extractLineNumber, formatPythonError } from '@/lib/python-utils';
 declare global {
   interface Window {
     loadPyodide: (config: { indexURL: string }) => Promise<PyodideInterface>;
+    currentPyodideInputLines: string[];
   }
 }
 
@@ -66,7 +67,10 @@ export function usePyodide() {
     };
   }, []);
 
-  const executeCode = useCallback(async (code: string): Promise<CodeExecutionResult> => {
+  const executeCode = useCallback(async (
+    code: string,
+    customInput: string = '',
+  ): Promise<CodeExecutionResult> => {
     if (!pyodideRef.current) {
       return {
         output: '',
@@ -77,6 +81,11 @@ export function usePyodide() {
 
     let output = '';
     let errorOutput = '';
+
+    // Set up standard input buffer from pre-filled lines
+    window.currentPyodideInputLines = customInput
+      ? customInput.split('\n').filter((l) => l !== '')
+      : [];
 
     pyodideRef.current.setStdout({
       batched: (msg: string) => {
@@ -94,6 +103,20 @@ export function usePyodide() {
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Execution timed out (30s limit)')), EXECUTION_TIMEOUT);
       });
+
+      // Inject synchronous input override from pre-filled JS array
+      await pyodideRef.current.runPythonAsync(`
+import builtins
+import js
+
+def custom_input(prompt_text=""):
+    if hasattr(js, 'currentPyodideInputLines') and js.currentPyodideInputLines.length > 0:
+        val = js.currentPyodideInputLines.shift()
+        return str(val)
+    raise EOFError("EOF: No more input provided")
+
+builtins.input = custom_input
+      `);
 
       await Promise.race([
         pyodideRef.current.runPythonAsync(code),
