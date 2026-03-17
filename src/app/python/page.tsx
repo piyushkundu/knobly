@@ -44,6 +44,16 @@ const pythonTopics = [
         chapter: 3,
     },
     {
+        title: 'Tuples',
+        href: '/python/tuples',
+        icon: <Circle size={22} style={{ color: '#f9a8d4' }} />,
+        gradient: 'linear-gradient(135deg, #831843, #be185d, #db2777)',
+        border: '#ec4899',
+        glow: 'rgba(236,72,153,0.15)',
+        desc: 'Tuple creation, operations, packing/unpacking, and immutability',
+        chapter: 4,
+    },
+    {
         title: 'File Handling',
         href: '/python/file-handling',
         icon: <FileText size={22} style={{ color: '#6ee7b7' }} />,
@@ -51,7 +61,7 @@ const pythonTopics = [
         border: '#10b981',
         glow: 'rgba(16,185,129,0.15)',
         desc: 'Reading, writing, appending files and working with CSV data',
-        chapter: 4,
+        chapter: 5,
     },
     {
         title: 'NumPy',
@@ -61,16 +71,6 @@ const pythonTopics = [
         border: '#06b6d4',
         glow: 'rgba(6,182,212,0.15)',
         desc: 'Arrays, operations, broadcasting, statistics, and linear algebra',
-        chapter: 5,
-    },
-    {
-        title: 'Tuples',
-        href: '/python/tuples',
-        icon: <Circle size={22} style={{ color: '#f9a8d4' }} />,
-        gradient: 'linear-gradient(135deg, #831843, #be185d, #db2777)',
-        border: '#ec4899',
-        glow: 'rgba(236,72,153,0.15)',
-        desc: 'Tuple creation, operations, packing/unpacking, and immutability',
         chapter: 6,
     },
 ];
