@@ -25,10 +25,6 @@ interface PythonConsoleProps {
     corrected_code: string;
   } | null;
   aiError?: string | null;
-  customInput?: string;
-  onCustomInputChange?: (value: string) => void;
-  activeTab?: 'output' | 'input';
-  onTabChange?: (tab: 'output' | 'input') => void;
   terminalLines?: Array<{ type: 'prompt' | 'input'; text: string }>;
   waitingForInput?: boolean;
   onPromptSubmit?: (value: string) => void;
@@ -45,10 +41,6 @@ export function PythonConsole({
   language = 'en',
   explanation,
   aiError,
-  customInput,
-  onCustomInputChange,
-  activeTab = 'output',
-  onTabChange,
   terminalLines = [],
   waitingForInput = false,
   onPromptSubmit
@@ -115,29 +107,13 @@ export function PythonConsole({
     <div className="flex flex-col h-full bg-[var(--bg-primary)]">
       <div className="flex items-center justify-between px-4 border-b border-[var(--border-color)] bg-[var(--glass-bg)] h-[45px]">
         <div className="flex items-center gap-6 h-full">
-          <button 
-            onClick={() => onTabChange?.('output')}
-            className={cn(
-              "flex items-center gap-2 h-full border-b-2 transition-colors", 
-              activeTab === 'output' ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-slate-200'
-            )}
-          >
+          <div className="flex items-center gap-2 h-full text-[var(--accent-primary)] border-b-2 border-transparent">
             <Terminal className="w-4 h-4" />
             <span className="text-sm font-medium">Output</span>
-          </button>
-          <button 
-            onClick={() => onTabChange?.('input')}
-            className={cn(
-              "flex items-center gap-2 h-full border-b-2 transition-colors", 
-              activeTab === 'input' ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-slate-200'
-            )}
-          >
-            <Keyboard className="w-4 h-4" />
-            <span className="text-sm font-medium">Custom Input</span>
-          </button>
+          </div>
         </div>
         <div className="flex items-center gap-1">
-          {activeTab === 'output' && hasOutput && (
+          {hasOutput && (
             <>
               <Button variant="ghost" size="sm" onClick={handleCopy} title="Copy" className="text-slate-400 hover:text-white">
                 {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
@@ -151,20 +127,7 @@ export function PythonConsole({
       </div>
 
       <div ref={consoleRef} className="flex-1 overflow-auto p-4 pb-24 md:pb-4 custom-scroll bg-[var(--bg-primary)] flex flex-col">
-        {activeTab === 'input' ? (
-          <div className="h-full flex flex-col text-[var(--text-primary)] animate-in fade-in duration-200">
-            <div className="mb-3 flex items-start gap-2 text-sm text-[var(--text-muted)] bg-[var(--glass-bg)] p-3 rounded-lg border border-[var(--border-color)]">
-              <Lightbulb className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
-              <p>Type the inputs for your program here. Each line acts as one input when your <code>input()</code> runs.</p>
-            </div>
-            <textarea
-              value={customInput}
-              onChange={(e) => onCustomInputChange?.(e.target.value)}
-              placeholder="Example values:\n10\nJohn Doe"
-              className="flex-1 w-full p-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] resize-none transition-colors"
-            />
-          </div>
-        ) : !hasOutput && !showExplanation && terminalLines.length === 0 ? (
+        {!hasOutput && !showExplanation && terminalLines.length === 0 ? (
           <div className="flex items-center justify-center h-full text-[var(--text-muted)]">
             <div className="text-center">
               <Zap className="w-8 h-8 mx-auto mb-2 opacity-30" />

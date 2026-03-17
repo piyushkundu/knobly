@@ -32,7 +32,6 @@ export function PythonLab() {
   const [output, setOutput] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [errorLine, setErrorLine] = useState<number | null>(null);
-  const [customInput, setCustomInput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [language, setLanguage] = useState<Language>('en');
   const [helpMode, setHelpMode] = useState<HelpMode>('manual');
@@ -41,7 +40,6 @@ export function PythonLab() {
   const [lastExecution, setLastExecution] = useState<{ code: string; error: string } | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [mobileTab, setMobileTab] = useState<'editor' | 'console'>('editor');
-  const [consoleTab, setConsoleTab] = useState<'output' | 'input'>('output');
   // Interactive prompt state - using refs to avoid stale closures
   const [terminalLines, setTerminalLines] = useState<Array<{ type: 'prompt' | 'input'; text: string }>>([]);
   const [waitingForInput, setWaitingForInput] = useState(false);
@@ -151,7 +149,6 @@ export function PythonLab() {
     if (!isPyodideReady || isRunning) return;
 
     setIsRunning(true);
-    setConsoleTab('output');
     setOutput('');
     setError(null);
     setErrorLine(null);
@@ -166,7 +163,7 @@ export function PythonLab() {
 
     const prompts = extractInputPrompts(code);
 
-    if (prompts.length > 0 && customInput.trim() === '') {
+    if (prompts.length > 0) {
       // Interactive mode: show prompts one by one in output panel
       pendingPromptsRef.current = prompts;
       promptIndexRef.current = 0;
@@ -188,9 +185,9 @@ export function PythonLab() {
         setIsRunning(false);
       }
     } else {
-      // Use customInput tab values or no input
+      // No input prompts, just run
       try {
-        await runCodeWithInputs(customInput.trim() ? customInput.split('\n') : []);
+        await runCodeWithInputs([]);
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : 'Execution failed';
         setError(errorMsg);
@@ -198,7 +195,7 @@ export function PythonLab() {
         setIsRunning(false);
       }
     }
-  }, [code, customInput, isPyodideReady, isRunning, runCodeWithInputs, clearExplanation]);
+  }, [code, isPyodideReady, isRunning, runCodeWithInputs, clearExplanation]);
 
   const handleGetAIHelp = useCallback(async () => {
     if (lastExecution) {
@@ -489,10 +486,6 @@ export function PythonLab() {
               language={language}
               explanation={explanation}
               aiError={aiError}
-              customInput={customInput}
-              onCustomInputChange={setCustomInput}
-              activeTab={consoleTab}
-              onTabChange={setConsoleTab}
               terminalLines={terminalLines}
               waitingForInput={waitingForInput}
               onPromptSubmit={handlePromptSubmit}
