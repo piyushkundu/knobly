@@ -47,9 +47,10 @@ export default function KnoblyAI() {
     const pathname = usePathname();
     const isHomePage = pathname === '/';
     const isTestPage = pathname?.startsWith('/test/');
+    const isPythonLabPage = pathname === '/python-lab';
 
-    // Hide AI completely on test pages
-    if (isTestPage) return null;
+    // Hide AI completely on test pages and python lab page
+    if (isTestPage || isPythonLabPage) return null;
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
