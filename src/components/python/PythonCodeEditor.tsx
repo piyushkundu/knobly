@@ -4,7 +4,7 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 import Editor, { OnMount, OnChange, BeforeMount } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { cn } from '@/lib/python-utils';
-import { Trash2, RotateCcw, Sparkles, Play } from 'lucide-react';
+import { Trash2, RotateCcw, Sparkles, Play, Sun, Moon, History } from 'lucide-react';
 import { Button } from './ui/Button';
 
 interface PythonCodeEditorProps {
@@ -13,6 +13,8 @@ interface PythonCodeEditorProps {
   errorLine?: number | null;
   isLoading?: boolean;
   theme?: 'dark' | 'light';
+  onThemeToggle?: () => void;
+  onShowHistory?: () => void;
   onRun?: () => void;
   isRunning?: boolean;
   isReady?: boolean;
@@ -27,6 +29,8 @@ export function PythonCodeEditor({
   errorLine, 
   isLoading, 
   theme = 'dark',
+  onThemeToggle,
+  onShowHistory,
   onRun,
   isRunning,
   isReady,
@@ -243,15 +247,28 @@ export function PythonCodeEditor({
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleReset}
-            title="Reset to default"
-            className="h-7 px-2"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-          </Button>
+          {isMobile && onThemeToggle && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onThemeToggle}
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              className="h-7 px-2"
+            >
+              {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            </Button>
+          )}
+          {isMobile && onShowHistory && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onShowHistory}
+              title="Show History"
+              className="h-7 px-2"
+            >
+              <History className="w-3.5 h-3.5" />
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="sm"

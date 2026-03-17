@@ -194,13 +194,13 @@ export function PythonLab() {
                 <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-[var(--text-primary)]" />
               </Button>
               <div className="relative flex-shrink-0">
-                <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                  <Code2 className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-[var(--accent-primary)] flex items-center justify-center shadow-lg shadow-[var(--accent-primary)]/30 text-white">
+                  <Code2 className="w-4 h-4 md:w-5 md:h-5" color="white" strokeWidth={2.5} />
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 md:w-3 md:h-3 bg-[var(--accent-success)] rounded-full border-2 border-[var(--bg-primary)]" />
               </div>
               <div className="flex flex-col min-w-0">
-                <h1 className="text-base md:text-lg font-bold leading-tight truncate">
+                <h1 className="text-base md:text-lg font-bold leading-tight truncate font-mono tracking-tight">
                   <span className="text-[var(--text-primary)] whitespace-nowrap">
                     AI Python Lab
                   </span>
@@ -209,24 +209,8 @@ export function PythonLab() {
               </div>
             </div>
 
-            {/* Mobile Right Actions: Theme, History, EN/HI (Large Icons) */}
-            <div className="flex md:hidden items-center gap-1.5 ml-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleThemeToggle}
-                className="h-9 w-9 p-0 rounded-full bg-[var(--glass-bg)] border border-[var(--border-color)] shadow-sm"
-              >
-                {theme === 'dark' ? <Sun className="w-4 h-4 text-[var(--text-secondary)]" /> : <Moon className="w-4 h-4 text-[var(--text-secondary)]" />}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowHistory(true)}
-                className="h-9 w-9 p-0 rounded-full bg-[var(--glass-bg)] border border-[var(--border-color)] shadow-sm"
-              >
-                <History className="w-4 h-4 text-[var(--text-secondary)]" />
-              </Button>
+            {/* Mobile Right Actions: EN/HI Toggle */}
+            <div className="flex md:hidden items-center ml-2">
               <Toggle
                 options={[
                   { value: 'en', label: 'EN' },
@@ -390,6 +374,8 @@ export function PythonLab() {
               errorLine={errorLine}
               isLoading={isPyodideLoading}
               theme={theme}
+              onThemeToggle={handleThemeToggle}
+              onShowHistory={() => setShowHistory(true)}
               onRun={handleRun}
               isRunning={isRunning}
               isReady={isPyodideReady}
