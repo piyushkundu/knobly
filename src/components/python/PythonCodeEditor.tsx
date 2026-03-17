@@ -278,7 +278,7 @@ export function PythonCodeEditor({
           <Editor
             height="100%"
             defaultLanguage="python"
-            value={code || DEFAULT_CODE}
+            value={code ?? DEFAULT_CODE}
             onChange={handleChange}
             beforeMount={handleBeforeMount}
             onMount={handleEditorMount}

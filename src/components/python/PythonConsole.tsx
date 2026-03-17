@@ -99,7 +99,7 @@ export function PythonConsole({
         </div>
       </div>
 
-      <div ref={consoleRef} className="flex-1 overflow-auto p-4 custom-scroll bg-[var(--bg-primary)]">
+      <div ref={consoleRef} className="flex-1 overflow-auto p-4 pb-24 md:pb-4 custom-scroll bg-[var(--bg-primary)]">
         {!hasOutput && !showExplanation ? (
           <div className="flex items-center justify-center h-full text-[var(--text-muted)]">
             <div className="text-center">
