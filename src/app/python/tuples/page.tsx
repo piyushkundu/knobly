@@ -56,6 +56,7 @@ const tocItems = [
     { icon: <Eye size={13} />, label: 'Accessing', id: 'accessing', color: '#86198f' },
     { icon: <Settings2 size={13} />, label: 'Operations', id: 'operations', color: '#701a75' },
     { icon: <BoxSelect size={13} />, label: 'Functions', id: 'functions', color: '#4a044e' },
+    { icon: <Brain size={13} />, label: 'Practice', id: 'practice', color: '#db2777' },
 ];
 
 const navLinks = [
@@ -249,6 +250,14 @@ export default function TuplesPage() {
                             <p className="text-xs mb-2">Kisi bhi dusri chiz ko tuple banata hai (String, List, Sets).</p>
                             <CB code={`new_tup = tuple("HELLO")\nprint(new_tup)  # ('H', 'E', 'L', 'L', 'O')`} />
                         </MethodCard>
+                    </Sec>
+
+                    {/* Practice */}
+                    <Sec id="practice" title="Practice Questions — Khud Karo! 💪" icon={<Brain size={16} className="text-pink-500" />}>
+                        <Def>🎯 In questions ki practice karein taaki Tuples ka concept perfectly clear ho jaye!</Def>
+                        <div className="w-full rounded-2xl overflow-hidden my-4" style={{ border: '1px solid #e2e8f0', background: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                            <Image src="/images/tuple_practice_questions.jpeg" alt="Python Tuples Practice Questions" width={1000} height={600} className="w-full h-auto object-contain" unoptimized />
+                        </div>
                     </Sec>
 
                 </main>
