@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, Home, BookOpen, Code2, GitBranch, FunctionSquare, FileText, BarChart3, List, Circle, ChevronRight, Sparkles, GraduationCap, Zap, LayoutDashboard, StickyNote, Brain, Keyboard, PenLine } from 'lucide-react';
+import { ArrowLeft, Home, BookOpen, Code2, GitBranch, FunctionSquare, FileText, BarChart3, List, Circle, ChevronRight, Sparkles, GraduationCap, Zap, LayoutDashboard, StickyNote, Brain, Keyboard, PenLine, Database } from 'lucide-react';
 
 const quickLinks = [
     { label: 'Home', href: '/', icon: <Home size={13} /> },
@@ -54,6 +54,16 @@ const pythonTopics = [
         chapter: 4,
     },
     {
+        title: 'Dictionary',
+        href: '/python/dictionary',
+        icon: <Database size={22} style={{ color: '#2dd4bf' }} />,
+        gradient: 'linear-gradient(135deg, #115e59, #0f766e, #14b8a6)',
+        border: '#14b8a6',
+        glow: 'rgba(20,184,166,0.15)',
+        desc: 'Key-value pairs, nested dictionaries, methods, and data retrieval',
+        chapter: 5,
+    },
+    {
         title: 'File Handling',
         href: '/python/file-handling',
         icon: <FileText size={22} style={{ color: '#6ee7b7' }} />,
@@ -61,7 +71,7 @@ const pythonTopics = [
         border: '#10b981',
         glow: 'rgba(16,185,129,0.15)',
         desc: 'Reading, writing, appending files and working with CSV data',
-        chapter: 5,
+        chapter: 6,
     },
     {
         title: 'NumPy',
@@ -71,7 +81,7 @@ const pythonTopics = [
         border: '#06b6d4',
         glow: 'rgba(6,182,212,0.15)',
         desc: 'Arrays, operations, broadcasting, statistics, and linear algebra',
-        chapter: 6,
+        chapter: 7,
     },
 ];
 
@@ -135,7 +145,7 @@ export default function PythonPage() {
                         {/* Stats row */}
                         <div className="flex flex-wrap gap-4">
                             {[
-                                { icon: <BookOpen size={14} />, label: '6 Chapters', color: '#93c5fd' },
+                                { icon: <BookOpen size={14} />, label: '7 Chapters', color: '#93c5fd' },
                                 { icon: <GraduationCap size={14} />, label: 'Beginner Friendly', color: '#86efac' },
                                 { icon: <Zap size={14} />, label: 'Practice Questions', color: '#fde68a' },
                             ].map((stat, i) => (

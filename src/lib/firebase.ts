@@ -27,18 +27,14 @@ if (!firebaseConfig.apiKey && isServer) {
   auth = {} as any;
   db = {} as any;
 } else {
-  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-  auth = getAuth(app);
-
-  try {
-    // Try to get existing Firestore instance first (important for HMR/dev)
+  if (getApps().length === 0) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = initializeFirestore(app, { experimentalForceLongPolling: true, ignoreUndefinedProperties: true });
+  } else {
+    app = getApps()[0];
+    auth = getAuth(app);
     db = getFirestore(app);
-  } catch {
-    try {
-      db = initializeFirestore(app, { experimentalForceLongPolling: true, ignoreUndefinedProperties: true });
-    } catch {
-      db = getFirestore(app);
-    }
   }
 }
 

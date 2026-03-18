@@ -47,7 +47,7 @@ export function usePyodide() {
 
           await new Promise((resolve, reject) => {
             script.onload = resolve;
-            script.onerror = reject;
+            script.onerror = () => reject(new Error('Failed to load Pyodide script. Please check your internet connection or ad blocker.'));
           });
         }
 
@@ -55,6 +55,8 @@ export function usePyodide() {
 
         const pyodide = await window.loadPyodide({
           indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/',
+          stdout: (msg: string) => { /* Ignore default stdout to prevent React overlay issues */ },
+          stderr: (msg: string) => { /* Ignore default stderr to prevent React overlay issues */ },
         });
 
         if (!mounted) return;
@@ -128,8 +130,11 @@ def custom_input(prompt_text=""):
 builtins.input = custom_input
       `);
 
+      const pyodidePromise = pyodideRef.current.runPythonAsync(code);
+      pyodidePromise.catch(() => {}); // Prevent unhandled rejection if timeout hits
+
       await Promise.race([
-        pyodideRef.current.runPythonAsync(code),
+        pyodidePromise,
         timeoutPromise,
       ]);
 

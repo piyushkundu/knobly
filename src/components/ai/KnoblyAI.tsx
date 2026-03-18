@@ -57,16 +57,20 @@ export default function KnoblyAI() {
     const [loading, setLoading] = useState(false);
     const [hovered, setHovered] = useState(false);
     const [isDark, setIsDark] = useState(true);
-    const [particles] = useState(() =>
-        Array.from({ length: 6 }, (_, i) => ({
-            id: i,
-            size: 2 + Math.random() * 3,
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            duration: 3 + Math.random() * 4,
-            delay: Math.random() * 2,
-        }))
-    );
+    const [particles, setParticles] = useState<any[]>([]);
+
+    useEffect(() => {
+        setParticles(
+            Array.from({ length: 6 }, (_, i) => ({
+                id: i,
+                size: 2 + Math.random() * 3,
+                x: Math.random() * 100,
+                y: Math.random() * 100,
+                duration: 3 + Math.random() * 4,
+                delay: Math.random() * 2,
+            }))
+        );
+    }, []);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
