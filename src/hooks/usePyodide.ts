@@ -8,6 +8,7 @@ declare global {
   interface Window {
     loadPyodide: (config: { indexURL: string }) => Promise<PyodideInterface>;
     currentPyodideInputLines: string[];
+    pyodideInputNeededPrompt: string | null;
   }
 }
 
@@ -18,6 +19,14 @@ interface PyodideInterface {
 }
 
 const EXECUTION_TIMEOUT = 30000;
+
+// Special error marker to detect when input is needed
+const INPUT_NEEDED_MARKER = '___PYODIDE_INPUT_NEEDED___';
+
+export interface ExecuteResult extends CodeExecutionResult {
+  needsInput?: boolean;
+  inputPrompt?: string;
+}
 
 export function usePyodide() {
   const [isLoading, setIsLoading] = useState(true);
@@ -69,8 +78,8 @@ export function usePyodide() {
 
   const executeCode = useCallback(async (
     code: string,
-    customInput: string = '',
-  ): Promise<CodeExecutionResult> => {
+    inputLines: string[] = [],
+  ): Promise<ExecuteResult> => {
     if (!pyodideRef.current) {
       return {
         output: '',
@@ -82,10 +91,9 @@ export function usePyodide() {
     let output = '';
     let errorOutput = '';
 
-    // Set up standard input buffer from pre-filled lines
-    window.currentPyodideInputLines = customInput
-      ? customInput.split('\n').filter((l) => l !== '')
-      : [];
+    // Set up pre-filled input lines
+    window.currentPyodideInputLines = [...inputLines];
+    window.pyodideInputNeededPrompt = null;
 
     pyodideRef.current.setStdout({
       batched: (msg: string) => {
@@ -104,7 +112,7 @@ export function usePyodide() {
         setTimeout(() => reject(new Error('Execution timed out (30s limit)')), EXECUTION_TIMEOUT);
       });
 
-      // Inject synchronous input override from pre-filled JS array
+      // Inject custom input that consumes from queue or raises special marker error
       await pyodideRef.current.runPythonAsync(`
 import builtins
 import js
@@ -113,7 +121,9 @@ def custom_input(prompt_text=""):
     if hasattr(js, 'currentPyodideInputLines') and js.currentPyodideInputLines.length > 0:
         val = js.currentPyodideInputLines.shift()
         return str(val)
-    raise EOFError("EOF: No more input provided")
+    # No input available — store the prompt and raise marker
+    js.pyodideInputNeededPrompt = str(prompt_text)
+    raise EOFError("${INPUT_NEEDED_MARKER}" + str(prompt_text))
 
 builtins.input = custom_input
       `);
@@ -127,14 +137,29 @@ builtins.input = custom_input
         output: output.trim(),
         error: errorOutput ? formatPythonError(errorOutput.trim()) : null,
         errorLine: errorOutput ? extractLineNumber(errorOutput) : null,
+        needsInput: false,
       };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
+      
+      // Check if this is our "needs input" marker
+      if (errorMessage.includes(INPUT_NEEDED_MARKER)) {
+        const prompt = window.pyodideInputNeededPrompt || '';
+        return {
+          output: output.trim(),
+          error: null,
+          errorLine: null,
+          needsInput: true,
+          inputPrompt: prompt,
+        };
+      }
+
       const cleanError = formatPythonError(errorMessage);
       return {
         output: output.trim(),
         error: cleanError,
         errorLine: extractLineNumber(errorMessage),
+        needsInput: false,
       };
     }
   }, []);

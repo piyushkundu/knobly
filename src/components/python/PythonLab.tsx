@@ -40,13 +40,14 @@ export function PythonLab() {
   const [lastExecution, setLastExecution] = useState<{ code: string; error: string } | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [mobileTab, setMobileTab] = useState<'editor' | 'console'>('editor');
-  // Interactive prompt state - using refs to avoid stale closures
+  // Interactive prompt state - re-run with accumulation approach
   const [terminalLines, setTerminalLines] = useState<Array<{ type: 'prompt' | 'input'; text: string }>>([]);
   const [waitingForInput, setWaitingForInput] = useState(false);
-  const promptResolveRef = useRef<((inputs: string[]) => void) | null>(null);
-  const pendingPromptsRef = useRef<string[]>([]);
-  const promptIndexRef = useRef<number>(0);
+  // Ref to resolve when user submits input
+  const inputResolveRef = useRef<((value: string) => void) | null>(null);
   const collectedInputsRef = useRef<string[]>([]);
+  const terminalLinesRef = useRef<Array<{ type: 'prompt' | 'input'; text: string }>>([]);
+  const isRunningRef = useRef(false);
   const router = useRouter();
 
   const { isLoading: isPyodideLoading, isReady: isPyodideReady, executeCode } = usePyodide();
@@ -70,42 +71,17 @@ export function PythonLab() {
     }
   }, []);
 
-  // Extract all input() calls and their prompt strings from code
-  const extractInputPrompts = (src: string): string[] => {
-    const prompts: string[] = [];
-    const regex = /\binput\s*\(\s*(?:f?["']([^"']*?)["']|([^)]*))?\s*\)/g;
-    let match;
-    while ((match = regex.exec(src)) !== null) {
-      const prompt = match[1] !== undefined ? match[1] : (match[2]?.trim() || '');
-      prompts.push(prompt);
-    }
-    return prompts;
-  };
-
-  // Stable callback using refs — no stale closure issues
+  // Handle user submitting input — resolves the waiting promise
   const handlePromptSubmit = useCallback((value: string) => {
-    const idx = promptIndexRef.current;
-    const prompts = pendingPromptsRef.current;
-    collectedInputsRef.current = [...collectedInputsRef.current, value];
-
-    const nextIdx = idx + 1;
-
-    if (nextIdx < prompts.length) {
-      // Show next prompt
-      promptIndexRef.current = nextIdx;
-      setTerminalLines(prev => [
-        ...prev,
-        { type: 'input', text: value },
-        { type: 'prompt', text: prompts[nextIdx] },
-      ]);
-    } else {
-      // All inputs collected — resolve the promise so execution continues
-      setTerminalLines(prev => [...prev, { type: 'input', text: value }]);
-      setWaitingForInput(false);
-      if (promptResolveRef.current) {
-        promptResolveRef.current(collectedInputsRef.current);
-        promptResolveRef.current = null;
-      }
+    // Add user input to terminal lines
+    const newLines = [...terminalLinesRef.current, { type: 'input' as const, text: value }];
+    terminalLinesRef.current = newLines;
+    setTerminalLines(newLines);
+    setWaitingForInput(false);
+    // Resolve the pending input promise
+    if (inputResolveRef.current) {
+      inputResolveRef.current(value);
+      inputResolveRef.current = null;
     }
   }, []);
 
@@ -121,81 +97,75 @@ export function PythonLab() {
     localStorage.setItem('python-lab-language', lang);
   };
 
-  const runCodeWithInputs = useCallback(async (inputValues: string[]) => {
-    const inputStr = inputValues.join('\n');
-    const result = await executeCode(code, inputStr);
-
-    // Clear prompts BEFORE showing output so they don't duplicate
-    setTerminalLines([]);
-    setWaitingForInput(false);
-    setOutput(result.output);
-
-    if (result.error) {
-      setError(result.error);
-      setErrorLine(result.errorLine);
-      setLastExecution({ code, error: result.error });
-      if (helpMode === 'auto') {
-        await explainError(code, result.error, language);
-      }
-    } else {
-      setLastExecution(null);
-    }
-
-    await saveToHistory(code, result.output, result.error);
-    setIsRunning(false);
-  }, [code, executeCode, helpMode, language, explainError, saveToHistory]);
-
   const handleRun = useCallback(async () => {
-    if (!isPyodideReady || isRunning) return;
+    if (!isPyodideReady || isRunningRef.current) return;
 
+    isRunningRef.current = true;
     setIsRunning(true);
     setOutput('');
     setError(null);
     setErrorLine(null);
     clearExplanation();
     setTerminalLines([]);
+    terminalLinesRef.current = [];
     setWaitingForInput(false);
     setMobileTab('console');
-    // Reset refs
     collectedInputsRef.current = [];
-    promptIndexRef.current = 0;
-    promptResolveRef.current = null;
+    inputResolveRef.current = null;
 
-    const prompts = extractInputPrompts(code);
+    try {
+      // Re-run loop: execute code, if it needs input, prompt user, accumulate, re-run
+      let done = false;
+      while (!done) {
+        const result = await executeCode(code, collectedInputsRef.current);
 
-    if (prompts.length > 0) {
-      // Interactive mode: show prompts one by one in output panel
-      pendingPromptsRef.current = prompts;
-      promptIndexRef.current = 0;
+        if (result.needsInput) {
+          // Show the prompt in terminal lines
+          const promptText = result.inputPrompt || '';
+          const newLines = [...terminalLinesRef.current, { type: 'prompt' as const, text: promptText }];
+          terminalLinesRef.current = newLines;
+          setTerminalLines(newLines);
+          setWaitingForInput(true);
 
-      setTerminalLines([{ type: 'prompt', text: prompts[0] }]);
-      setWaitingForInput(true);
+          // Wait for user to submit input
+          const userValue = await new Promise<string>((resolve) => {
+            inputResolveRef.current = resolve;
+          });
 
-      // Wait for user to fill all prompts
-      const inputValues = await new Promise<string[]>((resolve) => {
-        promptResolveRef.current = resolve;
-      });
+          // Add the user's value to accumulated inputs for re-run
+          collectedInputsRef.current = [...collectedInputsRef.current, userValue];
+          // Continue the loop — code will be re-run with all accumulated inputs
+        } else {
+          // Code finished (success or real error)
+          done = true;
+          setTerminalLines([]);
+          terminalLinesRef.current = [];
+          setWaitingForInput(false);
+          setOutput(result.output);
 
-      try {
-        await runCodeWithInputs(inputValues);
-      } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : 'Execution failed';
-        setError(errorMsg);
-        setLastExecution({ code, error: errorMsg });
-        setIsRunning(false);
+          if (result.error) {
+            setError(result.error);
+            setErrorLine(result.errorLine);
+            setLastExecution({ code, error: result.error });
+            if (helpMode === 'auto') {
+              await explainError(code, result.error, language);
+            }
+          } else {
+            setLastExecution(null);
+          }
+
+          await saveToHistory(code, result.output, result.error);
+        }
       }
-    } else {
-      // No input prompts, just run
-      try {
-        await runCodeWithInputs([]);
-      } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : 'Execution failed';
-        setError(errorMsg);
-        setLastExecution({ code, error: errorMsg });
-        setIsRunning(false);
-      }
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Execution failed';
+      setError(errorMsg);
+      setLastExecution({ code, error: errorMsg });
+    } finally {
+      isRunningRef.current = false;
+      setIsRunning(false);
     }
-  }, [code, isPyodideReady, isRunning, runCodeWithInputs, clearExplanation]);
+  }, [code, isPyodideReady, executeCode, helpMode, language, explainError, saveToHistory, clearExplanation]);
 
   const handleGetAIHelp = useCallback(async () => {
     if (lastExecution) {
