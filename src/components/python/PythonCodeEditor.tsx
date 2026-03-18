@@ -4,7 +4,7 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 import Editor, { OnMount, OnChange, BeforeMount } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { cn } from '@/lib/python-utils';
-import { Trash2, RotateCcw, Sparkles, Play, Sun, Moon, History } from 'lucide-react';
+import { Trash2, RotateCcw, Sparkles, Play, Sun, Moon, History, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from './ui/Button';
 
 interface PythonCodeEditorProps {
@@ -37,9 +37,19 @@ export function PythonCodeEditor({
   onAskAI
 }: PythonCodeEditorProps) {
   const [isMobile, setIsMobile] = useState(false);
+  const [fontSize, setFontSize] = useState(15);
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<typeof import('monaco-editor') | null>(null);
   const decorationsRef = useRef<string[]>([]);
+
+  // Load saved font size
+  useEffect(() => {
+    const savedSize = localStorage.getItem('python-editor-font-size');
+    if (savedSize) {
+      const size = parseInt(savedSize, 10);
+      if (size >= 10 && size <= 32) setFontSize(size);
+    }
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -179,6 +189,28 @@ export function PythonCodeEditor({
     }
   }, [onChange]);
 
+  const handleZoomIn = useCallback(() => {
+    setFontSize(prev => {
+      const next = Math.min(prev + 2, 32);
+      localStorage.setItem('python-editor-font-size', String(next));
+      if (editorRef.current) {
+        editorRef.current.updateOptions({ fontSize: next });
+      }
+      return next;
+    });
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setFontSize(prev => {
+      const next = Math.max(prev - 2, 10);
+      localStorage.setItem('python-editor-font-size', String(next));
+      if (editorRef.current) {
+        editorRef.current.updateOptions({ fontSize: next });
+      }
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     if (editorRef.current && monacoRef.current && errorLine) {
       const model = editorRef.current.getModel();
@@ -269,6 +301,30 @@ export function PythonCodeEditor({
               <History className="w-3.5 h-3.5" />
             </Button>
           )}
+
+          {/* Zoom In / Zoom Out - Premium Grouped Style */}
+          <div className="flex items-center bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg overflow-hidden h-7">
+            <button
+              onClick={handleZoomOut}
+              disabled={fontSize <= 10}
+              title="Zoom Out"
+              className="flex items-center justify-center w-7 h-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-bg)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <ZoomOut className="w-3.5 h-3.5" />
+            </button>
+            <div className="w-px h-4 bg-[var(--border-color)]" />
+            <span className="text-[10px] font-mono font-medium text-[var(--text-muted)] px-1.5 min-w-[28px] text-center select-none">{fontSize}</span>
+            <div className="w-px h-4 bg-[var(--border-color)]" />
+            <button
+              onClick={handleZoomIn}
+              disabled={fontSize >= 32}
+              title="Zoom In"
+              className="flex items-center justify-center w-7 h-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-bg)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           <Button
             variant="ghost"
             size="sm"
@@ -301,7 +357,7 @@ export function PythonCodeEditor({
             onMount={handleEditorMount}
             theme={theme === 'light' ? 'python-lab-light' : 'python-lab-dark'}
             options={{
-              fontSize: isMobile ? 13 : 15,
+              fontSize: fontSize,
               fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
               fontLigatures: true,
               minimap: { enabled: false },

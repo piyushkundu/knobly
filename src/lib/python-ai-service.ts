@@ -43,10 +43,12 @@ Agar error 'NameError: name is not defined' hai aur user ne koi spelling mistake
 !! STRICT RULE 2 !! Python ke technical terms jaise "indentation", "variable", "string", "loop", "syntax", "brackets", "function" ko bilkul translate MAT karna. Unko English word hi rehne dena.
 (Sahi Udaharan: "Line 2 par indentation missing hai", "is variable ko define karein", "print function me string band nahi hui")
 (Galat Udaharan: "dabav lagayein", "char ka upyog karein", "sutrdhar Missing hai")
+!! STRICT RULE 3 !! "corrected_code" me POORA COMPLETE code dena hai — sirf fix ki hui line nahi! User ka pura original code copy karo aur usme sirf error wali line ko fix karo. Baaki sab lines bilkul waisi hi rehni chahiye.
 Sirf JSON do jisme ye chaar (4) keys hon: "error_type", "explanation", "how_to_fix", "corrected_code". In keys ki values me apna jawav (Hindi/Hinglish me) likho.`
     : `You are an expert Python teacher. The user will provide their code and complete error traceback.
 READ EXACTLY WHAT THE ERROR SAYS. Explicitly mention the line number where the error occurred based on the traceback. Provide a helpful, clear explanation (2-3 sentences) of why the error happened and what it means, instead of just a brief summary.
 If the error is a 'NameError' or resembles a typo/random text entered into the code, suggest they either correct the spelling or REMOVE the invalid text completely. DO NOT invent new variables, assign random values, or write arbitrary code they didn't ask for. Fix ONLY what is explicitly broken.
+!! CRITICAL RULE !! The "corrected_code" field MUST contain the COMPLETE corrected program — ALL lines of the user's original code with ONLY the broken part fixed. Do NOT return just the fixed line alone. Copy the user's entire code and fix only the error.
 Reply with ONLY JSON containing exactly four keys: "error_type", "explanation", "how_to_fix", "corrected_code". Put your actual response in the values of these keys.`;
 
   const userMessage = isHindi
@@ -56,16 +58,19 @@ ${code}
 Error:
 ${error}
 
-Is error ko completely analyze karo aur mujhe proper JSON me answer do. IMPORTANT: Answer strictly HINDI (Hinglish) me hi dena hai, English bilkul allow nahi hai, lekin technical words ko English me hi likhna (no literal Hindi translations of technical concepts):
-{"error_type": "", "explanation": "", "how_to_fix": "", "corrected_code": ""}`
+Is error ko completely analyze karo aur mujhe proper JSON me answer do. IMPORTANT: Answer strictly HINDI (Hinglish) me hi dena hai, English bilkul allow nahi hai, lekin technical words ko English me hi likhna (no literal Hindi translations of technical concepts).
+YAAD RAKHNA: "corrected_code" me POORA code dena hai — sirf fix line nahi! User ka pura code copy karo aur usme sirf error fix karo.
+{"error_type": "", "explanation": "", "how_to_fix": "", "corrected_code": "<POORA CORRECTED CODE YAHAN>"}`
     : `Code:
 ${code}
 
 Error Traceback:
 ${error}
 
-Analyze the Error Traceback strictly! Do not guess. Fix ONLY what's broken in the code. Provide exactly this JSON structure with your custom answers:
-{"error_type": "", "explanation": "", "how_to_fix": "", "corrected_code": ""}`;
+Analyze the Error Traceback strictly! Do not guess. Fix ONLY what's broken in the code.
+REMEMBER: "corrected_code" MUST contain the COMPLETE corrected program with ALL lines, not just the fixed line. Copy the entire original code and fix only the error.
+Provide exactly this JSON structure with your custom answers:
+{"error_type": "", "explanation": "", "how_to_fix": "", "corrected_code": "<FULL CORRECTED CODE HERE>"}`;
 
   const response = await fetchWithFallback('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -79,7 +84,7 @@ Analyze the Error Traceback strictly! Do not guess. Fix ONLY what's broken in th
         { role: 'user', content: userMessage },
       ],
       temperature: 0.2,
-      max_tokens: 600,
+      max_tokens: 1000,
     }),
   });
 
