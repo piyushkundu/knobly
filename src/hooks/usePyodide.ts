@@ -6,7 +6,11 @@ import { extractLineNumber, formatPythonError } from '@/lib/python-utils';
 
 declare global {
   interface Window {
-    loadPyodide: (config: { indexURL: string }) => Promise<PyodideInterface>;
+    loadPyodide: (config: {
+      indexURL: string;
+      stdout?: (msg: string) => void;
+      stderr?: (msg: string) => void;
+    }) => Promise<PyodideInterface>;
     currentPyodideInputLines: string[];
     pyodideInputNeededPrompt: string | null;
   }
