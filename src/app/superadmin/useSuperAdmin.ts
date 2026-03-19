@@ -177,7 +177,7 @@ export function useSuperAdmin() {
             const qLine = lines.find(l => l.includes('?')) || lines[0];
             const question = qLine.replace(/^\d+[.)]\s*/, "");
             const options: any[] = [];
-            lines.forEach(l => { if (/^[A-E][.)]/.test(l)) { let c = l.replace(/^[A-E][.)]\s*/, ""); let ic = false; if (c.includes('*')) { ic = true; c = c.replace('*', '').trim(); } options.push({ text: c, is_correct: ic }); } });
+            lines.forEach(l => { if (/^[A-E][.)]/.test(l)) { let c = l.replace(/^[A-E][.)]\s*/, ""); let ic = false; if (c.trim().endsWith('*')) { ic = true; c = c.trim().slice(0, -1).trim(); } options.push({ text: c, is_correct: ic }); } });
             if (!options.find(o => o.is_correct) && options.length) options[0].is_correct = true;
             // Points per question are auto-calculated from test total_points / total_questions
             const qRef = doc(collection(db, 'exam_questions'));

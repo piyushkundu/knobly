@@ -22,6 +22,15 @@ function getCleanOptionText(text: string): string {
     return text;
 }
 
+function isOptionCorrect(val: any): boolean {
+    if (val === true || val === 1) return true;
+    if (typeof val === 'string') {
+        const lower = val.toLowerCase();
+        return lower === 'true' || lower === '1';
+    }
+    return false;
+}
+
 export default function ReviewPage() {
     const { id: attemptId } = useParams<{ id: string }>();
     const router = useRouter();
@@ -96,7 +105,8 @@ export default function ReviewPage() {
                     const isObj = type === 'MCQ' || type === 'TF';
                     const resp = respMap[q.id];
                     if (isObj) {
-                        const correctOpt = q.exam_options.find(o => o.is_correct);
+                        const correctOptions = q.exam_options.filter(o => isOptionCorrect(o.is_correct));
+                        const correctOpt = correctOptions[correctOptions.length - 1];
                         if (resp?.option_id && correctOpt && resp.option_id === correctOpt.id) correct++;
                         else if (resp?.option_id) wrong++;
                         else skipped++;
@@ -159,7 +169,8 @@ export default function ReviewPage() {
         const isObj = type === 'MCQ' || type === 'TF';
         const resp = responses[q.id];
         if (isObj) {
-            const correctOpt = q.exam_options.find(o => o.is_correct);
+            const correctOptions = q.exam_options.filter(o => isOptionCorrect(o.is_correct));
+            const correctOpt = correctOptions[correctOptions.length - 1];
             if (resp?.option_id && correctOpt) {
                 if (resp.option_id === correctOpt.id) return { label: 'Correct', color: '#10b981', bg: '#ecfdf5', border: '#a7f3d0', icon: '✓' };
                 return { label: 'Wrong', color: '#ef4444', bg: '#fef2f2', border: '#fecaca', icon: '✗' };
@@ -364,7 +375,9 @@ export default function ReviewPage() {
                                                 q.exam_options.map(opt => {
                                                     const cleanText = getCleanOptionText(opt.option_text);
                                                     const isSelected = resp?.option_id === opt.id;
-                                                    const isCorrect = !!opt.is_correct;
+                                                    const correctOptions = q.exam_options.filter(o => isOptionCorrect(o.is_correct));
+                                                    const correctOpt = correctOptions[correctOptions.length - 1];
+                                                    const isCorrect = correctOpt ? correctOpt.id === opt.id : false;
 
                                                     let style: React.CSSProperties = { background: '#f8fafc', border: '1px solid #e2e8f0', color: '#64748b' };
                                                     let icon = <div className="mt-0.5 h-4 w-4 rounded-full flex-shrink-0" style={{ border: '2px solid #cbd5e1' }}></div>;
