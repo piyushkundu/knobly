@@ -25,6 +25,7 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
     { id: 'youtube', name: 'YouTube', type: 'Channel', link: 'https://youtube.com/@knobly1', icon: 'ph-bold ph-youtube-logo', color: 'text-red-500', borderClass: 'border-red', category: 'Main' },
     { id: 'notes', name: 'Notes', type: 'Utility', link: '/notes', icon: 'ti ti-notes', color: 'text-cyan-300', borderClass: 'border-cyan', category: 'Main' },
     { id: 'python-lab', name: 'Python Interpreter', type: 'With AI', link: '/python-lab', icon: 'ph-bold ph-terminal-window', color: 'text-indigo-400', borderClass: 'border-indigo', category: 'Main' },
+    { id: 'c-lab', name: 'C Compiler', type: 'With AI', link: '/c-lab', icon: 'ph-bold ph-terminal-window', color: 'text-green-500', borderClass: 'border-green', category: 'Main' },
     { id: 'test-journey', name: 'Test Journey', type: 'Dashboard', link: '/dashboard', icon: 'ph-bold ph-trophy', color: 'text-amber-400', borderClass: 'border-amber', category: 'Main' },
   ],
   OLevel: [
