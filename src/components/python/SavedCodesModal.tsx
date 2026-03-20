@@ -40,7 +40,8 @@ function highlightPythonDark(code: string): string {
     .replace(strings, '<span style="color:#34d399">$1</span>')
     .replace(keywords, '<span style="color:#c084fc;font-weight:700">$1</span>')
     .replace(numbers, '<span style="color:#fbbf24">$1</span>');
-  return h;
+    
+  return h.split('\n').map((line, i) => `<span class="opacity-30 mr-3 text-[9px] select-none inline-block w-5 text-right border-r border-slate-700/50 pr-2">${i + 1}</span>${line}`).join('\n');
 }
 
 function relativeTime(dateStr: string): string {
@@ -98,6 +99,20 @@ export function SavedCodesModal({
   // Mobile long press
   const [longPressId, setLongPressId] = useState<string | null>(null);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (showSaveInput) handleSave();
+        else setShowSaveInput(true);
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, showSaveInput, currentCode, saveTitle, saveTags, saveFolder, activeFolder, onSave]);
 
   useEffect(() => {
     const saved = localStorage.getItem('knobly-custom-folders');
@@ -474,7 +489,7 @@ export function SavedCodesModal({
                     <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar sm:max-w-[50%] pt-1 sm:pt-0">
                       {[{ key: 'all', label: 'All', c: 'indigo' }, { key: 'important', label: '⭐ Important', c: 'amber' }].map(f => (
                         <button key={f.key} onClick={() => setTagFilter(f.key as typeof tagFilter)}
-                          className={`px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all whitespace-nowrap border ${tagFilter === f.key ? `bg-${f.c}-500 text-white border-${f.c}-500 shadow-md shadow-${f.c}-500/30` : `bg-transparent text-gray-500 border-gray-300 hover:border-${f.c}-400 hover:text-${f.c}-500 hover:bg-${f.c}-50/50`}`}
+                          className={`h-8 px-4 flex items-center justify-center min-w-[60px] rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all whitespace-nowrap border ${tagFilter === f.key ? `bg-${f.c}-500 text-white border-${f.c}-500 shadow-md shadow-${f.c}-500/30` : `bg-transparent text-gray-500 border-gray-300 hover:border-${f.c}-400 hover:text-${f.c}-500 hover:bg-${f.c}-50/50 hover:shadow-sm`}`}
                           style={tagFilter === f.key ? { backgroundColor: f.c === 'amber' ? '#f59e0b' : '#6366f1', borderColor: f.c === 'amber' ? '#f59e0b' : '#6366f1', color: 'white' } : {}}>
                           {f.label}
                         </button>
@@ -511,7 +526,7 @@ export function SavedCodesModal({
                       >
                         {/* Interactive Folder Color border */}
                         {item.folder && folderConfig[item.folder] && (
-                          <div className="absolute top-0 left-0 w-[3px] h-full transition-all group-hover:w-[5px]" style={{ backgroundColor: folderConfig[item.folder].color }} />
+                          <div className="absolute top-0 left-0 w-[2px] opacity-60 h-full transition-all group-hover:opacity-100 group-hover:w-[3px]" style={{ backgroundColor: folderConfig[item.folder].color }} />
                         )}
 
                         <div className="px-5 pt-4 pb-2">
@@ -540,7 +555,7 @@ export function SavedCodesModal({
                                 <AnimatePresence>
                                   {contextMenuId === item.id && (
                                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                                      className="absolute right-0 top-8 z-30 w-48 bg-white/95 backdrop-blur-xl rounded-xl border border-gray-200/80 shadow-[0_10px_40px_rgba(0,0,0,0.2)] overflow-hidden"
+                                      className="absolute right-0 top-8 z-30 w-48 bg-white/95 backdrop-blur-xl rounded-xl border border-gray-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.2)] overflow-hidden"
                                       onClick={e => e.stopPropagation()}>
                                       <button onClick={() => handleStartEdit(item)} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Pencil className="w-3.5 h-3.5 text-indigo-500" /> Rename Snippet</button>
                                       <button onClick={() => handleDuplicate(item)} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-purple-50/80 transition-all border-b border-gray-100"><Copy className="w-3.5 h-3.5 text-purple-500" /> Duplicate</button>
@@ -595,7 +610,7 @@ export function SavedCodesModal({
                           {/* Primary Actions (Run, Edit, Copy) */}
                           <div className="flex items-center gap-2 mt-4 flex-wrap">
                             {onRun && (
-                              <button onClick={() => { onSelect(item.code); onRun(item.code); onClose(); }} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-white shadow-[0_4px_12px_rgba(16,185,129,0.3)] hover:shadow-[0_6px_16px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                              <button onClick={() => { onSelect(item.code); onRun(item.code); onClose(); }} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider bg-gradient-to-br from-[#00c853] to-[#64dd17] text-white shadow-[0_0_10px_rgba(0,200,83,0.4)] hover:shadow-[0_0_15px_rgba(0,200,83,0.6)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
                                 <Play className="w-3.5 h-3.5 fill-current" /> RUN
                               </button>
                             )}
@@ -678,7 +693,7 @@ function SidebarItem({ label, id, icon, count, isActive, color, onClick, onDrop,
       onContextMenu={onContextMenu}
       className={`relative w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all duration-300 text-[12px] font-bold group overflow-hidden cursor-pointer select-none ${
         isActive 
-          ? 'text-white' 
+          ? 'text-gray-800' 
           : isDragOver 
             ? 'bg-gray-200 scale-105 border-dashed border border-gray-400'
             : 'text-gray-600 hover:bg-white hover:shadow-sm hover:translate-x-1'
@@ -692,8 +707,8 @@ function SidebarItem({ label, id, icon, count, isActive, color, onClick, onDrop,
       <span className={`text-base transition-transform duration-300 ${isActive || isDragOver ? 'scale-125' : 'group-hover:scale-110 drop-shadow-sm'}`}>{icon}</span>
       <span className="flex-1 truncate group-hover:text-gray-900 transition-colors" style={isActive ? { color: color, fontWeight: 900 } : {}}>{label}</span>
       <span className={`text-[9px] font-black px-2 py-0.5 rounded-full min-w-[24px] text-center transition-all shadow-sm ${
-        isActive ? 'text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200'
-      }`} style={isActive ? { backgroundColor: color, boxShadow: `0 4px 10px ${color}60` } : {}}>{count}</span>
+        isActive ? 'text-white' : 'group-hover:opacity-80'
+      }`} style={isActive ? { backgroundColor: color, boxShadow: `0 4px 10px ${color}60` } : { backgroundColor: `${color}26`, color: color }}>{count}</span>
     </div>
   );
 }
@@ -702,7 +717,7 @@ function SidebarItem({ label, id, icon, count, isActive, color, onClick, onDrop,
 function defaultTagsFilters(allTags: string[], tagFilter: string, setTagFilter: (v: string) => void) {
   return allTags.map(tag => (
     <button key={tag} onClick={() => setTagFilter(tagFilter === tag ? 'all' : tag)}
-      className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${tagFilter === tag ? 'text-white border-purple-500 shadow-sm shadow-purple-500/20' : 'bg-transparent text-gray-500 border-gray-300 hover:border-purple-400 hover:text-purple-500 hover:bg-purple-50/50'}`}
+      className={`h-8 px-4 flex items-center justify-center min-w-[60px] rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${tagFilter === tag ? 'text-white border-purple-500 shadow-sm shadow-purple-500/20' : 'bg-transparent text-gray-500 border-gray-300 hover:border-purple-400 hover:text-purple-500 hover:bg-purple-50/50 hover:shadow-sm'}`}
       style={tagFilter === tag ? { backgroundColor: '#8b5cf6', borderColor: '#8b5cf6', color: 'white' } : {}}>
       #{tag}
     </button>
