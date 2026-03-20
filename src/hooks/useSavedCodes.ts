@@ -37,7 +37,7 @@ export function useSavedCodes() {
     loadCodes();
   }, [loadCodes]);
 
-  const saveCode = useCallback(async (title: string, code: string) => {
+  const saveCode = useCallback(async (title: string, code: string, tags?: string[], folder?: string) => {
     if (!user) return;
     try {
       const newCode: SavedCodeItem = {
@@ -45,6 +45,8 @@ export function useSavedCodes() {
         title: title || 'Untitled',
         code,
         isImportant: false,
+        tags: tags || [],
+        folder: folder || '',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -58,6 +60,22 @@ export function useSavedCodes() {
       setCodes(newCodesList);
     } catch (err) {
       console.error('Failed to save code:', err);
+    }
+  }, [user, codes]);
+
+  const updateCode = useCallback(async (id: string, updates: Partial<Pick<SavedCodeItem, 'title' | 'code' | 'tags' | 'folder' | 'isImportant'>>) => {
+    if (!user) return;
+    try {
+      const newCodesList = codes.map(c =>
+        c.id === id
+          ? { ...c, ...updates, updatedAt: new Date().toISOString() }
+          : c
+      );
+      const userDocRef = doc(db, 'users', user.uid);
+      await updateDoc(userDocRef, { saved_codes: newCodesList });
+      setCodes(newCodesList);
+    } catch (err) {
+      console.error('Failed to update code:', err);
     }
   }, [user, codes]);
 
@@ -94,6 +112,7 @@ export function useSavedCodes() {
     isLoading,
     isLoggedIn: !!user,
     saveCode,
+    updateCode,
     deleteCode,
     toggleImportant,
     loadCodes,

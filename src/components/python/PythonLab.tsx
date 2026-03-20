@@ -66,11 +66,11 @@ export function PythonLab() {
   const { isLoading: isAILoading, explanation, error: aiError, explainError, clearExplanation } = useAIExplain();
   const { history, saveToHistory, deleteFromHistory } = useCodeHistory();
   const { user, logout } = useAuth();
-  const { codes, isLoading: isSavedCodesLoading, isLoggedIn, saveCode, deleteCode, toggleImportant } = useSavedCodes();
+  const { codes, isLoading: isSavedCodesLoading, isLoggedIn, saveCode, updateCode, deleteCode, toggleImportant } = useSavedCodes();
 
-  const handleSaveCode = useCallback(async (title: string, codeToSave: string) => {
+  const handleSaveCode = useCallback(async (title: string, codeToSave: string, tags?: string[], folder?: string) => {
     if (!isLoggedIn) { setShowLoginModal(true); return; }
-    await saveCode(title, codeToSave);
+    await saveCode(title, codeToSave, tags, folder);
   }, [isLoggedIn, saveCode]);
 
   const handleEditorSave = useCallback(() => {
@@ -220,6 +220,18 @@ export function PythonLab() {
       setIsRunning(false);
     }
   }, [code, isPyodideReady, executeCode, helpMode, language, explainError, saveToHistory, clearExplanation]);
+
+  const handleRunFromSaved = useCallback((savedCode: string) => {
+    setCode(savedCode);
+    localStorage.setItem('python-code', savedCode);
+    setTimeout(() => handleRun(), 100);
+  }, [handleRun]);
+
+  const handleExplainFromSaved = useCallback((savedCode: string) => {
+    setCode(savedCode);
+    localStorage.setItem('python-code', savedCode);
+    setShowAskAI(true);
+  }, []);
 
   const handleGetAIHelp = useCallback(async () => {
     if (lastExecution) {
@@ -488,9 +500,9 @@ export function PythonLab() {
 
               {showSettingsMenu && (
                 <div
-                  className="absolute right-0 top-[calc(100%+10px)] w-72 rounded-2xl z-50 bg-white border border-gray-100 overflow-hidden"
+                  className="fixed top-[110px] right-4 w-[calc(100vw-32px)] sm:w-80 md:absolute md:top-[calc(100%+10px)] md:right-0 md:w-72 rounded-2xl z-[100] bg-white border border-[var(--accent-primary)]/20 overflow-hidden"
                   style={{
-                    boxShadow: '0 10px 40px -10px rgba(0,0,0,0.1), 0 0 20px -5px rgba(0,0,0,0.05)',
+                    boxShadow: '0 10px 40px -10px rgba(168,85,247,0.08), 0 0 20px -5px rgba(0,0,0,0.03)',
                   }}
                 >
                   <div className="px-4 py-3 border-b border-gray-100/80 bg-white flex items-center gap-2">
@@ -814,7 +826,10 @@ export function PythonLab() {
         onSave={handleSaveCode}
         onDelete={deleteCode}
         onToggleImportant={toggleImportant}
+        onUpdate={updateCode}
         onSelect={handleSelectSavedCode}
+        onRun={handleRunFromSaved}
+        onExplain={handleExplainFromSaved}
         currentCode={code}
       />
 

@@ -27,6 +27,8 @@ export interface SavedCodeItem {
   title: string;
   code: string;
   isImportant: boolean;
+  tags?: string[];
+  folder?: string;
   createdAt: string;
   updatedAt: string;
 }
