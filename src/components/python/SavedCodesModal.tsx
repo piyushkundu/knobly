@@ -102,6 +102,7 @@ export function SavedCodesModal({
   const [folderContextMenu, setFolderContextMenu] = useState<{ name: string, x: number, y: number, isCustom: boolean } | null>(null);
   const [editingFolderName, setEditingFolderName] = useState<string | null>(null);
   const [editFolderNameInput, setEditFolderNameInput] = useState('');
+  const [confirmAction, setConfirmAction] = useState<{ message: string; onConfirm: () => void } | null>(null);
   
   // Mobile long press
   const [longPressId, setLongPressId] = useState<string | null>(null);
@@ -651,6 +652,27 @@ export function SavedCodesModal({
                 </div>
               </div>
             </div>
+            {/* Global Confirm Modal */}
+            <AnimatePresence>
+              {confirmAction && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-sm" style={{ backdropFilter: 'blur(4px)' }}>
+                  <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }} className="bg-white rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] overflow-hidden w-[320px] border border-gray-100">
+                    <div className="p-6 text-center">
+                      <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4 border border-red-100 shadow-inner">
+                        <Trash2 className="w-6 h-6 text-red-500 drop-shadow-sm" />
+                      </div>
+                      <h3 className="text-[16px] font-black text-gray-900 mb-1.5 tracking-wide">Confirm Deletion</h3>
+                      <p className="text-[12px] font-medium text-gray-500 mb-6">{confirmAction.message}</p>
+                      <div className="flex gap-2.5 w-full">
+                        <button onClick={() => setConfirmAction(null)} className="flex-1 py-2.5 rounded-xl font-bold text-[12px] text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all border border-gray-200/50">Cancel</button>
+                        <button onClick={() => { confirmAction.onConfirm(); setConfirmAction(null); }} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-bold text-[12px] text-white bg-red-500 hover:bg-red-600 transition-all shadow-md shadow-red-500/25 active:scale-95"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
+                      </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Global Toast */}
             <AnimatePresence>
               {toastMsg && (
@@ -675,7 +697,7 @@ export function SavedCodesModal({
                   </button>
                 )}
                 
-                <button onClick={() => { if (window.confirm('Do you want to delete?')) deleteFolder(folderContextMenu.name); }} className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-gray-700 hover:bg-indigo-50/80 transition-all">
+                <button onClick={() => { setFolderContextMenu(null); setConfirmAction({ message: `Are you sure you want to delete folder '${folderContextMenu.name}'?`, onConfirm: () => deleteFolder(folderContextMenu.name) }); }} className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-gray-700 hover:bg-indigo-50/80 transition-all">
                   <Trash2 className="w-3 h-3" /> {folderContextMenu.isCustom ? 'Delete' : 'Remove Empty'}
                 </button>
 
@@ -698,7 +720,7 @@ export function SavedCodesModal({
                 className="z-[999] w-48 bg-white/95 backdrop-blur-xl rounded-xl border border-gray-200/80 shadow-2xl shadow-gray-400/50 overflow-hidden"
                 onClick={e => e.stopPropagation()}>
                 <button onClick={() => { handleStartEdit(activeMenu.item); setActiveMenu(null); }} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Pencil className="w-3.5 h-3.5 text-indigo-500" /> Rename Snippet</button>
-                <button onClick={() => { if (window.confirm('Do you want to delete this code?')) { onDelete(activeMenu.id); setActiveMenu(null); } }} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Trash2 className="w-3.5 h-3.5 text-gray-500" /> Delete Snippet</button>
+                <button onClick={() => { setActiveMenu(null); setConfirmAction({ message: 'Do you want to delete this code snippet?', onConfirm: () => onDelete(activeMenu.id) }); }} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Trash2 className="w-3.5 h-3.5 text-gray-500" /> Delete Snippet</button>
                 <button onClick={() => handleDuplicate(activeMenu.item)} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-purple-50/80 transition-all border-b border-gray-100"><Copy className="w-3.5 h-3.5 text-purple-500" /> Duplicate</button>
                 <div className="px-3 pt-2 pb-1 text-[9px] font-black text-gray-400 uppercase tracking-widest">Move to Folder</div>
                 <div className="pb-1 max-h-[120px] overflow-y-auto no-scrollbar">
