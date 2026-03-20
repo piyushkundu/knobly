@@ -30,6 +30,19 @@ function highlightPython(code: string): string {
   return h;
 }
 
+function highlightPythonDark(code: string): string {
+  const keywords = /\b(def|class|if|elif|else|for|while|return|import|from|as|try|except|finally|with|yield|lambda|and|or|not|in|is|True|False|None|pass|break|continue|raise|global|nonlocal|assert|del|print|input|range|len|int|str|float|list|dict|set|tuple|type|map|filter|zip|enumerate|sorted|reversed|open|super|self)\b/g;
+  const strings = /("""[\s\S]*?"""|'''[\s\S]*?'''|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g;
+  const comments = /(#.*$)/gm;
+  const numbers = /\b(\d+\.?\d*)\b/g;
+  let h = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  h = h.replace(comments, '<span style="color:#64748b;font-style:italic">$1</span>')
+    .replace(strings, '<span style="color:#34d399">$1</span>')
+    .replace(keywords, '<span style="color:#c084fc;font-weight:700">$1</span>')
+    .replace(numbers, '<span style="color:#fbbf24">$1</span>');
+  return h;
+}
+
 function relativeTime(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const m = Math.floor(diff / 60000);
@@ -405,15 +418,15 @@ export function SavedCodesModal({
                     <div className="flex items-center gap-1.5 text-gray-600">
                       <span className="text-[13px]">📊</span> <b className="text-gray-800 text-xs">{filteredCodes.length}</b> Codes
                     </div>
-                    <div className="w-px h-3.5 bg-gray-300 rounded-full" />
+                    <span className="text-gray-300">•</span>
                     <div className="flex items-center gap-1.5 text-gray-600">
                       <span className="text-[13px]">⭐</span> <b className="text-amber-600 text-xs">{codes.filter(c => c.isImportant).length}</b> Important
                     </div>
-                    <div className="w-px h-3.5 bg-gray-300 rounded-full" />
+                    <span className="text-gray-300">•</span>
                     <div className="flex items-center gap-1.5 text-gray-600">
                       <span className="text-[13px]">🕒</span> <b className="text-gray-800">{lastSaved}</b>
                     </div>
-                    <div className="w-px h-3.5 bg-gray-300 rounded-full" />
+                    <span className="text-gray-300">•</span>
                     <div className="flex items-center gap-1.5">
                       <span className="text-[12px]">🐍</span> <b className="text-indigo-600 text-xs">Python</b>
                     </div>
@@ -461,7 +474,7 @@ export function SavedCodesModal({
                     <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar sm:max-w-[50%] pt-1 sm:pt-0">
                       {[{ key: 'all', label: 'All', c: 'indigo' }, { key: 'important', label: '⭐ Important', c: 'amber' }].map(f => (
                         <button key={f.key} onClick={() => setTagFilter(f.key as typeof tagFilter)}
-                          className={`px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all whitespace-nowrap border ${tagFilter === f.key ? `bg-${f.c}-500 text-white border-${f.c}-500 shadow-md shadow-${f.c}-500/30` : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'}`}
+                          className={`px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all whitespace-nowrap border ${tagFilter === f.key ? `bg-${f.c}-500 text-white border-${f.c}-500 shadow-md shadow-${f.c}-500/30` : `bg-transparent text-gray-500 border-gray-300 hover:border-${f.c}-400 hover:text-${f.c}-500 hover:bg-${f.c}-50/50`}`}
                           style={tagFilter === f.key ? { backgroundColor: f.c === 'amber' ? '#f59e0b' : '#6366f1', borderColor: f.c === 'amber' ? '#f59e0b' : '#6366f1', color: 'white' } : {}}>
                           {f.label}
                         </button>
@@ -521,7 +534,7 @@ export function SavedCodesModal({
                               <span className="text-[10px] font-semibold text-gray-400 px-2 py-0.5 rounded-full bg-gray-50 border border-gray-100">{relativeTime(item.createdAt)}</span>
                               {/* Action Menu (Vertical Dots) */}
                               <div className="relative">
-                                <button onClick={e => { e.stopPropagation(); setContextMenuId(contextMenuId === item.id ? null : item.id); setFolderContextMenu(null); }} className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100">
+                                <button onClick={e => { e.stopPropagation(); setContextMenuId(contextMenuId === item.id ? null : item.id); setFolderContextMenu(null); }} className="p-2 ml-1 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100">
                                   <MoreVertical className="w-4 h-4" />
                                 </button>
                                 <AnimatePresence>
@@ -554,29 +567,29 @@ export function SavedCodesModal({
                               </div>
                             )}
                             {item.tags?.map(tag => (
-                              <span key={tag} className="px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600 text-[9px] font-bold border border-gray-200"># {tag}</span>
+                              <button key={tag} onClick={(e) => { e.stopPropagation(); setTagFilter(tag); }} className="px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600 hover:bg-purple-100 hover:text-purple-600 hover:border-purple-200 text-[9px] font-bold border border-gray-200 transition-colors active:scale-95">#{tag}</button>
                             ))}
                           </div>
 
-                          {/* Code Preview Box */}
-                          <div className={`relative bg-[#fafafa] rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-300 group/code ${expandedCodeId === item.id ? 'max-h-[500px]' : 'max-h-[90px]'}`}>
+                          {/* Code Preview Box Dark Mode */}
+                          <div className={`relative bg-[#0f172a] rounded-xl border border-slate-700 shadow-inner overflow-hidden transition-all duration-300 group/code ${expandedCodeId === item.id ? 'max-h-[500px]' : 'max-h-[90px]'}`}>
                             {/* Window dots decoration */}
-                            <div className="absolute top-0 left-0 w-full h-6 bg-gray-100/50 border-b border-gray-200 flex items-center px-2.5 gap-1.5 z-10">
+                            <div className="absolute top-0 left-0 w-full h-7 bg-slate-800/80 border-b border-slate-700/50 flex items-center px-3 gap-1.5 z-10 backdrop-blur-sm">
                               <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400" /><div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                              <span className="ml-auto text-[9px] font-bold text-gray-400 uppercase">snippet.py</span>
+                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400" /><div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                              <span className="ml-auto text-[9px] font-bold text-slate-400 uppercase tracking-wider">snippet.py</span>
                             </div>
-                            <pre className="text-[11px] font-mono leading-relaxed p-4 pt-8 overflow-auto text-gray-700"
-                              dangerouslySetInnerHTML={{ __html: expandedCodeId === item.id ? highlightPython(item.code) : highlightPython(truncateCode(item.code, 4)) }} />
+                            <pre className="text-[11px] font-mono leading-relaxed p-4 pt-9 overflow-auto text-[#e2e8f0]"
+                              dangerouslySetInnerHTML={{ __html: expandedCodeId === item.id ? highlightPythonDark(item.code) : highlightPythonDark(truncateCode(item.code, 4)) }} />
                             {item.lastOutput && (
-                              <div className="border-t border-gray-200 bg-gray-100/50">
-                                <div className="px-3 py-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest bg-gray-200/50">Last Output:</div>
-                                <pre className="text-[10px] font-mono leading-relaxed px-4 py-2 text-gray-600 overflow-x-auto">
+                              <div className="border-t border-slate-700/80 bg-slate-900/80">
+                                <div className="px-4 py-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-800/50 border-b border-slate-800">🚀 Last Output:</div>
+                                <pre className="text-[10px] font-mono leading-relaxed px-4 py-3 text-emerald-400 overflow-x-auto">
                                   {expandedCodeId === item.id ? item.lastOutput : truncateCode(item.lastOutput, 3)}
                                 </pre>
                               </div>
                             )}
-                            {expandedCodeId !== item.id && <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-[#fafafa] to-transparent pointer-events-none" />}
+                            {expandedCodeId !== item.id && <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-[#0f172a] to-transparent pointer-events-none" />}
                           </div>
 
                           {/* Primary Actions (Run, Edit, Copy) */}
@@ -629,7 +642,14 @@ export function SavedCodesModal({
                       </motion.div>
                     ))
                   )}
-                  {/* Bottom spacing */}
+                  {/* End of List Graphic */}
+                  <div className="py-12 mt-4 flex flex-col items-center justify-center opacity-70">
+                    <div className="w-16 h-16 bg-white border-2 border-dashed border-gray-200 rounded-full flex items-center justify-center text-3xl mb-3 shadow-inner">
+                      🚀
+                    </div>
+                    <p className="text-[13px] font-black text-gray-400 uppercase tracking-widest">You've reached the end!</p>
+                    <p className="text-[11px] font-bold text-gray-400 mt-1">Keep coding and saving magic snippets.</p>
+                  </div>
                   <div className="h-4" />
                 </div>
               </div>
@@ -665,9 +685,8 @@ function SidebarItem({ label, id, icon, count, isActive, color, onClick, onDrop,
       }`}
       style={isActive ? {
         background: `${color}1A`, // 10% opacity
-        boxShadow: `0 0 15px ${color}15`,
         color: '#1f2937', 
-        borderLeft: `4px solid ${color}`
+        borderLeft: `3px solid ${color}`
       } : {}}
     >
       <span className={`text-base transition-transform duration-300 ${isActive || isDragOver ? 'scale-125' : 'group-hover:scale-110 drop-shadow-sm'}`}>{icon}</span>
@@ -683,7 +702,7 @@ function SidebarItem({ label, id, icon, count, isActive, color, onClick, onDrop,
 function defaultTagsFilters(allTags: string[], tagFilter: string, setTagFilter: (v: string) => void) {
   return allTags.map(tag => (
     <button key={tag} onClick={() => setTagFilter(tagFilter === tag ? 'all' : tag)}
-      className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${tagFilter === tag ? 'text-white border-purple-500 shadow-sm shadow-purple-500/20' : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'}`}
+      className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${tagFilter === tag ? 'text-white border-purple-500 shadow-sm shadow-purple-500/20' : 'bg-transparent text-gray-500 border-gray-300 hover:border-purple-400 hover:text-purple-500 hover:bg-purple-50/50'}`}
       style={tagFilter === tag ? { backgroundColor: '#8b5cf6', borderColor: '#8b5cf6', color: 'white' } : {}}>
       #{tag}
     </button>
