@@ -397,7 +397,7 @@ export function SavedCodesModal({
                           className="w-full relative group flex items-center justify-center gap-2 mt-4 px-3 py-2.5 rounded-xl text-[11px] font-bold text-indigo-100 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98] border border-indigo-400/50 hover:border-purple-400 shadow-[0_0_15px_rgba(99,102,241,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]">
                           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner" />
                           <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
-                          <FolderPlus className="w-4 h-4 shadow-sm relative z-10 text-white" />
+                          <FolderPlus className="w-4 h-4 shadow-sm relative z-10 !text-white" style={{ color: '#ffffff' }} />
                           <span className="relative z-10 !text-white drop-shadow-sm" style={{ color: '#ffffff' }}>New Folder</span>
                         </button>
                       )}
@@ -610,11 +610,6 @@ export function SavedCodesModal({
                             <button onClick={() => setExpandedCodeId(expandedCodeId === item.id ? null : item.id)} className="flex items-center gap-1 px-3 py-2 rounded-lg text-[10px] font-bold bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 hover:text-gray-800 transition-all active:scale-95 hidden sm:flex">
                               {expandedCodeId === item.id ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />} {expandedCodeId === item.id ? 'Collapse' : 'Full Preview'}
                             </button>
-                            {onExplain && (
-                              <button onClick={() => { onSelect(item.code); onExplain(item.code); onClose(); }} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-100 hover:shadow shadow-amber-500/10 transition-all active:scale-95 hidden sm:flex">
-                                <Sparkles className="w-3 h-3" /> AI Explain
-                              </button>
-                            )}
                             <button onClick={e => { e.stopPropagation(); onToggleImportant(item.id); }} className={`p-2 rounded-lg transition-all border ${item.isImportant ? 'bg-amber-50 text-amber-400 border-amber-200 shadow-sm' : 'bg-white text-gray-400 border-gray-200 hover:text-amber-400 hover:border-amber-300 hover:bg-amber-50'}`}>
                               <Star className={`w-3.5 h-3.5 ${item.isImportant ? 'fill-amber-400' : ''}`} />
                             </button>
