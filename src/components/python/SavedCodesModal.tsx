@@ -398,7 +398,7 @@ export function SavedCodesModal({
                           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner" />
                           <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
                           <FolderPlus className="w-4 h-4 shadow-sm relative z-10 text-white" />
-                          <span className="relative z-10 text-white drop-shadow-sm">New Folder</span>
+                          <span className="relative z-10 !text-white drop-shadow-sm" style={{ color: '#ffffff' }}>New Folder</span>
                         </button>
                       )}
                     </div>
@@ -483,8 +483,8 @@ export function SavedCodesModal({
                     <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar sm:max-w-[50%] pt-1 sm:pt-0">
                       {[{ key: 'all', label: 'All', c: 'indigo' }, { key: 'important', label: '⭐ Important', c: 'amber' }].map(f => (
                         <button key={f.key} onClick={() => setTagFilter(f.key as typeof tagFilter)}
-                          className={`h-8 px-4 flex items-center justify-center min-w-[60px] rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all whitespace-nowrap border ${tagFilter === f.key ? `bg-${f.c}-500 text-white border-${f.c}-500 shadow-md shadow-${f.c}-500/30` : `bg-transparent text-gray-500 border-gray-300 hover:border-${f.c}-400 hover:text-${f.c}-500 hover:bg-${f.c}-50/50 hover:shadow-sm`}`}
-                          style={tagFilter === f.key ? { backgroundColor: f.c === 'amber' ? '#f59e0b' : '#6366f1', borderColor: f.c === 'amber' ? '#f59e0b' : '#6366f1', color: 'white' } : {}}>
+                          className={`h-8 px-4 flex items-center justify-center min-w-[60px] rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all whitespace-nowrap border ${tagFilter === f.key ? `bg-${f.c}-500 !text-white border-${f.c}-500 shadow-md shadow-${f.c}-500/30` : `bg-transparent text-gray-500 border-gray-300 hover:border-${f.c}-400 hover:text-${f.c}-500 hover:bg-${f.c}-50/50 hover:shadow-sm`}`}
+                          style={tagFilter === f.key ? { backgroundColor: f.c === 'amber' ? '#f59e0b' : '#6366f1', borderColor: f.c === 'amber' ? '#f59e0b' : '#6366f1', color: '#ffffff' } : {}}>
                           {f.label}
                         </button>
                       ))}
@@ -575,13 +575,13 @@ export function SavedCodesModal({
                             <div className="absolute top-0 left-0 w-full h-7 bg-slate-800/80 border-b border-slate-700/50 flex items-center px-3 gap-1.5 z-10 backdrop-blur-sm">
                               <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                               <div className="w-2.5 h-2.5 rounded-full bg-amber-400" /><div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                              <span className="ml-auto text-[9px] font-bold text-slate-400 uppercase tracking-wider">snippet.py</span>
+                              <span className="ml-auto text-[9px] font-bold !text-white uppercase tracking-wider" style={{ color: '#ffffff' }}>snippet.py</span>
                             </div>
-                            <pre className="text-[11px] font-mono leading-relaxed p-4 pt-9 overflow-auto text-[#e2e8f0]"
+                            <pre className="text-[11px] font-mono leading-relaxed p-4 pt-9 overflow-auto !text-white"
                               dangerouslySetInnerHTML={{ __html: expandedCodeId === item.id ? highlightPythonDark(item.code) : highlightPythonDark(truncateCode(item.code, 4)) }} />
                             {item.lastOutput && (
                               <div className="border-t border-slate-700/80 bg-slate-900/80">
-                                <div className="px-4 py-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-800/50 border-b border-slate-800">🚀 Last Output:</div>
+                                <div className="px-4 py-1.5 text-[9px] font-bold !text-white uppercase tracking-widest bg-slate-800/50 border-b border-slate-800" style={{ color: '#ffffff' }}>🚀 Last Output:</div>
                                 <pre className="text-[10px] font-mono leading-relaxed px-4 py-3 text-emerald-400 overflow-x-auto">
                                   {expandedCodeId === item.id ? item.lastOutput : truncateCode(item.lastOutput, 3)}
                                 </pre>
