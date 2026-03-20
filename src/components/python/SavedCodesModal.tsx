@@ -652,27 +652,6 @@ export function SavedCodesModal({
                 </div>
               </div>
             </div>
-            {/* Global Confirm Modal */}
-            <AnimatePresence>
-              {confirmAction && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-sm" style={{ backdropFilter: 'blur(4px)' }}>
-                  <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }} className="bg-white rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] overflow-hidden w-[320px] border border-gray-100">
-                    <div className="p-6 text-center">
-                      <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4 border border-red-100 shadow-inner">
-                        <Trash2 className="w-6 h-6 text-red-500 drop-shadow-sm" />
-                      </div>
-                      <h3 className="text-[16px] font-black text-gray-900 mb-1.5 tracking-wide">Confirm Deletion</h3>
-                      <p className="text-[12px] font-medium text-gray-500 mb-6">{confirmAction.message}</p>
-                      <div className="flex gap-2.5 w-full">
-                        <button onClick={() => setConfirmAction(null)} className="flex-1 py-2.5 rounded-xl font-bold text-[12px] text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all border border-gray-200/50">Cancel</button>
-                        <button onClick={() => { confirmAction.onConfirm(); setConfirmAction(null); }} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-bold text-[12px] text-white bg-red-500 hover:bg-red-600 transition-all shadow-md shadow-red-500/25 active:scale-95"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
-                      </div>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             {/* Global Toast */}
             <AnimatePresence>
               {toastMsg && (
@@ -683,6 +662,27 @@ export function SavedCodesModal({
               )}
             </AnimatePresence>
           </motion.div>
+
+          {/* Global Confirm Modal */}
+          <AnimatePresence>
+            {confirmAction && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
+                <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }} className="bg-white rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4)] overflow-hidden w-[320px] border border-gray-100 relative max-w-[90vw]" onClick={e => e.stopPropagation()}>
+                  <div className="p-6 text-center">
+                    <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4 border border-red-100 shadow-inner">
+                      <Trash2 className="w-6 h-6 text-red-500 drop-shadow-sm" />
+                    </div>
+                    <h3 className="text-[16px] font-black text-gray-900 mb-1.5 tracking-wide">Confirm Deletion</h3>
+                    <p className="text-[12px] font-medium text-gray-500 mb-6">{confirmAction.message}</p>
+                    <div className="flex gap-2.5 w-full">
+                      <button onClick={() => setConfirmAction(null)} className="flex-1 py-2.5 rounded-xl font-bold text-[12px] text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all border border-gray-200/50">Cancel</button>
+                      <button onClick={() => { confirmAction.onConfirm(); setConfirmAction(null); }} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-bold text-[12px] text-white bg-red-500 hover:bg-red-600 transition-all shadow-md shadow-red-500/25 active:scale-95"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Global Folder Context Menu */}
           <AnimatePresence>
