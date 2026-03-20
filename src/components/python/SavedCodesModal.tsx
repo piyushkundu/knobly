@@ -89,7 +89,14 @@ export function SavedCodesModal({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showCreateFolder, setShowCreateFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
-  const [customFolders, setCustomFolders] = useState<{ name: string; color: string; icon: string }[]>([]);
+  const [customFolders, setCustomFolders] = useState<{ name: string; color: string; icon: string }[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('knobly-custom-folders');
+      if (saved) { try { return JSON.parse(saved); } catch { return [...DEFAULT_FOLDERS]; } }
+      localStorage.setItem('knobly-custom-folders', JSON.stringify(DEFAULT_FOLDERS));
+    }
+    return [...DEFAULT_FOLDERS];
+  });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeMenu, setActiveMenu] = useState<{ id: string, x: number, y: number, item: SavedCodeItem } | null>(null);
   const [folderContextMenu, setFolderContextMenu] = useState<{ name: string, x: number, y: number, isCustom: boolean } | null>(null);
@@ -114,10 +121,7 @@ export function SavedCodesModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, showSaveInput, currentCode, saveTitle, saveTags, saveFolder, activeFolder, onSave]);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('knobly-custom-folders');
-    if (saved) { try { setCustomFolders(JSON.parse(saved)); } catch { /* ignore */ } }
-  }, []);
+
 
   const saveCustomFolders = (updated: { name: string; color: string; icon: string }[]) => {
     setCustomFolders(updated);
@@ -141,17 +145,15 @@ export function SavedCodesModal({
 
   const allFolders = useMemo(() => {
     const s = new Set<string>();
-    codes.forEach(c => { if (c.folder) s.add(c.folder); });
-    DEFAULT_FOLDERS.forEach(f => s.add(f.name));
     customFolders.forEach(f => s.add(f.name));
+    codes.forEach(c => { if (c.folder) s.add(c.folder); });
     return Array.from(s);
   }, [codes, customFolders]);
 
   const folderConfig = useMemo(() => {
     const m: Record<string, { color: string; icon: string; isCustom: boolean }> = {};
-    DEFAULT_FOLDERS.forEach(f => { m[f.name] = { color: f.color, icon: f.icon, isCustom: false }; });
-    codes.forEach(c => { if (c.folder && !m[c.folder]) m[c.folder] = { color: '#94a3b8', icon: '📁', isCustom: true }; });
     customFolders.forEach(f => { m[f.name] = { color: f.color, icon: f.icon, isCustom: true }; });
+    codes.forEach(c => { if (c.folder && !m[c.folder]) m[c.folder] = { color: '#94a3b8', icon: '📁', isCustom: true }; });
     return m;
   }, [codes, customFolders]);
 
