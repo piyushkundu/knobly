@@ -79,7 +79,7 @@ export function SavedCodesModal({
   const [tagFilter, setTagFilter] = useState<'all' | 'important' | string>('all');
   const [saveTitle, setSaveTitle] = useState('');
   const [saveTags, setSaveTags] = useState<string[]>([]);
-  const [saveFolder, setSaveFolder] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('knobly-last-folder') || '' : '');
+  const [saveFolder, setSaveFolder] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveInput, setShowSaveInput] = useState(initialShowSaveInput || false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -194,9 +194,7 @@ export function SavedCodesModal({
   const handleSave = async () => {
     if (!currentCode.trim()) return;
     setIsSaving(true);
-    const resolvedFolder = saveFolder || (activeFolder !== 'all' && activeFolder !== 'unfiled' ? activeFolder : '');
-    localStorage.setItem('knobly-last-folder', resolvedFolder);
-    await onSave(saveTitle || `Code ${new Date().toLocaleString()}`, currentCode, saveTags, resolvedFolder);
+    await onSave(saveTitle || `Code ${new Date().toLocaleString()}`, currentCode, saveTags, saveFolder);
     setSaveTitle(''); setSaveTags([]); setSaveFolder(''); setShowSaveInput(false); setIsSaving(false);
     showToast('✔ Code Saved successfully!');
   };
@@ -459,14 +457,16 @@ export function SavedCodesModal({
                             <X className="w-4 h-4" />
                           </button>
                         </div>
-                        <div className="flex flex-wrap gap-1.5 items-center">
-                          <Tag className="w-3.5 h-3.5 text-gray-400 ml-1" />
-                          {AVAILABLE_TAGS.map(tag => (
-                            <button key={tag} onClick={() => toggleSaveTag(tag)}
-                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-all ${saveTags.includes(tag) ? 'bg-indigo-100 text-indigo-700 border-indigo-200 shadow-sm' : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-indigo-50 border hover:border-indigo-200'}`}>
-                              {tag}
-                            </button>
-                          ))}
+                        <div className="flex items-center gap-2 px-1">
+                          <FolderOpen className="w-3.5 h-3.5 text-gray-400" />
+                          <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Save to:</span>
+                          <select value={saveFolder} onChange={(e) => setSaveFolder(e.target.value)}
+                            className="bg-gray-50 border border-gray-200 text-gray-700 text-[11px] font-bold rounded-md px-2 py-1 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all cursor-pointer">
+                            <option value="">📄 Unfiled</option>
+                            {allFolders.map(f => (
+                              <option key={f} value={f}>{folderConfig[f]?.icon || '📁'} {f}</option>
+                            ))}
+                          </select>
                         </div>
                       </motion.div>
                     )}

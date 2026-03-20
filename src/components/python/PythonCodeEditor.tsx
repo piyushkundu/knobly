@@ -283,39 +283,6 @@ export function PythonCodeEditor({
           </div>
         </div>
         <div className="flex items-center gap-1">
-          {isMobile && onThemeToggle && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onThemeToggle}
-              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              className="h-7 px-2"
-            >
-              {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-            </Button>
-          )}
-          {isMobile && onShowHistory && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onShowHistory}
-              title="Show History"
-              className="h-7 px-2"
-            >
-              <History className="w-3.5 h-3.5" />
-            </Button>
-          )}
-          {isMobile && onShowSavedCodes && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onShowSavedCodes}
-              title="My Saved Codes"
-              className="h-7 px-2"
-            >
-              <FolderOpen className="w-3.5 h-3.5" />
-            </Button>
-          )}
 
           {/* Zoom In / Zoom Out - Premium Grouped Style */}
           <div className="flex items-center bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg overflow-hidden h-7">
