@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Play, History, Sparkles, Code2, Zap, Sun, Moon, Trash2, ChevronLeft, Save, FolderOpen, User, LogIn, LogOut, Globe, Bot, ChevronDown, X } from 'lucide-react';
+import { Play, History, Sparkles, Code2, Zap, Sun, Moon, Trash2, ChevronLeft, Save, FolderOpen, User, LogIn, LogOut, Globe, Bot, ChevronDown, X, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PythonCodeEditor } from './PythonCodeEditor';
 import { PythonConsole } from './PythonConsole';
@@ -51,7 +51,10 @@ export function PythonLab() {
   const [waitingForInput, setWaitingForInput] = useState(false);
   const [startSavingCode, setStartSavingCode] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileProfileMenuRef = useRef<HTMLDivElement>(null);
+  const settingsMenuRef = useRef<HTMLDivElement>(null);
   // Ref to resolve when user submits input
   const inputResolveRef = useRef<((value: string) => void) | null>(null);
   const collectedInputsRef = useRef<string[]>([]);
@@ -102,18 +105,25 @@ export function PythonLab() {
     }
   }, []);
 
-  // Close profile menu on click outside
+  // Close profile and settings menus on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        profileMenuRef.current && !profileMenuRef.current.contains(target) &&
+        (!mobileProfileMenuRef.current || !mobileProfileMenuRef.current.contains(target))
+      ) {
         setShowProfileMenu(false);
       }
+      if (settingsMenuRef.current && !settingsMenuRef.current.contains(target)) {
+        setShowSettingsMenu(false);
+      }
     };
-    if (showProfileMenu) {
+    if (showProfileMenu || showSettingsMenu) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showProfileMenu]);
+  }, [showProfileMenu, showSettingsMenu]);
 
   // Handle user submitting input — resolves the waiting promise
   const handlePromptSubmit = useCallback((value: string) => {
@@ -283,18 +293,16 @@ export function PythonLab() {
           {/* Top section on mobile: Logo, Title, Run/Ask AI */}
           <div className="flex items-center justify-between md:justify-start w-full md:w-auto">
             <div className="flex items-center gap-2 md:gap-3">
-              <Button
-                variant="secondary"
-                size="sm"
+              <button
                 onClick={() => router.push('/')}
-                className="h-8 w-8 md:h-9 md:w-9 p-0 mr-1 md:mr-2 rounded-lg flex-shrink-0 shadow-sm"
                 title="Back to Home"
+                className="w-9 h-9 md:w-11 md:h-11 rounded-full border border-gray-200/80 shadow-sm flex items-center justify-center bg-white hover:bg-gray-50 mr-1 md:mr-3 flex-shrink-0 transition-all hover:shadow-md hover:-translate-x-1"
               >
-                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-[var(--text-primary)]" />
-              </Button>
+                <img src="https://img.icons8.com/fluency/48/circled-left-2.png" alt="Back" className="w-5 h-5 md:w-7 md:h-7 object-contain" />
+              </button>
               <div className="relative flex-shrink-0">
-                <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-[var(--accent-primary)] flex items-center justify-center shadow-lg shadow-[var(--accent-primary)]/30 text-white">
-                  <Code2 className="w-4 h-4 md:w-5 md:h-5" color="white" strokeWidth={2.5} />
+                <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-white/10 flex items-center justify-center shadow-lg border border-[var(--border-color)] text-white">
+                  <img src="https://img.icons8.com/color/48/python--v1.png" alt="Python" className="w-5 h-5 md:w-6 md:h-6 object-contain drop-shadow-md" />
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 md:w-3 md:h-3 bg-[var(--accent-success)] rounded-full border-2 border-[var(--bg-primary)]" />
               </div>
@@ -308,144 +316,315 @@ export function PythonLab() {
               </div>
             </div>
 
-            {/* Mobile Right Actions: EN/HI Toggle */}
-            <div className="flex md:hidden items-center ml-2">
-              <Toggle
-                options={[
-                  { value: 'en', label: 'EN' },
-                  { value: 'hi', label: 'HI' },
-                ]}
-                value={language}
-                onChange={handleLanguageChange}
-                className="flex-shrink-0"
-              />
+            {/* Mobile Profile / Avatar */}
+            <div className="md:hidden flex-shrink-0 relative" ref={mobileProfileMenuRef}>
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className={cn(
+                  "w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all overflow-hidden shadow-md",
+                  showProfileMenu
+                    ? "border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/30"
+                    : "border-[var(--accent-primary)]/40 hover:border-[var(--accent-primary)]",
+                  user ? "bg-[var(--glass-bg)]" : "bg-gradient-to-br from-indigo-50/10 to-purple-50/10"
+                )}
+                title={user?.displayName || 'Profile'}
+              >
+                {user?.photoURL ? (
+                  <img src={user.photoURL} className="w-full h-full object-cover" alt="" />
+                ) : (
+                  <img src="https://img.icons8.com/fluency/48/user-male-circle--v1.png" alt="User" className="w-full h-full object-contain" />
+                )}
+              </button>
+
+              {/* Mobile Profile Dropdown */}
+              {showProfileMenu && (
+                <div className="absolute right-0 top-[calc(100%+10px)] w-64 rounded-2xl z-50 bg-white border border-gray-100 overflow-hidden shadow-2xl">
+                  <div className="px-4 pt-4 pb-3 border-b border-gray-100/80 bg-white">
+                    {user ? (
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center text-indigo-600 font-bold text-sm border border-indigo-100 flex-shrink-0">
+                          {user.photoURL ? (
+                            <img src={user.photoURL} className="w-full h-full object-cover rounded-full" alt="" />
+                          ) : (
+                            user.displayName?.charAt(0)?.toUpperCase() || 'U'
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-gray-900 truncate">{user.displayName || 'User'}</p>
+                          <p className="text-[11px] text-gray-500 truncate">{user.email}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100">
+                          <img src="https://img.icons8.com/fluency/48/user-male-circle--v1.png" alt="Guest" className="w-7 h-7 object-contain" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-gray-900">Guest User</p>
+                          <p className="text-[11px] text-gray-500">Sign in to save your work</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2 bg-gray-50/50">
+                    {user ? (
+                      <button onClick={() => { logout(); setShowProfileMenu(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 font-medium rounded-xl hover:bg-red-50 transition-colors">
+                        <LogOut className="w-4 h-4" /> Sign Out
+                      </button>
+                    ) : (
+                      <button onClick={() => { setShowLoginModal(true); setShowProfileMenu(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-indigo-600 font-medium rounded-xl hover:bg-indigo-50 transition-colors">
+                        <LogIn className="w-4 h-4" /> Sign In
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Desktop Right Actions / Mobile Bottom Scrollable Tools */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar md:overflow-visible pb-1 md:pb-0 scroll-smooth w-full md:w-auto -mx-1 px-1 md:mx-0 md:px-0 mt-2 md:mt-0">
-            {/* Desktop Run Button (First on Desktop) */}
-            <div className="hidden md:block flex-shrink-0">
+            {/* Run Button (Hidden on Mobile) */}
+            <div className="hidden md:block flex-shrink-0 md:ml-auto">
               <Button
-                variant="primary"
+                variant="ghost"
                 onClick={handleRun}
                 disabled={!isPyodideReady || isRunning}
                 data-run-button
                 title="Run Code (F5)"
                 className={cn(
-                  "w-14 h-14 p-0 flex items-center justify-center rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-200 text-white bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 border-2 border-white/20",
-                  isPyodideReady && !isRunning && 'animate-pulse-glow'
+                  "flex items-center justify-center gap-2 px-6 h-10 rounded-full bg-white hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md transition-all group",
+                  isPyodideReady && !isRunning && 'shadow-indigo-500/10'
                 )}
               >
-                {isRunning ? (
-                  <div className="w-8 h-8 border-[3px] border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="white"
-                    stroke="none"
-                    style={{ width: '30px', height: '30px', marginLeft: '3px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
-                  >
-                    <polygon points="5 3 19 12 5 21 5 3" />
-                  </svg>
-                )}
+                <svg viewBox="0 0 24 24" fill="currentColor" className={cn(
+                  "w-4 h-4 text-blue-500 transition-transform duration-300",
+                  isRunning ? "animate-spin" : "group-hover:scale-110"
+                )}>
+                  {isRunning ? (
+                    <path d="M12 2C6.477 2 2 6.477 2 12c0 5.523 4.477 10 10 10s10-4.477 10-10H20c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8V2z" />
+                  ) : (
+                    <polygon points="6,4 20,12 6,20" />
+                  )}
+                </svg>
+                <span className="font-extrabold text-[#2a2a2a] text-[14px] tracking-widest uppercase mt-0.5">
+                  {isRunning ? 'Running' : 'Run'}
+                </span>
+              </Button>
+            </div>
+
+            {/* Ask AI Button (Pushed left on mobile, right on desktop) */}
+            <div className="mr-auto md:mr-0 md:ml-1 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="lg"
+                onClick={() => setShowAskAI(true)}
+                className="flex items-center justify-center gap-1.5 md:gap-2 px-4 md:px-5 h-9 md:h-10 rounded-full bg-white hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md transition-all group"
+              >
+                <svg viewBox="0 0 100 100" className="w-4 h-4 md:w-5 md:h-5 animate-[spin_3s_linear_infinite]">
+                  <defs>
+                    <linearGradient id="iask-grad-desktop" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#ec4899" />
+                      <stop offset="50%" stopColor="#d946ef" />
+                      <stop offset="100%" stopColor="#8b5cf6" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="50" cy="50" r="32" stroke="url(#iask-grad-desktop)" strokeWidth="22" fill="none" />
+                </svg>
+                <span className="font-extrabold text-[#2a2a2a] text-[13px] md:text-sm tracking-tight mt-0.5">
+                  i<span className="text-[15px] md:text-base uppercase">A</span>sk
+                </span>
               </Button>
             </div>
 
             <div className="hidden md:block w-px h-6 bg-[var(--border-color)] mx-2 flex-shrink-0" />
 
-            {/* Ask AI Button (Mobile Row 2 Only) */}
-            <div className="md:hidden flex-shrink-0">
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => setShowAskAI(true)}
-                className="flex bg-[var(--accent-primary)] hover:opacity-90 border-[var(--accent-primary)] shadow-lg px-3 flex-shrink-0"
+            {/* History Button */}
+            <div className="flex-shrink-0">
+              <button
+                onClick={() => setShowHistory(true)}
+                title="Code History"
+                className={cn(
+                  "w-11 h-11 rounded-full border flex items-center justify-center transition-all bg-[var(--glass-bg)] shadow-sm hover:shadow-md hover:scale-105",
+                  showHistory
+                    ? "border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/30 text-[var(--accent-primary)]"
+                    : "border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--accent-primary)]/40"
+                )}
               >
-                <Sparkles className="w-4 h-4 mr-2" />
-                <span>Ask AI Question</span>
-              </Button>
+                <img src="https://img.icons8.com/fluency/48/time-machine.png" alt="History" className="w-6 h-6 object-contain drop-shadow-sm hover:-rotate-12 transition-transform duration-300" />
+              </button>
             </div>
 
-            <div className="hidden md:block w-px h-6 bg-[var(--border-color)] mr-2 flex-shrink-0" />
-
-            {/* Save & My Codes Buttons */}
-            <div className="hidden md:flex items-center gap-1.5 bg-[var(--glass-bg)] border border-[var(--border-color)] rounded-lg p-0.5 flex-shrink-0">
-              <Button
-                variant="ghost"
-                size="sm"
+            {/* Save & My Codes Button */}
+            <div className="flex-shrink-0">
+              <button
                 onClick={() => isLoggedIn ? setShowSavedCodes(true) : setShowLoginModal(true)}
                 title={isLoggedIn ? 'My Saved Codes' : 'Login to save codes'}
-                className="h-7 w-7 md:h-10 md:w-10 p-0"
+                className={cn(
+                  "w-11 h-11 rounded-full border flex items-center justify-center transition-all bg-[var(--glass-bg)] shadow-sm hover:shadow-md hover:scale-105",
+                  showSavedCodes
+                    ? "border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/30 text-[var(--accent-primary)]"
+                    : "border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--accent-primary)]/40"
+                )}
               >
-                <FolderOpen className="w-3.5 h-3.5 md:w-5 md:h-5" />
-              </Button>
+                <img src="https://img.icons8.com/fluency/48/opened-folder.png" alt="Saved" className="w-6 h-6 object-contain drop-shadow-sm hover:-translate-y-0.5 transition-transform duration-300" />
+              </button>
             </div>
 
-            <div className="hidden md:flex items-center gap-1.5 md:gap-2 bg-[var(--glass-bg)] border border-[var(--border-color)] rounded-lg p-0.5 md:p-1 flex-shrink-0">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleThemeToggle}
-                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                className="h-7 w-7 md:h-10 md:w-10 p-0"
+            {/* Settings Menu Dropdown */}
+            <div className="flex-shrink-0 relative md:ml-2" ref={settingsMenuRef}>
+              <button
+                onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                className={cn(
+                  "w-11 h-11 rounded-full border flex items-center justify-center transition-all bg-[var(--glass-bg)] shadow-sm hover:shadow-md hover:scale-105",
+                  showSettingsMenu
+                    ? "border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/30 text-[var(--accent-primary)]"
+                    : "border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--accent-primary)]/40"
+                )}
+                title="Settings"
               >
-                {theme === 'dark' ? <Sun className="w-3.5 h-3.5 md:w-5 md:h-5" /> : <Moon className="w-3.5 h-3.5 md:w-5 md:h-5" />}
-              </Button>
+                <img src="https://img.icons8.com/fluency/48/settings.png" alt="Settings" className="w-6 h-6 object-contain drop-shadow-sm hover:rotate-90 transition-transform duration-300" />
+              </button>
 
-              <div className="w-px h-6 bg-[var(--border-color)] mx-1" />
+              {showSettingsMenu && (
+                <div
+                  className="absolute right-0 top-[calc(100%+10px)] w-72 rounded-2xl z-50 bg-white border border-gray-100 overflow-hidden"
+                  style={{
+                    boxShadow: '0 10px 40px -10px rgba(0,0,0,0.1), 0 0 20px -5px rgba(0,0,0,0.05)',
+                  }}
+                >
+                  <div className="px-4 py-3 border-b border-gray-100/80 bg-white flex items-center gap-2">
+                    <img src="https://img.icons8.com/fluency/48/settings.png" alt="Settings" className="w-5 h-5 object-contain" />
+                    <h3 className="text-sm font-bold text-gray-900">Lab Settings</h3>
+                  </div>
+                  
+                  <div className="p-3 space-y-4 bg-white/50 backdrop-blur-md">
+                    {/* Theme Section */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2 px-1">
+                        {theme === 'dark' ? <img src="https://img.icons8.com/fluency/48/bright-moon.png" alt="Dark" className="w-4 h-4 object-contain" /> : <img src="https://img.icons8.com/fluency/48/sun.png" alt="Light" className="w-4 h-4 object-contain" />}
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Theme Mode</span>
+                      </div>
+                      <div className="flex gap-1.5 p-1 bg-gray-50/80 rounded-xl border border-gray-100">
+                        <button
+                          onClick={() => { if (theme !== 'light') handleThemeToggle(); }}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5"
+                          style={theme === 'light' ? {
+                            background: 'white',
+                            color: '#4f46e5',
+                            boxShadow: '0 2px 8px -2px rgba(79, 70, 229, 0.15)',
+                            border: '1px solid rgba(79, 70, 229, 0.1)'
+                          } : {
+                            color: '#64748b',
+                            border: '1px solid transparent'
+                          }}
+                        >
+                          <img src="https://img.icons8.com/fluency/48/sun.png" alt="Sun" className="w-4 h-4" /> Light
+                        </button>
+                        <button
+                          onClick={() => { if (theme !== 'dark') handleThemeToggle(); }}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5"
+                          style={theme === 'dark' ? {
+                            background: 'white',
+                            color: '#4f46e5',
+                            boxShadow: '0 2px 8px -2px rgba(79, 70, 229, 0.15)',
+                            border: '1px solid rgba(79, 70, 229, 0.1)'
+                          } : {
+                            color: '#64748b',
+                            border: '1px solid transparent'
+                          }}
+                        >
+                          <img src="https://img.icons8.com/fluency/48/bright-moon.png" alt="Moon" className="w-4 h-4" /> Dark
+                        </button>
+                      </div>
+                    </div>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowHistory(true)}
-                className="h-7 w-7 md:h-10 md:w-10 p-0"
-              >
-                <History className="w-3.5 h-3.5 md:w-5 md:h-5" />
-              </Button>
+                    {/* AI Mode Section */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2 px-1">
+                        <img src="https://img.icons8.com/fluency/48/bot.png" alt="AI Mode" className="w-4 h-4 object-contain" />
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">AI Mode</span>
+                      </div>
+                      <div className="flex gap-1.5 p-1 bg-gray-50/80 rounded-xl border border-gray-100">
+                        <button
+                          onClick={() => { setHelpMode('manual'); }}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5"
+                          style={helpMode === 'manual' ? {
+                            background: 'white',
+                            color: '#4f46e5',
+                            boxShadow: '0 2px 8px -2px rgba(79, 70, 229, 0.15)',
+                            border: '1px solid rgba(79, 70, 229, 0.1)'
+                          } : {
+                            color: '#64748b',
+                            border: '1px solid transparent'
+                          }}
+                        >
+                          <span className="text-sm">✋</span> Manual
+                        </button>
+                        <button
+                          onClick={() => { setHelpMode('auto'); }}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5"
+                          style={helpMode === 'auto' ? {
+                            background: 'white',
+                            color: '#4f46e5',
+                            boxShadow: '0 2px 8px -2px rgba(79, 70, 229, 0.15)',
+                            border: '1px solid rgba(79, 70, 229, 0.1)'
+                          } : {
+                            color: '#64748b',
+                            border: '1px solid transparent'
+                          }}
+                        >
+                          <span className="text-sm">✨</span> Auto
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Language Section */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2 px-1">
+                        <img src="https://img.icons8.com/color/48/translation.png" alt="Language" className="w-5 h-5 object-contain" />
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">AI Language</span>
+                      </div>
+                      <div className="flex gap-1.5 p-1 bg-gray-50/80 rounded-xl border border-gray-100">
+                        <button
+                          onClick={() => handleLanguageChange('en')}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5"
+                          style={language === 'en' ? {
+                            background: 'white',
+                            color: '#10b981',
+                            boxShadow: '0 2px 8px -2px rgba(16, 185, 129, 0.15)',
+                            border: '1px solid rgba(16, 185, 129, 0.1)'
+                          } : {
+                            color: '#64748b',
+                            border: '1px solid transparent'
+                          }}
+                        >
+                          <span className="text-sm">🌐</span> English
+                        </button>
+                        <button
+                          onClick={() => handleLanguageChange('hi')}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5"
+                          style={language === 'hi' ? {
+                            background: 'white',
+                            color: '#10b981',
+                            boxShadow: '0 2px 8px -2px rgba(16, 185, 129, 0.15)',
+                            border: '1px solid rgba(16, 185, 129, 0.1)'
+                          } : {
+                            color: '#64748b',
+                            border: '1px solid transparent'
+                          }}
+                        >
+                          <span className="text-sm">🇮🇳</span> हिंदी
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="ml-auto flex-shrink-0">
-              <Toggle
-                options={[
-                  { value: 'manual', label: 'Manual' },
-                  { value: 'auto', label: 'Auto AI' },
-                ]}
-                value={helpMode}
-                onChange={(v) => setHelpMode(v as HelpMode)}
-                className="flex-shrink-0"
-              />
-            </div>
-
-            {/* Desktop EN/HI Toggle (Mobile uses top row) */}
-            <div className="hidden md:block flex-shrink-0">
-              <Toggle
-                options={[
-                  { value: 'en', label: 'EN' },
-                  { value: 'hi', label: 'HI' },
-                ]}
-                value={language}
-                onChange={handleLanguageChange}
-                className="flex-shrink-0"
-              />
-            </div>
-
-            {/* Desktop Ask AI Button (Hidden on Mobile) */}
-            <div className="hidden md:block ml-2 flex-shrink-0">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => setShowAskAI(true)}
-                className="flex bg-[var(--accent-primary)] hover:opacity-90 border-[var(--accent-primary)] shadow-lg px-4 flex-shrink-0 h-11"
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                <span>Ask AI Question</span>
-              </Button>
-            </div>
-
-            {/* Profile / Settings Avatar with Dropdown */}
-            <div className="hidden md:block flex-shrink-0 relative" ref={profileMenuRef}>
+            {/* Profile / Avatar with Dropdown */}
+            <div className="hidden md:block flex-shrink-0 relative ml-2" ref={profileMenuRef}>
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
                 className={cn(
@@ -453,180 +632,75 @@ export function PythonLab() {
                   showProfileMenu
                     ? "border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/30"
                     : "border-[var(--accent-primary)]/40 hover:border-[var(--accent-primary)]",
-                  user ? "bg-[var(--glass-bg)]" : "bg-gradient-to-br from-indigo-500/20 to-purple-500/20"
+                  user ? "bg-[var(--glass-bg)]" : "bg-gradient-to-br from-indigo-50/10 to-purple-50/10"
                 )}
-                title={user?.displayName || 'Settings'}
+                title={user?.displayName || 'Profile'}
               >
                 {user?.photoURL ? (
                   <img src={user.photoURL} className="w-full h-full object-cover" alt="" />
                 ) : (
-                  <User className="w-5 h-5 text-[var(--accent-primary)]" />
+                  <img src="https://img.icons8.com/fluency/48/user-male-circle--v1.png" alt="User" className="w-full h-full object-contain" />
                 )}
               </button>
 
               {/* Premium Dropdown Menu */}
               {showProfileMenu && (
                 <div
-                  className="absolute right-0 top-[calc(100%+10px)] w-80 rounded-3xl z-50"
+                  className="absolute right-0 top-[calc(100%+10px)] w-72 rounded-2xl z-50 bg-white border border-gray-100 overflow-hidden"
                   style={{
-                    background: 'white',
-                    boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05)',
+                    boxShadow: '0 10px 40px -10px rgba(0,0,0,0.1), 0 0 20px -5px rgba(0,0,0,0.05)',
                   }}
                 >
-                  {/* Profile Header - Gradient Banner */}
-                  <div
-                    className="relative rounded-t-3xl px-5 pt-5 pb-4"
-                    style={{
-                      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)',
-                    }}
-                  >
-                    <div className="absolute inset-0 rounded-t-3xl opacity-20"
-                      style={{ background: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.4), transparent 60%)' }}
-                    />
+                  {/* Profile Header */}
+                  <div className="px-4 pt-4 pb-3 border-b border-gray-100/80 bg-white">
                     {user ? (
-                      <div className="relative flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg shadow-lg border border-white/30 overflow-hidden flex-shrink-0">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center text-indigo-600 font-bold text-sm border border-indigo-100 flex-shrink-0">
                           {user.photoURL ? (
-                            <img src={user.photoURL} className="w-full h-full object-cover" alt="" />
+                            <img src={user.photoURL} className="w-full h-full object-cover rounded-full" alt="" />
                           ) : (
                             user.displayName?.charAt(0)?.toUpperCase() || 'U'
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-base font-bold text-white truncate drop-shadow-sm">{user.displayName || 'User'}</p>
-                          <p className="text-xs text-white/70 truncate">{user.email}</p>
+                          <p className="text-sm font-bold text-gray-900 truncate">{user.displayName || 'User'}</p>
+                          <p className="text-[11px] text-gray-500 truncate">{user.email}</p>
                         </div>
                       </div>
                     ) : (
-                      <div className="relative flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
-                          <User className="w-6 h-6 text-white" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100">
+                          <img src="https://img.icons8.com/fluency/48/user-male-circle--v1.png" alt="Guest" className="w-8 h-8 object-contain" />
                         </div>
                         <div>
-                          <p className="text-base font-bold text-white">Guest User</p>
-                          <p className="text-xs text-white/70">Sign in to save your work</p>
+                          <p className="text-sm font-bold text-gray-900">Guest User</p>
+                          <p className="text-[11px] text-gray-500">Sign in to save your work</p>
                         </div>
                       </div>
                     )}
                   </div>
 
                   {/* Menu Content */}
-                  <div className="px-4 py-4 space-y-4">
-                    {/* AI Mode Section */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-2.5">
-                        <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
-                          <Bot className="w-3.5 h-3.5 text-white" />
-                        </div>
-                        <span className="text-xs font-bold text-gray-800 uppercase tracking-wider">AI Mode</span>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => { setHelpMode('manual'); }}
-                          className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300"
-                          style={helpMode === 'manual' ? {
-                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                            color: 'white',
-                            boxShadow: '0 4px 15px -3px rgba(99, 102, 241, 0.4)',
-                          } : {
-                            background: '#f1f5f9',
-                            color: '#64748b',
-                          }}
-                        >
-                          ✋ Manual
-                        </button>
-                        <button
-                          onClick={() => { setHelpMode('auto'); }}
-                          className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300"
-                          style={helpMode === 'auto' ? {
-                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                            color: 'white',
-                            boxShadow: '0 4px 15px -3px rgba(99, 102, 241, 0.4)',
-                          } : {
-                            background: '#f1f5f9',
-                            color: '#64748b',
-                          }}
-                        >
-                          ✨ Auto AI
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Language Section */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-2.5">
-                        <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #10b981, #14b8a6)' }}>
-                          <Globe className="w-3.5 h-3.5 text-white" />
-                        </div>
-                        <span className="text-xs font-bold text-gray-800 uppercase tracking-wider">AI Language</span>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleLanguageChange('en')}
-                          className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300"
-                          style={language === 'en' ? {
-                            background: 'linear-gradient(135deg, #10b981, #14b8a6)',
-                            color: 'white',
-                            boxShadow: '0 4px 15px -3px rgba(16, 185, 129, 0.4)',
-                          } : {
-                            background: '#f1f5f9',
-                            color: '#64748b',
-                          }}
-                        >
-                          🌐 English
-                        </button>
-                        <button
-                          onClick={() => handleLanguageChange('hi')}
-                          className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300"
-                          style={language === 'hi' ? {
-                            background: 'linear-gradient(135deg, #10b981, #14b8a6)',
-                            color: 'white',
-                            boxShadow: '0 4px 15px -3px rgba(16, 185, 129, 0.4)',
-                          } : {
-                            background: '#f1f5f9',
-                            color: '#64748b',
-                          }}
-                        >
-                          🇮🇳 हिंदी
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="h-px" style={{ background: 'linear-gradient(to right, transparent, #e2e8f0, transparent)' }} />
-
+                  <div className="p-3 space-y-3 bg-white/50 backdrop-blur-md">
                     {/* Login / Logout */}
                     {user ? (
                       <button
                         onClick={async () => { setShowProfileMenu(false); await logout(); }}
-                        className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-all duration-200 group"
-                        style={{ background: '#fef2f2' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = '#fef2f2'; }}
+                        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 text-red-600 bg-red-50/50 hover:bg-red-50 border border-red-100/50"
                       >
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)' }}>
-                          <LogOut className="w-4.5 h-4.5 text-white" />
-                        </div>
-                        <span className="font-bold text-red-600">Log Out</span>
+                        <img src="https://img.icons8.com/fluency/48/exit.png" alt="Logout" className="w-5 h-5 object-contain" />
+                        <span>Log Out</span>
                       </button>
                     ) : (
                       <button
                         onClick={() => { setShowProfileMenu(false); setShowLoginModal(true); }}
-                        className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-all duration-200"
-                        style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+                        className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 text-white bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-md shadow-indigo-500/20"
                       >
-                        <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-                          <LogIn className="w-4.5 h-4.5 text-white" />
-                        </div>
-                        <span className="font-bold text-white">Log In to Save Codes</span>
+                        <img src="https://img.icons8.com/fluency/48/login-rounded-right.png" alt="Login" className="w-5 h-5 object-contain" />
+                        <span>Log In to Save Codes</span>
                       </button>
                     )}
                   </div>
-
-                  {/* Bottom accent line */}
-                  <div className="h-1 rounded-b-3xl" style={{ background: 'linear-gradient(to right, #6366f1, #8b5cf6, #a855f7)' }} />
                 </div>
               )}
             </div>
