@@ -4,7 +4,7 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 import Editor, { OnMount, OnChange, BeforeMount } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { cn } from '@/lib/python-utils';
-import { Trash2, RotateCcw, Sparkles, Play, Sun, Moon, History, ZoomIn, ZoomOut } from 'lucide-react';
+import { Trash2, RotateCcw, Sparkles, Play, Sun, Moon, History, ZoomIn, ZoomOut, Save, FolderOpen } from 'lucide-react';
 import { Button } from './ui/Button';
 
 interface PythonCodeEditorProps {
@@ -19,6 +19,8 @@ interface PythonCodeEditorProps {
   isRunning?: boolean;
   isReady?: boolean;
   onAskAI?: () => void;
+  onSave?: () => void;
+  onShowSavedCodes?: () => void;
 }
 
 const DEFAULT_CODE = `print("Hello, World!")`;
@@ -34,7 +36,9 @@ export function PythonCodeEditor({
   onRun,
   isRunning,
   isReady,
-  onAskAI
+  onAskAI,
+  onSave,
+  onShowSavedCodes
 }: PythonCodeEditorProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [fontSize, setFontSize] = useState(15);
@@ -301,6 +305,17 @@ export function PythonCodeEditor({
               <History className="w-3.5 h-3.5" />
             </Button>
           )}
+          {isMobile && onShowSavedCodes && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onShowSavedCodes}
+              title="My Saved Codes"
+              className="h-7 px-2"
+            >
+              <FolderOpen className="w-3.5 h-3.5" />
+            </Button>
+          )}
 
           {/* Zoom In / Zoom Out - Premium Grouped Style */}
           <div className="flex items-center bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg overflow-hidden h-7">
@@ -324,6 +339,16 @@ export function PythonCodeEditor({
               <ZoomIn className="w-3.5 h-3.5" />
             </button>
           </div>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onSave}
+            title="Save code"
+            className="h-7 px-2 text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300"
+          >
+            <Save className="w-4 h-4" />
+          </Button>
 
           <Button
             variant="ghost"

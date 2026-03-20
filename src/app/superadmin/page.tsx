@@ -370,7 +370,7 @@ export default function SuperAdminPage() {
                                                         <td className="p-3"><span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold">{q.question_type}</span></td>
                                                         <td className="p-3 text-center font-bold text-gray-900">1</td>
                                                         <td className="p-3 text-center flex justify-center gap-2">
-                                                            <button onClick={async () => { const opts = await d.getOptionsForQuestion(q.id); setQForm({ id: q.id, text: q.question_text, type: q.question_type, marks: q.marks, difficulty: q.difficulty, options: opts.map((o: any) => ({ text: o.option_text, is_correct: o.is_correct })) }); setShowQModal(true); }} className="text-blue-500 hover:text-blue-700 p-1 rounded-lg hover:bg-blue-50"><Pencil size={13} /></button>
+                                                            <button onClick={async () => { const opts = await d.getOptionsForQuestion(q.id); setQForm({ id: q.id, text: q.question_text, type: q.question_type, marks: q.marks, difficulty: q.difficulty, options: opts.map((o: any) => ({ id: o.id, text: o.option_text, is_correct: o.is_correct === true || String(o.is_correct) === 'true' })) }); setShowQModal(true); }} className="text-blue-500 hover:text-blue-700 p-1 rounded-lg hover:bg-blue-50"><Pencil size={13} /></button>
                                                             <button onClick={() => { if (confirm('Delete?')) d.deleteQuestion(q.id, selTestId); }} className="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50"><Trash2 size={13} /></button>
                                                         </td>
                                                     </tr>
@@ -392,10 +392,10 @@ export default function SuperAdminPage() {
                                     <button onClick={() => d.loadResults(resTestId, resUserId)} className={`${btn} shadow-md`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}>Apply</button>
                                 </div>
                                 <div className={`${card} rounded-2xl overflow-hidden overflow-x-auto`}>
-                                    <table className="w-full text-left text-sm min-w-[700px]">
-                                        <thead className="bg-gray-50 text-gray-400 text-xs uppercase border-b border-gray-100"><tr><th className="p-3">Student</th><th className="p-3">Test</th><th className="p-3 text-center">Score</th><th className="p-3 text-center">Acc%</th><th className="p-3 text-center">Points</th><th className="p-3 text-center">Status</th><th className="p-3 text-center">Detail</th></tr></thead>
+                                    <table className="w-full text-left text-sm min-w-[850px]">
+                                        <thead className="bg-gray-50 text-gray-400 text-xs uppercase border-b border-gray-100"><tr><th className="p-3">Student</th><th className="p-3">Test</th><th className="p-3 text-center">Score</th><th className="p-3 text-center">Acc%</th><th className="p-3 text-center">Points</th><th className="p-3 text-center">Date & Time</th><th className="p-3 text-center">Status</th><th className="p-3 text-center">Detail</th></tr></thead>
                                         <tbody className="divide-y divide-gray-50">
-                                            {d.results.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-gray-400 text-xs">No results.</td></tr>}
+                                            {d.results.length === 0 && <tr><td colSpan={8} className="p-8 text-center text-gray-400 text-xs">No results.</td></tr>}
                                             {d.results.map((r: any) => (
                                                 <tr key={r.id} className="hover:bg-gray-50/50">
                                                     <td className="p-3 font-bold text-gray-900">{d.users.find(u => u.id === r.user_id)?.full_name || r.user_id}</td>
@@ -403,6 +403,7 @@ export default function SuperAdminPage() {
                                                     <td className="p-3 text-center font-bold text-emerald-600">{r.score}</td>
                                                     <td className="p-3 text-center font-bold">{r.accuracy}%</td>
                                                     <td className="p-3 text-center text-amber-500 font-bold">+{r.xp_earned}</td>
+                                                    <td className="p-3 text-center text-[10px] text-gray-500 whitespace-nowrap">{(() => { const ts = r.started_at || r.created_at; if (!ts) return '—'; const d2 = ts?.seconds ? new Date(ts.seconds * 1000) : new Date(ts); return isNaN(d2.getTime()) ? '—' : d2.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }); })()}</td>
                                                     <td className="p-3 text-center"><span className={`text-[9px] uppercase px-2 py-0.5 rounded-full font-bold ${r.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>{r.status}</span></td>
                                                     <td className="p-3 text-center"><button onClick={async () => { const det = await d.viewAttemptDetail(r); setAttemptDetail(det); }} className="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1 rounded-lg font-bold transition">View</button></td>
                                                 </tr>
@@ -776,7 +777,7 @@ export default function SuperAdminPage() {
                                     <div className="text-[10px] text-gray-400 uppercase font-bold">Options (select correct)</div>
                                     {qForm.options.map((opt, idx) => (
                                         <div key={idx} className="flex gap-2 items-center">
-                                            <input type="radio" name="correctOpt" checked={opt.is_correct} onChange={() => setQForm({ ...qForm, options: qForm.options.map((o, i) => ({ ...o, is_correct: i === idx })) })} className="accent-emerald-500" />
+                                            <input type="radio" name="correctOpt" checked={opt.is_correct === true || String(opt.is_correct) === 'true'} onChange={() => setQForm({ ...qForm, options: qForm.options.map((o, i) => ({ ...o, is_correct: i === idx })) })} className="accent-emerald-500" />
                                             <input value={opt.text} onChange={e => setQForm({ ...qForm, options: qForm.options.map((o, i) => i === idx ? { ...o, text: e.target.value } : o) })} className={`${inp} flex-1`} placeholder="Option text" />
                                             <button onClick={() => setQForm({ ...qForm, options: qForm.options.filter((_, i) => i !== idx) })} className="text-red-400 hover:text-red-600"><X size={14} /></button>
                                         </div>
@@ -786,7 +787,7 @@ export default function SuperAdminPage() {
                             )}
                             <div className="flex justify-end gap-3 mt-4">
                                 <button onClick={() => setShowQModal(false)} className={`${btn} text-gray-400`}>Cancel</button>
-                                <button onClick={async () => { await d.saveQuestion(selTestId, qForm); setShowQModal(false); }} className={`${btn}`} style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: '#ffffff' }}>Save</button>
+                                <button disabled={saving} onClick={async () => { if (saving) return; setSaving(true); try { await d.saveQuestion(selTestId, qForm); setShowQModal(false); } finally { setSaving(false); } }} className={`${btn}`} style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: '#ffffff', opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving...' : 'Save'}</button>
                             </div>
                         </div>
                     </div>

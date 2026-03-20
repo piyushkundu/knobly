@@ -160,8 +160,9 @@ export default function ReviewPage() {
         );
     }
 
-    const accuracy = typeof attempt.accuracy === 'number' ? Math.round(attempt.accuracy) : 0;
-    const score = attempt.score || 0;
+    const totalQForAccuracy = questions.length || 1;
+    const accuracy = Math.round((stats.correct / totalQForAccuracy) * 100) || 0;
+    const score = stats.correct || 0;
 
     /* ── Helpers ── */
     const getStatus = (q: Question) => {

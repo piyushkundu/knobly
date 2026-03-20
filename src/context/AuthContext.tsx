@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, EmailAuthProvider, linkWithCredential } from 'firebase/auth';
+import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, sendEmailVerification, signInWithPopup, GoogleAuthProvider, EmailAuthProvider, linkWithCredential } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp, query, collection, where, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 
@@ -14,6 +14,7 @@ interface AuthContextType {
     logout: () => Promise<void>;
     loginWithGoogle: () => Promise<void>;
     resetPassword: (email: string) => Promise<void>;
+    resendVerificationEmail: (email: string, password: string) => Promise<void>;
     createUserId: (userId: string, password: string) => Promise<void>;
     loginWithUserId: (userId: string, password: string) => Promise<void>;
     getUserIdForCurrentUser: () => Promise<string | null>;
@@ -57,7 +58,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = async (email: string, password: string) => {
-        await signInWithEmailAndPassword(auth, email, password);
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        // Check if email is verified (skip for @knobly.id virtual emails)
+        if (!cred.user.emailVerified && !cred.user.email?.endsWith('@knobly.id')) {
+            await signOut(auth);
+            throw new Error('EMAIL_NOT_VERIFIED');
+        }
     };
 
     const signup = async (email: string, password: string, fullName: string, username: string, avatar: string) => {
@@ -98,6 +104,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 created_at: serverTimestamp(),
             });
         } catch (_) { }
+        // Send email verification
+        try {
+            await sendEmailVerification(cred.user);
+            console.log('[Knobly] Verification email sent successfully to:', email);
+        } catch (verifyErr) {
+            console.error('[Knobly] Failed to send verification email:', verifyErr);
+        }
+        // Sign out so user must verify email before accessing app
+        await signOut(auth);
     };
 
     const logout = async () => {
@@ -148,17 +163,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await sendPasswordResetEmail(auth, email);
     };
 
+    // Resend verification email - temporarily signs in to get user object
+    const resendVerificationEmail = async (email: string, password: string) => {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        if (cred.user.emailVerified) {
+            throw new Error('EMAIL_ALREADY_VERIFIED');
+        }
+        await sendEmailVerification(cred.user);
+        await signOut(auth);
+    };
+
     // Create a unique User ID + password for Google-signed-in users
     const createUserId = async (userId: string, password: string) => {
         if (!user) throw new Error('You must be logged in.');
         const cleanId = userId.trim().toLowerCase();
-        if (cleanId.length < 3) throw new Error('User ID kam se kam 3 characters ka hona chahiye.');
-        if (!/^[a-z0-9_]+$/.test(cleanId)) throw new Error('User ID mein sirf letters, numbers aur _ use karo.');
-        if (password.length < 6) throw new Error('Password kam se kam 6 characters ka hona chahiye.');
+        if (cleanId.length < 3) throw new Error('User ID must be at least 3 characters.');
+        if (!/^[a-z0-9_]+$/.test(cleanId)) throw new Error('User ID can only contain letters, numbers and underscores.');
+        if (password.length < 6) throw new Error('Password must be at least 6 characters.');
 
         // Check uniqueness
         const existingDoc = await getDoc(doc(db, 'usernames', cleanId));
-        if (existingDoc.exists()) throw new Error('Ye User ID pehle se kisi ne le liya hai. Doosra try karo.');
+        if (existingDoc.exists()) throw new Error('This User ID is already taken. Please try another one.');
 
         // Create a virtual email from the userId for Firebase Auth
         const virtualEmail = `${cleanId}@knobly.id`;
@@ -184,7 +209,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const loginWithUserId = async (userId: string, password: string) => {
         const cleanId = userId.trim().toLowerCase();
         const usernameDoc = await getDoc(doc(db, 'usernames', cleanId));
-        if (!usernameDoc.exists()) throw new Error('Ye User ID exist nahi karta.');
+        if (!usernameDoc.exists()) throw new Error('This User ID does not exist.');
         const virtualEmail = usernameDoc.data().email;
         await signInWithEmailAndPassword(auth, virtualEmail, password);
     };
@@ -202,7 +227,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAdmin, loading, login, signup, logout, loginWithGoogle, resetPassword, createUserId, loginWithUserId, getUserIdForCurrentUser }}>
+        <AuthContext.Provider value={{ user, isAdmin, loading, login, signup, logout, loginWithGoogle, resetPassword, resendVerificationEmail, createUserId, loginWithUserId, getUserIdForCurrentUser }}>
             {children}
         </AuthContext.Provider>
     );

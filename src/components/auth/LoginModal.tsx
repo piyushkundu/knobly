@@ -20,27 +20,32 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
-    const { user, login, signup, loginWithGoogle, resetPassword, loginWithUserId } = useAuth();
+    const { user, login, signup, loginWithGoogle, resetPassword, resendVerificationEmail, loginWithUserId } = useAuth();
     const [isSignUp, setIsSignUp] = useState(false);
     const [loginMode, setLoginMode] = useState<'email' | 'userid'>('email');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [showVerificationScreen, setShowVerificationScreen] = useState(false);
 
     // Auto-close when user logs in (detected by Firebase auth state)
+    // Skip auto-close during signup flow (user is briefly created before signOut)
     useEffect(() => {
-        if (user && isOpen) {
+        if (user && isOpen && !isSignUp && !showVerificationScreen) {
             onClose();
         }
-    }, [user, isOpen, onClose]);
+    }, [user, isOpen, isSignUp, showVerificationScreen, onClose]);
 
     // Reset form when modal opens
     useEffect(() => {
         if (isOpen) {
             setForm({ fullName: '', email: '', password: '', username: '', selectedAvatar: '' });
             setError('');
+            setSuccessMessage('');
             setIsSignUp(false);
             setLoginMode('email');
             setLoading(false);
+            setShowVerificationScreen(false);
         }
     }, [isOpen]);
     const [form, setForm] = useState({
@@ -51,12 +56,37 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         selectedAvatar: '',
     });
 
+    // Sanitize Firebase errors so internal names never leak to users
+    const sanitizeError = (msg: string): string => {
+        if (msg.includes('auth/email-already-in-use')) return 'This email is already registered. Please login instead.';
+        if (msg.includes('auth/invalid-credential') || msg.includes('auth/wrong-password') || msg.includes('auth/user-not-found')) return 'Incorrect email or password. Please try again.';
+        if (msg.includes('auth/weak-password')) return 'Password must be at least 6 characters.';
+        if (msg.includes('auth/invalid-email')) return 'Please enter a valid email address.';
+        if (msg.includes('auth/too-many-requests')) return 'Too many attempts. Please try again later.';
+        if (msg.includes('auth/missing-password')) return 'Please enter your password.';
+        if (msg.includes('auth/missing-email')) return 'Please enter your email address.';
+        if (msg.includes('auth/network-request-failed')) return 'Network error. Please check your connection.';
+        if (msg.includes('auth/popup-closed-by-user')) return '';
+        if (msg.includes('auth/cancelled-popup-request')) return '';
+        if (msg.includes('auth/account-exists-with-different-credential')) return 'An account already exists with this email using a different sign-in method.';
+        if (msg.includes('EMAIL_NOT_VERIFIED')) return 'Please verify your email first! A verification link was sent to your inbox.';
+        if (msg.includes('EMAIL_ALREADY_VERIFIED')) return 'Your email is already verified! You can login now.';
+        // Strip any Firebase prefix from unknown errors
+        if (msg.includes('Firebase:') || msg.includes('auth/')) return 'Authentication failed. Please try again.';
+        return msg;
+    };
+
     const handleSubmit = async () => {
         setLoading(true);
         setError('');
+        setSuccessMessage('');
         try {
             if (isSignUp) {
                 await signup(form.email, form.password, form.fullName, form.username, form.selectedAvatar);
+                // Show verification screen instead of closing modal
+                setShowVerificationScreen(true);
+                setLoading(false);
+                return;
             } else {
                 await login(form.email, form.password);
             }
@@ -69,6 +99,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 try {
                     if (isSignUp) {
                         await signup(form.email, form.password, form.fullName, form.username, form.selectedAvatar);
+                        setShowVerificationScreen(true);
+                        setLoading(false);
+                        return;
                     } else {
                         await login(form.email, form.password);
                     }
@@ -77,18 +110,24 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 } catch (_) {
                     setError('Connection error. Please try again.');
                 }
+            } else if (message.includes('EMAIL_NOT_VERIFIED')) {
+                setError('Please verify your email first! A verification link was sent to your inbox. You can resend it below.');
             } else if (message.includes('auth/email-already-in-use')) {
-                setError('Ye email already registered hai. Login karo.');
+                setError('This email is already registered. Please login instead.');
             } else if (message.includes('auth/invalid-credential') || message.includes('auth/wrong-password') || message.includes('auth/user-not-found')) {
-                setError('Email ya password galat hai. Check karo.');
+                setError('Incorrect email or password. Please try again.');
             } else if (message.includes('auth/weak-password')) {
-                setError('Password kam se kam 6 characters ka hona chahiye.');
+                setError('Password must be at least 6 characters.');
             } else if (message.includes('auth/invalid-email')) {
-                setError('Email format sahi nahi hai.');
+                setError('Please enter a valid email address.');
             } else if (message.includes('auth/too-many-requests')) {
-                setError('Bahut zyada attempts ho gaye. Thodi der baad try karo.');
+                setError('Too many attempts. Please try again later.');
+            } else if (message.includes('auth/missing-password')) {
+                setError('Please enter your password.');
+            } else if (message.includes('auth/missing-email')) {
+                setError('Please enter your email address.');
             } else {
-                setError(message);
+                setError(sanitizeError(message));
             }
         } finally {
             setLoading(false);
@@ -114,7 +153,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             } else if (message.includes('popup-closed-by-user')) {
                 setError('');
             } else {
-                setError(message);
+                setError(sanitizeError(message));
             }
         } finally {
             setLoading(false);
@@ -123,15 +162,56 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
     const handlePasswordReset = async () => {
         if (!form.email) {
-            setError('Enter your email first');
+            setError('Please enter your email first.');
             return;
         }
+        setLoading(true);
+        setError('');
+        setSuccessMessage('');
         try {
             await resetPassword(form.email);
-            setError('Password reset email sent!');
+            setSuccessMessage('✅ Password reset link has been sent to your email! Please check your inbox.');
+            setError('');
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'An error occurred';
-            setError(message);
+            if (message.includes('auth/user-not-found')) {
+                setError('No account found with this email.');
+            } else if (message.includes('auth/too-many-requests')) {
+                setError('Too many requests. Please try again later.');
+            } else if (message.includes('auth/invalid-email')) {
+                setError('Please enter a valid email address.');
+            } else {
+                setError(sanitizeError(message));
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleResendVerification = async () => {
+        if (!form.email || !form.password) {
+            setError('Please enter your email and password to resend the verification email.');
+            return;
+        }
+        setLoading(true);
+        setError('');
+        setSuccessMessage('');
+        try {
+            await resendVerificationEmail(form.email, form.password);
+            setSuccessMessage('✅ Verification email has been resent! Please check your inbox.');
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'An error occurred';
+            if (message.includes('EMAIL_ALREADY_VERIFIED')) {
+                setSuccessMessage('✅ Your email is already verified! You can login now.');
+                setShowVerificationScreen(false);
+                setIsSignUp(false);
+            } else if (message.includes('auth/too-many-requests')) {
+                setError('Too many requests. Please try again later.');
+            } else {
+                setError(sanitizeError(message));
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -144,9 +224,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'An error occurred';
             if (message.includes('auth/invalid-credential') || message.includes('auth/wrong-password')) {
-                setError('User ID ya password galat hai.');
+                setError('Incorrect User ID or password.');
             } else {
-                setError(message);
+                setError(sanitizeError(message));
             }
         } finally {
             setLoading(false);
@@ -191,6 +271,41 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                     {error}
                                 </div>
                             )}
+                            {successMessage && (
+                                <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs p-3 rounded-lg">
+                                    {successMessage}
+                                </div>
+                            )}
+
+                            {/* Email Verification Screen */}
+                            {showVerificationScreen ? (
+                                <div className="flex flex-col items-center gap-4 py-4">
+                                    <div className="w-16 h-16 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                                        <span className="text-3xl">📧</span>
+                                    </div>
+                                    <h3 className="text-lg font-bold text-white text-center" style={{ fontFamily: 'var(--font-gaming)' }}>
+                                        VERIFY YOUR EMAIL
+                                    </h3>
+                                    <p className="text-gray-400 text-xs text-center leading-relaxed">
+                                        We have sent a verification link to <span className="text-cyan-400 font-bold">{form.email}</span>.
+                                        <br />Open your email and click the link, then come back here to login.
+                                    </p>
+                                    <button
+                                        onClick={handleResendVerification}
+                                        disabled={loading}
+                                        className="mt-2 text-xs text-cyan-400 hover:text-cyan-300 underline cursor-pointer disabled:opacity-50"
+                                    >
+                                        {loading ? 'Sending...' : 'Resend verification email'}
+                                    </button>
+                                    <button
+                                        onClick={() => { setShowVerificationScreen(false); setIsSignUp(false); setError(''); setSuccessMessage(''); }}
+                                        className="mt-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95"
+                                    >
+                                        GO TO LOGIN
+                                    </button>
+                                </div>
+                            ) : (
+                            <>
 
                             {isSignUp && (
                                 <div className="flex flex-col gap-3">
@@ -332,7 +447,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <div className="text-center mt-2 text-xs text-gray-400">
                                 {isSignUp ? 'Already have an account?' : "Don't have an account?"}
                                 <button
-                                    onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
+                                    onClick={() => { setIsSignUp(!isSignUp); setError(''); setSuccessMessage(''); }}
                                     className="text-cyan-400 font-bold hover:underline ml-1 cursor-pointer"
                                 >
                                     {isSignUp ? 'Login' : 'Sign Up'}
@@ -340,6 +455,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             </div>
 
                             {!isSignUp && (
+                                <>
                                 <div className="text-center mt-1 text-xs">
                                     <button
                                         onClick={handlePasswordReset}
@@ -348,6 +464,21 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                         Forgot Password?
                                     </button>
                                 </div>
+                                {/* Resend verification link for unverified users */}
+                                {error && error.includes('verify') && (
+                                    <div className="text-center mt-1 text-xs">
+                                        <button
+                                            onClick={handleResendVerification}
+                                            disabled={loading}
+                                            className="text-cyan-400 hover:text-cyan-300 cursor-pointer underline disabled:opacity-50"
+                                        >
+                                            {loading ? 'Bhej rahe hain...' : '📧 Verification Email Dobara Bhejo'}
+                                        </button>
+                                    </div>
+                                )}
+                                </>
+                            )}
+                            </>
                             )}
                         </div>
                     </motion.div>

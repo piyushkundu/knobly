@@ -56,8 +56,13 @@ const WALLPAPER_OPTIONS = [
 ];
 
 const VIDEOS = [
-  { id: 'bJzb-RuUcMU', title: 'How To Learn Programming', views: 'Featured' },
-  { id: 'dQw4w9WgXcQ', title: 'Web Development Roadmap', views: '10M views' },
+  { id: '_yYBKI0FW_I', title: 'Master Python Lists in ONE Video!', views: 'Featured' },
+  { id: 'rlAaZruWkK0', title: 'O-Level Python Practical Exam', views: 'Featured' },
+  { id: 'XIeiGNKMPt4', title: 'Python For Loop Explained 🔥', views: 'Featured' },
+  { id: 'vHKhQhW0koU', title: 'Master Python Loops: For & While Loop', views: 'Featured' },
+  { id: 'OrRv_CSmakM', title: 'Python Decision Making Made Easy', views: 'Featured' },
+  { id: 'sUlahBo2Xik', title: 'Python Fundamentals Part 1', views: 'Featured' },
+  { id: 'I2T6Fztf590', title: 'Create & Format Tables in LibreOffice Writer', views: 'Featured' },
 ];
 
 const NAV_ITEMS = [
@@ -291,12 +296,15 @@ export default function HomePage() {
         const q = query(collection(db, 'videos'), orderBy('created_at', 'desc'));
         const snapshot = await getDocs(q);
         if (!snapshot.empty) {
-          const vids = snapshot.docs.map(doc => {
+          const firestoreVids = snapshot.docs.map(doc => {
             const v = doc.data();
             return { id: v.youtube_id, title: v.title, views: v.views || 'Video' };
           });
-          setMyVideos(vids);
-          setCurrentVideo(vids[0]);
+          // Merge: Firestore videos first, then add any hardcoded VIDEOS not already present
+          const existingIds = new Set(firestoreVids.map(v => v.id));
+          const merged = [...firestoreVids, ...VIDEOS.filter(v => !existingIds.has(v.id))];
+          setMyVideos(merged);
+          setCurrentVideo(merged[0]);
         }
       } catch { /* silently ignore permission errors */ }
     };

@@ -84,6 +84,15 @@ function shuffleArray<T>(array: T[]): T[] {
     return arr;
 }
 
+function isOptionCorrect(val: any): boolean {
+    if (val === true || val === 1) return true;
+    if (typeof val === 'string') {
+        const lower = val.toLowerCase();
+        return lower === 'true' || lower === '1';
+    }
+    return false;
+}
+
 export default function TestPlayPage({ params }: { params: Promise<{ id: string }> }) {
     const { id: testId } = use(params);
     const { user } = useAuth();
@@ -395,7 +404,10 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
         questions.forEach((q) => {
             const resp = responsesMap[q.id];
             if (!resp || !resp.option_id) return;
-            const correctOpt = (q.exam_options || []).find(o => o.is_correct);
+            const sortedOptions = [...(q.exam_options || [])].sort((a, b) => a.id > b.id ? 1 : -1);
+            const correctOptions = sortedOptions.filter(o => isOptionCorrect(o.is_correct));
+            const correctOpt = correctOptions[correctOptions.length - 1];
+
             if (correctOpt && correctOpt.id === resp.option_id) {
                 score++;
                 correctCount++;
@@ -625,42 +637,51 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
 
             {/* Results Overlay */}
             {resultData && (
-                <div className="fixed inset-0 z-[80] flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 30%, #312e81 60%, #4338ca 100%)' }} onClick={e => e.stopPropagation()}>
-                    <div className="w-full max-w-lg rounded-3xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 25px 80px rgba(0,0,0,0.4), 0 0 120px rgba(99,102,241,0.15)' }}>
-                        {/* Premium Header - More compact */}
-                        <div className="relative px-5 pt-6 pb-4 text-center overflow-hidden" style={{ background: resultData.accuracy >= 70 ? 'linear-gradient(135deg, #059669, #10b981, #34d399)' : resultData.accuracy >= 40 ? 'linear-gradient(135deg, #d97706, #f59e0b, #fbbf24)' : 'linear-gradient(135deg, #dc2626, #ef4444, #f87171)' }}>
-                            <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }} />
-                            <div className="absolute -bottom-4 -left-4 w-12 h-12 rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }} />
-                            <div className="h-14 w-14 rounded-full mx-auto flex items-center justify-center mb-2 text-3xl" style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', border: '2px solid rgba(255,255,255,0.3)', boxShadow: '0 4px 16px rgba(0,0,0,0.15)' }}>
-                                {resultData.accuracy >= 70 ? '🏆' : resultData.accuracy >= 40 ? '📊' : '💪'}
+                <div className="fixed inset-0 z-[80] flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4338ca 60%, #6366f1 100%)' }} onClick={e => e.stopPropagation()}>
+                    <div className="w-full max-w-md rounded-3xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 25px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1)' }}>
+                        <div className="px-6 pt-6 pb-4">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="h-11 w-11 rounded-2xl flex items-center justify-center text-white font-black text-lg" style={{ background: resultData.accuracy >= 70 ? 'linear-gradient(135deg, #10b981, #34d399)' : resultData.accuracy >= 40 ? 'linear-gradient(135deg, #f59e0b, #fbbf24)' : 'linear-gradient(135deg, #ef4444, #f87171)', boxShadow: '0 4px 14px rgba(0,0,0,0.1)' }}>
+                                    {resultData.accuracy >= 70 ? '🏆' : resultData.accuracy >= 40 ? '📊' : '💪'}
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-black" style={{ color: '#0f172a' }}>{resultData.statusType === 'AUTO_SUBMITTED' ? 'Auto-Submitted' : 'Exam Submitted'}</h2>
+                                    <p className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>
+                                        {resultData.accuracy >= 70 ? '🎉 Excellent Performance!' : resultData.accuracy >= 40 ? '👍 Good Effort!' : '📈 Keep Practicing!'}
+                                    </p>
+                                </div>
                             </div>
-                            <h2 className="text-xl font-black text-white tracking-wide">{resultData.statusType === 'AUTO_SUBMITTED' ? 'Auto-Submitted' : 'Exam Submitted'}</h2>
-                            <p className="text-[11px] font-medium mt-0.5" style={{ color: 'rgba(255,255,255,0.8)' }}>
-                                {resultData.accuracy >= 70 ? '🎉 Excellent Performance!' : resultData.accuracy >= 40 ? '👍 Good Effort!' : '📈 Keep Practicing!'}
-                            </p>
                             {resultData.statusType === 'AUTO_SUBMITTED' && (
-                                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}>
-                                    ⚠️ {resultData.statusType === 'AUTO_SUBMITTED' ? 'Auto-submitted: Time expired / warnings limit' : ''}
+                                <div className="mb-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider" style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca' }}>
+                                    ⚠️ Auto-submitted: Time expired or warnings limit
                                 </div>
                             )}
-                        </div>
 
-                        <div className="p-4 sm:p-5">
-                            {/* Question Breakdown Bar */}
-                            <div className="mb-4">
-                                <div className="flex items-center justify-between mb-1.5">
-                                    <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: '#64748b' }}>Question Breakdown</span>
-                                    <span className="text-[9px] font-bold" style={{ color: '#94a3b8' }}>{resultData.correctCount}/{resultData.total} Correct</span>
+                            <div className="rounded-2xl p-4 mb-4" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', border: '1px solid #c7d2fe' }}>
+                                <div className="grid grid-cols-2 gap-2 mb-3">
+                                    <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
+                                        <div className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: '#6366f1' }}>🪙 Points</div>
+                                        <div className="text-xl font-black" style={{ color: '#4338ca' }}>+{resultData.pointsEarned}</div>
+                                        <div className="text-[9px] font-medium" style={{ color: '#818cf8' }}>of {testData?.xp_reward || resultData.total}</div>
+                                    </div>
+                                    <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
+                                        <div className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: resultData.accuracy >= 70 ? '#059669' : resultData.accuracy >= 40 ? '#d97706' : '#dc2626' }}>📊 Accuracy</div>
+                                        <div className="text-xl font-black" style={{ color: resultData.accuracy >= 70 ? '#047857' : resultData.accuracy >= 40 ? '#b45309' : '#b91c1c' }}>{resultData.accuracy}%</div>
+                                    </div>
                                 </div>
-                                <div className="h-2.5 rounded-full overflow-hidden flex" style={{ background: '#f1f5f9' }}>
-                                    {resultData.correctCount > 0 && <div className="h-full transition-all" style={{ width: `${(resultData.correctCount / resultData.total) * 100}%`, background: 'linear-gradient(90deg, #10b981, #34d399)' }} />}
-                                    {resultData.wrongCount > 0 && <div className="h-full transition-all" style={{ width: `${(resultData.wrongCount / resultData.total) * 100}%`, background: 'linear-gradient(90deg, #ef4444, #f87171)' }} />}
-                                    {resultData.skippedCount > 0 && <div className="h-full transition-all" style={{ width: `${(resultData.skippedCount / resultData.total) * 100}%`, background: '#cbd5e1' }} />}
+                                <div className="mt-2">
+                                    <div className="flex items-center justify-between mb-1.5 px-1">
+                                        <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: '#64748b' }}>Question Breakdown</span>
+                                        <span className="text-[9px] font-bold" style={{ color: '#6366f1' }}>{resultData.correctCount}/{resultData.total} Correct</span>
+                                    </div>
+                                    <div className="h-2.5 rounded-full overflow-hidden flex" style={{ background: 'rgba(255,255,255,0.5)' }}>
+                                        {resultData.correctCount > 0 && <div className="h-full transition-all" style={{ width: `${(resultData.correctCount / resultData.total) * 100}%`, background: 'linear-gradient(90deg, #10b981, #34d399)' }} />}
+                                        {resultData.wrongCount > 0 && <div className="h-full transition-all" style={{ width: `${(resultData.wrongCount / resultData.total) * 100}%`, background: 'linear-gradient(90deg, #ef4444, #f87171)' }} />}
+                                        {resultData.skippedCount > 0 && <div className="h-full transition-all" style={{ width: `${(resultData.skippedCount / resultData.total) * 100}%`, background: '#cbd5e1' }} />}
+                                    </div>
                                 </div>
                             </div>
-
-                            {/* Stats Grid */}
-                            <div className="grid grid-cols-3 gap-2 mb-3">
+                            <div className="grid grid-cols-3 gap-2">
                                 <div className="text-center rounded-xl p-2.5" style={{ background: '#ecfdf5', border: '1px solid #a7f3d0' }}>
                                     <div className="text-sm mb-0.5">✅</div>
                                     <div className="text-lg font-black" style={{ color: '#059669' }}>{resultData.correctCount}</div>
@@ -677,30 +698,14 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                                     <div className="text-[8px] font-bold uppercase tracking-wider" style={{ color: '#94a3b8' }}>Skipped</div>
                                 </div>
                             </div>
-
-                            {/* Points & Accuracy */}
-                            <div className="grid grid-cols-2 gap-2 mb-4">
-                                <div className="text-center rounded-xl p-3" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', border: '1px solid #c7d2fe' }}>
-                                    <div className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: '#6366f1' }}>🪙 Points Earned</div>
-                                    <div className="text-xl font-black" style={{ color: '#4338ca' }}>+{resultData.pointsEarned}</div>
-                                    <div className="text-[9px] font-medium mt-0.5" style={{ color: '#818cf8' }}>out of {testData?.xp_reward || resultData.total}</div>
-                                </div>
-                                <div className="text-center rounded-xl p-3" style={{ background: resultData.accuracy >= 70 ? 'linear-gradient(135deg, #ecfdf5, #d1fae5)' : resultData.accuracy >= 40 ? 'linear-gradient(135deg, #fffbeb, #fef3c7)' : 'linear-gradient(135deg, #fef2f2, #fce7f3)', border: resultData.accuracy >= 70 ? '1px solid #a7f3d0' : resultData.accuracy >= 40 ? '1px solid #fde68a' : '1px solid #fecaca' }}>
-                                    <div className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: resultData.accuracy >= 70 ? '#059669' : resultData.accuracy >= 40 ? '#d97706' : '#dc2626' }}>📊 Accuracy</div>
-                                    <div className="text-xl font-black" style={{ color: resultData.accuracy >= 70 ? '#047857' : resultData.accuracy >= 40 ? '#b45309' : '#b91c1c' }}>{resultData.accuracy}%</div>
-                                    <div className="text-[9px] font-medium mt-0.5" style={{ color: '#94a3b8' }}>{resultData.accuracy >= 70 ? 'Excellent' : resultData.accuracy >= 40 ? 'Average' : 'Needs Work'}</div>
-                                </div>
-                            </div>
-
-                            {/* CTA Buttons - Compact */}
-                            <div className="flex flex-col sm:flex-row gap-2">
-                                <button onClick={() => router.push(`/review/${attempt?.id || ''}`)} className="flex-1 py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 transition-all hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 15px rgba(99,102,241,0.3)' }}>
-                                    📋 Full Analysis
-                                </button>
-                                <button onClick={() => router.push('/dashboard')} className="flex-1 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition hover:bg-gray-100" style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>
-                                    ← Dashboard
-                                </button>
-                            </div>
+                        </div>
+                        <div className="px-6 pb-6">
+                            <button onClick={() => router.push(`/review/${attempt?.id || ''}`)} className="w-full py-3.5 rounded-2xl text-white text-sm font-bold flex items-center justify-center gap-2 mb-3 transition-all hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', boxShadow: '0 8px 25px rgba(109,40,217,0.4)' }}>
+                                📋 Full Analysis
+                            </button>
+                            <button onClick={() => router.push('/dashboard')} className="w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition hover:bg-gray-100" style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>
+                                ← Back to Dashboard
+                            </button>
                         </div>
                     </div>
                 </div>

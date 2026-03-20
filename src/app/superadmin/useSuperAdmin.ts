@@ -150,19 +150,38 @@ export function useSuperAdmin() {
         setQuestions(snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a: any, b: any) => (a.created_at?.seconds || 0) - (b.created_at?.seconds || 0)));
     };
     const saveQuestion = async (testId: string, data: any) => {
-        const payload = { test_id: testId, question_text: data.text, question_type: data.type, marks: data.marks, difficulty: data.difficulty };
-        let qId = data.id;
-        if (qId) {
-            await updateDoc(doc(db, 'exam_questions', qId), payload);
-            const optsSnap = await getDocs(query(collection(db, 'exam_options'), where('question_id', '==', qId)));
-            const batch = writeBatch(db); optsSnap.forEach(d => batch.delete(d.ref)); await batch.commit();
-        } else { const ref = await addDoc(collection(db, 'exam_questions'), { ...payload, created_at: serverTimestamp() }); qId = ref.id; }
-        if (data.type !== 'SHORT' && data.options?.length) {
-            const batch = writeBatch(db);
-            data.options.filter((o: any) => o.text).forEach((o: any) => { batch.set(doc(collection(db, 'exam_options')), { question_id: qId, option_text: o.text, is_correct: o.is_correct }); });
-            await batch.commit();
+        try {
+            const payload = { test_id: testId, question_text: data.text, question_type: data.type, marks: data.marks, difficulty: data.difficulty };
+            let qId = data.id;
+            
+            if (qId) {
+                await updateDoc(doc(db, 'exam_questions', qId), payload);
+            } else { 
+                const ref = await addDoc(collection(db, 'exam_questions'), { ...payload, created_at: serverTimestamp() }); 
+                qId = ref.id;
+            }
+
+            if (data.type !== 'SHORT' && data.options?.length) {
+                // Delete ALL old options first
+                const oldOptsSnap = await getDocs(query(collection(db, 'exam_options'), where('question_id', '==', qId)));
+                if (!oldOptsSnap.empty) {
+                    const deleteBatch = writeBatch(db);
+                    oldOptsSnap.forEach(d => deleteBatch.delete(d.ref));
+                    await deleteBatch.commit();
+                }
+
+                // Re-create all options fresh with correct is_correct boolean values
+                const createBatch = writeBatch(db);
+                data.options.filter((o: any) => o.text).forEach((o: any) => { 
+                    createBatch.set(doc(collection(db, 'exam_options')), { question_id: qId, option_text: o.text, is_correct: o.is_correct === true });
+                });
+                await createBatch.commit();
+            }
+            loadQuestions(testId);
+        } catch (err) {
+            console.error('[saveQuestion] ERROR:', err);
+            alert('Save failed: ' + (err as any).message);
         }
-        loadQuestions(testId);
     };
     const deleteQuestion = async (id: string, testId: string) => { await deleteDoc(doc(db, 'exam_questions', id)); loadQuestions(testId); };
     const getOptionsForQuestion = async (qId: string) => {

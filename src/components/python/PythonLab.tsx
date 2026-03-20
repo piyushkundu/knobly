@@ -1,18 +1,22 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Play, History, Sparkles, Code2, Zap, Sun, Moon, Trash2, ChevronLeft } from 'lucide-react';
+import { Play, History, Sparkles, Code2, Zap, Sun, Moon, Trash2, ChevronLeft, Save, FolderOpen, User, LogIn, LogOut, Globe, Bot, ChevronDown, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PythonCodeEditor } from './PythonCodeEditor';
 import { PythonConsole } from './PythonConsole';
 import { PythonHistory } from './PythonHistory';
 import { PythonAskAIModal } from './PythonAskAIModal';
+import { SavedCodesModal } from './SavedCodesModal';
+import LoginModal from '@/components/auth/LoginModal';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 import { Toggle } from './ui/Toggle';
 import { usePyodide } from '@/hooks/usePyodide';
 import { useAIExplain } from '@/hooks/useAIExplain';
 import { useCodeHistory } from '@/hooks/useCodeHistory';
+import { useSavedCodes } from '@/hooks/useSavedCodes';
+import { useAuth } from '@/context/AuthContext';
 import { CodeHistoryItem, Language, HelpMode } from '@/types/python';
 import { cn } from '@/lib/python-utils';
 
@@ -37,12 +41,17 @@ export function PythonLab() {
   const [helpMode, setHelpMode] = useState<HelpMode>('manual');
   const [showHistory, setShowHistory] = useState(false);
   const [showAskAI, setShowAskAI] = useState(false);
+  const [showSavedCodes, setShowSavedCodes] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [lastExecution, setLastExecution] = useState<{ code: string; error: string } | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [mobileTab, setMobileTab] = useState<'editor' | 'console'>('editor');
   // Interactive prompt state - re-run with accumulation approach
   const [terminalLines, setTerminalLines] = useState<Array<{ type: 'prompt' | 'input'; text: string }>>([]);
   const [waitingForInput, setWaitingForInput] = useState(false);
+  const [startSavingCode, setStartSavingCode] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   // Ref to resolve when user submits input
   const inputResolveRef = useRef<((value: string) => void) | null>(null);
   const collectedInputsRef = useRef<string[]>([]);
@@ -53,6 +62,27 @@ export function PythonLab() {
   const { isLoading: isPyodideLoading, isReady: isPyodideReady, executeCode } = usePyodide();
   const { isLoading: isAILoading, explanation, error: aiError, explainError, clearExplanation } = useAIExplain();
   const { history, saveToHistory, deleteFromHistory } = useCodeHistory();
+  const { user, logout } = useAuth();
+  const { codes, isLoading: isSavedCodesLoading, isLoggedIn, saveCode, deleteCode, toggleImportant } = useSavedCodes();
+
+  const handleSaveCode = useCallback(async (title: string, codeToSave: string) => {
+    if (!isLoggedIn) { setShowLoginModal(true); return; }
+    await saveCode(title, codeToSave);
+  }, [isLoggedIn, saveCode]);
+
+  const handleEditorSave = useCallback(() => {
+    if (isLoggedIn) {
+      setStartSavingCode(true);
+      setShowSavedCodes(true);
+    } else {
+      setShowLoginModal(true);
+    }
+  }, [isLoggedIn]);
+
+  const handleSelectSavedCode = useCallback((savedCode: string) => {
+    setCode(savedCode);
+    localStorage.setItem('python-code', savedCode);
+  }, []);
 
   useEffect(() => {
     const savedLang = localStorage.getItem('python-lab-language') as Language;
@@ -66,10 +96,24 @@ export function PythonLab() {
       setTheme(savedTheme);
       document.documentElement.classList.toggle('light', savedTheme === 'light');
     } else {
+
       setTheme('light');
       document.documentElement.classList.add('light');
     }
   }, []);
+
+  // Close profile menu on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setShowProfileMenu(false);
+      }
+    };
+    if (showProfileMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showProfileMenu]);
 
   // Handle user submitting input — resolves the waiting promise
   const handlePromptSubmit = useCallback((value: string) => {
@@ -230,12 +274,12 @@ export function PythonLab() {
   return (
     <div className="python-lab-root flex flex-col h-[100dvh]">
       {/* Top Bar */}
-      <header className="flex flex-col bg-[var(--header-bg)] backdrop-blur-2xl border-b border-[var(--border-color)] relative z-20 w-full overflow-hidden">
+      <header className="flex flex-col bg-[var(--header-bg)] backdrop-blur-2xl border-b border-[var(--border-color)] relative z-20 w-full">
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--accent-primary)]/50 to-transparent"></div>
-        
+
         {/* Main Row / Desktop Full Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between px-3 md:px-6 py-2 md:py-3 w-full gap-2 md:gap-0">
-          
+
           {/* Top section on mobile: Logo, Title, Run/Ask AI */}
           <div className="flex items-center justify-between md:justify-start w-full md:w-auto">
             <div className="flex items-center gap-2 md:gap-3">
@@ -284,26 +328,27 @@ export function PythonLab() {
             <div className="hidden md:block flex-shrink-0">
               <Button
                 variant="primary"
-                size="lg"
                 onClick={handleRun}
                 disabled={!isPyodideReady || isRunning}
                 data-run-button
                 title="Run Code (F5)"
                 className={cn(
-                  "px-4",
+                  "w-14 h-14 p-0 flex items-center justify-center rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-200 text-white bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 border-2 border-white/20",
                   isPyodideReady && !isRunning && 'animate-pulse-glow'
                 )}
               >
                 {isRunning ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                    <span>Running...</span>
-                  </>
+                  <div className="w-8 h-8 border-[3px] border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
-                  <>
-                    <Play className="w-4 h-4 mr-2" />
-                    <span>Run Code</span>
-                  </>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="white"
+                    stroke="none"
+                    style={{ width: '30px', height: '30px', marginLeft: '3px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
+                  >
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                  </svg>
                 )}
               </Button>
             </div>
@@ -322,8 +367,21 @@ export function PythonLab() {
                 <span>Ask AI Question</span>
               </Button>
             </div>
-            
+
             <div className="hidden md:block w-px h-6 bg-[var(--border-color)] mr-2 flex-shrink-0" />
+
+            {/* Save & My Codes Buttons */}
+            <div className="hidden md:flex items-center gap-1.5 bg-[var(--glass-bg)] border border-[var(--border-color)] rounded-lg p-0.5 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => isLoggedIn ? setShowSavedCodes(true) : setShowLoginModal(true)}
+                title={isLoggedIn ? 'My Saved Codes' : 'Login to save codes'}
+                className="h-7 w-7 md:h-10 md:w-10 p-0"
+              >
+                <FolderOpen className="w-3.5 h-3.5 md:w-5 md:h-5" />
+              </Button>
+            </div>
 
             <div className="hidden md:flex items-center gap-1.5 md:gap-2 bg-[var(--glass-bg)] border border-[var(--border-color)] rounded-lg p-0.5 md:p-1 flex-shrink-0">
               <Button
@@ -337,7 +395,7 @@ export function PythonLab() {
               </Button>
 
               <div className="w-px h-6 bg-[var(--border-color)] mx-1" />
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -384,6 +442,193 @@ export function PythonLab() {
                 <Sparkles className="w-4 h-4 mr-2" />
                 <span>Ask AI Question</span>
               </Button>
+            </div>
+
+            {/* Profile / Settings Avatar with Dropdown */}
+            <div className="hidden md:block flex-shrink-0 relative" ref={profileMenuRef}>
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className={cn(
+                  "w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all overflow-hidden shadow-md hover:shadow-lg hover:scale-105",
+                  showProfileMenu
+                    ? "border-[var(--accent-primary)] ring-2 ring-[var(--accent-primary)]/30"
+                    : "border-[var(--accent-primary)]/40 hover:border-[var(--accent-primary)]",
+                  user ? "bg-[var(--glass-bg)]" : "bg-gradient-to-br from-indigo-500/20 to-purple-500/20"
+                )}
+                title={user?.displayName || 'Settings'}
+              >
+                {user?.photoURL ? (
+                  <img src={user.photoURL} className="w-full h-full object-cover" alt="" />
+                ) : (
+                  <User className="w-5 h-5 text-[var(--accent-primary)]" />
+                )}
+              </button>
+
+              {/* Premium Dropdown Menu */}
+              {showProfileMenu && (
+                <div
+                  className="absolute right-0 top-[calc(100%+10px)] w-80 rounded-3xl z-50"
+                  style={{
+                    background: 'white',
+                    boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05)',
+                  }}
+                >
+                  {/* Profile Header - Gradient Banner */}
+                  <div
+                    className="relative rounded-t-3xl px-5 pt-5 pb-4"
+                    style={{
+                      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)',
+                    }}
+                  >
+                    <div className="absolute inset-0 rounded-t-3xl opacity-20"
+                      style={{ background: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.4), transparent 60%)' }}
+                    />
+                    {user ? (
+                      <div className="relative flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg shadow-lg border border-white/30 overflow-hidden flex-shrink-0">
+                          {user.photoURL ? (
+                            <img src={user.photoURL} className="w-full h-full object-cover" alt="" />
+                          ) : (
+                            user.displayName?.charAt(0)?.toUpperCase() || 'U'
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-base font-bold text-white truncate drop-shadow-sm">{user.displayName || 'User'}</p>
+                          <p className="text-xs text-white/70 truncate">{user.email}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
+                          <User className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-base font-bold text-white">Guest User</p>
+                          <p className="text-xs text-white/70">Sign in to save your work</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Menu Content */}
+                  <div className="px-4 py-4 space-y-4">
+                    {/* AI Mode Section */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2.5">
+                        <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                          <Bot className="w-3.5 h-3.5 text-white" />
+                        </div>
+                        <span className="text-xs font-bold text-gray-800 uppercase tracking-wider">AI Mode</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => { setHelpMode('manual'); }}
+                          className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300"
+                          style={helpMode === 'manual' ? {
+                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                            color: 'white',
+                            boxShadow: '0 4px 15px -3px rgba(99, 102, 241, 0.4)',
+                          } : {
+                            background: '#f1f5f9',
+                            color: '#64748b',
+                          }}
+                        >
+                          ✋ Manual
+                        </button>
+                        <button
+                          onClick={() => { setHelpMode('auto'); }}
+                          className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300"
+                          style={helpMode === 'auto' ? {
+                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                            color: 'white',
+                            boxShadow: '0 4px 15px -3px rgba(99, 102, 241, 0.4)',
+                          } : {
+                            background: '#f1f5f9',
+                            color: '#64748b',
+                          }}
+                        >
+                          ✨ Auto AI
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Language Section */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2.5">
+                        <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #10b981, #14b8a6)' }}>
+                          <Globe className="w-3.5 h-3.5 text-white" />
+                        </div>
+                        <span className="text-xs font-bold text-gray-800 uppercase tracking-wider">AI Language</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleLanguageChange('en')}
+                          className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300"
+                          style={language === 'en' ? {
+                            background: 'linear-gradient(135deg, #10b981, #14b8a6)',
+                            color: 'white',
+                            boxShadow: '0 4px 15px -3px rgba(16, 185, 129, 0.4)',
+                          } : {
+                            background: '#f1f5f9',
+                            color: '#64748b',
+                          }}
+                        >
+                          🌐 English
+                        </button>
+                        <button
+                          onClick={() => handleLanguageChange('hi')}
+                          className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300"
+                          style={language === 'hi' ? {
+                            background: 'linear-gradient(135deg, #10b981, #14b8a6)',
+                            color: 'white',
+                            boxShadow: '0 4px 15px -3px rgba(16, 185, 129, 0.4)',
+                          } : {
+                            background: '#f1f5f9',
+                            color: '#64748b',
+                          }}
+                        >
+                          🇮🇳 हिंदी
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="h-px" style={{ background: 'linear-gradient(to right, transparent, #e2e8f0, transparent)' }} />
+
+                    {/* Login / Logout */}
+                    {user ? (
+                      <button
+                        onClick={async () => { setShowProfileMenu(false); await logout(); }}
+                        className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-all duration-200 group"
+                        style={{ background: '#fef2f2' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = '#fef2f2'; }}
+                      >
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)' }}>
+                          <LogOut className="w-4.5 h-4.5 text-white" />
+                        </div>
+                        <span className="font-bold text-red-600">Log Out</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => { setShowProfileMenu(false); setShowLoginModal(true); }}
+                        className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl text-sm transition-all duration-200"
+                        style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
+                          <LogIn className="w-4.5 h-4.5 text-white" />
+                        </div>
+                        <span className="font-bold text-white">Log In to Save Codes</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Bottom accent line */}
+                  <div className="h-1 rounded-b-3xl" style={{ background: 'linear-gradient(to right, #6366f1, #8b5cf6, #a855f7)' }} />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -435,6 +680,8 @@ export function PythonLab() {
               isRunning={isRunning}
               isReady={isPyodideReady}
               onAskAI={() => setShowAskAI(true)}
+              onSave={handleEditorSave}
+              onShowSavedCodes={() => isLoggedIn ? setShowSavedCodes(true) : setShowLoginModal(true)}
             />
           </Card>
         </div>
@@ -478,6 +725,29 @@ export function PythonLab() {
         onClose={() => setShowAskAI(false)}
         onGenerate={handleGenerateCode}
         language={language}
+      />
+
+      {/* Saved Codes Modal */}
+      <SavedCodesModal
+        isOpen={showSavedCodes}
+        onClose={() => {
+          setShowSavedCodes(false);
+          setTimeout(() => setStartSavingCode(false), 200);
+        }}
+        initialShowSaveInput={startSavingCode}
+        codes={codes}
+        isLoading={isSavedCodesLoading}
+        onSave={handleSaveCode}
+        onDelete={deleteCode}
+        onToggleImportant={toggleImportant}
+        onSelect={handleSelectSavedCode}
+        currentCode={code}
+      />
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
       />
     </div>
   );

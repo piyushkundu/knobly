@@ -22,6 +22,15 @@ export interface CodeHistoryItem {
   timestamp: string;
 }
 
+export interface SavedCodeItem {
+  id: string;
+  title: string;
+  code: string;
+  isImportant: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export type Language = 'en' | 'hi';
 export type HelpMode = 'manual' | 'auto';
 
