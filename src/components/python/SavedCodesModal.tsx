@@ -124,6 +124,14 @@ export function SavedCodesModal({
     localStorage.setItem('knobly-custom-folders', JSON.stringify(updated));
   };
 
+  const [toastMsg, setToastMsg] = useState('');
+  const toastTimer = useRef<NodeJS.Timeout | null>(null);
+  const showToast = useCallback((msg: string) => {
+    setToastMsg(msg);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastMsg(''), 2500);
+  }, []);
+
   useEffect(() => {
     if (isOpen) {
       setShowSaveInput(initialShowSaveInput || false);
@@ -186,6 +194,7 @@ export function SavedCodesModal({
     setIsSaving(true);
     await onSave(saveTitle || `Code ${new Date().toLocaleString()}`, currentCode, saveTags, saveFolder || (activeFolder !== 'all' && activeFolder !== 'unfiled' ? activeFolder : ''));
     setSaveTitle(''); setSaveTags([]); setSaveFolder(''); setShowSaveInput(false); setIsSaving(false);
+    showToast('✔ Code Saved successfully!');
   };
 
   const handleCopy = useCallback(async (id: string, code: string) => {
@@ -193,7 +202,8 @@ export function SavedCodesModal({
       const ta = document.createElement('textarea'); ta.value = code; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
     }
     setCopiedId(id); setTimeout(() => setCopiedId(null), 2000);
-  }, []);
+    showToast('📋 Code copied to clipboard');
+  }, [showToast]);
 
   const handleStartEdit = (item: SavedCodeItem) => { setEditingId(item.id); setEditTitle(item.title); setContextMenuId(null); };
   const handleSaveEdit = async (id: string) => { if (onUpdate && editTitle.trim()) await onUpdate(id, { title: editTitle.trim() }); setEditingId(null); };
@@ -249,7 +259,7 @@ export function SavedCodesModal({
   };
 
   // Drag and Drop
-  const handleMoveToFolder = async (id: string, folder: string) => { if (onUpdate) await onUpdate(id, { folder: folder === 'unfiled' ? '' : folder }); setContextMenuId(null); };
+  const handleMoveToFolder = async (id: string, folder: string) => { if (onUpdate) await onUpdate(id, { folder: folder === 'unfiled' ? '' : folder }); setContextMenuId(null); showToast(`📁 Moved to ${folder === 'unfiled' ? 'Unfiled' : folder}`); };
   
   const onDragStartCode = (e: React.DragEvent, id: string) => {
     e.dataTransfer.setData('code_id', id);
@@ -257,7 +267,7 @@ export function SavedCodesModal({
   };
 
   // Duplicate Code
-  const handleDuplicate = async (item: SavedCodeItem) => { await onSave(item.title + ' (copy)', item.code, item.tags, item.folder, item.lastOutput); setContextMenuId(null); };
+  const handleDuplicate = async (item: SavedCodeItem) => { await onSave(item.title + ' (copy)', item.code, item.tags, item.folder, item.lastOutput); setContextMenuId(null); showToast('📄 Snippet duplicated successfully!'); };
   
   const handleTouchStart = (id: string) => { longPressTimer.current = setTimeout(() => setLongPressId(id), 500); };
   const handleTouchEnd = () => { if (longPressTimer.current) { clearTimeout(longPressTimer.current); longPressTimer.current = null; } };
@@ -442,7 +452,7 @@ export function SavedCodesModal({
                       <span className="text-[13px]">🕒</span> <b className="text-gray-800">{lastSaved}</b>
                     </div>
                     <span className="text-gray-300">•</span>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-indigo-50 border border-indigo-100/50">
                       <span className="text-[12px]">🐍</span> <b className="text-indigo-600 text-xs">Python</b>
                     </div>
                     
@@ -500,7 +510,7 @@ export function SavedCodesModal({
                 </div>
 
                 {/* ═══════ CODE LIST (WITH DRAG & DROP) ═══════ */}
-                <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+                <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
                   {isLoading ? (
                     <div className="flex flex-col items-center justify-center h-40 gap-3">
                       <div className="w-8 h-8 border-[3px] border-indigo-500 border-t-transparent rounded-full animate-spin" />
@@ -526,7 +536,7 @@ export function SavedCodesModal({
                       >
                         {/* Interactive Folder Color border */}
                         {item.folder && folderConfig[item.folder] && (
-                          <div className="absolute top-0 left-0 w-[2px] opacity-60 h-full transition-all group-hover:opacity-100 group-hover:w-[3px]" style={{ backgroundColor: folderConfig[item.folder].color }} />
+                          <div className="absolute top-0 left-0 w-[2px] opacity-0 h-full transition-all duration-300 group-hover:opacity-100 group-hover:w-[3px]" style={{ backgroundColor: folderConfig[item.folder].color }} />
                         )}
 
                         <div className="px-5 pt-4 pb-2">
@@ -554,13 +564,13 @@ export function SavedCodesModal({
                                 </button>
                                 <AnimatePresence>
                                   {contextMenuId === item.id && (
-                                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                                      className="absolute right-0 top-8 z-30 w-48 bg-white/95 backdrop-blur-xl rounded-xl border border-gray-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.2)] overflow-hidden"
+                                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} style={{ transformOrigin: 'top right' }}
+                                      className="absolute right-0 top-8 z-30 w-48 max-h-[250px] overflow-y-auto no-scrollbar bg-white/95 backdrop-blur-xl rounded-xl border border-gray-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
                                       onClick={e => e.stopPropagation()}>
                                       <button onClick={() => handleStartEdit(item)} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Pencil className="w-3.5 h-3.5 text-indigo-500" /> Rename Snippet</button>
                                       <button onClick={() => handleDuplicate(item)} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-purple-50/80 transition-all border-b border-gray-100"><Copy className="w-3.5 h-3.5 text-purple-500" /> Duplicate</button>
                                       <div className="px-3 pt-2 pb-1 text-[9px] font-black text-gray-400 uppercase tracking-widest">Move to Folder</div>
-                                      <div className="max-h-[120px] overflow-y-auto no-scrollbar pb-1">
+                                      <div className="pb-1 border-b border-gray-100">
                                         <button onClick={() => handleMoveToFolder(item.id, 'unfiled')} className="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-bold text-gray-600 hover:bg-gray-100"><span className="text-[14px]">📄</span> Unfiled</button>
                                         {allFolders.map(f => (
                                           <button key={f} onClick={() => handleMoveToFolder(item.id, f)} className="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-bold text-gray-700 hover:bg-indigo-50 transition-all"><span className="text-[14px]">{folderConfig[f]?.icon || '📁'}</span> {f}</button>
@@ -610,7 +620,7 @@ export function SavedCodesModal({
                           {/* Primary Actions (Run, Edit, Copy) */}
                           <div className="flex items-center gap-2 mt-4 flex-wrap">
                             {onRun && (
-                              <button onClick={() => { onSelect(item.code); onRun(item.code); onClose(); }} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider bg-gradient-to-br from-[#00c853] to-[#64dd17] text-white shadow-[0_0_10px_rgba(0,200,83,0.4)] hover:shadow-[0_0_15px_rgba(0,200,83,0.6)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                              <button onClick={() => { onSelect(item.code); onRun(item.code); onClose(); }} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider bg-gradient-to-br from-[#00c853] to-[#64dd17] text-white shadow-[0_0_15px_rgba(0,200,83,0.5)] hover:shadow-[0_0_20px_rgba(0,200,83,0.7)] hover:scale-[1.03] active:scale-95 transition-all">
                                 <Play className="w-3.5 h-3.5 fill-current" /> RUN
                               </button>
                             )}
@@ -669,6 +679,16 @@ export function SavedCodesModal({
                 </div>
               </div>
             </div>
+            
+            {/* Global Toast */}
+            <AnimatePresence>
+              {toastMsg && (
+                <motion.div initial={{ opacity: 0, y: 30, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                  className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full bg-gray-900/90 backdrop-blur-md text-white shadow-[0_10px_30px_rgba(0,0,0,0.3)] border border-gray-700 font-bold text-[11px] tracking-wider pointer-events-none">
+                  {toastMsg}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </>
       )}
