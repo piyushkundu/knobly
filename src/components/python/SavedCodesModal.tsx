@@ -670,20 +670,22 @@ export function SavedCodesModal({
                 className="z-[999] w-40 bg-white/95 backdrop-blur-xl rounded-xl border border-gray-200/80 shadow-2xl shadow-gray-400/50 overflow-hidden"
                 onClick={e => e.stopPropagation()}>
                 {folderContextMenu.isCustom && (
-                  <>
-                    <button onClick={() => { setEditingFolderName(folderContextMenu.name); setEditFolderNameInput(folderContextMenu.name); setFolderContextMenu(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-gray-700 hover:bg-indigo-50/80 transition-all">
-                      <Pencil className="w-3 h-3" /> Rename
-                    </button>
-                    <div className="px-3 py-2 border-b border-t border-gray-100 flex flex-wrap gap-1">
-                      {PRESET_COLORS.map(c => (
-                        <button key={c} onClick={() => changeFolderColor(folderContextMenu.name, c)} className="w-4 h-4 rounded-full border border-black/10 transition-transform hover:scale-125 hover:shadow-sm" style={{ backgroundColor: c }} />
-                      ))}
-                    </div>
-                  </>
+                  <button onClick={() => { setEditingFolderName(folderContextMenu.name); setEditFolderNameInput(folderContextMenu.name); setFolderContextMenu(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-gray-700 hover:bg-indigo-50/80 transition-all">
+                    <Pencil className="w-3 h-3" /> Rename
+                  </button>
                 )}
-                <button onClick={() => deleteFolder(folderContextMenu.name)} className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-red-500 hover:bg-red-50/80 transition-all border-t border-gray-100">
-                  <Trash2 className="w-3 h-3" /> {folderContextMenu.isCustom ? 'Delete Folder' : 'Remove Empty Folder'}
+                
+                <button onClick={() => { if (window.confirm('Do you want to delete?')) deleteFolder(folderContextMenu.name); }} className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-medium text-gray-700 hover:bg-indigo-50/80 transition-all">
+                  <Trash2 className="w-3 h-3" /> {folderContextMenu.isCustom ? 'Delete' : 'Remove Empty'}
                 </button>
+
+                {folderContextMenu.isCustom && (
+                  <div className="px-3 py-2 border-t border-gray-100 flex flex-wrap gap-1">
+                    {PRESET_COLORS.map(c => (
+                      <button key={c} onClick={() => changeFolderColor(folderContextMenu.name, c)} className="w-4 h-4 rounded-full border border-black/10 transition-transform hover:scale-125 hover:shadow-sm" style={{ backgroundColor: c }} />
+                    ))}
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -696,15 +698,15 @@ export function SavedCodesModal({
                 className="z-[999] w-48 bg-white/95 backdrop-blur-xl rounded-xl border border-gray-200/80 shadow-2xl shadow-gray-400/50 overflow-hidden"
                 onClick={e => e.stopPropagation()}>
                 <button onClick={() => { handleStartEdit(activeMenu.item); setActiveMenu(null); }} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Pencil className="w-3.5 h-3.5 text-indigo-500" /> Rename Snippet</button>
+                <button onClick={() => { if (window.confirm('Do you want to delete this code?')) { onDelete(activeMenu.id); setActiveMenu(null); } }} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Trash2 className="w-3.5 h-3.5 text-gray-500" /> Delete Snippet</button>
                 <button onClick={() => handleDuplicate(activeMenu.item)} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-purple-50/80 transition-all border-b border-gray-100"><Copy className="w-3.5 h-3.5 text-purple-500" /> Duplicate</button>
                 <div className="px-3 pt-2 pb-1 text-[9px] font-black text-gray-400 uppercase tracking-widest">Move to Folder</div>
-                <div className="pb-1 border-b border-gray-100 max-h-[120px] overflow-y-auto no-scrollbar">
+                <div className="pb-1 max-h-[120px] overflow-y-auto no-scrollbar">
                   <button onClick={() => handleMoveToFolder(activeMenu.id, 'unfiled')} className="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-bold text-gray-600 hover:bg-gray-100"><span className="text-[14px]">📄</span> Unfiled</button>
                   {allFolders.map(f => (
                     <button key={f} onClick={() => handleMoveToFolder(activeMenu.id, f)} className="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-bold text-gray-700 hover:bg-indigo-50 transition-all"><span className="text-[14px]">{folderConfig[f]?.icon || '📁'}</span> {f}</button>
                   ))}
                 </div>
-                <button onClick={() => { onDelete(activeMenu.id); setActiveMenu(null); }} className="w-full flex items-center justify-center gap-1.5 p-2.5 text-xs font-bold text-white bg-red-500 hover:bg-red-600 transition-all"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
               </motion.div>
             )}
           </AnimatePresence>
