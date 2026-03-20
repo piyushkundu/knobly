@@ -68,10 +68,10 @@ export function PythonLab() {
   const { user, logout } = useAuth();
   const { codes, isLoading: isSavedCodesLoading, isLoggedIn, saveCode, updateCode, deleteCode, toggleImportant } = useSavedCodes();
 
-  const handleSaveCode = useCallback(async (title: string, codeToSave: string, tags?: string[], folder?: string) => {
+  const handleSaveCode = useCallback(async (title: string, codeToSave: string, tags?: string[], folder?: string, lastOutput?: string) => {
     if (!isLoggedIn) { setShowLoginModal(true); return; }
-    await saveCode(title, codeToSave, tags, folder);
-  }, [isLoggedIn, saveCode]);
+    await saveCode(title, codeToSave, tags, folder, lastOutput !== undefined ? lastOutput : output);
+  }, [isLoggedIn, saveCode, output]);
 
   const handleEditorSave = useCallback(() => {
     if (isLoggedIn) {
