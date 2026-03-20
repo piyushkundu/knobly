@@ -569,25 +569,25 @@ export function SavedCodesModal({
                             ))}
                           </div>
 
-                          {/* Code Preview Box Dark Mode */}
-                          <div className={`relative bg-[#0f172a] rounded-xl border border-slate-700 shadow-inner overflow-hidden transition-all duration-300 group/code ${expandedCodeId === item.id ? 'max-h-[500px]' : 'max-h-[90px]'}`}>
+                          {/* Code Preview Box Light Theme */}
+                          <div className={`relative bg-gray-50/80 rounded-xl border border-gray-200/80 shadow-inner overflow-hidden transition-all duration-300 group/code ${expandedCodeId === item.id ? 'max-h-[500px]' : 'max-h-[90px]'}`}>
                             {/* Window dots decoration */}
-                            <div className="absolute top-0 left-0 w-full h-7 bg-slate-800/80 border-b border-slate-700/50 flex items-center px-3 gap-1.5 z-10 backdrop-blur-sm">
+                            <div className="absolute top-0 left-0 w-full h-7 bg-white/60 border-b border-gray-200/80 flex items-center px-3 gap-1.5 z-10 backdrop-blur-sm">
                               <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                               <div className="w-2.5 h-2.5 rounded-full bg-amber-400" /><div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                              <span className="ml-auto text-[9px] font-bold !text-white uppercase tracking-wider" style={{ color: '#ffffff' }}>snippet.py</span>
+                              <span className="ml-auto text-[9px] font-bold text-gray-400 uppercase tracking-wider">snippet.py</span>
                             </div>
-                            <pre className="text-[11px] font-mono leading-relaxed p-4 pt-9 overflow-auto !text-white"
-                              dangerouslySetInnerHTML={{ __html: expandedCodeId === item.id ? highlightPythonDark(item.code) : highlightPythonDark(truncateCode(item.code, 4)) }} />
+                            <pre className="text-[11px] font-mono leading-relaxed p-4 pt-9 overflow-auto text-gray-800"
+                              dangerouslySetInnerHTML={{ __html: expandedCodeId === item.id ? highlightPython(item.code) : highlightPython(truncateCode(item.code, 4)) }} />
                             {item.lastOutput && (
-                              <div className="border-t border-slate-700/80 bg-slate-900/80">
-                                <div className="px-4 py-1.5 text-[9px] font-bold !text-white uppercase tracking-widest bg-slate-800/50 border-b border-slate-800" style={{ color: '#ffffff' }}>🚀 Last Output:</div>
-                                <pre className="text-[10px] font-mono leading-relaxed px-4 py-3 text-emerald-400 overflow-x-auto">
+                              <div className="border-t border-gray-200/80 bg-white/50">
+                                <div className="px-4 py-1.5 text-[9px] font-bold text-gray-500 uppercase tracking-widest bg-gray-50 border-b border-gray-100">🚀 Last Output:</div>
+                                <pre className="text-[10px] font-mono leading-relaxed px-4 py-3 text-emerald-600 overflow-x-auto">
                                   {expandedCodeId === item.id ? item.lastOutput : truncateCode(item.lastOutput, 3)}
                                 </pre>
                               </div>
                             )}
-                            {expandedCodeId !== item.id && <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-[#0f172a] to-transparent pointer-events-none" />}
+                            {expandedCodeId !== item.id && <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none" />}
                           </div>
 
                           {/* Primary Actions (Run, Edit, Copy) */}
