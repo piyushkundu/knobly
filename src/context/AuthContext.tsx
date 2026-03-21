@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, sendPasswordResetEmail, sendEmailVerification, signInWithPopup, GoogleAuthProvider, EmailAuthProvider, linkWithCredential } from 'firebase/auth';
+import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, signInWithPopup, GoogleAuthProvider, EmailAuthProvider, linkWithCredential } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp, query, collection, where, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 
@@ -104,10 +104,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 created_at: serverTimestamp(),
             });
         } catch (_) { }
-        // Send email verification
+        // Send custom branded verification email via our API
         try {
-            await sendEmailVerification(cred.user);
-            console.log('[Knobly] Verification email sent successfully to:', email);
+            await fetch('/api/auth/send-verification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, displayName: fullName }),
+            });
+            console.log('[Knobly] Custom verification email sent to:', email);
         } catch (verifyErr) {
             console.error('[Knobly] Failed to send verification email:', verifyErr);
         }
@@ -160,17 +164,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const resetPassword = async (email: string) => {
-        await sendPasswordResetEmail(auth, email);
+        const res = await fetch('/api/auth/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+        if (!res.ok) {
+            let errorMsg = 'Failed to send reset email.';
+            try {
+                const data = await res.json();
+                errorMsg = data.error || errorMsg;
+            } catch (_) {
+                // API returned HTML (server error) — use default message
+            }
+            throw new Error(errorMsg);
+        }
     };
 
     // Resend verification email - temporarily signs in to get user object
     const resendVerificationEmail = async (email: string, password: string) => {
         const cred = await signInWithEmailAndPassword(auth, email, password);
         if (cred.user.emailVerified) {
+            await signOut(auth);
             throw new Error('EMAIL_ALREADY_VERIFIED');
         }
-        await sendEmailVerification(cred.user);
         await signOut(auth);
+        // Send custom branded verification email via our API
+        const res = await fetch('/api/auth/send-verification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+        if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || 'Failed to resend verification email.');
+        }
     };
 
     // Create a unique User ID + password for Google-signed-in users
