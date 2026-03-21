@@ -3,33 +3,47 @@ import { getAuth, Auth } from 'firebase-admin/auth';
 import path from 'path';
 import fs from 'fs';
 
-let adminApp: App;
-let adminAuth: Auth;
-
 function getCredential() {
-  // Method 1: Load from service-account.json file (most reliable)
+  // Method 1: Load from service-account.json file (local dev)
   const jsonPath = path.join(process.cwd(), 'service-account.json');
   if (fs.existsSync(jsonPath)) {
     const serviceAccount = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
     return cert(serviceAccount);
   }
 
-  // Method 2: Fallback to environment variables
+  // Method 2: Load from FIREBASE_SERVICE_ACCOUNT_JSON env var (Vercel - base64 encoded)
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    try {
+      const decoded = Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_JSON, 'base64').toString('utf8');
+      const serviceAccount = JSON.parse(decoded);
+      return cert(serviceAccount);
+    } catch {
+      // fall through to method 3
+    }
+  }
+
+  // Method 3: Fallback to individual env vars
+  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
+  if (!privateKey) {
+    throw new Error('Firebase Admin: No credentials found. Set FIREBASE_SERVICE_ACCOUNT_JSON or FIREBASE_ADMIN_PRIVATE_KEY.');
+  }
   return cert({
     projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
     clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    privateKey: privateKey.replace(/\\n/g, '\n'),
   });
 }
 
-if (!getApps().length) {
-  adminApp = initializeApp({
-    credential: getCredential(),
-  });
-} else {
-  adminApp = getApps()[0];
+function getAdminApp(): App {
+  if (getApps().length) {
+    return getApps()[0];
+  }
+  return initializeApp({ credential: getCredential() });
 }
 
-adminAuth = getAuth(adminApp);
+function getAdminAuth(): Auth {
+  return getAuth(getAdminApp());
+}
 
-export { adminAuth };
+// Lazy initialization - only init when actually used, not at import time
+export const adminAuth: Auth = getAdminAuth();
