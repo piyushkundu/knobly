@@ -37,8 +37,8 @@ export function useSavedCodes() {
     loadCodes();
   }, [loadCodes]);
 
-  const saveCode = useCallback(async (title: string, code: string, tags?: string[], folder?: string, lastOutput?: string) => {
-    if (!user) return;
+  const saveCode = useCallback(async (title: string, code: string, tags?: string[], folder?: string, lastOutput?: string, description?: string): Promise<SavedCodeItem | null> => {
+    if (!user) return null;
     try {
       const newCode: SavedCodeItem = {
         id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
@@ -48,6 +48,7 @@ export function useSavedCodes() {
         tags: tags || [],
         folder: folder || '',
         lastOutput: lastOutput,
+        description: description || '',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -59,8 +60,10 @@ export function useSavedCodes() {
       await setDoc(userDocRef, { saved_codes: newCodesList }, { merge: true });
       
       setCodes(newCodesList);
+      return newCode;
     } catch (err) {
       console.error('Failed to save code:', err);
+      return null;
     }
   }, [user, codes]);
 

@@ -97,27 +97,27 @@ export function CCodeEditor({
       base: 'vs',
       inherit: true,
       rules: [
-        { token: 'comment', foreground: '6b7280', fontStyle: 'italic' },
+        { token: 'comment', foreground: '94a3b8', fontStyle: 'italic' },
         { token: 'keyword', foreground: '7c3aed', fontStyle: 'bold' },
-        { token: 'keyword.control', foreground: 'db2777', fontStyle: 'bold' },
-        { token: 'string', foreground: '059669' },
-        { token: 'number', foreground: 'd97706' },
-        { token: 'function', foreground: '0891b2' },
-        { token: 'variable', foreground: '1e293b' },
-        { token: 'operator', foreground: 'db2777' },
+        { token: 'keyword.control', foreground: '7c3aed', fontStyle: 'bold' },
+        { token: 'string', foreground: '16a34a' },
+        { token: 'number', foreground: 'ea580c' },
+        { token: 'function', foreground: '2563eb' },
+        { token: 'variable', foreground: '111827' },
+        { token: 'operator', foreground: '7c3aed' },
         { token: 'delimiter', foreground: '475569' },
         { token: 'type', foreground: '7c3aed' },
         { token: 'type.identifier', foreground: '16a34a' },
       ],
       colors: {
         'editor.background': '#ffffff',
-        'editor.foreground': '#1e293b',
-        'editor.lineHighlightBackground': '#f1f5f9',
-        'editor.selectionBackground': '#6366f140',
-        'editorCursor.foreground': '#16a34a',
+        'editor.foreground': '#111827',
+        'editor.lineHighlightBackground': '#eef2ff',
+        'editor.selectionBackground': '#c7d2fe',
+        'editorCursor.foreground': '#2563eb',
         'editorLineNumber.foreground': '#94a3b8',
-        'editorLineNumber.activeForeground': '#475569',
-        'editor.inactiveSelectionBackground': '#6366f120',
+        'editorLineNumber.activeForeground': '#111827',
+        'editor.inactiveSelectionBackground': '#e0e7ff',
         'editorIndentGuide.background': '#e2e8f0',
         'editorIndentGuide.activeBackground': '#cbd5e1',
       },
@@ -287,7 +287,7 @@ export function CCodeEditor({
         </div>
       </div>
       
-      <div className="flex-1 relative">
+      <div className={`flex-1 relative ${theme === 'light' ? 'bg-[#f1f5f9] p-[12px] rounded-[14px]' : ''}`}>
         {isLoading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--bg-primary)]/80 backdrop-blur-sm">
             <div className="flex flex-col items-center gap-3">
@@ -296,7 +296,11 @@ export function CCodeEditor({
             </div>
           </div>
         )}
-        <div className={cn('h-full w-full', isLoading && 'opacity-50')}>
+        <div className={cn(
+          'h-full w-full overflow-hidden transition-all',
+          theme === 'light' ? 'bg-[#ffffff] rounded-[10px] border border-[#e2e8f0] shadow-[0_4px_12px_rgba(0,0,0,0.04)]' : '',
+          isLoading && 'opacity-50'
+        )}>
           <Editor
             height="100%"
             defaultLanguage="c"
@@ -307,7 +311,7 @@ export function CCodeEditor({
             theme={theme === 'light' ? 'c-lab-light' : 'c-lab-dark'}
             options={{
               fontSize: fontSize,
-              fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
+              fontFamily: "'Fira Code', 'JetBrains Mono', 'Consolas', monospace",
               fontLigatures: true,
               minimap: { enabled: false },
               lineNumbers: 'on',

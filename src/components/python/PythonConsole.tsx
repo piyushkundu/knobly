@@ -28,6 +28,7 @@ interface PythonConsoleProps {
   terminalLines?: Array<{ type: 'prompt' | 'input'; text: string }>;
   waitingForInput?: boolean;
   onPromptSubmit?: (value: string) => void;
+  onLanguageChange?: (lang: 'en' | 'hi') => void;
 }
 
 export function PythonConsole({ 
@@ -43,7 +44,8 @@ export function PythonConsole({
   aiError,
   terminalLines = [],
   waitingForInput = false,
-  onPromptSubmit
+  onPromptSubmit,
+  onLanguageChange
 }: PythonConsoleProps) {
   const consoleRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -113,6 +115,28 @@ export function PythonConsole({
           </div>
         </div>
         <div className="flex items-center gap-1">
+          {onLanguageChange && (
+            <div className="flex bg-[var(--bg-secondary)] rounded-md border border-[var(--border-color)] p-0.5 mr-2">
+              <button
+                onClick={() => onLanguageChange('en')}
+                className={cn(
+                  "px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm transition-all",
+                  language === 'en' ? "bg-purple-500 !text-white shadow-sm" : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-bg)]"
+                )}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => onLanguageChange('hi')}
+                className={cn(
+                  "px-2.5 py-1 text-[10px] font-bold uppercase rounded-sm transition-all",
+                  language === 'hi' ? "bg-purple-500 !text-white shadow-sm" : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-bg)]"
+                )}
+              >
+                HI
+              </button>
+            </div>
+          )}
           {hasOutput && (
             <>
               <Button variant="ghost" size="sm" onClick={handleCopy} title="Copy" className="text-slate-400 hover:text-white">
@@ -131,7 +155,13 @@ export function PythonConsole({
           <div className="flex items-center justify-center h-full text-[var(--text-muted)]">
             <div className="text-center">
               <Zap className="w-8 h-8 mx-auto mb-2 opacity-30" />
-              <span>Run your Python code to see output here</span>
+              <div className="flex flex-col items-center gap-3">
+                <span>Run your Python code to see output here</span>
+                <div className="text-[11px] bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 border border-indigo-100 dark:border-indigo-500/20 shadow-sm font-medium">
+                  <Keyboard className="w-3.5 h-3.5" />
+                  Tip: Press <kbd className="px-1.5 py-0.5 mx-0.5 rounded-md bg-white dark:bg-black/40 font-mono border border-indigo-200 dark:border-indigo-500/30 font-bold shadow-sm text-[10px]">F5</kbd> to run code
+                </div>
+              </div>
             </div>
           </div>
         ) : (

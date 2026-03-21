@@ -61,11 +61,11 @@ interface SavedCodesModalProps {
   onClose: () => void;
   codes: SavedCodeItem[];
   isLoading: boolean;
-  onSave: (title: string, code: string, tags?: string[], folder?: string, lastOutput?: string) => Promise<void>;
+  onSave: (title: string, code: string, tags?: string[], folder?: string, lastOutput?: string) => Promise<SavedCodeItem | void | null>;
   onDelete: (id: string) => Promise<void>;
   onToggleImportant: (id: string) => Promise<void>;
   onUpdate?: (id: string, updates: Partial<Pick<SavedCodeItem, 'title' | 'code' | 'tags' | 'folder' | 'isImportant' | 'lastOutput'>>) => Promise<void>;
-  onSelect: (code: string) => void;
+  onSelect: (item: SavedCodeItem) => void;
   onRun?: (code: string) => void;
   onExplain?: (code: string) => void;
   currentCode: string;
@@ -577,6 +577,13 @@ export function SavedCodesModal({
                             </div>
                           </div>
 
+                          {/* Description */}
+                          {item.description && (
+                            <p className="text-[12px] text-gray-600 font-medium leading-[1.4] mt-0.5 mb-0.5 px-0.5 max-w-[95%] italic">
+                              {item.description}
+                            </p>
+                          )}
+
                           {/* Folder Badge & Tags Inline */}
                           <div className="flex flex-wrap items-center gap-[10px]">
                             {item.folder && folderConfig[item.folder] && (
@@ -597,8 +604,9 @@ export function SavedCodesModal({
                               <div className="w-2.5 h-2.5 rounded-full bg-amber-400" /><div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
                               <span className="ml-auto text-[9px] font-bold text-gray-400 uppercase tracking-wider">snippet.py</span>
                             </div>
-                            <pre className="text-[11px] font-mono leading-relaxed p-4 pt-9 overflow-auto text-gray-800"
-                              dangerouslySetInnerHTML={{ __html: expandedCodeId === item.id ? highlightPython(item.code) : highlightPython(truncateCode(item.code, 4)) }} />
+                            <pre className="text-[11px] font-mono leading-[1.6] p-4 pt-9 overflow-auto text-gray-800 whitespace-pre-wrap selection:bg-indigo-100 selection:text-indigo-900">
+                              {expandedCodeId === item.id ? item.code : truncateCode(item.code, 6)}
+                            </pre>
                             {item.lastOutput && (
                               <div className="border-t border-gray-200/80 bg-white/50">
                                 <div className="px-4 py-1.5 text-[9px] font-bold text-gray-500 uppercase tracking-widest bg-gray-50 border-b border-gray-100">🚀 Last Output:</div>
@@ -613,11 +621,11 @@ export function SavedCodesModal({
                           {/* Primary Actions (Run, Edit, Copy) */}
                           <div className="flex items-center gap-[10px] sm:gap-2 mt-2 sm:mt-4 flex-nowrap sm:flex-wrap">
                             {onRun && (
-                              <button onClick={() => { onSelect(item.code); onRun(item.code); onClose(); }} className="flex-1 sm:flex-none flex justify-center items-center gap-1.5 px-3 sm:px-4 py-2 h-[40px] sm:h-auto rounded-xl sm:rounded-lg text-[13px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-to-br from-[#00c853] to-[#64dd17] text-white shadow-[0_0_15px_rgba(0,200,83,0.5)] active:scale-95 transition-all">
+                              <button onClick={() => { onSelect(item); onRun(item.code); onClose(); }} className="flex-1 sm:flex-none flex justify-center items-center gap-1.5 px-3 sm:px-4 py-2 h-[40px] sm:h-auto rounded-xl sm:rounded-lg text-[13px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-to-br from-[#00c853] to-[#64dd17] text-white shadow-[0_0_15px_rgba(0,200,83,0.5)] active:scale-95 transition-all">
                                 <Play className="w-4 h-4 sm:w-3.5 sm:h-3.5 fill-current" /> RUN
                               </button>
                             )}
-                            <button onClick={() => { onSelect(item.code); onClose(); }} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-3 py-2 h-[40px] sm:h-auto rounded-xl sm:rounded-lg text-[12px] sm:text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 transition-all active:scale-95">
+                            <button onClick={() => { onSelect(item); onClose(); }} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-3 py-2 h-[40px] sm:h-auto rounded-xl sm:rounded-lg text-[12px] sm:text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 transition-all active:scale-95">
                               <Pencil className="w-3.5 h-3.5" /> EDIT
                             </button>
                             <button onClick={e => { e.stopPropagation(); handleCopy(item.id, item.code); }} className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 h-[40px] sm:h-auto rounded-xl sm:rounded-lg text-[12px] sm:text-[10px] font-black uppercase tracking-wider border transition-all active:scale-95 ${copiedId === item.id ? 'bg-green-50 text-green-600 border-green-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
@@ -643,8 +651,8 @@ export function SavedCodesModal({
                               className="absolute inset-0 bg-white/95 backdrop-blur-md z-20 flex flex-col items-center justify-center p-6 text-center">
                               <p className="text-[14px] font-black text-gray-800 mb-4">{item.title}</p>
                               <div className="grid grid-cols-2 gap-3 w-full max-w-[200px]">
-                                {onRun && <button className="py-2.5 rounded-xl text-[11px] font-bold bg-emerald-500 text-white shadow-lg shadow-emerald-500/30" onClick={() => { onSelect(item.code); onRun(item.code); onClose(); setLongPressId(null); }}>▶️ Run</button>}
-                                <button className="py-2.5 rounded-xl text-[11px] font-bold bg-indigo-500 text-white shadow-lg shadow-indigo-500/30" onClick={() => { onSelect(item.code); onClose(); setLongPressId(null); }}>✏️ Edit</button>
+                                {onRun && <button className="py-2.5 rounded-xl text-[11px] font-bold bg-emerald-500 text-white shadow-lg shadow-emerald-500/30" onClick={() => { onSelect(item); onRun(item.code); onClose(); setLongPressId(null); }}>▶️ Run</button>}
+                                <button className="py-2.5 rounded-xl text-[11px] font-bold bg-indigo-500 text-white shadow-lg shadow-indigo-500/30" onClick={() => { onSelect(item); onClose(); setLongPressId(null); }}>✏️ Edit</button>
                                 <button className="py-2.5 rounded-xl text-[11px] font-bold bg-gray-700 text-white shadow-lg" onClick={() => { handleCopy(item.id, item.code); setLongPressId(null); }}>📋 Copy</button>
                                 <button className="py-2.5 rounded-xl text-[11px] font-bold bg-red-500 text-white shadow-lg shadow-red-500/30" onClick={() => { onDelete(item.id); setLongPressId(null); }}>🗑️ Delete</button>
                               </div>

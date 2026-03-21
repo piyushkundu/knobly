@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
 
 .python-lab-root {
   --bg-primary: #16161e;
@@ -55,8 +57,8 @@ html.light .python-lab-root {
 
   /* Syntax Highlighting */
   --monaco-bg: #ffffff;
-  --error-bg: rgba(239, 68, 68, 0.1);
-  --error-border: #ef4444;
+  --error-bg: #fee2e2;
+  --error-border: red;
 }
 
 .python-lab-root {
@@ -135,4 +137,23 @@ html.light .python-lab-root .bg-gradient-to-r {
 
 .monaco-editor .cursors-layer .cursor {
   transition: all 0.1s ease !important;
+}
+
+/* Premium Light Mode Monaco Details */
+html.light .monaco-editor .current-line {
+  background-color: #eef2ff !important;
+  box-sizing: border-box !important;
+}
+
+html.light .monaco-editor .margin-view-overlays .current-line {
+  border-left: 3px solid #6366f1 !important;
+}
+
+html.light .monaco-editor .line-numbers {
+  color: #94a3b8 !important;
+  padding-right: 10px !important;
+}
+
+html.light .monaco-scrollable-element {
+  scroll-behavior: smooth !important;
 }

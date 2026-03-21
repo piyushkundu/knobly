@@ -30,6 +30,7 @@ export interface SavedCodeItem {
   tags?: string[];
   folder?: string;
   lastOutput?: string;
+  description?: string;
   createdAt: string;
   updatedAt: string;
 }
