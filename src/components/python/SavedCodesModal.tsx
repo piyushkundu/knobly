@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { X, Trash2, Star, Download, Save, Search, Code2, Play, Copy, Pencil, Eye, EyeOff, Sparkles, Check, FolderOpen, FolderPlus, ChevronLeft, ChevronRight, Plus, MoreVertical, Palette, Tag } from 'lucide-react';
+import { X, Trash2, Star, Download, Save, Search, Code2, Play, Copy, Pencil, Eye, EyeOff, Sparkles, Check, FolderOpen, FolderPlus, ChevronLeft, ChevronRight, Plus, MoreVertical, Palette, Tag, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SavedCodeItem } from '@/types/python';
 import { formatTimestamp, truncateCode } from '@/lib/python-utils';
@@ -296,129 +296,146 @@ export function SavedCodesModal({
             className="fixed inset-2 sm:inset-3 md:inset-auto md:top-[2%] md:left-1/2 md:-translate-x-1/2 md:w-[940px] md:max-h-[96vh] bg-white rounded-2xl z-[201] overflow-hidden shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] flex flex-col border border-gray-200/80"
           >
             {/* ═══════ HEADER ═══════ */}
-            <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 shrink-0 relative overflow-hidden" onClick={() => { setActiveMenu(null); setFolderContextMenu(null); }}>
+            <div className="flex items-center justify-between px-3 md:px-5 h-[56px] md:h-auto md:py-3.5 border-b border-gray-100 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 shrink-0 relative overflow-hidden" onClick={() => { setActiveMenu(null); setFolderContextMenu(null); }}>
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.05] pointer-events-none" />
-              <div className="flex items-center gap-3 relative z-10">
-                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/30 shadow-inner">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5 drop-shadow-md">
+              
+              <div className="flex items-center gap-2.5 md:gap-3 relative z-10">
+                <button onClick={(e) => { e.stopPropagation(); setSidebarOpen(true); }} className="md:hidden p-1.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors active:scale-95">
+                  <Menu className="w-5 h-5" />
+                </button>
+                
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/30 shadow-inner shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4 md:w-5 md:h-5 drop-shadow-md">
                     <path fill="#FFCA28" d="M20,6h-8l-2-2H4C2.9,4,2.01,4.9,2.01,6L2,18c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V8C22,6.9,21.1,6,20,6z"/>
                     <path fill="#FFD54F" d="M20,8H4v10h16V8z"/>
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-[16px] font-black tracking-wide !text-white drop-shadow-sm">File Manager</h2>
-                  <span className="text-[10px] font-medium !text-white/80 block">{codes.length} code{codes.length !== 1 ? 's' : ''} • Last saved {lastSaved}</span>
+                  <h2 className="text-[15px] md:text-[16px] font-black tracking-wide !text-white drop-shadow-sm">File Manager</h2>
+                  <span className="hidden md:block text-[10px] font-medium !text-white/80">{codes.length} code{codes.length !== 1 ? 's' : ''} • Last saved {lastSaved}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2.5 relative z-10">
+              
+              <div className="flex items-center gap-1.5 md:gap-2.5 relative z-10">
                 <button onClick={() => setShowSaveInput(true)} disabled={!currentCode.trim()} title="Save New Code"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold !bg-white/10 !text-white border border-white/20 hover:!bg-white/20 active:scale-95 transition-all disabled:opacity-40">
-                  <Plus className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Add Code</span>
+                  className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-xl text-[11px] font-bold !bg-white/10 !text-white border border-white/20 hover:!bg-white/20 active:scale-95 transition-all disabled:opacity-40">
+                  <Plus className="w-4 h-4 md:w-3.5 md:h-3.5" /> <span className="hidden sm:inline">Add Code</span>
                 </button>
-                <div className="w-px h-5 bg-white/20 mx-1" />
+                <div className="hidden md:block w-px h-5 bg-white/20 mx-1" />
                 <button onClick={handleDownloadPDF} disabled={codes.length === 0} title="Export PDF"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold !bg-red-500 !text-white border border-red-400 hover:!bg-red-600 active:scale-95 transition-all disabled:opacity-40 shadow-lg shadow-red-500/20">
+                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold !bg-red-500 !text-white border border-red-400 hover:!bg-red-600 active:scale-95 transition-all disabled:opacity-40 shadow-lg shadow-red-500/20">
                   <Download className="w-3.5 h-3.5" />
                 </button>
                 <button onClick={onClose} className="p-1.5 rounded-xl !bg-white/10 hover:!bg-white/20 transition-all border border-white/15 group">
-                  <X className="w-5 h-5 !text-white stroke-[2.5] group-hover:rotate-90 transition-transform" />
+                  <X className="w-4 h-4 md:w-5 md:h-5 !text-white stroke-[2.5] group-hover:rotate-90 transition-transform" />
                 </button>
               </div>
             </div>
 
             {/* ═══════ BODY ═══════ */}
-            <div className="flex flex-1 overflow-hidden min-h-0" onClick={() => { setActiveMenu(null); setFolderContextMenu(null); }}>
+            <div className="flex flex-1 overflow-hidden min-h-0 relative" onClick={() => { setActiveMenu(null); setFolderContextMenu(null); }}>
+
+              {/* Mobile Sidebar Overlay */}
+              <div className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 md:hidden ${sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} onClick={(e) => { e.stopPropagation(); setSidebarOpen(false); }} />
 
               {/* ─── SIDEBAR ─── */}
-              <AnimatePresence initial={false}>
-                {sidebarOpen && (
-                  <motion.div
-                    initial={{ width: 0, opacity: 0 }} animate={{ width: 220, opacity: 1 }} exit={{ width: 0, opacity: 0 }}
-                    transition={{ duration: 0.25, ease: 'easeOut' }}
-                    className="border-r border-gray-100 bg-gradient-to-b from-gray-50/80 to-white flex flex-col shrink-0 overflow-hidden relative z-10 shadow-[2px_0_15px_rgba(0,0,0,0.02)]"
-                  >
-                    <div className="px-4 pt-5 pb-2 flex items-center justify-between">
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">📁 Folders</span>
-                      <button onClick={() => setShowCreateFolder(true)} className="p-1 rounded-md text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors tooltip" title="New Folder">
-                        <FolderPlus className="w-3.5 h-3.5" />
+              <div className={`fixed inset-y-0 left-0 z-50 md:static md:z-10 h-full bg-gradient-to-b from-gray-50/95 to-white border-r border-gray-100 flex flex-col shrink-0 overflow-hidden shadow-[20px_0_40px_rgba(0,0,0,0.15)] md:shadow-none transition-transform duration-300 ease-out transform md:translate-x-0 md:w-[220px] ${sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full'}`}>
+                <div className="w-64 md:w-[220px] h-full flex flex-col min-w-[220px]">
+                  <div className="px-4 pt-5 pb-2 flex items-center justify-between">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">📁 Folders</span>
+                    <button onClick={() => setShowCreateFolder(true)} className="p-1 rounded-md text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors tooltip" title="New Folder">
+                      <FolderPlus className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); setSidebarOpen(false); }} className="p-1 rounded-md text-gray-400 hover:bg-gray-200 md:hidden">
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto px-2.5 pb-4 space-y-0.5 no-scrollbar">
+                    {/* Standard folders */}
+                    <SidebarItem label="All Codes" id="all" icon="📂" count={folderCounts.all} isActive={activeFolder === 'all'} color="#6366f1" onClick={() => { setActiveFolder('all'); if(typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} onDrop={handleMoveToFolder} />
+                    <SidebarItem label="Unfiled" id="unfiled" icon="📄" count={folderCounts.unfiled || 0} isActive={activeFolder === 'unfiled'} color="#f97316" onClick={() => { setActiveFolder('unfiled'); if(typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} onDrop={handleMoveToFolder} />
+
+                    <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-2" />
+
+                    {/* Custom/Code folders */}
+                    {allFolders.map(name => {
+                      const cfg = folderConfig[name];
+                      const isEditing = editingFolderName === name;
+
+                      return (
+                        <div key={name} className="relative">
+                          {isEditing ? (
+                            <div className="px-2 py-1.5 flex gap-1 bg-white border border-indigo-300 shadow-sm rounded-lg mb-0.5">
+                              <input type="text" value={editFolderNameInput} onChange={e => setEditFolderNameInput(e.target.value)} autoFocus
+                                onKeyDown={e => { if (e.key === 'Enter') renameFolder(name, editFolderNameInput); if (e.key === 'Escape') setEditingFolderName(null); }}
+                                className="flex-1 min-w-0 text-xs text-gray-800 outline-none" />
+                              <button onClick={() => renameFolder(name, editFolderNameInput)} className="text-indigo-500"><Check className="w-3.5 h-3.5" /></button>
+                            </div>
+                          ) : (
+                            <SidebarItem label={name} id={name} icon={cfg.icon} count={folderCounts[name] || 0} isActive={activeFolder === name} color={cfg.color} onClick={() => { setActiveFolder(name); if(typeof window !== 'undefined' && window.innerWidth < 768) setSidebarOpen(false); }} onDrop={handleMoveToFolder}
+                              onContextMenu={(e) => {
+                                e.preventDefault();
+                                if (folderContextMenu?.name === name) { setFolderContextMenu(null); return; }
+                                setFolderContextMenu({ name, x: e.clientX, y: e.clientY, isCustom: cfg.isCustom });
+                              }} />
+                          )}
+                        </div>
+                      );
+                    })}
+
+                    {/* Create Folder Box */}
+                    {showCreateFolder && (
+                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-2 p-2.5 bg-white rounded-xl border border-indigo-200 shadow-lg shadow-indigo-500/10 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500" />
+                        <input type="text" value={newFolderName} onChange={e => setNewFolderName(e.target.value)} placeholder="Folder name..." autoFocus
+                          onKeyDown={e => { if (e.key === 'Enter') handleCreateFolder(); if (e.key === 'Escape') setShowCreateFolder(false); }}
+                          className="w-full bg-gray-50/50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-[11px] text-gray-800 focus:outline-none focus:border-indigo-400 mb-2" />
+                        <div className="flex gap-1.5">
+                          <button onClick={handleCreateFolder} disabled={!newFolderName.trim()} className="flex-1 py-1.5 rounded-lg text-[10px] font-bold bg-indigo-500 !text-white hover:bg-indigo-600 transition-all disabled:opacity-40 shadow-sm" style={{ color: '#ffffff' }}>Save</button>
+                          <button onClick={() => setShowCreateFolder(false)} className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all"><X className="w-3 h-3" /></button>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Prominent Neon New Folder Button */}
+                    {!showCreateFolder && (
+                      <button onClick={() => setShowCreateFolder(true)}
+                        className="w-full relative group flex items-center justify-center gap-2 mt-4 px-3 py-2.5 rounded-xl text-[11px] font-bold text-indigo-100 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98] border border-indigo-400/50 hover:border-purple-400 shadow-[0_0_15px_rgba(99,102,241,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]">
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner" />
+                        <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
+                        <FolderPlus className="w-4 h-4 shadow-sm relative z-10 !text-white" style={{ color: '#ffffff' }} />
+                        <span className="relative z-10 !text-white drop-shadow-sm" style={{ color: '#ffffff' }}>New Folder</span>
                       </button>
-                    </div>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-                    <div className="flex-1 overflow-y-auto px-2.5 pb-4 space-y-0.5 no-scrollbar">
-                      {/* Standard folders */}
-                      <SidebarItem label="All Codes" id="all" icon="📂" count={folderCounts.all} isActive={activeFolder === 'all'} color="#6366f1" onClick={() => setActiveFolder('all')} onDrop={handleMoveToFolder} />
-                      <SidebarItem label="Unfiled" id="unfiled" icon="📄" count={folderCounts.unfiled || 0} isActive={activeFolder === 'unfiled'} color="#f97316" onClick={() => setActiveFolder('unfiled')} onDrop={handleMoveToFolder} />
-
-                      <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-2" />
-
-                      {/* Custom/Code folders */}
-                      {allFolders.map(name => {
-                        const cfg = folderConfig[name];
-                        const isEditing = editingFolderName === name;
-
-                        return (
-                          <div key={name} className="relative">
-                            {isEditing ? (
-                              <div className="px-2 py-1.5 flex gap-1 bg-white border border-indigo-300 shadow-sm rounded-lg mb-0.5">
-                                <input type="text" value={editFolderNameInput} onChange={e => setEditFolderNameInput(e.target.value)} autoFocus
-                                  onKeyDown={e => { if (e.key === 'Enter') renameFolder(name, editFolderNameInput); if (e.key === 'Escape') setEditingFolderName(null); }}
-                                  className="flex-1 min-w-0 text-xs text-gray-800 outline-none" />
-                                <button onClick={() => renameFolder(name, editFolderNameInput)} className="text-indigo-500"><Check className="w-3.5 h-3.5" /></button>
-                              </div>
-                            ) : (
-                              <SidebarItem label={name} id={name} icon={cfg.icon} count={folderCounts[name] || 0} isActive={activeFolder === name} color={cfg.color} onClick={() => setActiveFolder(name)} onDrop={handleMoveToFolder}
-                                onContextMenu={(e) => {
-                                  e.preventDefault();
-                                  if (folderContextMenu?.name === name) { setFolderContextMenu(null); return; }
-                                  setFolderContextMenu({ name, x: e.clientX, y: e.clientY, isCustom: cfg.isCustom });
-                                }} />
-                            )}
-                          </div>
-                        );
-                      })}
-
-                      {/* Create Folder Box */}
-                      {showCreateFolder && (
-                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-2 p-2.5 bg-white rounded-xl border border-indigo-200 shadow-lg shadow-indigo-500/10 relative overflow-hidden">
-                          <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500" />
-                          <input type="text" value={newFolderName} onChange={e => setNewFolderName(e.target.value)} placeholder="Folder name..." autoFocus
-                            onKeyDown={e => { if (e.key === 'Enter') handleCreateFolder(); if (e.key === 'Escape') setShowCreateFolder(false); }}
-                            className="w-full bg-gray-50/50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-[11px] text-gray-800 focus:outline-none focus:border-indigo-400 mb-2" />
-                          <div className="flex gap-1.5">
-                            <button onClick={handleCreateFolder} disabled={!newFolderName.trim()} className="flex-1 py-1.5 rounded-lg text-[10px] font-bold bg-indigo-500 text-white hover:bg-indigo-600 transition-all disabled:opacity-40 shadow-sm">Save</button>
-                            <button onClick={() => setShowCreateFolder(false)} className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all"><X className="w-3 h-3" /></button>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* Prominent Neon New Folder Button */}
-                      {!showCreateFolder && (
-                        <button onClick={() => setShowCreateFolder(true)}
-                          className="w-full relative group flex items-center justify-center gap-2 mt-4 px-3 py-2.5 rounded-xl text-[11px] font-bold text-indigo-100 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98] border border-indigo-400/50 hover:border-purple-400 shadow-[0_0_15px_rgba(99,102,241,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]">
-                          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner" />
-                          <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
-                          <FolderPlus className="w-4 h-4 shadow-sm relative z-10 !text-white" style={{ color: '#ffffff' }} />
-                          <span className="relative z-10 !text-white drop-shadow-sm" style={{ color: '#ffffff' }}>New Folder</span>
-                        </button>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Sidebar Toggle Handle */}
-              <button onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="absolute z-20 left-0 bottom-6 p-1 rounded-r-lg bg-white border border-l-0 border-gray-200 text-gray-400 hover:text-indigo-500 hover:bg-indigo-50 hover:w-8 transition-all shadow-md md:hidden flex justify-center"
-                style={sidebarOpen ? { left: '220px' } : { left: '0px' }}
-              >
-                {sidebarOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-              </button>
-
-              {/* ─── MAIN CONTENT ─── */}
               <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-50/40">
 
+                {/* Mobile Horizontal Folders Strip */}
+                <div className="md:hidden flex items-center gap-2 overflow-x-auto no-scrollbar px-3 py-2 bg-gray-50/90 backdrop-blur-md border-b border-gray-100 shrink-0">
+                  <button onClick={() => setActiveFolder('all')} className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${activeFolder === 'all' ? 'bg-indigo-500 text-white border-indigo-500 shadow-md shadow-indigo-500/20' : 'bg-white text-gray-600 border-gray-200 shadow-sm'}`}>
+                    📂 All Codes
+                  </button>
+                  <button onClick={() => setActiveFolder('unfiled')} className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${activeFolder === 'unfiled' ? 'bg-orange-500 text-white border-orange-500 shadow-md shadow-orange-500/20' : 'bg-white text-gray-600 border-gray-200 shadow-sm'}`}>
+                    📄 Unfiled
+                  </button>
+                  <div className="w-px h-4 bg-gray-300 shrink-0 mx-1" />
+                  {allFolders.map(name => {
+                    const cfg = folderConfig[name];
+                    const isActive = activeFolder === name;
+                    return (
+                      <button key={name} onClick={() => setActiveFolder(name)} className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border shadow-sm ${isActive ? 'text-white' : 'bg-white'}`} style={isActive ? { backgroundColor: cfg.color, borderColor: cfg.color } : { color: '#4b5563', borderColor: '#e5e7eb' }}>
+                        {cfg.icon} {name}
+                      </button>
+                    )
+                  })}
+                </div>
+
                 {/* Top Headers: Stats & Search & Save */}
-                <div className="px-5 py-3 border-b border-gray-100 space-y-3 shrink-0 bg-white/70 backdrop-blur-md relative z-10 shadow-sm">
+                <div className="px-3 md:px-5 py-3 border-b border-gray-100 space-y-3 shrink-0 bg-white/70 backdrop-blur-md relative z-10 shadow-sm">
                   
                   {/* Elite Stats Row */}
                   <div className="flex items-center gap-3 text-[11px] overflow-x-auto no-scrollbar font-medium">
@@ -451,8 +468,8 @@ export function SavedCodesModal({
                         <div className="flex items-center gap-2">
                           <input type="text" value={saveTitle} onChange={e => setSaveTitle(e.target.value)} placeholder="Enter code title..." autoFocus onKeyDown={e => e.key === 'Enter' && handleSave()}
                             className="flex-1 bg-gray-50/50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-800 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
-                          <button onClick={handleSave} disabled={isSaving || !currentCode.trim()} className="flex items-center justify-center min-w-[80px] px-3 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 shadow-md shadow-indigo-500/20 active:scale-95 disabled:opacity-40 transition-all">
-                            {isSaving ? '...' : <><Save className="w-3.5 h-3.5 mr-1" /> Save</>}
+                          <button onClick={handleSave} disabled={isSaving || !currentCode.trim()} className="flex items-center justify-center min-w-[80px] px-3 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-indigo-500 to-purple-500 !text-white hover:from-indigo-600 hover:to-purple-600 shadow-md shadow-indigo-500/20 active:scale-95 disabled:opacity-40 transition-all" style={{ color: '#ffffff' }}>
+                            {isSaving ? '...' : <><Save className="w-3.5 h-3.5 mr-1 !text-white" style={{ color: '#ffffff' }} /> Save</>}
                           </button>
                           <button onClick={() => { setShowSaveInput(false); setSaveTitle(''); setSaveTags([]); }} className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors bg-gray-50">
                             <X className="w-4 h-4" />
@@ -475,10 +492,10 @@ export function SavedCodesModal({
 
                   {/* Search and Tag Filters */}
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <div className="relative flex-1 group">
+                    <div className="relative flex-1 group w-full">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
                       <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search snippets, tags, code..."
-                        className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-3 py-2.5 text-xs text-gray-800 focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 shadow-sm transition-all" />
+                        className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-3 py-3 md:py-2.5 text-[13px] md:text-xs text-gray-800 focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 shadow-sm transition-all" />
                     </div>
                     <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar sm:max-w-[50%] pt-1 sm:pt-0">
                       {[{ key: 'all', label: 'All', c: 'indigo' }, { key: 'important', label: '⭐ Important', c: 'amber' }].map(f => (
@@ -494,19 +511,22 @@ export function SavedCodesModal({
                 </div>
 
                 {/* ═══════ CODE LIST (WITH DRAG & DROP) ═══════ */}
-                <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+                <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-3 sm:py-4 space-y-4 sm:space-y-5 pb-24">
                   {isLoading ? (
                     <div className="flex flex-col items-center justify-center h-40 gap-3">
                       <div className="w-8 h-8 border-[3px] border-indigo-500 border-t-transparent rounded-full animate-spin" />
                       <span className="text-xs font-semibold text-gray-400">Loading magic...</span>
                     </div>
                   ) : filteredCodes.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-40 text-center animate-fade-in">
-                      <div className="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-3 shadow-inner">
-                        <Code2 className="w-8 h-8 text-indigo-300" />
+                    <div className="flex flex-col items-center justify-center h-[50vh] text-center animate-fade-in px-6">
+                      <div className="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-4 shadow-inner">
+                        <Code2 className="w-8 h-8 text-indigo-400" />
                       </div>
-                      <p className="text-[13px] font-bold text-gray-800">{codes.length === 0 ? 'Your vault is empty' : 'No matching codes found'}</p>
-                      <p className="text-[11px] text-gray-400 mt-1 max-w-[200px]">{codes.length === 0 ? 'Click "Add Code" to save your current work here.' : 'Try taking out some filters.'}</p>
+                      <p className="text-[15px] font-black text-gray-800 tracking-wide">{codes.length === 0 ? '🚀 No snippets yet' : 'No matching codes found'}</p>
+                      <p className="text-[12px] font-medium text-gray-500 mt-1.5 mb-6 max-w-[220px] leading-relaxed">{codes.length === 0 ? 'Start by saving your first code' : 'Try taking out some filters.'}</p>
+                      {codes.length === 0 && (
+                        <button onClick={() => setShowSaveInput(true)} className="px-6 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-[13px] tracking-wide shadow-lg shadow-indigo-500/25 transition-all"><Plus className="w-4 h-4 inline mr-1.5 stroke-[2.5]" /> Add Code</button>
+                      )}
                     </div>
                   ) : (
                     filteredCodes.map((item, idx) => (
@@ -514,7 +534,7 @@ export function SavedCodesModal({
                         draggable
                         onDragStart={(e) => onDragStartCode(e as any, item.id)}
                         initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(idx * 0.04, 0.4), ease: 'easeOut' }}
-                        className="group relative rounded-2xl border border-gray-200/80 bg-white/90 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(0,0,0,0.12)] hover:border-indigo-300"
+                        className="group relative rounded-[16px] border border-gray-200/80 bg-white/90 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(0,0,0,0.12)] hover:border-indigo-300"
                         style={{ backdropFilter: 'blur(10px)' }}
                         onTouchStart={() => handleTouchStart(item.id)} onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchEnd}
                       >
@@ -523,9 +543,9 @@ export function SavedCodesModal({
                           <div className="absolute top-0 left-0 w-[2px] opacity-0 h-full transition-all duration-300 group-hover:opacity-100 group-hover:w-[3px]" style={{ backgroundColor: folderConfig[item.folder].color }} />
                         )}
 
-                        <div className="px-5 pt-4 pb-2">
+                        <div className="p-[14px] sm:px-5 sm:pt-4 sm:pb-2 flex flex-col gap-[10px]">
                           {/* Header Line */}
-                          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
                             <div className="flex items-center gap-2 min-w-0 flex-1">
                               {item.isImportant && <Star className="w-4 h-4 text-amber-400 fill-amber-400 shrink-0 drop-shadow-sm" />}
                               {editingId === item.id ? (
@@ -558,9 +578,9 @@ export function SavedCodesModal({
                           </div>
 
                           {/* Folder Badge & Tags Inline */}
-                          <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <div className="flex flex-wrap items-center gap-[10px]">
                             {item.folder && folderConfig[item.folder] && (
-                              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold border shadow-sm" style={{ backgroundColor: `${folderConfig[item.folder].color}12`, borderColor: `${folderConfig[item.folder].color}30`, color: folderConfig[item.folder].color }}>
+                              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border shadow-sm" style={{ backgroundColor: `${folderConfig[item.folder].color}12`, borderColor: `${folderConfig[item.folder].color}30`, color: folderConfig[item.folder].color }}>
                                 {folderConfig[item.folder].icon} {item.folder}
                               </div>
                             )}
@@ -591,16 +611,16 @@ export function SavedCodesModal({
                           </div>
 
                           {/* Primary Actions (Run, Edit, Copy) */}
-                          <div className="flex items-center gap-2 mt-4 flex-wrap">
+                          <div className="flex items-center gap-[10px] mt-1 flex-wrap">
                             {onRun && (
-                              <button onClick={() => { onSelect(item.code); onRun(item.code); onClose(); }} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider bg-gradient-to-br from-[#00c853] to-[#64dd17] text-white shadow-[0_0_15px_rgba(0,200,83,0.5)] hover:shadow-[0_0_20px_rgba(0,200,83,0.7)] hover:scale-[1.03] active:scale-95 transition-all">
-                                <Play className="w-3.5 h-3.5 fill-current" /> RUN
+                              <button onClick={() => { onSelect(item.code); onRun(item.code); onClose(); }} className="w-full sm:w-auto flex justify-center items-center gap-1.5 px-6 sm:px-4 py-3 sm:py-2 min-h-[44px] sm:min-h-[auto] rounded-xl sm:rounded-lg text-[14px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-to-br from-[#00c853] to-[#64dd17] text-white shadow-[0_0_15px_rgba(0,200,83,0.5)] hover:shadow-[0_0_20px_rgba(0,200,83,0.7)] active:scale-95 transition-all">
+                                <Play className="w-4 h-4 sm:w-3.5 sm:h-3.5 fill-current" /> RUN
                               </button>
                             )}
-                            <button onClick={() => { onSelect(item.code); onClose(); }} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 hover:shadow-md transition-all active:scale-95">
+                            <button onClick={() => { onSelect(item.code); onClose(); }} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 sm:px-3 py-3 sm:py-2 min-h-[44px] sm:min-h-[auto] rounded-xl sm:rounded-lg text-[11px] sm:text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 hover:shadow-md transition-all active:scale-95">
                               <Pencil className="w-3.5 h-3.5" /> EDIT
                             </button>
-                            <button onClick={e => { e.stopPropagation(); handleCopy(item.id, item.code); }} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider border hover:shadow-md transition-all active:scale-95 ${copiedId === item.id ? 'bg-green-50 text-green-600 border-green-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
+                            <button onClick={e => { e.stopPropagation(); handleCopy(item.id, item.code); }} className={`flex items-center justify-center gap-1.5 px-4 sm:px-3 py-3 sm:py-2 min-h-[44px] sm:min-h-[auto] rounded-xl sm:rounded-lg text-[11px] sm:text-[10px] font-black uppercase tracking-wider border hover:shadow-md transition-all active:scale-95 ${copiedId === item.id ? 'bg-green-50 text-green-600 border-green-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
                               {copiedId === item.id ? <><Check className="w-3.5 h-3.5" /> COPIED</> : <><Copy className="w-3.5 h-3.5" /> COPY</>}
                             </button>
                             
@@ -610,8 +630,8 @@ export function SavedCodesModal({
                             <button onClick={() => setExpandedCodeId(expandedCodeId === item.id ? null : item.id)} className="flex items-center gap-1 px-3 py-2 rounded-lg text-[10px] font-bold bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 hover:text-gray-800 transition-all active:scale-95 hidden sm:flex">
                               {expandedCodeId === item.id ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />} {expandedCodeId === item.id ? 'Collapse' : 'Full Preview'}
                             </button>
-                            <button onClick={e => { e.stopPropagation(); onToggleImportant(item.id); }} className={`p-2 rounded-lg transition-all border ${item.isImportant ? 'bg-amber-50 text-amber-400 border-amber-200 shadow-sm' : 'bg-white text-gray-400 border-gray-200 hover:text-amber-400 hover:border-amber-300 hover:bg-amber-50'}`}>
-                              <Star className={`w-3.5 h-3.5 ${item.isImportant ? 'fill-amber-400' : ''}`} />
+                            <button onClick={e => { e.stopPropagation(); onToggleImportant(item.id); }} className={`p-2.5 sm:p-2 rounded-xl sm:rounded-lg transition-all border ${item.isImportant ? 'bg-amber-50 text-amber-400 border-amber-200 shadow-sm' : 'bg-white text-gray-400 border-gray-200 hover:text-amber-400 hover:border-amber-300 hover:bg-amber-50'}`}>
+                              <Star className={`w-4 h-4 sm:w-3.5 sm:h-3.5 ${item.isImportant ? 'fill-amber-400' : ''}`} />
                             </button>
                           </div>
                         </div>
@@ -644,6 +664,15 @@ export function SavedCodesModal({
                     <p className="text-[11px] font-bold text-gray-400 mt-1">Keep coding and saving magic snippets.</p>
                   </div>
                   <div className="h-4" />
+
+                  {/* Floating Action Button (Mobile) */}
+                  <button 
+                    onClick={() => setShowSaveInput(true)} 
+                    className="md:hidden fixed bottom-[20px] right-[16px] z-[90] w-[52px] h-[52px] bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-[0_10px_25px_rgba(99,102,241,0.4)] active:scale-90 transition-all border border-white/20"
+                  >
+                    <Plus className="w-7 h-7 stroke-[2.5]" />
+                  </button>
+
                 </div>
               </div>
             </div>
@@ -710,21 +739,30 @@ export function SavedCodesModal({
           {/* Global Floating 3-dot Menu */}
           <AnimatePresence>
             {activeMenu && (
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                style={{ position: 'fixed', top: activeMenu.y, left: activeMenu.x - 192, transformOrigin: 'top right' }}
-                className="z-[999] w-48 bg-white/95 backdrop-blur-xl rounded-xl border border-gray-200/80 shadow-2xl shadow-gray-400/50 overflow-hidden"
-                onClick={e => e.stopPropagation()}>
-                <button onClick={() => { handleStartEdit(activeMenu.item); setActiveMenu(null); }} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Pencil className="w-3.5 h-3.5 text-indigo-500" /> Rename Snippet</button>
-                <button onClick={() => { setActiveMenu(null); setConfirmAction({ message: 'Do you want to delete this code snippet?', onConfirm: () => onDelete(activeMenu.id) }); }} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Trash2 className="w-3.5 h-3.5 text-gray-500" /> Delete Snippet</button>
-                <button onClick={() => handleDuplicate(activeMenu.item)} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-purple-50/80 transition-all border-b border-gray-100"><Copy className="w-3.5 h-3.5 text-purple-500" /> Duplicate</button>
-                <div className="px-3 pt-2 pb-1 text-[9px] font-black text-gray-400 uppercase tracking-widest">Move to Folder</div>
-                <div className="pb-1 max-h-[120px] overflow-y-auto no-scrollbar">
-                  <button onClick={() => handleMoveToFolder(activeMenu.id, 'unfiled')} className="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-bold text-gray-600 hover:bg-gray-100"><span className="text-[14px]">📄</span> Unfiled</button>
-                  {allFolders.map(f => (
-                    <button key={f} onClick={() => handleMoveToFolder(activeMenu.id, f)} className="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-bold text-gray-700 hover:bg-indigo-50 transition-all"><span className="text-[14px]">{folderConfig[f]?.icon || '📁'}</span> {f}</button>
-                  ))}
-                </div>
-              </motion.div>
+              <>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActiveMenu(null)} className="fixed inset-0 bg-black/40 z-[998] sm:hidden backdrop-blur-sm" />
+                <motion.div initial={{ opacity: 0, y: 50, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 50, scale: 0.95 }}
+                  style={{ ...((typeof window !== 'undefined' && window.innerWidth >= 640) ? { position: 'fixed', top: activeMenu.y, left: activeMenu.x - 192, transformOrigin: 'top right' } : {}) }}
+                  className="fixed sm:absolute z-[999] w-full sm:w-48 bottom-0 sm:bottom-auto left-0 flex flex-col sm:block bg-white/95 backdrop-blur-xl rounded-t-2xl sm:rounded-xl border-t sm:border border-gray-200/80 shadow-[0_-15px_40px_rgba(0,0,0,0.15)] sm:shadow-2xl sm:shadow-gray-400/50 overflow-hidden pb-6 sm:pb-0"
+                  onClick={e => e.stopPropagation()}>
+                  
+                  {/* Mobile Grabber */}
+                  <div className="w-full flex justify-center py-3 sm:hidden border-b border-gray-100 bg-gray-50/50">
+                    <div className="w-12 h-1.5 rounded-full bg-gray-300" />
+                  </div>
+
+                  <button onClick={() => { handleStartEdit(activeMenu.item); setActiveMenu(null); }} className="w-full flex items-center gap-3 px-5 sm:px-3 py-3.5 sm:py-2.5 text-[14px] sm:text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Pencil className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-indigo-500" /> Rename Snippet</button>
+                  <button onClick={() => { setActiveMenu(null); setConfirmAction({ message: 'Do you want to delete this code snippet?', onConfirm: () => onDelete(activeMenu.id) }); }} className="w-full flex items-center gap-3 px-5 sm:px-3 py-3.5 sm:py-2.5 text-[14px] sm:text-xs font-bold text-gray-700 hover:bg-indigo-50/80 transition-all border-b border-gray-100"><Trash2 className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-gray-500" /> Delete Snippet</button>
+                  <button onClick={() => handleDuplicate(activeMenu.item)} className="w-full flex items-center gap-3 px-5 sm:px-3 py-3.5 sm:py-2.5 text-[14px] sm:text-xs font-bold text-gray-700 hover:bg-purple-50/80 transition-all border-b border-gray-100"><Copy className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-purple-500" /> Duplicate</button>
+                  <div className="px-5 sm:px-3 pt-3 sm:pt-2 pb-1.5 sm:pb-1 text-[10px] sm:text-[9px] font-black text-gray-400 uppercase tracking-widest">Move to Folder</div>
+                  <div className="pb-1 max-h-[25vh] sm:max-h-[120px] overflow-y-auto no-scrollbar">
+                    <button onClick={() => handleMoveToFolder(activeMenu.id, 'unfiled')} className="w-full flex items-center gap-3 px-5 sm:px-3 py-2.5 sm:py-1.5 text-[12px] sm:text-[11px] font-bold text-gray-600 hover:bg-gray-100"><span className="text-[16px] sm:text-[14px] w-6 text-center">📄</span> Unfiled</button>
+                    {allFolders.map(f => (
+                      <button key={f} onClick={() => handleMoveToFolder(activeMenu.id, f)} className="w-full flex items-center gap-3 px-5 sm:px-3 py-2.5 sm:py-1.5 text-[12px] sm:text-[11px] font-bold text-gray-700 hover:bg-indigo-50 transition-all"><span className="text-[16px] sm:text-[14px] w-6 text-center">{folderConfig[f]?.icon || '📁'}</span> {f}</button>
+                    ))}
+                  </div>
+                </motion.div>
+              </>
             )}
           </AnimatePresence>
 
