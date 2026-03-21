@@ -344,16 +344,6 @@ export function PythonCodeEditor({
             </button>
           </div>
 
-          {/* Save & Clear */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onSave}
-            className="h-8 px-2.5 text-indigo-600 dark:text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-400 bg-white dark:bg-[var(--bg-primary)] border border-gray-200 dark:border-[var(--border-color)] flex-shrink-0 rounded-lg shadow-sm"
-          >
-            <Save className="w-4 h-4" />
-          </Button>
-
           <Button
             variant="ghost"
             size="sm"
@@ -471,33 +461,36 @@ export function PythonCodeEditor({
           </button>
         </div>
 
-        {/* Save Status Pill (Mobile Only now) */}
+        {/* Save Status Pill (Mobile Only) — tappable to save when unsaved */}
         <div className="flex md:hidden items-center mb-1.5 ml-2 mr-0 flex-shrink-0">
-          <div className={cn(
-            'flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] uppercase font-extrabold tracking-wider transition-all duration-300 border shadow-sm',
-            isSaving 
-              ? 'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-500/10 dark:border-indigo-500/20 dark:text-indigo-400'
-              : (isDirty || !tabs[activeTabIndex]?.savedId)
-                ? 'bg-amber-50 border-amber-200 text-amber-600 dark:bg-amber-500/10 dark:border-amber-500/20 dark:text-amber-400'
-                : 'bg-green-50 border-green-200 text-green-600 dark:bg-green-500/10 dark:border-green-500/20 dark:text-green-400'
-          )}>
-            {isSaving ? (
-              <>
-                <Loader2 className="w-2.5 h-2.5 animate-spin" />
-                Saving
-              </>
-            ) : (isDirty || !tabs[activeTabIndex]?.savedId) ? (
-              <>
-                <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse opacity-80" />
-                Unsaved
-              </>
-            ) : (
-              <>
-                <Check className="w-2.5 h-2.5" />
-                Saved
-              </>
-            )}
-          </div>
+          {isSaving ? (
+            <div className={cn(
+              'flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] uppercase font-extrabold tracking-wider transition-all duration-300 border shadow-sm',
+              'bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-500/10 dark:border-indigo-500/20 dark:text-indigo-400'
+            )}>
+              <Loader2 className="w-2.5 h-2.5 animate-spin" />
+              Saving
+            </div>
+          ) : (isDirty || !tabs[activeTabIndex]?.savedId) ? (
+            <button
+              onClick={onSave}
+              className={cn(
+                'flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] uppercase font-extrabold tracking-wider transition-all duration-300 border shadow-sm cursor-pointer active:scale-95',
+                'bg-amber-50 border-amber-200 text-amber-600 dark:bg-amber-500/10 dark:border-amber-500/20 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20'
+              )}
+            >
+              <Save className="w-2.5 h-2.5" />
+              Save
+            </button>
+          ) : (
+            <div className={cn(
+              'flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] uppercase font-extrabold tracking-wider transition-all duration-300 border shadow-sm',
+              'bg-green-50 border-green-200 text-green-600 dark:bg-green-500/10 dark:border-green-500/20 dark:text-green-400'
+            )}>
+              <Check className="w-2.5 h-2.5" />
+              Saved
+            </div>
+          )}
         </div>
       </div>
       
