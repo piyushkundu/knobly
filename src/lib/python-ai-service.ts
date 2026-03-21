@@ -16,14 +16,29 @@ async function fetchWithFallback(url: string, options: RequestInit): Promise<Res
     }
   });
 
-  // If failed (likely rate limit or quota), and we have a secondary key, try fallback
-  if (!response.ok && secondaryKey) {
-    console.warn('Primary Groq API Key failed. Attempting fallback...');
+  // If failed (likely rate limit or quota), try fallback
+  if (!response.ok) {
+    const fallbackKey = secondaryKey || primaryKey;
+    console.warn('Primary request failed. Attempting fallback model/key...');
+    
+    let fallbackOptions = { ...options };
+    if (fallbackOptions.body && typeof fallbackOptions.body === 'string') {
+      try {
+        const bodyObj = JSON.parse(fallbackOptions.body);
+        if (bodyObj.model === 'llama-3.3-70b-versatile') {
+          bodyObj.model = 'llama-3.1-8b-instant';
+          fallbackOptions.body = JSON.stringify(bodyObj);
+        }
+      } catch (e) {
+        // Ignore JSON parse errors
+      }
+    }
+
     response = await fetch(url, {
-      ...options,
+      ...fallbackOptions,
       headers: {
-        ...options.headers,
-        'Authorization': `Bearer ${secondaryKey}`,
+        ...fallbackOptions.headers,
+        'Authorization': `Bearer ${fallbackKey}`,
       }
     });
   }
@@ -78,7 +93,8 @@ Provide exactly this JSON structure with your custom answers:
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'llama-3.1-8b-instant',
+      model: 'llama-3.3-70b-versatile',
+      response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage },
@@ -156,7 +172,7 @@ export async function generateCode(prompt: string, language: 'en' | 'hi'): Promi
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'llama-3.1-8b-instant',
+      model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage },

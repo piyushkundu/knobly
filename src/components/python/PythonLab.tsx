@@ -694,6 +694,7 @@ export function PythonLab() {
               waitingForInput={waitingForInput}
               onPromptSubmit={handlePromptSubmit}
               onLanguageChange={handleLanguageChange}
+              theme={theme}
             />
           </Card>
         </div>

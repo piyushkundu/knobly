@@ -57,8 +57,8 @@ html.light .python-lab-root {
 
   /* Syntax Highlighting */
   --monaco-bg: #ffffff;
-  --error-bg: #fee2e2;
-  --error-border: red;
+  --error-bg: rgba(239, 68, 68, 0.1);
+  --error-border: #ef4444;
 }
 
 .python-lab-root {
@@ -130,9 +130,14 @@ html.light .python-lab-root .bg-gradient-to-r {
 }
 
 .error-glyph {
-  background-color: var(--error-border);
-  border-radius: 50%;
-  margin-left: 4px;
+  background-color: #ef4444 !important;
+  border-radius: 50% !important;
+  width: 7px !important;
+  height: 7px !important;
+  margin-left: 10px !important;
+  margin-top: 6px !important;
+  box-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
+  opacity: 0.85;
 }
 
 .monaco-editor .cursors-layer .cursor {

@@ -245,7 +245,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         onClick={onClose}
                     />
                     <motion.div
-                        className="relative w-[90%] max-w-md max-h-[85vh] overflow-y-auto custom-scroll bg-[#0f172a] border border-cyan-500/30 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(6,182,212,0.15)] z-50"
+                        className="relative w-[90%] max-w-[380px] bg-[#0f172a] border border-cyan-500/30 rounded-2xl p-5 shadow-[0_0_50px_rgba(6,182,212,0.15)] z-50"
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
@@ -253,53 +253,53 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     >
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/20 blur-3xl rounded-full pointer-events-none" />
 
-                        <div className="flex justify-between items-center mb-6">
+                        <div className="flex justify-between items-center mb-4">
                             <h2
-                                className="text-xl md:text-2xl font-bold text-white tracking-widest"
+                                className="text-lg font-bold text-white tracking-widest"
                                 style={{ fontFamily: 'var(--font-gaming)' }}
                             >
                                 {isSignUp ? 'CREATE ACCOUNT' : 'SYSTEM LOGIN'}
                             </h2>
                             <button onClick={onClose} className="text-gray-400 hover:text-white">
-                                <X size={20} />
+                                <X size={18} />
                             </button>
                         </div>
 
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-3">
                             {error && (
-                                <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs p-3 rounded-lg">
+                                <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] p-2.5 rounded-lg">
                                     {error}
                                 </div>
                             )}
                             {successMessage && (
-                                <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs p-3 rounded-lg">
+                                <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] p-2.5 rounded-lg">
                                     {successMessage}
                                 </div>
                             )}
 
                             {/* Email Verification Screen */}
                             {showVerificationScreen ? (
-                                <div className="flex flex-col items-center gap-4 py-4">
-                                    <div className="w-16 h-16 rounded-full bg-cyan-500/20 flex items-center justify-center">
-                                        <span className="text-3xl">📧</span>
+                                <div className="flex flex-col items-center gap-3 py-3">
+                                    <div className="w-14 h-14 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                                        <span className="text-2xl">📧</span>
                                     </div>
-                                    <h3 className="text-lg font-bold text-white text-center" style={{ fontFamily: 'var(--font-gaming)' }}>
+                                    <h3 className="text-base font-bold text-white text-center" style={{ fontFamily: 'var(--font-gaming)' }}>
                                         VERIFY YOUR EMAIL
                                     </h3>
-                                    <p className="text-gray-400 text-xs text-center leading-relaxed">
-                                        We have sent a verification link to <span className="text-cyan-400 font-bold">{form.email}</span>.
-                                        <br />Open your email and click the link, then come back here to login.
+                                    <p className="text-gray-400 text-[11px] text-center leading-relaxed">
+                                        We sent a verification link to <span className="text-cyan-400 font-bold">{form.email}</span>.
+                                        <br />Open your email and click the link, then login.
                                     </p>
                                     <button
                                         onClick={handleResendVerification}
                                         disabled={loading}
-                                        className="mt-2 text-xs text-cyan-400 hover:text-cyan-300 underline cursor-pointer disabled:opacity-50"
+                                        className="text-[11px] text-cyan-400 hover:text-cyan-300 underline cursor-pointer disabled:opacity-50"
                                     >
                                         {loading ? 'Sending...' : 'Resend verification email'}
                                     </button>
                                     <button
                                         onClick={() => { setShowVerificationScreen(false); setIsSignUp(false); setError(''); setSuccessMessage(''); }}
-                                        className="mt-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95"
+                                        className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-2.5 px-6 rounded-xl text-sm hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95"
                                     >
                                         GO TO LOGIN
                                     </button>
@@ -308,9 +308,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <>
 
                             {isSignUp && (
-                                <div className="flex flex-col gap-3">
+                                <div className="flex flex-col gap-2.5">
                                     <div>
-                                        <label className="text-[10px] uppercase text-cyan-400 font-bold tracking-wider mb-2 block">
+                                        <label className="text-[10px] uppercase text-cyan-400 font-bold tracking-wider mb-1.5 block">
                                             Choose Avatar
                                         </label>
                                         <div className="flex gap-2 justify-center flex-wrap">
@@ -320,7 +320,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                                     src={av}
                                                     alt="avatar"
                                                     onClick={() => setForm({ ...form, selectedAvatar: av })}
-                                                    className={`w-10 h-10 rounded-full border-2 cursor-pointer transition-all hover:scale-110 bg-white/10 ${form.selectedAvatar === av
+                                                    className={`w-9 h-9 rounded-full border-2 cursor-pointer transition-all hover:scale-110 bg-white/10 ${form.selectedAvatar === av
                                                         ? 'border-cyan-400 shadow-[0_0_10px_#22d3ee]'
                                                         : 'border-transparent opacity-60 hover:opacity-100'
                                                         }`}
@@ -334,7 +334,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                             type="text"
                                             value={form.fullName}
                                             onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                                            className="rounded-lg p-2.5 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                                            className="rounded-lg p-2 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
                                             placeholder="John Doe"
                                             autoComplete="off"
                                         />
@@ -345,7 +345,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                             type="text"
                                             value={form.username}
                                             onChange={(e) => setForm({ ...form, username: e.target.value })}
-                                            className="rounded-lg p-2.5 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                                            className="rounded-lg p-2 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
                                             placeholder="@johndoe"
                                             autoComplete="off"
                                         />
@@ -368,7 +368,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                             {!isSignUp && loginMode === 'userid' ? (
                                 /* User ID Login Mode */
-                                <div className="flex flex-col gap-3">
+                                <div className="flex flex-col gap-2.5">
                                     <div className="flex flex-col gap-1">
                                         <label className="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">User ID</label>
                                         <div className="flex items-center gap-1 rounded-lg overflow-hidden border border-white/10 bg-black/40">
@@ -377,7 +377,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                                 type="text"
                                                 value={form.username}
                                                 onChange={(e) => setForm({ ...form, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
-                                                className="flex-1 bg-transparent text-sm text-white p-2.5 focus:outline-none font-mono"
+                                                className="flex-1 bg-transparent text-sm text-white p-2 focus:outline-none font-mono"
                                                 placeholder="my_username"
                                                 autoComplete="off"
                                             />
@@ -389,21 +389,21 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                             type="password"
                                             value={form.password}
                                             onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                            className="rounded-lg p-3 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                                            className="rounded-lg p-2 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
                                             placeholder="••••••••"
                                             autoComplete="new-password"
                                         />
                                     </div>
                                 </div>
                             ) : (
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-2.5">
                                 <div className="flex flex-col gap-1">
                                     <label className="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Email Address</label>
                                     <input
                                         type="email"
                                         value={form.email}
                                         onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                        className="rounded-lg p-3 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                                        className="rounded-lg p-2 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
                                         placeholder="user@knobly.os"
                                         autoComplete="off"
                                     />
@@ -414,7 +414,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                         type="password"
                                         value={form.password}
                                         onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                        className="rounded-lg p-3 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                                        className="rounded-lg p-2 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
                                         placeholder="••••••••"
                                         autoComplete="new-password"
                                     />
@@ -425,12 +425,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <button
                                 onClick={!isSignUp && loginMode === 'userid' ? handleUserIdLogin : handleSubmit}
                                 disabled={loading}
-                                className="mt-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-3 rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="mt-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-2.5 rounded-xl text-sm hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? 'PROCESSING...' : isSignUp ? 'REGISTER' : loginMode === 'userid' ? 'LOGIN WITH USER ID' : 'AUTHENTICATE'}
                             </button>
 
-                            <div className="flex items-center gap-3 my-2">
+                            <div className="flex items-center gap-3 my-1">
                                 <div className="h-[1px] bg-white/10 flex-1" />
                                 <span className="text-[10px] text-gray-500 uppercase">OR</span>
                                 <div className="h-[1px] bg-white/10 flex-1" />
@@ -439,12 +439,18 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <button
                                 onClick={handleGoogleLogin}
                                 disabled={loading}
-                                className="bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                                className="bg-white text-[#3c4043] font-medium py-2.5 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-3 text-sm border border-gray-300 shadow-sm"
                             >
-                                <i className="ph-bold ph-google-logo text-lg" /> Continue with Google
+                                <svg width="18" height="18" viewBox="0 0 48 48">
+                                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                                </svg>
+                                Sign in with Google
                             </button>
 
-                            <div className="text-center mt-2 text-xs text-gray-400">
+                            <div className="text-center text-[11px] text-gray-400">
                                 {isSignUp ? 'Already have an account?' : "Don't have an account?"}
                                 <button
                                     onClick={() => { setIsSignUp(!isSignUp); setError(''); setSuccessMessage(''); }}
@@ -456,7 +462,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                             {!isSignUp && (
                                 <>
-                                <div className="text-center mt-1 text-xs">
+                                <div className="text-center text-[11px]">
                                     <button
                                         onClick={handlePasswordReset}
                                         className="text-gray-500 hover:text-white cursor-pointer underline"
@@ -466,7 +472,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 </div>
                                 {/* Resend verification link for unverified users */}
                                 {error && error.includes('verify') && (
-                                    <div className="text-center mt-1 text-xs">
+                                    <div className="text-center text-[11px]">
                                         <button
                                             onClick={handleResendVerification}
                                             disabled={loading}

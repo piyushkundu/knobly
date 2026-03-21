@@ -5,6 +5,7 @@ import { Terminal, Copy, Trash2, Check, Sparkles, Zap, Lightbulb, Wrench, FileCo
 import { motion } from 'framer-motion';
 import { Button } from './ui/Button';
 import { cn } from '@/lib/python-utils';
+import { Editor } from '@monaco-editor/react';
 
 interface PythonConsoleProps {
   output: string;
@@ -13,6 +14,7 @@ interface PythonConsoleProps {
   onGetAIHelp?: () => void;
   onApplyFix?: (code: string) => void;
   isAILoading?: boolean;
+  theme: 'light' | 'dark';
   helpMode?: 'manual' | 'auto';
   language?: 'en' | 'hi';
   explanation?: {
@@ -45,7 +47,8 @@ export function PythonConsole({
   terminalLines = [],
   waitingForInput = false,
   onPromptSubmit,
-  onLanguageChange
+  onLanguageChange,
+  theme
 }: PythonConsoleProps) {
   const consoleRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -290,11 +293,29 @@ export function PythonConsole({
                       {language === 'hi' ? 'कोड लागू करें' : 'Apply Fix'}
                     </Button>
                   </div>
-                  <pre className="text-xs overflow-x-auto p-2 bg-[var(--bg-secondary)] rounded border border-[var(--border-color)]">
-                    <code className="text-green-400 font-mono">
-                      {explanation.corrected_code}
-                    </code>
-                  </pre>
+                  <div className="h-[200px] w-full rounded-lg overflow-hidden border border-[var(--border-color)]">
+                    <Editor
+                      height="100%"
+                      language="python"
+                      value={explanation.corrected_code}
+                      theme={theme === 'light' ? 'python-lab-light' : 'python-lab-dark'}
+                      options={{
+                        readOnly: true,
+                        minimap: { enabled: false },
+                        lineNumbers: 'on',
+                        scrollBeyondLastLine: false,
+                        wordWrap: 'on',
+                        padding: { top: 12, bottom: 12 },
+                        fontFamily: "'Fira Code', 'JetBrains Mono', 'Consolas', monospace",
+                        fontSize: 13,
+                        renderLineHighlight: 'none',
+                        scrollbar: {
+                          vertical: 'hidden',
+                          horizontal: 'hidden'
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
               </motion.div>
             )}
