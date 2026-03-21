@@ -296,7 +296,7 @@ export function SavedCodesModal({
             className="fixed inset-2 sm:inset-3 md:inset-auto md:top-[2%] md:left-1/2 md:-translate-x-1/2 md:w-[940px] md:max-h-[96vh] bg-white rounded-2xl z-[201] overflow-hidden shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] flex flex-col border border-gray-200/80"
           >
             {/* ═══════ HEADER ═══════ */}
-            <div className="flex items-center justify-between px-3 md:px-5 h-[56px] md:h-auto md:py-3.5 border-b border-gray-100 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 shrink-0 relative overflow-hidden" onClick={() => { setActiveMenu(null); setFolderContextMenu(null); }}>
+            <div className="flex items-center justify-between px-[12px] md:px-5 h-[56px] md:h-auto md:py-3.5 border-b border-gray-100 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 shrink-0 relative overflow-hidden" onClick={() => { setActiveMenu(null); setFolderContextMenu(null); }}>
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.05] pointer-events-none" />
               
               <div className="flex items-center gap-2.5 md:gap-3 relative z-10">
@@ -491,7 +491,7 @@ export function SavedCodesModal({
                   </AnimatePresence>
 
                   {/* Search and Tag Filters */}
-                  <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="flex flex-col sm:flex-row gap-[8px] mb-[10px]">
                     <div className="relative flex-1 group w-full">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
                       <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search snippets, tags, code..."
@@ -511,7 +511,7 @@ export function SavedCodesModal({
                 </div>
 
                 {/* ═══════ CODE LIST (WITH DRAG & DROP) ═══════ */}
-                <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-3 sm:py-4 space-y-4 sm:space-y-5 pb-24">
+                <div className="flex-1 overflow-y-auto px-[12px] md:px-5 py-[12px] md:py-4 space-y-[12px] md:space-y-5 pb-[100px] snap-y snap-mandatory">
                   {isLoading ? (
                     <div className="flex flex-col items-center justify-center h-40 gap-3">
                       <div className="w-8 h-8 border-[3px] border-indigo-500 border-t-transparent rounded-full animate-spin" />
@@ -534,7 +534,7 @@ export function SavedCodesModal({
                         draggable
                         onDragStart={(e) => onDragStartCode(e as any, item.id)}
                         initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(idx * 0.04, 0.4), ease: 'easeOut' }}
-                        className="group relative rounded-[16px] border border-gray-200/80 bg-white/90 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(0,0,0,0.12)] hover:border-indigo-300"
+                        className="group relative rounded-[16px] border border-gray-200/80 bg-white/90 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(0,0,0,0.12)] hover:border-indigo-300 snap-start"
                         style={{ backdropFilter: 'blur(10px)' }}
                         onTouchStart={() => handleTouchStart(item.id)} onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchEnd}
                       >
@@ -556,7 +556,7 @@ export function SavedCodesModal({
                                   <button onClick={() => handleSaveEdit(item.id)} className="p-1 rounded-lg bg-indigo-500 text-white shadow-md"><Check className="w-3.5 h-3.5" /></button>
                                 </div>
                               ) : (
-                                <span className="text-[14px] font-extrabold text-gray-800 truncate">{item.title}</span>
+                                <span className="text-[15px] leading-[1.5] font-extrabold text-gray-800 truncate">{item.title}</span>
                               )}
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
@@ -611,16 +611,16 @@ export function SavedCodesModal({
                           </div>
 
                           {/* Primary Actions (Run, Edit, Copy) */}
-                          <div className="flex items-center gap-[10px] mt-1 flex-wrap">
+                          <div className="flex items-center gap-[10px] sm:gap-2 mt-2 sm:mt-4 flex-nowrap sm:flex-wrap">
                             {onRun && (
-                              <button onClick={() => { onSelect(item.code); onRun(item.code); onClose(); }} className="w-full sm:w-auto flex justify-center items-center gap-1.5 px-6 sm:px-4 py-3 sm:py-2 min-h-[44px] sm:min-h-[auto] rounded-xl sm:rounded-lg text-[14px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-to-br from-[#00c853] to-[#64dd17] text-white shadow-[0_0_15px_rgba(0,200,83,0.5)] hover:shadow-[0_0_20px_rgba(0,200,83,0.7)] active:scale-95 transition-all">
+                              <button onClick={() => { onSelect(item.code); onRun(item.code); onClose(); }} className="flex-1 sm:flex-none flex justify-center items-center gap-1.5 px-3 sm:px-4 py-2 h-[40px] sm:h-auto rounded-xl sm:rounded-lg text-[13px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-to-br from-[#00c853] to-[#64dd17] text-white shadow-[0_0_15px_rgba(0,200,83,0.5)] active:scale-95 transition-all">
                                 <Play className="w-4 h-4 sm:w-3.5 sm:h-3.5 fill-current" /> RUN
                               </button>
                             )}
-                            <button onClick={() => { onSelect(item.code); onClose(); }} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 sm:px-3 py-3 sm:py-2 min-h-[44px] sm:min-h-[auto] rounded-xl sm:rounded-lg text-[11px] sm:text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 hover:shadow-md transition-all active:scale-95">
+                            <button onClick={() => { onSelect(item.code); onClose(); }} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-3 py-2 h-[40px] sm:h-auto rounded-xl sm:rounded-lg text-[12px] sm:text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 transition-all active:scale-95">
                               <Pencil className="w-3.5 h-3.5" /> EDIT
                             </button>
-                            <button onClick={e => { e.stopPropagation(); handleCopy(item.id, item.code); }} className={`flex items-center justify-center gap-1.5 px-4 sm:px-3 py-3 sm:py-2 min-h-[44px] sm:min-h-[auto] rounded-xl sm:rounded-lg text-[11px] sm:text-[10px] font-black uppercase tracking-wider border hover:shadow-md transition-all active:scale-95 ${copiedId === item.id ? 'bg-green-50 text-green-600 border-green-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
+                            <button onClick={e => { e.stopPropagation(); handleCopy(item.id, item.code); }} className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 h-[40px] sm:h-auto rounded-xl sm:rounded-lg text-[12px] sm:text-[10px] font-black uppercase tracking-wider border transition-all active:scale-95 ${copiedId === item.id ? 'bg-green-50 text-green-600 border-green-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
                               {copiedId === item.id ? <><Check className="w-3.5 h-3.5" /> COPIED</> : <><Copy className="w-3.5 h-3.5" /> COPY</>}
                             </button>
                             
@@ -668,7 +668,7 @@ export function SavedCodesModal({
                   {/* Floating Action Button (Mobile) */}
                   <button 
                     onClick={() => setShowSaveInput(true)} 
-                    className="md:hidden fixed bottom-[20px] right-[16px] z-[90] w-[52px] h-[52px] bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-[0_10px_25px_rgba(99,102,241,0.4)] active:scale-90 transition-all border border-white/20"
+                    className="md:hidden fixed bottom-[16px] right-[16px] z-[90] w-[52px] h-[52px] bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-[0_10px_25px_rgba(99,102,241,0.4)] active:scale-90 transition-all border border-white/20"
                   >
                     <Plus className="w-7 h-7 stroke-[2.5]" />
                   </button>
