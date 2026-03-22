@@ -95,13 +95,13 @@ export default function HomePage() {
   const [booted, setBooted] = useState(false);
   const [bootChecked, setBootChecked] = useState(false);
   useEffect(() => {
-    if (localStorage.getItem('knobly_booted') === 'true') {
+    if (sessionStorage.getItem('knobly_booted') === 'true') {
       setBooted(true);
     }
     setBootChecked(true);
   }, []);
   const handleBootComplete = useCallback(() => {
-    localStorage.setItem('knobly_booted', 'true');
+    sessionStorage.setItem('knobly_booted', 'true');
     setBooted(true);
   }, []);
 
