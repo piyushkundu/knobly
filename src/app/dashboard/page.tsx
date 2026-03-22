@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import LoginModal from '@/components/auth/LoginModal';
 import { useDashboard } from './useDashboard';
@@ -16,6 +17,7 @@ import {
 
 
 export default function DashboardPage() {
+    const router = useRouter();
     const d = useDashboard();
     const [activeSubject, setActiveSubject] = useState('all');
     const points = d.totalPoints;
@@ -39,7 +41,7 @@ export default function DashboardPage() {
     if (!authLoading && !d.user) {
         return (
             <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #6366f1 100%)' }}>
-                <LoginModal isOpen={true} onClose={() => { }} />
+                <LoginModal isOpen={true} onClose={() => router.push('/')} />
             </div>
         );
     }

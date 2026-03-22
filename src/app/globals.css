@@ -989,33 +989,38 @@ textarea::placeholder {
 
 /* ──── Wallpaper Thumbnails ──── */
 .wallpaper-thumb-default {
-  background-image:
-    radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.5) 0, transparent 60%),
-    radial-gradient(circle at 90% 100%, rgba(139, 92, 246, 0.6) 0, transparent 60%);
+  background:
+    radial-gradient(circle at 15% 30%, #38bdf8 0%, transparent 55%),
+    radial-gradient(circle at 85% 70%, #8b5cf6 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, #1e3a5f 0%, #0f172a 100%) !important;
 }
 
 .wallpaper-thumb-ocean {
-  background-image:
-    radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.7) 0, transparent 60%),
-    radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.7) 0, transparent 60%);
+  background:
+    radial-gradient(circle at 10% 20%, #38bdf8 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, #3b82f6 0%, transparent 50%),
+    linear-gradient(135deg, #0c4a6e 0%, #1e40af 100%) !important;
 }
 
 .wallpaper-thumb-purple {
-  background-image:
-    radial-gradient(circle at 10% 0%, rgba(244, 114, 182, 0.7) 0, transparent 60%),
-    radial-gradient(circle at 90% 100%, rgba(129, 140, 248, 0.7) 0, transparent 60%);
+  background:
+    radial-gradient(circle at 15% 25%, #f472b6 0%, transparent 55%),
+    radial-gradient(circle at 85% 75%, #818cf8 0%, transparent 55%),
+    linear-gradient(135deg, #581c87 0%, #312e81 100%) !important;
 }
 
 .wallpaper-thumb-sunset {
-  background-image:
-    radial-gradient(circle at 0% 0%, rgba(251, 113, 133, 0.7) 0, transparent 60%),
-    radial-gradient(circle at 100% 100%, rgba(253, 186, 116, 0.8) 0, transparent 60%);
+  background:
+    radial-gradient(circle at 10% 25%, #fb7185 0%, transparent 55%),
+    radial-gradient(circle at 90% 75%, #fdba74 0%, transparent 55%),
+    linear-gradient(135deg, #9f1239 0%, #c2410c 100%) !important;
 }
 
 .wallpaper-thumb-matrix {
-  background-image:
-    radial-gradient(circle at 10% 0%, rgba(34, 197, 94, 0.8) 0, transparent 60%),
-    radial-gradient(circle at 90% 100%, rgba(45, 212, 191, 0.8) 0, transparent 60%);
+  background:
+    radial-gradient(circle at 15% 30%, #22c55e 0%, transparent 55%),
+    radial-gradient(circle at 85% 70%, #2dd4bf 0%, transparent 55%),
+    linear-gradient(135deg, #064e3b 0%, #065f46 100%) !important;
 }
 
 /* ──── Settings Tab ──── */
@@ -1259,6 +1264,44 @@ body.light-mode .settings-tab-btn-active {
   color: #0f172a !important;
   border-color: #0ea5e9 !important;
   background: #e0f2fe !important;
+}
+
+/* ── LIGHT MODE WALLPAPER THUMB PROTECTION ── */
+body.light-mode [data-wallpaper-thumb] {
+  background-color: #0f172a !important;
+}
+body.light-mode .wallpaper-thumb-default {
+  background:
+    radial-gradient(circle at 15% 30%, #38bdf8 0%, transparent 55%),
+    radial-gradient(circle at 85% 70%, #8b5cf6 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, #1e3a5f 0%, #0f172a 100%) !important;
+}
+body.light-mode .wallpaper-thumb-ocean {
+  background:
+    radial-gradient(circle at 10% 20%, #38bdf8 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, #3b82f6 0%, transparent 50%),
+    linear-gradient(135deg, #0c4a6e 0%, #1e40af 100%) !important;
+}
+body.light-mode .wallpaper-thumb-purple {
+  background:
+    radial-gradient(circle at 15% 25%, #f472b6 0%, transparent 55%),
+    radial-gradient(circle at 85% 75%, #818cf8 0%, transparent 55%),
+    linear-gradient(135deg, #581c87 0%, #312e81 100%) !important;
+}
+body.light-mode .wallpaper-thumb-sunset {
+  background:
+    radial-gradient(circle at 10% 25%, #fb7185 0%, transparent 55%),
+    radial-gradient(circle at 90% 75%, #fdba74 0%, transparent 55%),
+    linear-gradient(135deg, #9f1239 0%, #c2410c 100%) !important;
+}
+body.light-mode .wallpaper-thumb-matrix {
+  background:
+    radial-gradient(circle at 15% 30%, #22c55e 0%, transparent 55%),
+    radial-gradient(circle at 85% 70%, #2dd4bf 0%, transparent 55%),
+    linear-gradient(135deg, #064e3b 0%, #065f46 100%) !important;
+}
+body.light-mode [data-wallpaper-thumb] span {
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 /* ── LIGHT MODE APPS FILTER ── */

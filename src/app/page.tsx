@@ -18,19 +18,18 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
   Main: [
     { id: 'security', name: 'Security', type: 'Cyber', link: '/cybersecurity', icon: 'ph-bold ph-shield-check', color: 'text-emerald-400', borderClass: 'border-emerald', category: 'Main' },
     { id: 'aiweb', name: 'AI Web', type: 'Future', link: '/ai', icon: 'ph-bold ph-robot', color: 'text-purple-400', borderClass: 'border-purple', category: 'Main' },
-    { id: 'html', name: 'HTML', type: 'Structure', link: '/html', icon: 'ti ti-brand-html5', color: 'text-orange-500', borderClass: 'border-orange', category: 'Main' },
-    { id: 'css', name: 'CSS', type: 'Style', link: '/web-design/css', icon: 'ti ti-brand-css3', color: 'text-blue-500', borderClass: 'border-blue', category: 'Main' },
-    { id: 'w3css', name: 'W3.CSS', type: 'Framework', link: '/web-design/w3css', icon: 'ph-bold ph-layout', color: 'text-green-400', borderClass: 'border-green', category: 'Main' },
-    { id: 'js', name: 'JS', type: 'Scripting', link: '/web-design/javascript', icon: 'ti ti-brand-javascript', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'Main' },
     { id: 'youtube', name: 'YouTube', type: 'Channel', link: 'https://youtube.com/@knobly1', icon: 'ph-bold ph-youtube-logo', color: 'text-red-500', borderClass: 'border-red', category: 'Main' },
-    { id: 'notes', name: 'Notes', type: 'Utility', link: '/notes', icon: 'ti ti-notes', color: 'text-cyan-300', borderClass: 'border-cyan', category: 'Main' },
     { id: 'python-lab', name: 'Python Interpreter', type: 'With AI', link: '/python-lab', icon: 'ph-bold ph-terminal-window', color: 'text-indigo-400', borderClass: 'border-indigo', category: 'Main' },
     { id: 'c-lab', name: 'C Compiler', type: 'With AI', link: '/c-lab', icon: 'ph-bold ph-terminal-window', color: 'text-green-500', borderClass: 'border-green', category: 'Main' },
     { id: 'test-journey', name: 'Test Journey', type: 'Dashboard', link: '/dashboard', icon: 'ph-bold ph-trophy', color: 'text-amber-400', borderClass: 'border-amber', category: 'Main' },
   ],
   OLevel: [
     { id: 'syllabus', name: 'Syllabus', type: 'Info', link: '/syllabus', icon: 'ph-bold ph-list-bullets', color: 'text-gray-300', borderClass: 'border-slate', category: 'OLevel' },
-    { id: 'olevel-notes', name: 'Notes', type: 'Reading', link: '/notes', icon: 'ph-bold ph-book-open-text', color: 'text-blue-400', borderClass: 'border-blue', category: 'OLevel' },
+    { id: 'olevel-notes', name: 'IT Notes', type: 'Reading', link: '/notes', icon: 'ph-bold ph-book-open-text', color: 'text-blue-400', borderClass: 'border-blue', category: 'OLevel' },
+    { id: 'html', name: 'HTML', type: 'Structure', link: '/html', icon: 'ti ti-brand-html5', color: 'text-orange-500', borderClass: 'border-orange', category: 'OLevel' },
+    { id: 'css', name: 'CSS', type: 'Style', link: '/web-design/css', icon: 'ti ti-brand-css3', color: 'text-blue-500', borderClass: 'border-blue', category: 'OLevel' },
+    { id: 'w3css', name: 'W3.CSS', type: 'Framework', link: '/web-design/w3css', icon: 'ph-bold ph-layout', color: 'text-green-400', borderClass: 'border-green', category: 'OLevel' },
+    { id: 'js', name: 'JS', type: 'Scripting', link: '/web-design/javascript', icon: 'ti ti-brand-javascript', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'OLevel' },
     { id: 'it-tools', name: 'IT Tools', type: 'Module 1', link: '/ccc/tests', icon: 'ph-bold ph-desktop', color: 'text-sky-400', borderClass: 'border-sky', category: 'OLevel' },
     { id: 'iot', name: 'IoT', type: 'Module 4', link: '/iot', icon: 'ph-bold ph-wifi-high', color: 'text-orange-400', borderClass: 'border-orange', category: 'OLevel' },
     { id: 'python', name: 'Python', type: 'Module 3', link: '/python', icon: 'ti ti-brand-python', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'OLevel' },
@@ -38,8 +37,7 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
     { id: 'webdes', name: 'Web Des.', type: 'Course', link: '/web-design', icon: 'ph-bold ph-paint-brush', color: 'text-pink-400', borderClass: 'border-pink', category: 'OLevel' },
   ],
   CCC: [
-    { id: 'ccc-test', name: 'CCC Test', type: 'Cert', link: '/ccc/tests', icon: 'ph-bold ph-certificate', color: 'text-yellow-500', borderClass: 'border-yellow', category: 'CCC' },
-    { id: 'live-test', name: 'Live Test', type: 'Exam', link: '/dashboard', icon: 'ph-bold ph-broadcast', color: 'text-red-500', borderClass: 'border-red', category: 'CCC' },
+    { id: 'notes', name: 'CCC Notes', type: 'Notes', link: '/notes', icon: 'ti ti-notes', color: 'text-cyan-300', borderClass: 'border-cyan', category: 'Main' },
     { id: 'mock-test', name: 'Mock Test', type: 'Practice', link: '/dashboard', icon: 'ph-bold ph-exam', color: 'text-blue-400', borderClass: 'border-blue', category: 'CCC' },
     { id: 'shortcuts', name: 'Shortcuts', type: 'Utility', link: '/shortcuts', icon: 'ph-bold ph-keyboard', color: 'text-slate-300', borderClass: 'border-slate', category: 'CCC' },
   ],
@@ -48,11 +46,11 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
 const TABS = ['Main', 'OLevel', 'CCC', 'Favourites'] as const;
 
 const WALLPAPER_OPTIONS = [
-  { id: 'default', label: 'Core', thumbClass: 'wallpaper-thumb-default' },
-  { id: 'ocean', label: 'Ocean', thumbClass: 'wallpaper-thumb-ocean' },
-  { id: 'purple', label: 'Neon', thumbClass: 'wallpaper-thumb-purple' },
-  { id: 'sunset', label: 'Sunset', thumbClass: 'wallpaper-thumb-sunset' },
-  { id: 'matrix', label: 'Matrix', thumbClass: 'wallpaper-thumb-matrix' },
+  { id: 'default', label: 'Core', thumbClass: 'wallpaper-thumb-default', thumbBg: 'radial-gradient(circle at 15% 30%, #38bdf8 0%, transparent 55%), radial-gradient(circle at 85% 70%, #8b5cf6 0%, transparent 55%), radial-gradient(circle at 50% 50%, #1e3a5f 0%, #0f172a 100%)' },
+  { id: 'ocean', label: 'Ocean', thumbClass: 'wallpaper-thumb-ocean', thumbBg: 'radial-gradient(circle at 10% 20%, #38bdf8 0%, transparent 50%), radial-gradient(circle at 90% 80%, #3b82f6 0%, transparent 50%), linear-gradient(135deg, #0c4a6e 0%, #1e40af 100%)' },
+  { id: 'purple', label: 'Neon', thumbClass: 'wallpaper-thumb-purple', thumbBg: 'radial-gradient(circle at 15% 25%, #f472b6 0%, transparent 55%), radial-gradient(circle at 85% 75%, #818cf8 0%, transparent 55%), linear-gradient(135deg, #581c87 0%, #312e81 100%)' },
+  { id: 'sunset', label: 'Sunset', thumbClass: 'wallpaper-thumb-sunset', thumbBg: 'radial-gradient(circle at 10% 25%, #fb7185 0%, transparent 55%), radial-gradient(circle at 90% 75%, #fdba74 0%, transparent 55%), linear-gradient(135deg, #9f1239 0%, #c2410c 100%)' },
+  { id: 'matrix', label: 'Matrix', thumbClass: 'wallpaper-thumb-matrix', thumbBg: 'radial-gradient(circle at 15% 30%, #22c55e 0%, transparent 55%), radial-gradient(circle at 85% 70%, #2dd4bf 0%, transparent 55%), linear-gradient(135deg, #064e3b 0%, #065f46 100%)' },
 ];
 
 const VIDEOS = [
@@ -155,7 +153,7 @@ export default function HomePage() {
   // Check if user already has a User ID
   useEffect(() => {
     if (user) {
-      getUserIdForCurrentUser().then(id => setExistingUserId(id)).catch(() => {});
+      getUserIdForCurrentUser().then(id => setExistingUserId(id)).catch(() => { });
     } else {
       setExistingUserId(null);
     }
@@ -901,11 +899,10 @@ export default function HomePage() {
                                 />
                               </div>
                               {userIdMsg && (
-                                <div className={`text-[10px] p-2 rounded-lg border ${
-                                  userIdStatus === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                                <div className={`text-[10px] p-2 rounded-lg border ${userIdStatus === 'error' ? 'bg-red-500/10 border-red-500/30 text-red-400'
                                   : userIdStatus === 'success' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                                  : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
-                                }`}>{userIdMsg}</div>
+                                    : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                                  }`}>{userIdMsg}</div>
                               )}
                               <button
                                 onClick={async () => {
@@ -944,8 +941,10 @@ export default function HomePage() {
                     <div className="flex items-center gap-3 scroll-x-soft pt-1 pb-1">
                       {WALLPAPER_OPTIONS.map((wp) => (
                         <button key={wp.id} onClick={() => setWallpaper(wp.id)}
-                          className={`relative flex-shrink-0 w-20 h-12 rounded-xl overflow-hidden border transition-all active-press bg-slate-900/80 ${wp.thumbClass} ${wallpaper === wp.id ? 'border-cyan-400 shadow-[0_0_14px_rgba(34,211,238,0.6)]' : 'border-white/10 hover:border-cyan-300/70'}`}>
-                          <span className="absolute bottom-1 left-1 text-[8px] font-semibold uppercase tracking-[0.16em] text-white/80 drop-shadow">{wp.label}</span>
+                          data-wallpaper-thumb
+                          className={`relative flex-shrink-0 w-20 h-12 rounded-xl overflow-hidden border transition-all active-press ${wallpaper === wp.id ? 'border-cyan-400 shadow-[0_0_14px_rgba(34,211,238,0.6)]' : ''}`}
+                          style={{ background: wp.thumbBg, borderColor: wallpaper === wp.id ? undefined : 'rgba(255,255,255,0.1)' }}>
+                          <span className="absolute bottom-1 left-1 text-[8px] font-semibold uppercase tracking-[0.16em] drop-shadow" style={{ color: 'rgba(255,255,255,0.9)' }}>{wp.label}</span>
                         </button>
                       ))}
                     </div>

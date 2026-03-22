@@ -43,11 +43,15 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             setError('');
             setSuccessMessage('');
             setIsSignUp(false);
+            setShowForgotPassword(false);
+            setForgotEmail('');
             setLoginMode('email');
             setLoading(false);
             setShowVerificationScreen(false);
         }
     }, [isOpen]);
+    const [showForgotPassword, setShowForgotPassword] = useState(false);
+    const [forgotEmail, setForgotEmail] = useState('');
     const [form, setForm] = useState({
         fullName: '',
         email: '',
@@ -161,17 +165,23 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     };
 
     const handlePasswordReset = async () => {
-        if (!form.email) {
-            setError('Please enter your email first.');
+        if (!forgotEmail) {
+            setError('Please enter your email.');
             return;
         }
         setLoading(true);
         setError('');
         setSuccessMessage('');
         try {
-            await resetPassword(form.email);
-            setSuccessMessage('✅ Password reset link has been sent to your email! Please check your inbox.');
+            await resetPassword(forgotEmail);
+            setSuccessMessage('✅ Password reset link sent! Redirecting to login in 5 seconds...');
             setError('');
+            // Auto-redirect back to login after 5 seconds
+            setTimeout(() => {
+                setShowForgotPassword(false);
+                setError('');
+                setSuccessMessage('');
+            }, 5000);
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'An error occurred';
             if (message.includes('auth/user-not-found')) {
@@ -258,9 +268,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 className="text-lg font-bold text-white tracking-widest"
                                 style={{ fontFamily: 'var(--font-gaming)' }}
                             >
-                                {isSignUp ? 'CREATE ACCOUNT' : 'SYSTEM LOGIN'}
+                                {showForgotPassword ? 'RESET PASSWORD' : isSignUp ? 'CREATE ACCOUNT' : 'SYSTEM LOGIN'}
                             </h2>
-                            <button onClick={onClose} className="text-gray-400 hover:text-white">
+                            <button onClick={showForgotPassword ? () => { setShowForgotPassword(false); setError(''); setSuccessMessage(''); } : onClose} className="text-gray-400 hover:text-white">
                                 <X size={18} />
                             </button>
                         </div>
@@ -277,8 +287,45 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 </div>
                             )}
 
-                            {/* Email Verification Screen */}
-                            {showVerificationScreen ? (
+                            {/* Forgot Password Screen */}
+                            {showForgotPassword ? (
+                                <>
+                                    <p className="text-gray-400 text-[11px] leading-relaxed">
+                                        Enter your registered email and we&apos;ll send you a link to reset your password.
+                                    </p>
+
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Email Address</label>
+                                        <input
+                                            type="email"
+                                            value={forgotEmail}
+                                            onChange={(e) => setForgotEmail(e.target.value)}
+                                            className="rounded-lg p-2 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
+                                            placeholder="user@knobly.os"
+                                            autoComplete="off"
+                                            autoFocus
+                                        />
+                                    </div>
+
+                                    <button
+                                        onClick={handlePasswordReset}
+                                        disabled={loading}
+                                        className="mt-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-2.5 rounded-xl text-sm hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {loading ? 'SENDING...' : 'SEND RESET LINK'}
+                                    </button>
+
+                                    <div className="text-center text-[11px]">
+                                        <button
+                                            onClick={() => { setShowForgotPassword(false); setError(''); setSuccessMessage(''); }}
+                                            className="text-gray-500 hover:text-white cursor-pointer underline"
+                                        >
+                                            ← Back to Login
+                                        </button>
+                                    </div>
+                                </>
+                            ) : showVerificationScreen ? (
+                            /* Email Verification Screen */
                                 <div className="flex flex-col items-center gap-3 py-3">
                                     <div className="w-14 h-14 rounded-full bg-cyan-500/20 flex items-center justify-center">
                                         <span className="text-2xl">📧</span>
@@ -464,7 +511,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 <>
                                 <div className="text-center text-[11px]">
                                     <button
-                                        onClick={handlePasswordReset}
+                                        onClick={() => { setShowForgotPassword(true); setError(''); setSuccessMessage(''); setForgotEmail(form.email || ''); }}
                                         className="text-gray-500 hover:text-white cursor-pointer underline"
                                     >
                                         Forgot Password?
@@ -487,6 +534,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             </>
                             )}
                         </div>
+
                     </motion.div>
                 </div>
             )}
