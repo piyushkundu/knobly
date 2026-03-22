@@ -17,19 +17,16 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
     const [startLoader, setStartLoader] = useState(false);
 
     /* =========================
-       WEBSITE THEME DETECTION
+       THEME SYNC
     ========================= */
 
     useEffect(() => {
-
         const checkTheme = () => {
-            const isDarkMode = document.documentElement.classList.contains("dark");
-            setIsDark(isDarkMode);
+            setIsDark(document.documentElement.classList.contains("dark"));
         };
 
         checkTheme();
 
-        // observe changes (important 🔥)
         const observer = new MutationObserver(checkTheme);
 
         observer.observe(document.documentElement, {
@@ -38,7 +35,6 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
         });
 
         return () => observer.disconnect();
-
     }, []);
 
     /* =========================
@@ -57,10 +53,13 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
 
                             if (i === letters.length - 1) {
                                 setTextDone(true);
-                                setStartLoader(true);
+
+                                setTimeout(() => {
+                                    setStartLoader(true);
+                                }, 1000); // pause
                             }
 
-                        }, i * 170)
+                        }, i * 150)
                     );
                 });
             }, 300)
@@ -70,7 +69,7 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
     }, []);
 
     /* =========================
-       FAST LOADER
+       SMOOTH LOADER
     ========================= */
 
     useEffect(() => {
@@ -79,10 +78,7 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
         let value = 0;
 
         const interval = setInterval(() => {
-
-            if (value < 60) value += 6;
-            else if (value < 90) value += 3;
-            else value += 1.5;
+            value += 2.2;
 
             if (value > 100) value = 100;
 
@@ -94,47 +90,47 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
                 setTimeout(() => {
                     setExit(true);
                     setTimeout(onComplete, 700);
-                }, 300);
+                }, 400);
             }
 
-        }, 25);
+        }, 30);
 
         return () => clearInterval(interval);
     }, [startLoader, onComplete]);
 
     /* =========================
-       COLORS (SYNCED)
+       COLORS
     ========================= */
 
-    const bgStyle = {
-        backgroundColor: isDark ? "#000000" : "#ffffff",
-    };
-
-    const textColor = isDark ? "#ffffff" : "#000000";
-    const barBg = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
+    const bg = isDark ? "#000000" : "#ffffff";
+    const text = isDark ? "#ffffff" : "#000000";
+    const barBg = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
     const barFill = isDark ? "#ffffff" : "#000000";
 
     return (
         <motion.div
             className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
-            style={bgStyle}
+            style={{ backgroundColor: bg }}
             animate={
                 exit
                     ? { opacity: 0, scale: 1.02, filter: "blur(8px)" }
                     : { opacity: 1 }
             }
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1 }}
         >
 
-            {/* TEXT */}
+            {/* =========================
+         TEXT (BOLDER)
+      ========================= */}
+
             <motion.div
-                className="flex mb-16"
+                className="flex mb-14"
                 animate={
                     textDone
-                        ? { letterSpacing: "0.4em" }
-                        : { letterSpacing: "0.25em" }
+                        ? { letterSpacing: "0.18em", scale: 1.02 }
+                        : { letterSpacing: "0.12em", scale: 1 }
                 }
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.6 }}
             >
 
                 {letters.map((letter, i) => {
@@ -144,26 +140,14 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
                         <motion.span
                             key={i}
                             style={{
-                                color: textColor,
+                                color: text,
                                 fontSize: "clamp(3rem, 10vw, 6rem)",
                             }}
-                            className="font-medium"
-                            initial={{
-                                opacity: 0,
-                                y: 50,
-                                scale: 0.9,
-                            }}
-                            animate={
-                                visible
-                                    ? {
-                                        opacity: 1,
-                                        y: 0,
-                                        scale: 1,
-                                    }
-                                    : {}
-                            }
+                            className="font-bold" // 🔥 bold
+                            initial={{ opacity: 0, y: 40 }}
+                            animate={visible ? { opacity: 1, y: 0 } : {}}
                             transition={{
-                                duration: 0.7,
+                                duration: 0.6,
                                 ease: [0.16, 1, 0.3, 1],
                             }}
                         >
@@ -174,23 +158,38 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
 
             </motion.div>
 
-            {/* LOADER */}
+            {/* =========================
+         LOADER (STYLISH)
+      ========================= */}
+
             {startLoader && (
                 <>
                     <div
-                        className="relative w-60 h-[1.5px] overflow-hidden"
+                        className="relative w-64 h-[4px] rounded-full overflow-hidden"
                         style={{ backgroundColor: barBg }}
                     >
+
+                        {/* glow background */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-20" />
+
+                        {/* progress fill */}
                         <motion.div
-                            className="h-full"
-                            style={{ backgroundColor: barFill }}
+                            className="h-full relative"
+                            style={{
+                                background: `linear-gradient(90deg, ${barFill}, ${barFill})`,
+                                boxShadow: isDark
+                                    ? "0 0 12px rgba(255,255,255,0.4)"
+                                    : "0 0 8px rgba(0,0,0,0.2)",
+                            }}
                             animate={{ width: `${progress}%` }}
+                            transition={{ ease: "linear" }}
                         />
+
                     </div>
 
                     <motion.div
-                        className="mt-6 text-[10px] font-mono tracking-[0.3em]"
-                        style={{ color: textColor + "66" }}
+                        className="mt-5 text-[10px] font-mono tracking-[0.25em]"
+                        style={{ color: text + "66" }}
                         animate={{ opacity: [0.3, 1, 0.3] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
                     >
