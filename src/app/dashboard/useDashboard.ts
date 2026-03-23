@@ -19,7 +19,7 @@ export interface ExamTest {
 export interface LeaderRow { id: string; user_id: string; full_name: string; current_level: number; total_xp: number; track_rank: number; exam_track: string;[k: string]: any; }
 export interface Badge { id: string; badge_name: string; badge_icon?: string; description?: string; xp_reward?: number;[k: string]: any; }
 export interface Attempt {
-    id: string; test_title: string; total_marks: number; durationLabel: string;
+    id: string; test_id?: string; test_title: string; total_marks: number; durationLabel: string;
     status: string; score: number; accuracy: number; submitted_at?: string; started_at?: string;
 }
 export interface Stats { testsCompleted: number; avgScore: number; avgAccuracy: number; totalCorrect: number; totalWrong: number; }
@@ -306,7 +306,7 @@ export function useDashboard() {
             const hist = recentAttempts.map((row: any) => {
                 const t = testMap[row.test_id] || { title: 'Unknown Test' };
                 return {
-                    id: row.id, test_title: t.title, total_marks: t.total_marks || t.total_points || row.score || 0,
+                    id: row.id, test_id: row.test_id, test_title: t.title, total_marks: t.total_marks || t.total_points || row.score || 0,
                     durationLabel: t.duration_minutes ? `${t.duration_minutes} min` : '-',
                     status: row.status, score: row.score, accuracy: row.accuracy || 0,
                     submitted_at: row.submitted_at, started_at: row.started_at,
@@ -317,14 +317,42 @@ export function useDashboard() {
             const attemptedIds = new Set<string>();
             attempts.forEach((a: any) => { if (a.test_id && (a.status === 'SUBMITTED' || a.status === 'AUTO_SUBMITTED')) attemptedIds.add(a.test_id); });
             setAttemptedTestIds(attemptedIds);
-            calcStats(hist);
+            // Build full history for stats (unlimited, not just top 20)
+            const allHist = attempts.map((row: any) => {
+                const t = testMap[row.test_id] || { title: 'Unknown Test' };
+                return {
+                    id: row.id, test_id: row.test_id, test_title: t.title, total_marks: t.total_marks || t.total_points || row.score || 0,
+                    durationLabel: t.duration_minutes ? `${t.duration_minutes} min` : '-',
+                    status: row.status, score: row.score, accuracy: row.accuracy || 0,
+                    submitted_at: row.submitted_at, started_at: row.started_at,
+                } as Attempt;
+            });
+            calcStats(allHist);
         } catch (e) { console.error('loadAttempts error:', e); }
     }
 
-    function calcStats(hist: Attempt[]) {
-        if (!hist.length) { setStats({ testsCompleted: 0, avgScore: 0, avgAccuracy: 0, totalCorrect: 0, totalWrong: 0 }); return; }
+    function calcStats(allAttempts: Attempt[]) {
+        if (!allAttempts.length) { setStats({ testsCompleted: 0, avgScore: 0, avgAccuracy: 0, totalCorrect: 0, totalWrong: 0 }); return; }
+        
+        // Find the FIRST attempt for each test_id
+        // Filter only submitted attempts
+        const submitted = allAttempts.filter(a => a.test_id && (a.status === 'SUBMITTED' || a.status === 'AUTO_SUBMITTED'));
+        
+        // Sort chronologically (oldest first) so the first we see is the actual first attempt
+        submitted.sort((a, b) => new Date(a.submitted_at || 0).getTime() - new Date(b.submitted_at || 0).getTime());
+        
+        const firstAttemptsMap = new Map<string, Attempt>();
+        submitted.forEach(r => {
+            if (r.test_id && !firstAttemptsMap.has(r.test_id)) {
+                firstAttemptsMap.set(r.test_id, r);
+            }
+        });
+        
+        const firstAttempts = Array.from(firstAttemptsMap.values());
+        if (!firstAttempts.length) { setStats({ testsCompleted: 0, avgScore: 0, avgAccuracy: 0, totalCorrect: 0, totalWrong: 0 }); return; }
+        
         let totalScorePercent = 0, totalAcc = 0, correct = 0, wrong = 0;
-        hist.forEach(r => {
+        firstAttempts.forEach(r => {
             const totalPts = r.total_marks || 1;
             const scoreVal = r.score || 0;
             // Convert score to percentage of total marks
@@ -336,7 +364,7 @@ export function useDashboard() {
             const c = Math.round((acc / 100) * totalPts);
             correct += c; wrong += Math.max(0, totalPts - c);
         });
-        const n = hist.length;
+        const n = firstAttempts.length;
         setStats({ testsCompleted: n, avgScore: n ? totalScorePercent / n : 0, avgAccuracy: n ? totalAcc / n : 0, totalCorrect: correct, totalWrong: wrong });
     }
 
