@@ -1,5 +1,6 @@
 import { initializeApp, getApps, cert, App } from 'firebase-admin/app';
 import { getAuth, Auth } from 'firebase-admin/auth';
+import { getFirestore, Firestore } from 'firebase-admin/firestore';
 import path from 'path';
 import fs from 'fs';
 
@@ -47,3 +48,4 @@ function getAdminAuth(): Auth {
 
 // Lazy initialization - only init when actually used, not at import time
 export const adminAuth: Auth = getAdminAuth();
+export const adminDb: Firestore = getFirestore(getAdminApp());

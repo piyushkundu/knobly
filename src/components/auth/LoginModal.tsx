@@ -166,15 +166,27 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
     const handlePasswordReset = async () => {
         if (!forgotEmail) {
-            setError('Please enter your email.');
+            setError('Please enter your email or User ID.');
             return;
         }
         setLoading(true);
         setError('');
         setSuccessMessage('');
         try {
-            await resetPassword(forgotEmail);
-            setSuccessMessage('✅ Password reset link sent! Redirecting to login in 5 seconds...');
+            let emailToSend = forgotEmail.trim();
+            
+            // If user entered a User ID (no @ symbol or starts with @), resolve it
+            // User might enter "piyushk" or "@piyushk"
+            const cleanInput = emailToSend.replace(/^@/, '').toLowerCase();
+            if (!cleanInput.includes('@')) {
+                // This looks like a User ID, not an email
+                // We need to look up the associated email from the API
+                // The API will handle the Knobly ID lookup
+                emailToSend = `${cleanInput}@knobly.id`;
+            }
+            
+            await resetPassword(emailToSend);
+            setSuccessMessage('✅ Password reset link sent! Check your email inbox. Redirecting to login in 5 seconds...');
             setError('');
             // Auto-redirect back to login after 5 seconds
             setTimeout(() => {
@@ -184,12 +196,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             }, 5000);
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'An error occurred';
-            if (message.includes('auth/user-not-found')) {
-                setError('No account found with this email.');
+            if (message.includes('auth/user-not-found') || message.includes('No account found')) {
+                setError('No account found. Please check your email or User ID.');
             } else if (message.includes('auth/too-many-requests')) {
                 setError('Too many requests. Please try again later.');
             } else if (message.includes('auth/invalid-email')) {
-                setError('Please enter a valid email address.');
+                setError('Please enter a valid email address or User ID.');
+            } else if (message.includes('Google sign-in')) {
+                setError(message);
             } else {
                 setError(sanitizeError(message));
             }
@@ -291,17 +305,17 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             {showForgotPassword ? (
                                 <>
                                     <p className="text-gray-400 text-[11px] leading-relaxed">
-                                        Enter your registered email and we&apos;ll send you a link to reset your password.
+                                        Enter your registered email or User ID and we&apos;ll send you a link to reset your password.
                                     </p>
 
                                     <div className="flex flex-col gap-1">
-                                        <label className="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Email Address</label>
+                                        <label className="text-[10px] uppercase text-cyan-400 font-bold tracking-wider">Email or User ID</label>
                                         <input
-                                            type="email"
+                                            type="text"
                                             value={forgotEmail}
                                             onChange={(e) => setForgotEmail(e.target.value)}
                                             className="rounded-lg p-2 text-sm focus:border-cyan-400 focus:outline-none bg-black/40 text-white border border-white/10"
-                                            placeholder="user@knobly.os"
+                                            placeholder="email@gmail.com or @username"
                                             autoComplete="off"
                                             autoFocus
                                         />

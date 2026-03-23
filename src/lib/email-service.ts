@@ -159,3 +159,21 @@ export async function sendPasswordResetMail(email: string): Promise<void> {
     html: emailWrapper(buildResetBody(customLink)),
   });
 }
+
+/**
+ * For Knobly ID users (Google sign-in + created User ID):
+ * Generate reset link for @knobly.id virtual email (password provider)
+ * but send the email to user's actual Gmail address.
+ */
+export async function sendPasswordResetMailForKnoblyId(knoblyEmail: string, actualEmail: string): Promise<void> {
+  const firebaseLink = await adminAuth.generatePasswordResetLink(knoblyEmail, { url: APP_URL });
+  const url = new URL(firebaseLink);
+  const oobCode = url.searchParams.get('oobCode') || '';
+  const customLink = APP_URL + '/reset-password?oobCode=' + encodeURIComponent(oobCode);
+  await transporter.sendMail({
+    from: getFromAddress(),
+    to: actualEmail,
+    subject: 'Reset your Knobly User ID password - Knobly Web',
+    html: emailWrapper(buildResetBody(customLink)),
+  });
+}
