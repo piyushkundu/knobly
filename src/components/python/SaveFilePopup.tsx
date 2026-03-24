@@ -6,9 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const DEFAULT_FOLDERS = [
   { name: 'Practice', color: '#3b82f6', icon: '📘' },
-  { name: 'Projects', color: '#8b5cf6', icon: '🚀' },
-  { name: 'School', color: '#f59e0b', icon: '🎓' },
-  { name: 'Experiments', color: '#10b981', icon: '🧪' },
 ];
 
 interface SaveFilePopupProps {
@@ -32,7 +29,21 @@ export function SaveFilePopup({ isOpen, onClose, initialName, onSave, existingFo
   const [customFolders, setCustomFolders] = useState<{ name: string; color: string; icon: string }[]>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('knobly-custom-folders');
-      if (saved) { try { return JSON.parse(saved); } catch { return [...DEFAULT_FOLDERS]; } }
+      if (saved) { 
+        try { 
+          const parsed = JSON.parse(saved); 
+          const version = localStorage.getItem('kb-folder-v');
+          if (!version) {
+            localStorage.setItem('kb-folder-v', '1');
+            const newFolders = parsed.filter((f: any) => !['Projects', 'School', 'Experiments'].includes(f.name));
+            localStorage.setItem('knobly-custom-folders', JSON.stringify(newFolders));
+            return newFolders.length > 0 ? newFolders : [...DEFAULT_FOLDERS];
+          }
+          return parsed;
+        } catch { 
+          return [...DEFAULT_FOLDERS]; 
+        } 
+      }
     }
     return [...DEFAULT_FOLDERS];
   });

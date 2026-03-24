@@ -372,7 +372,7 @@ export function PythonCodeEditor({
                   : 'bg-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-bg)] border-transparent'
               )}
             >
-              <img src="https://img.icons8.com/color/48/python--v1.png" alt="" className="w-[14px] h-[14px] flex-shrink-0" />
+              <img src={tab.name.endsWith('.c') || tab.name.endsWith('.h') ? 'https://img.icons8.com/color/48/c-programming.png' : 'https://img.icons8.com/color/48/python--v1.png'} alt="" className="w-[14px] h-[14px] flex-shrink-0" />
               <span className="truncate font-medium">{tab.name}</span>
               {tab.isDirty && (
                 <div className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" title="Unsaved" />
@@ -499,7 +499,7 @@ export function PythonCodeEditor({
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--bg-primary)]/80 backdrop-blur-sm">
             <div className="flex flex-col items-center gap-3">
               <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-              <span className="text-sm text-[var(--text-muted)]">Loading Python Runtime...</span>
+              <span className="text-sm text-[var(--text-muted)]">{activeFileName?.endsWith('.c') || activeFileName?.endsWith('.h') ? 'Loading C Runtime...' : 'Loading Python Runtime...'}</span>
             </div>
           </div>
         )}
@@ -510,7 +510,8 @@ export function PythonCodeEditor({
         )}>
           <Editor
             height="100%"
-            defaultLanguage="python"
+            defaultLanguage={activeFileName?.endsWith('.c') || activeFileName?.endsWith('.h') ? 'c' : 'python'}
+            language={activeFileName?.endsWith('.c') || activeFileName?.endsWith('.h') ? 'c' : 'python'}
             value={code ?? DEFAULT_CODE}
             onChange={handleChange}
             beforeMount={handleBeforeMount}

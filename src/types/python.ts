@@ -31,6 +31,7 @@ export interface SavedCodeItem {
   folder?: string;
   lastOutput?: string;
   description?: string;
+  language?: 'python' | 'c';
   createdAt: string;
   updatedAt: string;
 }

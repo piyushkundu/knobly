@@ -37,7 +37,7 @@ export function useSavedCodes() {
     loadCodes();
   }, [loadCodes]);
 
-  const saveCode = useCallback(async (title: string, code: string, tags?: string[], folder?: string, lastOutput?: string, description?: string): Promise<SavedCodeItem | null> => {
+  const saveCode = useCallback(async (title: string, code: string, folder?: string, lastOutput?: string, description?: string): Promise<SavedCodeItem | null> => {
     if (!user) return null;
     try {
       const newCode: SavedCodeItem = {
@@ -45,7 +45,6 @@ export function useSavedCodes() {
         title: title || 'Untitled',
         code,
         isImportant: false,
-        tags: tags || [],
         folder: folder || '',
         lastOutput: lastOutput,
         description: description || '',
@@ -67,7 +66,7 @@ export function useSavedCodes() {
     }
   }, [user, codes]);
 
-  const updateCode = useCallback(async (id: string, updates: Partial<Pick<SavedCodeItem, 'title' | 'code' | 'tags' | 'folder' | 'isImportant' | 'lastOutput'>>) => {
+  const updateCode = useCallback(async (id: string, updates: Partial<Pick<SavedCodeItem, 'title' | 'code' | 'description' | 'folder' | 'isImportant' | 'lastOutput'>>) => {
     if (!user) return;
     try {
       const newCodesList = codes.map(c =>

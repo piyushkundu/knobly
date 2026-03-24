@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Terminal, Copy, Trash2, Check, Sparkles, Zap, Lightbulb, Wrench, FileCode, Wand2, Keyboard } from 'lucide-react';
+import { Terminal, Copy, Trash2, Check, Sparkles, Zap, Lightbulb, Wrench, FileCode, Wand2, Keyboard, Code2, FolderTree, Languages, Bot, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/Button';
 import { cn } from '@/lib/python-utils';
@@ -159,7 +159,7 @@ export function PythonConsole({
             <div className="text-center">
               <Zap className="w-8 h-8 mx-auto mb-2 opacity-30" />
               <div className="flex flex-col items-center gap-3">
-                <span>Run your Python code to see output here</span>
+                <span>Run your code to see output here</span>
                 <div className="text-[11px] bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 border border-indigo-100 dark:border-indigo-500/20 shadow-sm font-medium">
                   <Keyboard className="w-3.5 h-3.5" />
                   Tip: Press <kbd className="px-1.5 py-0.5 mx-0.5 rounded-md bg-white dark:bg-black/40 font-mono border border-indigo-200 dark:border-indigo-500/30 font-bold shadow-sm text-[10px]">F5</kbd> to run code

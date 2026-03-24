@@ -9,11 +9,13 @@ import { PythonHistory } from './PythonHistory';
 import { PythonAskAIModal } from './PythonAskAIModal';
 import { SavedCodesModal } from './SavedCodesModal';
 import { SaveFilePopup } from './SaveFilePopup';
+import { EditorFileExplorer } from './EditorFileExplorer';
 import LoginModal from '@/components/auth/LoginModal';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 import { Toggle } from './ui/Toggle';
 import { usePyodide } from '@/hooks/usePyodide';
+import { useJSCPP } from '@/hooks/useJSCPP';
 import { useAIExplain } from '@/hooks/useAIExplain';
 import { useCodeHistory } from '@/hooks/useCodeHistory';
 import { useSavedCodes } from '@/hooks/useSavedCodes';
@@ -21,14 +23,7 @@ import { useAuth } from '@/context/AuthContext';
 import { CodeHistoryItem, Language, HelpMode, SavedCodeItem } from '@/types/python';
 import { cn } from '@/lib/python-utils';
 
-const DEFAULT_CODE = `# Welcome to AI Python Learning Lab!
-# Write your Python code here and click Run to execute
-
-print("Hello, World!")
-
-# Try creating an error to see AI explanation:
-# print(undefined_variable)
-`;
+const DEFAULT_CODE = `# Welcome to AI Python Learning Lab!\n\nprint("Hello, World!")\n`;
 
 import './python-lab.css';
 
@@ -40,6 +35,15 @@ interface EditorTab {
   savedId: string | null; // linked Firebase doc id, null = unsaved
   output?: string;
 }
+
+const C_DEFAULT_CODE = `#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\\n");
+    
+    return 0;
+}
+`;
 
 const createNewTab = (name = 'Untitled.py', code = DEFAULT_CODE): EditorTab => ({
   id: Date.now().toString() + Math.random().toString(36).slice(2, 6),
@@ -64,6 +68,9 @@ export function PythonLab() {
   const [showAskAI, setShowAskAI] = useState(false);
   const [showSavedCodes, setShowSavedCodes] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [editorWidthPercent, setEditorWidthPercent] = useState(55); // draggable split
+  const isDraggingRef = useRef(false);
+  const mainRef = useRef<HTMLDivElement>(null);
 
   // Derived active tab
   const activeTab = tabs[activeTabIndex] || tabs[0];
@@ -88,11 +95,17 @@ export function PythonLab() {
   const isRunningRef = useRef(false);
   const router = useRouter();
 
-  const { isLoading: isPyodideLoading, isReady: isPyodideReady, executeCode } = usePyodide();
+  const { isLoading: isPyodideLoading, isReady: isPyodideReady, executeCode: executePython } = usePyodide();
+  const { isLoading: isJSCPPLoading, isReady: isJSCPPReady, executeCode: executeC } = useJSCPP();
   const { isLoading: isAILoading, explanation, error: aiError, explainError, clearExplanation } = useAIExplain();
   const { history, saveToHistory, deleteFromHistory } = useCodeHistory();
   const { user, logout } = useAuth();
   const { codes, isLoading: isSavedCodesLoading, isLoggedIn, saveCode, updateCode, deleteCode, toggleImportant } = useSavedCodes();
+
+  // Detect if active file is C language
+  const isCFile = activeFileName.endsWith('.c') || activeFileName.endsWith('.h');
+  const isRuntimeReady = isCFile ? isJSCPPReady : isPyodideReady;
+  const isRuntimeLoading = isCFile ? isJSCPPLoading : isPyodideLoading;
 
   // ---- Tab Helpers ----
   const setCode = useCallback((newCode: string) => {
@@ -139,10 +152,29 @@ export function PythonLab() {
     setActiveTabIndex(index);
   }, [activeTabIndex, tabs, output]);
 
+  const handleLanguageSwitch = useCallback((lang: 'python' | 'c') => {
+    const isCTarget = lang === 'c';
+    // Check if any existing tab matches the target language
+    const existingIdx = tabs.findIndex(t => {
+      const tExt = t.name.endsWith('.c') || t.name.endsWith('.h');
+      return isCTarget ? tExt : !tExt;
+    });
+    if (existingIdx >= 0) {
+      handleSwitchTab(existingIdx);
+      return;
+    }
+    // Create a new tab with the target language
+    const newName = isCTarget ? 'Untitled.c' : 'Untitled.py';
+    const newCode = isCTarget ? C_DEFAULT_CODE : DEFAULT_CODE;
+    const newTab = createNewTab(newName, newCode);
+    setTabs(prev => [...prev, newTab]);
+    setActiveTabIndex(tabs.length);
+  }, [tabs, handleSwitchTab]);
+
   // ---- Save Handlers ----
-  const handleSaveCode = useCallback(async (title: string, codeToSave: string, tags?: string[], folder?: string, lastOutput?: string, description?: string) => {
+  const handleSaveCode = useCallback(async (title: string, codeToSave: string, description?: string, folder?: string, lastOutput?: string) => {
     if (!isLoggedIn) { setShowLoginModal(true); return; }
-    const newCode = await saveCode(title, codeToSave, tags, folder, lastOutput !== undefined ? lastOutput : output, description);
+    const newCode = await saveCode(title, codeToSave, folder, lastOutput !== undefined ? lastOutput : output, description);
     if (newCode) {
       updateActiveTab({ savedId: newCode.id, name: newCode.title, isDirty: false });
     }
@@ -166,7 +198,7 @@ export function PythonLab() {
   const handleSavePopupSubmit = useCallback(async (name: string, description: string, folder: string) => {
     if (!isLoggedIn) { setShowLoginModal(true); return; }
     setIsSaving(true);
-    const newCode = await saveCode(name, code, [], folder, output, description);
+    const newCode = await saveCode(name, code, folder, output, description);
     if (newCode) {
       updateActiveTab({ savedId: newCode.id, name: newCode.title, isDirty: false });
     }
@@ -279,7 +311,7 @@ export function PythonLab() {
   };
 
   const handleRun = useCallback(async () => {
-    if (!isPyodideReady || isRunningRef.current) return;
+    if (!isRuntimeReady || isRunningRef.current) return;
 
     isRunningRef.current = true;
     setIsRunning(true);
@@ -294,11 +326,14 @@ export function PythonLab() {
     collectedInputsRef.current = [];
     inputResolveRef.current = null;
 
+    // Pick the right executor based on file extension
+    const execute = isCFile ? executeC : executePython;
+
     try {
       // Re-run loop: execute code, if it needs input, prompt user, accumulate, re-run
       let done = false;
       while (!done) {
-        const result = await executeCode(code, collectedInputsRef.current);
+        const result = await execute(code, collectedInputsRef.current);
 
         if (result.needsInput) {
           // Show the prompt in terminal lines
@@ -346,7 +381,7 @@ export function PythonLab() {
       isRunningRef.current = false;
       setIsRunning(false);
     }
-  }, [code, isPyodideReady, executeCode, helpMode, language, explainError, saveToHistory, clearExplanation]);
+  }, [code, isRuntimeReady, isCFile, executeC, executePython, helpMode, language, explainError, saveToHistory, clearExplanation]);
 
   // Global F5 Shortcut for Running Code
   useEffect(() => {
@@ -354,14 +389,14 @@ export function PythonLab() {
       // Prevent browser refresh and run the code instead
       if (e.key === 'F5') {
         e.preventDefault();
-        if (isPyodideReady && !isRunningRef.current) {
+        if (isRuntimeReady && !isRunningRef.current) {
           handleRun();
         }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleRun, isPyodideReady]);
+  }, [handleRun, isRuntimeReady]);
 
   const handleRunFromSaved = useCallback((savedCode: string) => {
     setCode(savedCode);
@@ -454,16 +489,20 @@ export function PythonLab() {
               <img src="https://img.icons8.com/fluency/48/circled-left-2.png" alt="Back" className="w-4 h-4 md:w-7 md:h-7 object-contain" />
             </button>
             <div className="relative flex-shrink-0">
-              <div className="w-7 h-7 md:w-9 md:h-9 rounded-lg bg-white/10 flex items-center justify-center shadow-lg border border-[var(--border-color)] text-white">
-                <img src="https://img.icons8.com/color/48/python--v1.png" alt="Python" className="w-[18px] h-[18px] md:w-6 md:h-6 object-contain drop-shadow-md" />
+              <div className="w-7 h-7 md:w-9 md:h-9 rounded-lg bg-white/10 flex items-center justify-center shadow-lg border border-[var(--border-color)]">
+                {isCFile ? (
+                  <img src="https://img.icons8.com/color/48/c-programming.png" alt="C" className="w-[18px] h-[18px] md:w-6 md:h-6 object-contain drop-shadow-md" />
+                ) : (
+                  <img src="https://img.icons8.com/color/48/python--v1.png" alt="Python" className="w-[18px] h-[18px] md:w-6 md:h-6 object-contain drop-shadow-md" />
+                )}
               </div>
-              <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 md:w-3 md:h-3 bg-[var(--accent-success)] rounded-full border border-[var(--bg-primary)]" />
+              <div className={cn("absolute -bottom-0.5 -right-0.5 w-2 h-2 md:w-3 md:h-3 rounded-full border border-[var(--bg-primary)]", isCFile ? "bg-emerald-400" : "bg-[var(--accent-success)]")} />
             </div>
             <div className="flex flex-col min-w-0">
               <h1 className="text-[14px] md:text-lg font-bold leading-tight truncate font-mono tracking-tight text-[var(--text-primary)]">
-                AI Python Tab
+                {isCFile ? 'AI C Compiler' : 'AI Python Tab'}
               </h1>
-              <span className="text-[10px] text-[var(--text-muted,#64748b)] -mt-0.5 hidden sm:block">Learn Python with AI</span>
+              <span className="text-[10px] text-[var(--text-muted,#64748b)] -mt-0.5 hidden sm:block">{isCFile ? 'Learn C with AI' : 'Learn Python with AI'}</span>
             </div>
           </div>
 
@@ -475,18 +514,18 @@ export function PythonLab() {
               <Button
                 variant="ghost"
                 onClick={handleRun}
-                disabled={!isPyodideReady || isRunning}
+                disabled={!isRuntimeReady || isRunning}
                 data-run-button="true"
                 className={cn(
                   "flex items-center justify-center gap-2 px-6 h-10 rounded-full bg-white dark:bg-[var(--glass-bg)] hover:bg-gray-50 dark:hover:bg-[var(--bg-tertiary)] border border-gray-200 dark:border-[var(--border-color)] shadow-sm hover:shadow-md transition-all group",
-                  isPyodideReady && !isRunning && 'shadow-indigo-500/10'
+                  isRuntimeReady && !isRunning && (isCFile ? 'shadow-green-500/10' : 'shadow-indigo-500/10')
                 )}
               >
-                <svg viewBox="0 0 24 24" fill="currentColor" className={cn("w-4 h-4 text-blue-500 transition-transform duration-300", isRunning ? "animate-spin" : "group-hover:scale-110")}>
+                <svg viewBox="0 0 24 24" fill="currentColor" className={cn("w-4 h-4 transition-transform duration-300", isCFile ? 'text-green-500' : 'text-blue-500', isRunning ? "animate-spin" : "group-hover:scale-110")}>
                   {isRunning ? <path d="M12 2C6.477 2 2 6.477 2 12c0 5.523 4.477 10 10 10s10-4.477 10-10H20c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8V2z" /> : <polygon points="6,4 20,12 6,20" />}
                 </svg>
                 <span className="font-extrabold text-[#2a2a2a] dark:text-white text-[14px] tracking-widest uppercase mt-0.5">
-                  {isRunning ? 'Running' : 'Run'}
+                  {isRunning ? (isCFile ? 'Compiling' : 'Running') : (isCFile ? 'Compile' : 'Run')}
                 </span>
               </Button>
             </div>
@@ -631,12 +670,27 @@ export function PythonLab() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col md:flex-row gap-0 md:gap-4 p-0 md:p-4 overflow-hidden h-[calc(100dvh-64px)] md:h-[calc(100dvh-73px)]">
+      <main ref={mainRef} className="flex-1 flex flex-col md:flex-row gap-0 p-0 overflow-hidden h-[calc(100dvh-64px)] md:h-[calc(100dvh-73px)]" style={{ cursor: isDraggingRef.current ? 'col-resize' : undefined }}>
+        {/* VS Code-style File Explorer Sidebar (Desktop only) */}
+        <div className="hidden md:flex h-full flex-shrink-0">
+          <EditorFileExplorer
+            codes={codes}
+            isLoggedIn={isLoggedIn}
+            onSelectFile={handleSelectSavedCode}
+            onDelete={deleteCode}
+            onUpdate={updateCode}
+            onSave={handleSaveCode}
+            onLoginRequired={() => setShowLoginModal(true)}
+            activeFileId={activeFileId}
+            onLanguageSwitch={handleLanguageSwitch}
+          />
+        </div>
+
         {/* Top/Left Panel - Code Editor */}
         <div className={cn(
-          "h-full w-full md:w-[55%] relative flex-shrink-0 md:block",
+          "h-full w-full md:block",
           mobileTab !== 'editor' && "hidden"
-        )}>
+        )} style={{ flex: `1 1 ${editorWidthPercent}%`, minWidth: 200 }}>
           <Card className="h-full overflow-hidden border-0 md:border-[var(--border-color)] bg-[var(--card-bg)] rounded-none md:rounded-xl">
             <PythonCodeEditor
               code={code}
@@ -659,13 +713,13 @@ export function PythonLab() {
               onCloseTab={handleCloseTab}
               onNewTab={handleNewTab}
               errorLine={errorLine}
-              isLoading={isPyodideLoading}
+              isLoading={isRuntimeLoading}
               theme={theme}
               onThemeToggle={handleThemeToggle}
               onShowHistory={() => setShowHistory(true)}
               onRun={handleRun}
               isRunning={isRunning}
-              isReady={isPyodideReady}
+              isReady={isRuntimeReady}
               onAskAI={() => setShowAskAI(true)}
               onSave={handleEditorSave}
               onShowSavedCodes={() => isLoggedIn ? setShowSavedCodes(true) : setShowLoginModal(true)}
@@ -673,11 +727,41 @@ export function PythonLab() {
           </Card>
         </div>
 
+        {/* ═══ Draggable Resizer ═══ */}
+        <div
+          className="hidden md:flex"
+          style={{ width:6, cursor:'col-resize', background:'transparent', flexShrink:0, alignItems:'center', justifyContent:'center', zIndex:5, position:'relative' }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            isDraggingRef.current = true;
+            const main = mainRef.current;
+            if (!main) return;
+            const onMove = (ev: MouseEvent) => {
+              if (!isDraggingRef.current) return;
+              const rect = main.getBoundingClientRect();
+              // Subtract sidebar width from calculation
+              const sidebar = main.querySelector('.hidden.md\\:flex') as HTMLElement;
+              const sidebarW = sidebar ? sidebar.getBoundingClientRect().width : 0;
+              const available = rect.width - sidebarW - 6; // minus resizer
+              const editorW = ev.clientX - rect.left - sidebarW;
+              const pct = Math.min(80, Math.max(25, (editorW / available) * 100));
+              setEditorWidthPercent(pct);
+            };
+            const onUp = () => { isDraggingRef.current = false; document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); document.body.style.cursor = ''; document.body.style.userSelect = ''; };
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+          }}
+        >
+          <div style={{ width:3, height:40, borderRadius:2, background:'var(--border-color, #d1d5db)', opacity:0.5, transition:'opacity 0.15s' }} onMouseEnter={e => (e.currentTarget.style.opacity = '1')} onMouseLeave={e => (e.currentTarget.style.opacity = '0.5')} />
+        </div>
+
         {/* Bottom/Right Panel - Combined Console & AI */}
         <div className={cn(
-          "h-full w-full md:w-[45%] flex-shrink-0 md:block",
+          "h-full w-full md:block",
           mobileTab !== 'console' && "hidden"
-        )}>
+        )} style={{ flex: `0 1 ${100 - editorWidthPercent}%`, minWidth: 200 }}>
           <Card className="h-full overflow-hidden border-0 md:border-[var(--border-color)] bg-[var(--card-bg)] rounded-none md:rounded-xl">
             <PythonConsole
               output={output}

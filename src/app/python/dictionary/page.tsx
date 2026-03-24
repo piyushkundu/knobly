@@ -68,6 +68,7 @@ const tocItems = [
     { icon: <Settings2 size={13} />, label: 'Operations', id: 'operations', color: '#0ea5e9' },
     { icon: <ListTree size={13} />, label: 'Nested Dictionary', id: 'nested', color: '#0284c7' },
     { icon: <BoxSelect size={13} />, label: 'Functions', id: 'functions', color: '#4f46e5' },
+    { icon: <Code2 size={13} />, label: 'Practice Questions', id: 'practice', color: '#8b5cf6' },
 ];
 
 const navLinks = [
@@ -414,6 +415,62 @@ export default function DictionaryPage() {
                             </div>
                             <p className="text-xs text-slate-600 font-medium mt-3">players dictionary के elements को Cricket dictionary में जोड़ दिया जाएगा।</p>
                         </MethodCard>
+                    </Sec>
+
+                    {/* Practice Questions */}
+                    <Sec id="practice" title="Practice Questions :" icon={<Code2 size={18} className="text-violet-600" />}>
+                        <div className="space-y-4">
+                            {[
+                                {
+                                    hi: "एक dictionary student बनाइए जिसमें name, age और class store हो, और उसे print कीजिए।",
+                                    en: "Create a dictionary student with name, age, and class, and print it."
+                                },
+                                {
+                                    hi: "एक dictionary marks बनाइए और किसी एक subject के marks को access करके print कीजिए।",
+                                    en: "Create a dictionary marks and print the marks of a specific subject."
+                                },
+                                {
+                                    hi: "एक existing dictionary में किसी key की value को update कीजिए।",
+                                    en: "Update the value of an existing key in a dictionary."
+                                },
+                                {
+                                    hi: "एक dictionary में नया key-value pair जोड़िए।",
+                                    en: "Add a new key-value pair to a dictionary."
+                                },
+                                {
+                                    hi: "update() method का उपयोग करके dictionary में multiple values add या update कीजिए।",
+                                    en: "Use the update() method to add or update multiple values in a dictionary."
+                                },
+                                {
+                                    hi: "Loop का उपयोग करके dictionary के सभी key-value pairs print कीजिए।",
+                                    en: "Use a loop to print all key-value pairs of a dictionary."
+                                },
+                                {
+                                    hi: "यह जांचिए कि कोई key dictionary में मौजूद है या नहीं।",
+                                    en: "Check whether a key exists in a dictionary or not."
+                                },
+                                {
+                                    hi: "pop() method का उपयोग करके किसी एक element को delete कीजिए।",
+                                    en: "Use the pop() method to delete an element from a dictionary."
+                                },
+                                {
+                                    hi: "एक nested dictionary बनाइए जिसमें 2 students की details store हों।",
+                                    en: "Create a nested dictionary to store details of two students."
+                                },
+                                {
+                                    hi: "एक dictionary बनाइए जिसमें numbers हों और सबसे बड़ी (maximum) value निकालिए।",
+                                    en: "Create a dictionary with numbers and find the maximum value."
+                                }
+                            ].map((q, i) => (
+                                <div key={i} className="p-4 rounded-xl border border-slate-200 bg-white shadow-sm flex gap-4 transition-all hover:shadow-md">
+                                    <div className="w-8 h-8 flex-shrink-0 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-bold">{i + 1}</div>
+                                    <div>
+                                        <p className="font-medium text-slate-800 mb-1">{q.hi}</p>
+                                        <p className="text-sm text-slate-500">{q.en}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </Sec>
                 </main>
             </div>
