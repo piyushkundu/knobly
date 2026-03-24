@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendPasswordResetMail, sendPasswordResetMailForKnoblyId } from '@/lib/email-service';
-import { adminDb, adminAuth } from '@/lib/firebase-admin';
+import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       const knoblyUserId = trimmedEmail.replace('@knobly.id', '');
       
       // Look up the username mapping to find their UID
-      const usernameDoc = await adminDb.collection('usernames').doc(knoblyUserId).get();
+      const usernameDoc = await getAdminDb().collection('usernames').doc(knoblyUserId).get();
       if (!usernameDoc.exists) {
         return NextResponse.json({ error: 'No account found with this User ID.' }, { status: 404 });
       }
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       }
       
       // Get the user's actual email from their profile
-      const profileDoc = await adminDb.collection('profiles').doc(uid).get();
+      const profileDoc = await getAdminDb().collection('profiles').doc(uid).get();
       const profileEmail = profileDoc.data()?.email;
       
       // Find a real email to send to (not @knobly.id)
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       if (!actualEmail || actualEmail.endsWith('@knobly.id')) {
         // Try getting email from Firebase Auth user record
         try {
-          const userRecord = await adminAuth.getUser(uid);
+          const userRecord = await getAdminAuth().getUser(uid);
           // Check Google provider first, then other providers
           const googleProvider = userRecord.providerData.find(p => p.providerId === 'google.com');
           if (googleProvider?.email) {
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     // ── CASE 2: User entered a regular email (Gmail, etc.) ──
     // First check Firestore profiles to see if this email belongs to a user with a Knobly ID
     try {
-      const profilesSnapshot = await adminDb.collection('profiles')
+      const profilesSnapshot = await getAdminDb().collection('profiles')
         .where('email', '==', trimmedEmail)
         .limit(1)
         .get();
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
 
     // ── CASE 3: Check if this is a Google-only user (no Knobly ID, no password) ──
     try {
-      const userRecord = await adminAuth.getUserByEmail(trimmedEmail);
+      const userRecord = await getAdminAuth().getUserByEmail(trimmedEmail);
       const hasGoogleProvider = userRecord.providerData.some(p => p.providerId === 'google.com');
       const hasPasswordProvider = userRecord.providerData.some(p => p.providerId === 'password');
       

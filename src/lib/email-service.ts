@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { adminAuth } from './firebase-admin';
+import { getAdminAuth } from './firebase-admin';
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.zoho.in',
@@ -133,7 +133,7 @@ function buildResetBody(link: string): string {
 }
 
 export async function sendVerificationEmail(email: string, displayName?: string): Promise<void> {
-  const firebaseLink = await adminAuth.generateEmailVerificationLink(email, { url: APP_URL });
+  const firebaseLink = await getAdminAuth().generateEmailVerificationLink(email, { url: APP_URL });
   const url = new URL(firebaseLink);
   const oobCode = url.searchParams.get('oobCode') || '';
   const customLink = APP_URL + '/verify-email?oobCode=' + encodeURIComponent(oobCode);
@@ -148,7 +148,7 @@ export async function sendVerificationEmail(email: string, displayName?: string)
 }
 
 export async function sendPasswordResetMail(email: string): Promise<void> {
-  const firebaseLink = await adminAuth.generatePasswordResetLink(email, { url: APP_URL });
+  const firebaseLink = await getAdminAuth().generatePasswordResetLink(email, { url: APP_URL });
   const url = new URL(firebaseLink);
   const oobCode = url.searchParams.get('oobCode') || '';
   const customLink = APP_URL + '/reset-password?oobCode=' + encodeURIComponent(oobCode);
@@ -166,7 +166,7 @@ export async function sendPasswordResetMail(email: string): Promise<void> {
  * but send the email to user's actual Gmail address.
  */
 export async function sendPasswordResetMailForKnoblyId(knoblyEmail: string, actualEmail: string): Promise<void> {
-  const firebaseLink = await adminAuth.generatePasswordResetLink(knoblyEmail, { url: APP_URL });
+  const firebaseLink = await getAdminAuth().generatePasswordResetLink(knoblyEmail, { url: APP_URL });
   const url = new URL(firebaseLink);
   const oobCode = url.searchParams.get('oobCode') || '';
   const customLink = APP_URL + '/reset-password?oobCode=' + encodeURIComponent(oobCode);

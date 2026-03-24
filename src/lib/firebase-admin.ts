@@ -35,17 +35,17 @@ function getCredential() {
   });
 }
 
-function getAdminApp(): App {
+export function getAdminApp(): App {
   if (getApps().length) {
     return getApps()[0];
   }
   return initializeApp({ credential: getCredential() });
 }
 
-function getAdminAuth(): Auth {
+export function getAdminAuth(): Auth {
   return getAuth(getAdminApp());
 }
 
-// Lazy initialization - only init when actually used, not at import time
-export const adminAuth: Auth = getAdminAuth();
-export const adminDb: Firestore = getFirestore(getAdminApp());
+export function getAdminDb(): Firestore {
+  return getFirestore(getAdminApp());
+}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 
 /**
  * Resolves a regular email (e.g. Gmail) to the user's @knobly.id email
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     const trimmed = email.trim().toLowerCase();
 
     // Look up the user's profile by email
-    const snap = await adminDb.collection('profiles')
+    const snap = await getAdminDb().collection('profiles')
       .where('email', '==', trimmed)
       .limit(1)
       .get();
