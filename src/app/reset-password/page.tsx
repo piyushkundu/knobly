@@ -44,7 +44,7 @@ function ResetPasswordForm() {
     if (status === 'success') {
       const timer = setInterval(() => {
         setCountdown((p) => {
-          if (p <= 1) { clearInterval(timer); router.push('/python-lab'); return 0; }
+          if (p <= 1) { clearInterval(timer); router.push('/'); return 0; }
           return p - 1;
         });
       }, 1000);
@@ -170,12 +170,12 @@ function ResetPasswordForm() {
               }}><span style={{ fontSize: '24px' }}>⚠️</span></div>
               <h2 style={{ margin: '0 0 6px', color: '#1e293b', fontSize: '18px', fontWeight: 700 }}>Invalid Link</h2>
               <p style={{ margin: '0 0 18px', color: '#64748b', fontSize: '13px', lineHeight: 1.6 }}>{errorMessage}</p>
-              <a href="/python-lab" style={{
+              <a href="/" style={{
                 display: 'inline-block', padding: '10px 26px',
                 background: 'linear-gradient(135deg, #4a9fe5, #6db3f2)',
                 color: '#fff', fontSize: '13px', fontWeight: 700,
                 borderRadius: '10px', textDecoration: 'none',
-              }}>Go to Login</a>
+              }}>Go to Home</a>
             </div>
 
           ) : (
@@ -278,7 +278,7 @@ function ResetPasswordForm() {
 
         {status !== 'success' && (
           <div style={{ textAlign: 'center', marginTop: '18px' }}>
-            <a href="/python-lab" style={{ color: '#94a3b8', fontSize: '12px', textDecoration: 'none' }}>← Back to Login</a>
+            <a href="/" style={{ color: '#94a3b8', fontSize: '12px', textDecoration: 'none' }}>← Back to Home</a>
           </div>
         )}
       </div>
