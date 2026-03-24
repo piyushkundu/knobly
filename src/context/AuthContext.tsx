@@ -67,26 +67,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
         } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : '';
+            // Re-throw non-credential errors immediately (e.g. EMAIL_NOT_VERIFIED)
+            if (msg === 'EMAIL_NOT_VERIFIED') throw err;
+
             // If login failed with invalid credentials and the email is NOT a @knobly.id,
             // check if this user has a linked Knobly User ID and retry with that
-            if (msg.includes('auth/invalid-credential') || msg.includes('auth/wrong-password') || msg.includes('auth/user-not-found')) {
-                if (!email.endsWith('@knobly.id')) {
-                    try {
-                        // Look up profile by email to find knobly_user_id
-                        const profilesQuery = query(collection(db, 'profiles'), where('email', '==', email.trim().toLowerCase()));
-                        const profileSnap = await getDocs(profilesQuery);
-                        if (!profileSnap.empty) {
-                            const knoblyUserId = profileSnap.docs[0].data()?.knobly_user_id;
-                            if (knoblyUserId) {
-                                const knoblyEmail = `${knoblyUserId}@knobly.id`;
-                                const cred = await signInWithEmailAndPassword(auth, knoblyEmail, password);
-                                // Knobly ID emails skip verification check
-                                return;
-                            }
-                        }
-                    } catch (_) {
-                        // Firestore lookup failed, throw original error
+            if ((msg.includes('auth/invalid-credential') || msg.includes('auth/wrong-password') || msg.includes('auth/user-not-found')) && !email.endsWith('@knobly.id')) {
+                // Step 1: Look up profile by email via server-side API to bypass Firestore security rules
+                let knoblyEmail: string | null = null;
+                try {
+                    const res = await fetch('/api/auth/resolve-knobly-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+                    });
+                    
+                    if (res.ok) {
+                        const data = await res.json();
+                        knoblyEmail = data.knoblyEmail || null;
+                        console.log('[Knobly Login] Resolved remote email:', knoblyEmail);
+                    } else {
+                        console.log('[Knobly Login] Failed to resolve email via API.');
                     }
+                } catch (fetchErr) {
+                    console.warn('[Knobly Login] API lookup failed:', fetchErr);
+                }
+
+                // Step 2: If we found a knobly_user_id, retry auth with @knobly.id email
+                if (knoblyEmail) {
+                    console.log('[Knobly Login] Retrying auth with:', knoblyEmail);
+                    // Let this throw naturally if it fails — user will see the real error
+                    const cred = await signInWithEmailAndPassword(auth, knoblyEmail, password);
+                    // Knobly ID emails skip verification check
+                    return;
                 }
             }
             throw err;
