@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendVerificationEmail } from '@/lib/email-service';
 
+// Force dynamic — requires runtime env vars, cannot be statically collected
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const { email, displayName } = await req.json();

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sendPasswordResetMail, sendPasswordResetMailForKnoblyId } from '@/lib/email-service';
 import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
 
+// Force dynamic — requires runtime env vars, cannot be statically collected
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();

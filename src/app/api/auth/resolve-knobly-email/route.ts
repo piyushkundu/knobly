@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase-admin';
 
+// Force dynamic — requires runtime env vars, cannot be statically collected
+export const dynamic = 'force-dynamic';
+
 /**
  * Resolves a regular email (e.g. Gmail) to the user's @knobly.id email
  * if they have a linked Knobly User ID. Used by the login flow when
