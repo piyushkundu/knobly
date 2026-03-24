@@ -58,11 +58,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = async (email: string, password: string) => {
-        const cred = await signInWithEmailAndPassword(auth, email, password);
-        // Check if email is verified (skip for @knobly.id virtual emails)
-        if (!cred.user.emailVerified && !cred.user.email?.endsWith('@knobly.id')) {
-            await signOut(auth);
-            throw new Error('EMAIL_NOT_VERIFIED');
+        try {
+            const cred = await signInWithEmailAndPassword(auth, email, password);
+            // Check if email is verified (skip for @knobly.id virtual emails)
+            if (!cred.user.emailVerified && !cred.user.email?.endsWith('@knobly.id')) {
+                await signOut(auth);
+                throw new Error('EMAIL_NOT_VERIFIED');
+            }
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : '';
+            // If login failed with invalid credentials and the email is NOT a @knobly.id,
+            // check if this user has a linked Knobly User ID and retry with that
+            if (msg.includes('auth/invalid-credential') || msg.includes('auth/wrong-password') || msg.includes('auth/user-not-found')) {
+                if (!email.endsWith('@knobly.id')) {
+                    try {
+                        // Look up profile by email to find knobly_user_id
+                        const profilesQuery = query(collection(db, 'profiles'), where('email', '==', email.trim().toLowerCase()));
+                        const profileSnap = await getDocs(profilesQuery);
+                        if (!profileSnap.empty) {
+                            const knoblyUserId = profileSnap.docs[0].data()?.knobly_user_id;
+                            if (knoblyUserId) {
+                                const knoblyEmail = `${knoblyUserId}@knobly.id`;
+                                const cred = await signInWithEmailAndPassword(auth, knoblyEmail, password);
+                                // Knobly ID emails skip verification check
+                                return;
+                            }
+                        }
+                    } catch (_) {
+                        // Firestore lookup failed, throw original error
+                    }
+                }
+            }
+            throw err;
         }
     };
 
