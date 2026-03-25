@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase-admin';
+import { rateLimitAuth } from '@/lib/rate-limit';
 
 // Force dynamic — requires runtime env vars, cannot be statically collected
 export const dynamic = 'force-dynamic';
@@ -11,6 +12,14 @@ export const dynamic = 'force-dynamic';
  */
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get('x-forwarded-for') || 'unknown';
+    const rateLimit = rateLimitAuth(ip);
+    
+    if (!rateLimit.success) {
+      // Return null quietly if rate limited, to simulate not found and not reveal limits easily
+      return NextResponse.json({ knoblyEmail: null });
+    }
+
     const { email } = await req.json();
     if (!email || typeof email !== 'string') {
       return NextResponse.json({ knoblyEmail: null });

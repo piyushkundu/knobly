@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendPasswordResetMail, sendPasswordResetMailForKnoblyId } from '@/lib/email-service';
 import { getAdminDb, getAdminAuth } from '@/lib/firebase-admin';
+import { rateLimitAuth } from '@/lib/rate-limit';
 
 // Force dynamic — requires runtime env vars, cannot be statically collected
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get('x-forwarded-for') || 'unknown';
+    const rateLimit = rateLimitAuth(ip);
+    
+    if (!rateLimit.success) {
+      return NextResponse.json({ error: rateLimit.message }, { status: 429 });
+    }
+
     const { email } = await req.json();
 
     if (!email || typeof email !== 'string') {
@@ -102,7 +110,7 @@ export async function POST(req: NextRequest) {
     } catch (authErr: unknown) {
       const authMsg = authErr instanceof Error ? authErr.message : '';
       if (authMsg.includes('auth/user-not-found')) {
-        return NextResponse.json({ error: 'No account found with this email.' }, { status: 404 });
+        return NextResponse.json({ message: 'Password reset email sent successfully.' }, { status: 200 });
       }
     }
 
@@ -115,7 +123,7 @@ export async function POST(req: NextRequest) {
     const message = err instanceof Error ? err.message : 'Failed to send reset email.';
 
     if (message.includes('auth/user-not-found')) {
-      return NextResponse.json({ error: 'No account found with this email.' }, { status: 404 });
+      return NextResponse.json({ message: 'Password reset email sent successfully.' }, { status: 200 });
     }
     if (message.includes('auth/too-many-requests')) {
       return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
