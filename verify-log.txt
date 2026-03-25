@@ -1,0 +1,30 @@
+{
+  "simplifiedQs": [
+    {
+      "id": "q1",
+      "text": "Which loop is used when number of iterations is known?",
+      "options": [
+        {
+          "id": "1",
+          "text": "for"
+        },
+        {
+          "id": "2",
+          "text": "do-while"
+        },
+        {
+          "id": "3",
+          "text": "while"
+        },
+        {
+          "id": "4",
+          "text": "repeat"
+        }
+      ],
+      "marked_correct_id": "2",
+      "marked_correct_text": "do-while"
+    }
+  ],
+  "prompt": "You are a strict technical exam reviewer. Review the following test questions for accuracy.\n        \nFor EACH question, carefully analyze if the 'marked_correct_text' is the BEST and MOST ACCURATE answer among the available options.\nIf the currently marked correct option is WRONG, or if a significantly better option exists, you MUST report a doubt. Provide a clear, brief explanation stating what the correct answer should actually be and why the marked one is incorrect.\n\nFormat your response as a JSON object:\n{\n  \"doubts\": [\n    { \"questionId\": \"ID_HERE\", \"doubt\": \"The marked option is wrong because... The correct option should be 'XXX'.\" }\n  ]\n}\n\nIf all marked answers are perfectly correct, return an empty array for doubts: { \"doubts\": [] }\n\nTest Name: PYTHON TEST TUPLE 1\nQuestions Data:\n[\n  {\n    \"id\": \"q1\",\n    \"text\": \"Which loop is used when number of iterations is known?\",\n    \"options\": [\n      {\n        \"id\": \"1\",\n        \"text\": \"for\"\n      },\n      {\n        \"id\": \"2\",\n        \"text\": \"do-while\"\n      },\n      {\n        \"id\": \"3\",\n        \"text\": \"while\"\n      },\n      {\n        \"id\": \"4\",\n        \"text\": \"repeat\"\n      }\n    ],\n    \"marked_correct_id\": \"2\",\n    \"marked_correct_text\": \"do-while\"\n  }\n]",
+  "reply": "{\n  \"doubts\": [\n     { \n       \"questionId\": \"q1\", \n       \"doubt\": \"The marked option is wrong because 'do-while' is not a loop type in Python and is not typically used when the number of iterations is known. The correct option should be 'for' because a for loop is used when the number of iterations is known.\"\n     }\n   ]\n}"
+}

@@ -184,6 +184,14 @@ export function useSuperAdmin() {
         }
     };
     const deleteQuestion = async (id: string, testId: string) => { await deleteDoc(doc(db, 'exam_questions', id)); loadQuestions(testId); };
+    const setCorrectOption = async (questionId: string, correctOptionId: string) => {
+        const optsSnap = await getDocs(query(collection(db, 'exam_options'), where('question_id', '==', questionId)));
+        const batch = writeBatch(db);
+        optsSnap.forEach((d) => {
+            batch.update(d.ref, { is_correct: d.id === correctOptionId });
+        });
+        await batch.commit();
+    };
     const getOptionsForQuestion = async (qId: string) => {
         const snap = await getDocs(query(collection(db, 'exam_options'), where('question_id', '==', qId)));
         return snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -206,6 +214,22 @@ export function useSuperAdmin() {
         await batch.commit();
         loadQuestions(testId);
         return blocks.length;
+    };
+
+    const getTestPreviewData = async (testId: string) => {
+        try {
+            const qSnap = await getDocs(query(collection(db, 'exam_questions'), where('test_id', '==', testId)));
+            const qs = qSnap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a: any, b: any) => (a.created_at?.seconds || 0) - (b.created_at?.seconds || 0));
+            const fullQs = await Promise.all(qs.map(async (q: any) => {
+                const optsSnap = await getDocs(query(collection(db, 'exam_options'), where('question_id', '==', q.id)));
+                const opts = optsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                return { ...q, options: opts };
+            }));
+            return fullQs;
+        } catch (e) {
+            console.error('[SuperAdmin] getTestPreviewData failed', e);
+            return [];
+        }
     };
 
     // Results
@@ -338,7 +362,7 @@ export function useSuperAdmin() {
         tests, questions, users, levels, badges, results, notifications, apps, videos, leaderboard, categories,
         login, logout, refreshAll,
         saveTest, deleteTest,
-        loadQuestions, saveQuestion, deleteQuestion, getOptionsForQuestion, importQuestions,
+        loadQuestions, saveQuestion, deleteQuestion, setCorrectOption, getOptionsForQuestion, importQuestions, getTestPreviewData,
         loadResults, viewAttemptDetail,
         deleteUser, deleteLeaderboardUser, updateLeaderboardPoints, getUserProfile,
         saveLevel, deleteLevel, saveBadge, deleteBadge,

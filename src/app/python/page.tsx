@@ -74,6 +74,16 @@ const pythonTopics = [
         chapter: 6,
     },
     {
+        title: 'Library Functions',
+        href: '/python/library-functions',
+        icon: <FunctionSquare size={22} style={{ color: '#c084fc' }} />,
+        gradient: 'linear-gradient(135deg, #4c1d95, #6d28d9, #7c3aed)',
+        border: '#8b5cf6',
+        glow: 'rgba(139,92,246,0.15)',
+        desc: 'Pre-defined modules, math functions, random values, string operations, and date/time',
+        chapter: 7,
+    },
+    {
         title: 'NumPy',
         href: '/python/numpy',
         icon: <BarChart3 size={22} style={{ color: '#67e8f9' }} />,
@@ -81,7 +91,7 @@ const pythonTopics = [
         border: '#06b6d4',
         glow: 'rgba(6,182,212,0.15)',
         desc: 'Arrays, operations, broadcasting, statistics, and linear algebra',
-        chapter: 7,
+        chapter: 8,
     },
 ];
 
@@ -145,7 +155,7 @@ export default function PythonPage() {
                         {/* Stats row */}
                         <div className="flex flex-wrap gap-4">
                             {[
-                                { icon: <BookOpen size={14} />, label: '7 Chapters', color: '#93c5fd' },
+                                { icon: <BookOpen size={14} />, label: '8 Chapters', color: '#93c5fd' },
                                 { icon: <GraduationCap size={14} />, label: 'Beginner Friendly', color: '#86efac' },
                                 { icon: <Zap size={14} />, label: 'Practice Questions', color: '#fde68a' },
                             ].map((stat, i) => (

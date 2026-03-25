@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, getDocs, collection, query, where } from 'firebase/firestore';
 import Link from 'next/link';
+import { Sparkles, Loader2 } from 'lucide-react';
 
 /* ── Types ── */
 interface Option { id: string; option_text: string; is_correct: boolean; question_id: string; }
@@ -43,6 +44,9 @@ export default function ReviewPage() {
     const [responses, setResponses] = useState<Record<string, any>>({});
     const [stats, setStats] = useState({ correct: 0, wrong: 0, skipped: 0, totalPoints: 0, pointsEarned: 0, timeTaken: '' });
     const [filter, setFilter] = useState<'all' | 'correct' | 'wrong' | 'skip'>('all');
+    const [aiExplanations, setAiExplanations] = useState<Record<string, string>>({});
+    const [loadingExplanations, setLoadingExplanations] = useState<Record<string, boolean>>({});
+    const [aiLanguage, setAiLanguage] = useState<'Hindi' | 'English'>('Hindi');
 
     useEffect(() => {
         if (!user || !attemptId) return;
@@ -188,6 +192,48 @@ export default function ReviewPage() {
         return { color: '#10b981', bg: '#ecfdf5', border: '#a7f3d0' };
     };
 
+    const handleAiExplain = async (q: Question) => {
+        if (aiExplanations[q.id]) return;
+        setLoadingExplanations(prev => ({ ...prev, [q.id]: true }));
+        try {
+            const resp = responses[q.id];
+            const type = (q.question_type || '').toUpperCase();
+            const isObj = type === 'MCQ' || type === 'TF';
+            
+            let userAns = resp?.short_answer || 'Skipped';
+            let correctAns = '';
+            let optionsText: string[] = [];
+
+            if (isObj) {
+                optionsText = q.exam_options.map(o => getCleanOptionText(o.option_text));
+                const correctOpt = q.exam_options.find(o => isOptionCorrect(o.is_correct));
+                if (correctOpt) correctAns = getCleanOptionText(correctOpt.option_text);
+                
+                if (resp?.option_id) {
+                    const selectedOpt = q.exam_options.find(o => o.id === resp.option_id);
+                    if (selectedOpt) userAns = getCleanOptionText(selectedOpt.option_text);
+                }
+            }
+
+            const res = await fetch('/api/ai/explain-question', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question_text: q.question_text, options: optionsText, correct_option: correctAns, user_answer: userAns, language: aiLanguage })
+            });
+
+            if(res.ok) {
+                const data = await res.json();
+                setAiExplanations(prev => ({ ...prev, [q.id]: data.explanation }));
+            } else {
+                setAiExplanations(prev => ({ ...prev, [q.id]: '⚠️ AI failed to generate an explanation.' }));
+            }
+        } catch (err) {
+            setAiExplanations(prev => ({ ...prev, [q.id]: '⚠️ Network error.' }));
+        } finally {
+            setLoadingExplanations(prev => ({ ...prev, [q.id]: false }));
+        }
+    };
+
     /* ── RENDER ── */
     return (
         <div className="min-h-screen" style={{ background: '#f8fafc' }}>
@@ -298,8 +344,15 @@ export default function ReviewPage() {
                             <span style={{ color: '#6366f1', fontSize: '16px' }}>🔍</span>
                             <h2 className="text-sm sm:text-base font-bold" style={{ color: '#0f172a' }}>Detailed Question Review</h2>
                         </div>
-                        {/* Filter Buttons */}
-                        <div className="flex items-center gap-1.5 p-1 rounded-xl" style={{ background: '#f1f5f9', border: '1px solid #e2e8f0' }}>
+                        <div className="flex flex-wrap items-center gap-3">
+                            {/* AI Language Selection */}
+                            <div className="flex items-center p-1 rounded-xl bg-white shadow-sm" style={{ border: '1px solid #e2e8f0' }}>
+                                <span className="text-[10px] font-bold text-gray-400 tracking-wider px-2"><Sparkles size={10} className="inline mr-1 text-purple-400" />Explanation Language</span>
+                                <button onClick={() => setAiLanguage('Hindi')} className={`text-[10px] px-3 py-1 font-bold rounded-lg transition-all ${aiLanguage === 'Hindi' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-50'}`}>Hindi</button>
+                                <button onClick={() => setAiLanguage('English')} className={`text-[10px] px-3 py-1 font-bold rounded-lg transition-all ${aiLanguage === 'English' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-50'}`}>English</button>
+                            </div>
+                            {/* Filter Buttons */}
+                            <div className="flex items-center gap-1.5 p-1 rounded-xl" style={{ background: '#f1f5f9', border: '1px solid #e2e8f0' }}>
                             {[
                                 { key: 'all' as const, label: 'All', count: questions.length, color: '#6366f1', bg: '#eef2ff' },
                                 { key: 'correct' as const, label: 'Correct', count: stats.correct, color: '#10b981', bg: '#ecfdf5' },
@@ -319,6 +372,7 @@ export default function ReviewPage() {
                                     }>{f.count}</span>
                                 </button>
                             ))}
+                            </div>
                         </div>
                     </div>
 
@@ -435,6 +489,32 @@ export default function ReviewPage() {
                                             </p>
                                         </div>
                                     )}
+
+                                    {/* AI Explanation Box */}
+                                    {aiExplanations[q.id] && (
+                                        <div className="mt-4 p-4 rounded-xl shadow-sm border" style={{ background: 'linear-gradient(to right, #f8fafc, #eff6ff)', borderLeft: '3px solid #6366f1', borderColor: '#e2e8f0' }}>
+                                            <p className="text-[10px] uppercase tracking-widest mb-2 flex items-center gap-1.5 font-black" style={{ color: '#4f46e5' }}>
+                                                <Sparkles size={12} className="text-purple-500" /> AI Tutor Explanation
+                                            </p>
+                                            <div className="text-xs sm:text-[13px] leading-relaxed whitespace-pre-wrap" style={{ color: '#334155' }}>
+                                                {aiExplanations[q.id]}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* AI Explain Request Button */}
+                                    <div className="mt-4 pt-3 flex justify-end" style={{ borderTop: '1px solid #f1f5f9' }}>
+                                        <button 
+                                            onClick={() => handleAiExplain(q)}
+                                            disabled={loadingExplanations[q.id]}
+                                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all hover:scale-105 active:scale-95 disabled:opacity-50" 
+                                            style={{ background: 'linear-gradient(135deg, #a855f7, #6366f1)', color: '#fff', boxShadow: '0 2px 8px rgba(99,102,241,0.2)' }}
+                                            title={aiExplanations[q.id] ? "Regenerate AI Explanation" : "Ask AI to Explain"}
+                                        >
+                                            {loadingExplanations[q.id] ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                                            {loadingExplanations[q.id] ? 'Generating...' : (aiExplanations[q.id] ? 'Regenerate Explanation' : 'Explain with AI Tutor')}
+                                        </button>
+                                    </div>
                                 </div>
                             </article>
                         );

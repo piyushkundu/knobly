@@ -34,6 +34,10 @@ export default function SuperAdminPage() {
     const [saving, setSaving] = useState(false);
     const [selTestId, setSelTestId] = useState('');
     const [showQModal, setShowQModal] = useState(false);
+    const [previewData, setPreviewData] = useState<any>(null);
+    const [loadingPreviewId, setLoadingPreviewId] = useState<string | null>(null);
+    const [aiFeedback, setAiFeedback] = useState<any>({});
+    const [verifyingTest, setVerifyingTest] = useState(false);
     const [qForm, setQForm] = useState({ id: null as any, text: '', type: 'MCQ', marks: 1, difficulty: 'EASY', options: [{ text: '', is_correct: false }, { text: '', is_correct: false }] });
     const [importMode, setImportMode] = useState(false);
     const [importText, setImportText] = useState('');
@@ -258,7 +262,12 @@ export default function SuperAdminPage() {
                                                                 {t.category && <span className="text-[8px] px-2 py-0.5 rounded-full font-bold" style={{ background: `${catColor}15`, color: catColor, border: `1px solid ${catColor}30` }}>{t.category}</span>}
                                                                 <span className={`text-[8px] px-2 py-0.5 rounded-full font-bold ${t.is_active ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-gray-100 text-gray-400 border border-gray-200'}`}>{t.is_active ? '● Active' : '○ Hidden'}</span>
                                                             </div>
-                                                            <button onClick={e => { e.stopPropagation(); if (confirm(`Delete "${t.title}"?`)) d.deleteTest(t.id); }} className="text-red-400 hover:text-white hover:bg-red-500 p-1.5 rounded-lg transition-all" title="Delete Test"><Trash2 size={13} /></button>
+                                                            <div className="flex items-center gap-1">
+                                                                <button onClick={async (e) => { e.stopPropagation(); setLoadingPreviewId(t.id); const qs = await d.getTestPreviewData(t.id); setPreviewData({ test: t, questions: qs }); setLoadingPreviewId(null); }} className="text-blue-400 hover:text-white hover:bg-blue-500 p-1.5 rounded-lg transition-all" title="Preview Test">
+                                                                    {loadingPreviewId === t.id ? <Loader2 size={13} className="animate-spin" /> : <Eye size={13} />}
+                                                                </button>
+                                                                <button onClick={e => { e.stopPropagation(); if (confirm(`Delete "${t.title}"?`)) d.deleteTest(t.id); }} className="text-red-400 hover:text-white hover:bg-red-500 p-1.5 rounded-lg transition-all" title="Delete Test"><Trash2 size={13} /></button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -837,6 +846,95 @@ export default function SuperAdminPage() {
                                 {profileModal.badgeNames?.map((b: string, i: number) => <div key={i} className="px-2.5 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-[10px] text-emerald-600 font-bold">{b}</div>)}
                                 {(!profileModal.badgeNames || profileModal.badgeNames.length === 0) && <div className="text-xs text-gray-400">No badges earned yet.</div>}
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ═══ TEST PREVIEW MODAL ═══ */}
+            {previewData && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
+                    <div className={`${card} w-full max-w-3xl p-6 shadow-2xl max-h-[90vh] flex flex-col relative`}>
+                        <button onClick={() => { setPreviewData(null); setAiFeedback({}); }} className="absolute top-4 right-4 text-gray-400 hover:text-gray-900 z-10"><X size={20} /></button>
+                        <div className="border-b border-gray-100 pb-4 mb-4 shrink-0 pr-8 flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-black text-gray-900 flex items-center gap-2"><Eye size={18} className="text-blue-500"/> Test Preview: {previewData.test.title}</h3>
+                                <div className="text-xs text-gray-500 mt-1 font-medium">{previewData.test.total_marks} Questions • {previewData.test.duration_minutes} Mins • {previewData.test.mode}</div>
+                            </div>
+                            <button onClick={async () => {
+                                setVerifyingTest(true);
+                                setAiFeedback({});
+                                try {
+                                    const res = await fetch('/api/admin/verify-test', {
+                                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ testTitle: previewData.test.title, questions: previewData.questions })
+                                    });
+                                    const data = await res.json();
+                                    if(data.feedback) {
+                                        const fbMap: any = {};
+                                        data.feedback.forEach((f: any) => fbMap[f.questionId] = f.doubt);
+                                        setAiFeedback(fbMap);
+                                    }
+                                } catch (e) {
+                                    console.error('Verify failed', e);
+                                    alert('AI verification failed');
+                                }
+                                setVerifyingTest(false);
+                            }} disabled={verifyingTest || previewData.questions.length === 0} className={`${btn} shadow-md flex items-center gap-2`} style={{ background: 'linear-gradient(135deg, #a855f7, #c084fc)', color: '#ffffff', opacity: verifyingTest ? 0.7 : 1 }}>
+                                {verifyingTest ? <Loader2 size={13} className="animate-spin" /> : <Shield size={13} />} {verifyingTest ? 'AI Verifying...' : 'AI Verify Test'}
+                            </button>
+                        </div>
+                        <div className="overflow-y-auto flex-1 pr-2 space-y-4">
+                            {previewData.questions.length === 0 && <div className="text-center text-gray-400 text-sm py-8">No questions added yet.</div>}
+                            {previewData.questions.map((q: any, i: number) => (
+                                <div key={q.id} className={`p-4 rounded-xl border transition-colors ${aiFeedback[q.id] ? 'bg-amber-50 border-amber-300' : 'bg-gray-50 border-gray-200'}`}>
+                                    <div className="text-sm font-bold text-gray-900 mb-3 flex items-start gap-2">
+                                        <span className="text-indigo-500 shrink-0">Q{i + 1}.</span> 
+                                        <span className="flex-1">{q.question_text}</span>
+                                        <div className="flex items-center gap-2 shrink-0">
+                                            <span className="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full whitespace-nowrap">{q.question_type}</span>
+                                            <button onClick={async () => {
+                                                if(confirm('Delete this question?')) {
+                                                    await d.deleteQuestion(q.id, previewData.test.id);
+                                                    setPreviewData({ ...previewData, questions: previewData.questions.filter((x: any) => x.id !== q.id) });
+                                                }
+                                            }} className="text-red-400 hover:text-red-600 p-1.5 bg-white rounded-lg shadow-sm border border-red-100 transition" title="Delete Question"><Trash2 size={13} /></button>
+                                        </div>
+                                    </div>
+                                    {(q.question_type === 'MCQ' || q.question_type === 'TF') && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-6">
+                                            {q.options?.map((opt: any, oIdx: number) => (
+                                                <button key={opt.id} onClick={async () => {
+                                                    if (opt.is_correct) return;
+                                                    const newQs = previewData.questions.map((x: any) => x.id === q.id ? { ...x, options: x.options.map((o: any) => ({ ...o, is_correct: o.id === opt.id })) } : x);
+                                                    setPreviewData({ ...previewData, questions: newQs });
+                                                    await d.setCorrectOption(q.id, opt.id);
+                                                }} className={`text-xs p-2.5 rounded-lg border flex items-center gap-2 transition-all cursor-pointer text-left ${opt.is_correct ? 'bg-emerald-50 border-emerald-400 text-emerald-800 font-bold shadow-sm ring-1 ring-emerald-400' : 'bg-white border-gray-200 text-gray-600 hover:border-indigo-300 hover:shadow-sm'}`}>
+                                                    <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 border ${opt.is_correct ? 'bg-emerald-500 border-emerald-600 text-white' : 'border-gray-300'}`}>
+                                                        {opt.is_correct ? <Check size={10} /> : <span className="text-[8px]">{String.fromCharCode(65 + oIdx)}</span>}
+                                                    </div>
+                                                    <span className="flex-1">{opt.option_text}</span>
+                                                    {opt.is_correct && <span className="text-[10px] uppercase tracking-wider text-emerald-600 hidden sm:inline">Correct</span>}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {q.question_type === 'SHORT' && (
+                                        <div className="ml-6 text-xs text-gray-500 italic bg-white p-3 rounded-lg border border-gray-200">
+                                            Short answer question. Admin manually evaluates.
+                                        </div>
+                                    )}
+                                    {aiFeedback[q.id] && (
+                                        <div className="mt-3 ml-6 p-3 bg-white border border-amber-200 rounded-xl flex items-start gap-2 text-amber-800 shadow-sm">
+                                            <span className="text-base mt-0.5 shrink-0">🤖</span>
+                                            <div>
+                                                <h4 className="text-[10px] font-black uppercase tracking-wider mb-1 opacity-70">AI Doubt / Fix Suggestion</h4>
+                                                <p className="text-xs font-medium leading-relaxed">{aiFeedback[q.id]}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
