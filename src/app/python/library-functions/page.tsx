@@ -95,7 +95,7 @@ export default function LibraryFunctionsPage() {
                             <h1 className="text-sm font-extrabold" style={{ color: '#0f172a' }}>Library Functions</h1>
                             <div className="flex items-center gap-1.5">
                                 <Sparkles size={8} style={{ color: '#9333ea' }} />
-                                <span className="text-[9px] uppercase tracking-[0.18em] font-bold" style={{ color: '#9333ea' }}>Chapter 7 • Python</span>
+                                <span className="text-[9px] uppercase tracking-[0.18em] font-bold" style={{ color: '#9333ea' }}>Chapter 6 • Python</span>
                             </div>
                         </div>
                     </div>
@@ -141,9 +141,9 @@ export default function LibraryFunctionsPage() {
                         </div>
                         <div className="relative z-10 p-6 md:p-10">
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold mb-4" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: '#fff' }}>
-                                <Sparkles size={10} /> Chapter 7 • Python
+                                <Sparkles size={10} /> Chapter 6 • Python
                             </div>
-                            <h2 className="text-2xl md:text-3xl font-black mb-3 text-white">Library Functions</h2>
+                            <h2 className="text-2xl md:text-3xl font-black mb-3" style={{ color: '#ffffff' }}>Library Functions</h2>
                             <p className="text-sm md:text-base max-w-2xl mb-5" style={{ color: 'rgba(255,255,255,0.95)' }}>
                                 Explore Python's powerful built-in modules. From Math and Random objects to deep String manipulation and detailed Date-Time tracking!
                             </p>
@@ -154,7 +154,7 @@ export default function LibraryFunctionsPage() {
                                     { icon: <Code2 size={14} />, label: 'String Mgmt' }, 
                                     { icon: <Repeat size={14} />, label: 'Date/Time' }
                                 ].map((s, i) => (
-                                    <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-sm" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)' }}>
+                                    <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm" style={{ color: '#ffffff', background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)' }}>
                                         {s.icon}<span>{s.label}</span>
                                     </div>
                                 ))}
@@ -352,7 +352,12 @@ Backward index → -6 -5 -4 -3 -2 -1`}
 
                     {/* Date & Time */}
                     <Sec id="datetime" title="Date & Time Function :" icon={<Repeat size={18} className="text-purple-600" />}>
-                        <p className="mb-4">Python में time और calendar module होते हैं। date/time data का structure tuple (Struct_Time) जैसा होता है:</p>
+                        <p className="mb-4">Python में time और date को handle करने के लिए 2 modules होते हैं:</p>
+                        <ul className="list-none space-y-1 mb-4 text-slate-700 font-medium">
+                            <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div> time module</li>
+                            <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div> calendar module</li>
+                        </ul>
+                        <p className="mb-4">यह modules समय को 8 values के tuple में store करते हैं।</p>
 
                         <div className="overflow-x-auto mb-6 rounded-xl border border-slate-200 shadow-sm">
                             <table className="w-full text-sm text-left">
@@ -364,38 +369,127 @@ Backward index → -6 -5 -4 -3 -2 -1`}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">0</td><td className="py-2 px-4 font-medium">Year</td><td className="py-2 px-4 text-slate-600">4 digit</td></tr>
-                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">1</td><td className="py-2 px-4 font-medium">Month</td><td className="py-2 px-4 text-slate-600">1 – 12</td></tr>
-                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">2</td><td className="py-2 px-4 font-medium">Day</td><td className="py-2 px-4 text-slate-600">1 – 31</td></tr>
-                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">3</td><td className="py-2 px-4 font-medium">Hour</td><td className="py-2 px-4 text-slate-600">0 – 23</td></tr>
-                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">4</td><td className="py-2 px-4 font-medium">Minute</td><td className="py-2 px-4 text-slate-600">0 – 59</td></tr>
-                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">5</td><td className="py-2 px-4 font-medium">Second</td><td className="py-2 px-4 text-slate-600">0 – 60</td></tr>
-                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">6</td><td className="py-2 px-4 font-medium">Day of week</td><td className="py-2 px-4 text-slate-600">0 – 6</td></tr>
-                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">7</td><td className="py-2 px-4 font-medium">Day of year</td><td className="py-2 px-4 text-slate-600">1 – 366</td></tr>
+                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">0</td><td className="py-2 px-4 font-medium">Year</td><td className="py-2 px-4 text-slate-600">4-digit (जैसे 2008)</td></tr>
+                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">1</td><td className="py-2 px-4 font-medium">Month</td><td className="py-2 px-4 text-slate-600">1 to 12</td></tr>
+                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">2</td><td className="py-2 px-4 font-medium">Day</td><td className="py-2 px-4 text-slate-600">1 to 31</td></tr>
+                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">3</td><td className="py-2 px-4 font-medium">Hour</td><td className="py-2 px-4 text-slate-600">0 to 23</td></tr>
+                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">4</td><td className="py-2 px-4 font-medium">Minute</td><td className="py-2 px-4 text-slate-600">0 to 59</td></tr>
+                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">5</td><td className="py-2 px-4 font-medium">Second</td><td className="py-2 px-4 text-slate-600">0 to 60 (61 leap second)</td></tr>
+                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">6</td><td className="py-2 px-4 font-medium">Day of week</td><td className="py-2 px-4 text-slate-600">0 to 6 (0 = Monday)</td></tr>
+                                    <tr className="border-b border-slate-100"><td className="py-2 px-4">7</td><td className="py-2 px-4 font-medium">Day of year</td><td className="py-2 px-4 text-slate-600">1 to 366</td></tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <h3 className="text-base font-bold mt-6 mb-3 text-slate-800">Time Module Functions :</h3>
+                        <h3 className="text-lg font-extrabold mt-8 mb-4 flex items-center gap-2" style={{ color: '#0f172a' }}>
+                            <Zap size={20} className="text-blue-500" /> TIME MODULE
+                        </h3>
+                        
                         <div className="space-y-4">
-                            <MethodCard name="(1) time()" desc="Seconds since January 1, 1970 (Epoch time) return करता है" color="#0ea5e9">
+                            <MethodCard name="(1) time()" desc="यह function 1 January 1970 (12:00 AM) से अब तक के seconds return करता है।" color="#0ea5e9">
                                 <CB code={`import time\nt = time.time()\nprint(t)`} />
                             </MethodCard>
                             
-                            <MethodCard name="(2) localtime()" desc="epoch time को tuple format (struct_time) में convert करता है" color="#14b8a6">
-                                <CB code={`print(time.localtime())`} />
+                            <MethodCard name="(2) localtime()" desc="seconds को time tuple में convert करता है।" color="#14b8a6">
+                                <CB code={`import time\nt = time.localtime(time.time())\n\nprint("Current time is:", t)\nprint("Current month is:", t[1])`} />
                             </MethodCard>
 
-                            <MethodCard name="(3) ctime()" desc="Current Date & Time दिखाता है" color="#8b5cf6">
-                                <CB code={`print(time.ctime())`} />
+                            <MethodCard name="(3) ctime()" desc="current date & time readable format में दिखाता है।" color="#8b5cf6">
+                                <CB code={`import time\nprint(time.ctime())\n\n# Output:\n# Fri Dec 17 10:30:00 2021`} />
                             </MethodCard>
 
-                            <MethodCard name="(4) mktime()" desc="tuple (struct_time) को seconds में convert करता है" color="#ec4899">
-                                <CB code={`t = time.localtime()\nprint(time.mktime(t))`} />
+                            <MethodCard name="(4) mktime()" desc="time tuple को seconds में convert करता है।" color="#ec4899">
+                                <CB code={`import time\nprint(time.mktime(time.localtime()))`} />
                             </MethodCard>
 
-                            <MethodCard name="(5) sleep()" desc="Program execution को दिए गए seconds के लिए रोकता है" color="#f59e0b">
-                                <CB code={`print("Wait...")\ntime.sleep(5)\nprint("Done!")`} />
+                            <MethodCard name="(5) sleep()" desc="program को कुछ seconds के लिए रोक देता है।" color="#f59e0b">
+                                <CB code={`import time\ntime.sleep(5)`} />
+                            </MethodCard>
+
+                            <MethodCard name="(6) strftime()" desc="यह function time tuple को format करके string में convert करता है।" color="#ef4444">
+                                <div><span className="text-[10px] font-bold uppercase text-slate-400">Syntax</span><CB code={`time.strftime(<format>, <time tuple>)`} /></div>
+                                
+                                <div className="mt-4 mb-2 overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                                    <table className="w-full text-sm text-left">
+                                        <thead className="bg-slate-50 text-slate-700 border-b border-slate-200">
+                                            <tr>
+                                                <th className="py-2 px-4 font-bold">Code</th>
+                                                <th className="py-2 px-4 font-bold">Meaning</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%a</td><td className="py-1.5 px-4 text-slate-600">Weekday short name</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%A</td><td className="py-1.5 px-4 text-slate-600">Full weekday name</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%b</td><td className="py-1.5 px-4 text-slate-600">Short month name</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%B</td><td className="py-1.5 px-4 text-slate-600">Full month name</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%m</td><td className="py-1.5 px-4 text-slate-600">Month (1–12)</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%d</td><td className="py-1.5 px-4 text-slate-600">Day (1–31)</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%D</td><td className="py-1.5 px-4 text-slate-600">Date format (%m/%d/%y)</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%H</td><td className="py-1.5 px-4 text-slate-600">Hour (0–23)</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%I</td><td className="py-1.5 px-4 text-slate-600">Hour (1–12)</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%M</td><td className="py-1.5 px-4 text-slate-600">Minute</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%S</td><td className="py-1.5 px-4 text-slate-600">Second</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%p</td><td className="py-1.5 px-4 text-slate-600">AM/PM</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%y</td><td className="py-1.5 px-4 text-slate-600">Year (2 digit)</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%Y</td><td className="py-1.5 px-4 text-slate-600">Year (4 digit)</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%j</td><td className="py-1.5 px-4 text-slate-600">Day of year (001–366)</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%U</td><td className="py-1.5 px-4 text-slate-600">Weekday no (1–7)</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%n</td><td className="py-1.5 px-4 text-slate-600">New line</td></tr>
+                                            <tr><td className="py-1.5 px-4 font-mono font-bold text-rose-500">%t</td><td className="py-1.5 px-4 text-slate-600">Tab</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="mt-4"><span className="text-[10px] font-bold uppercase text-slate-400">Example</span>
+                                <CB code={`import time\nt = (2009,2,17,11,3,38,1,48,0)\n\nprint(time.strftime("%b %d %Y %I:%M:%S", t))\n\n# Output:\n# Feb 17 2009 11:03:38`} /></div>
+                            </MethodCard>
+
+                            <MethodCard name="(7) strptime()" desc="यह function string को time tuple में convert करता है।" color="#8b5cf6">
+                                <div><span className="text-[10px] font-bold uppercase text-slate-400">Syntax</span><CB code={`time.strptime(<time>, <format>)`} /></div>
+                                <div className="mt-4"><span className="text-[10px] font-bold uppercase text-slate-400">Example</span><CB code={`import time\nprint(time.strptime("30 Aug 1961", "%d %b %Y"))`} /></div>
+                            </MethodCard>
+                        </div>
+
+                        <h3 className="text-lg font-extrabold mt-10 mb-4 flex items-center gap-2" style={{ color: '#0f172a' }}>
+                            <BoxSelect size={20} className="text-teal-500" /> CALENDAR MODULE
+                        </h3>
+
+                        <div className="space-y-4">
+                            <MethodCard name="(1) calendar()" desc="यह पूरे year का calendar return करता है (multi-line string में)" color="#10b981">
+                                <div><span className="text-[10px] font-bold uppercase text-slate-400">Syntax</span><CB code={`calendar.calendar(<year>, <w>, <l>, <c>)`} /></div>
+                                <ul className="list-disc pl-5 my-2 text-sm text-slate-600">
+                                    <li><strong>w</strong> → width</li>
+                                    <li><strong>l</strong> → lines</li>
+                                    <li><strong>c</strong> → space between months</li>
+                                </ul>
+                                <div className="mt-4"><span className="text-[10px] font-bold uppercase text-slate-400">Example</span><CB code={`import calendar\nprint(calendar.calendar(2021, w=3, l=1, c=6))`} /></div>
+                            </MethodCard>
+
+                            <MethodCard name="(2) isleap()" desc="check करता है कि year leap year है या नहीं" color="#3b82f6">
+                                <CB code={`import calendar\nprint(calendar.isleap(2020))  # True`} />
+                            </MethodCard>
+
+                            <MethodCard name="(3) leapdays()" desc="दो years के बीच leap years की संख्या देता है" color="#6366f1">
+                                <CB code={`import calendar\nprint(calendar.leapdays(2000, 2020))  # 5`} />
+                            </MethodCard>
+
+                            <MethodCard name="(4) month()" desc="किसी specific month का calendar देता है" color="#8b5cf6">
+                                <CB code={`import calendar\nprint(calendar.month(2021, 12, w=2, l=1))`} />
+                            </MethodCard>
+
+                            <MethodCard name="(5) monthcalendar()" desc="month का calendar nested list में देता है" color="#ec4899">
+                                <CB code={`import calendar\nprint(calendar.monthcalendar(2022, 1))`} />
+                            </MethodCard>
+
+                            <MethodCard name="(6) monthrange()" desc="month का पहला weekday और total days देता है" color="#f43f5e">
+                                <CB code={`import calendar\nprint(calendar.monthrange(2019, 8))\n\n# Output:\n# (3, 31)`} />
+                            </MethodCard>
+
+                            <MethodCard name="(7) setfirstweekday()" desc="week का first day set करता है" color="#eab308">
+                                <CB code={`import calendar\ncalendar.setfirstweekday(5)\nprint(calendar.prmonth(2019, 6))\n\n# Weekday code:\n# 0 = Monday\n# 6 = Sunday`} />
+                            </MethodCard>
+
+                            <MethodCard name="(8) weekday()" desc="given date का weekday code return करता है" color="#84cc16">
+                                <CB code={`import calendar\nprint(calendar.weekday(2019, 4, 12))`} />
                             </MethodCard>
                         </div>
                     </Sec>

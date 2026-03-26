@@ -64,16 +64,6 @@ const pythonTopics = [
         chapter: 5,
     },
     {
-        title: 'File Handling',
-        href: '/python/file-handling',
-        icon: <FileText size={22} style={{ color: '#6ee7b7' }} />,
-        gradient: 'linear-gradient(135deg, #064e3b, #047857, #059669)',
-        border: '#10b981',
-        glow: 'rgba(16,185,129,0.15)',
-        desc: 'Reading, writing, appending files and working with CSV data',
-        chapter: 6,
-    },
-    {
         title: 'Library Functions',
         href: '/python/library-functions',
         icon: <FunctionSquare size={22} style={{ color: '#c084fc' }} />,
@@ -81,6 +71,16 @@ const pythonTopics = [
         border: '#8b5cf6',
         glow: 'rgba(139,92,246,0.15)',
         desc: 'Pre-defined modules, math functions, random values, string operations, and date/time',
+        chapter: 6,
+    },
+    {
+        title: 'File Handling',
+        href: '/python/file-handling',
+        icon: <FileText size={22} style={{ color: '#6ee7b7' }} />,
+        gradient: 'linear-gradient(135deg, #064e3b, #047857, #059669)',
+        border: '#10b981',
+        glow: 'rgba(16,185,129,0.15)',
+        desc: 'Reading, writing, appending files and working with CSV data',
         chapter: 7,
     },
     {
