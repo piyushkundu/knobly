@@ -22,6 +22,7 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
     { id: 'python-lab', name: 'Python Interpreter', type: 'With AI', link: '/python-lab', icon: 'ph-bold ph-terminal-window', color: 'text-indigo-400', borderClass: 'border-indigo', category: 'Main' },
     { id: 'c-lab', name: 'C Compiler', type: 'With AI', link: '/c-lab', icon: 'ph-bold ph-terminal-window', color: 'text-green-500', borderClass: 'border-green', category: 'Main' },
     { id: 'test-journey', name: 'Test Journey', type: 'Dashboard', link: '/dashboard', icon: 'ph-bold ph-trophy', color: 'text-amber-400', borderClass: 'border-amber', category: 'Main' },
+    { id: 'top10-news', name: 'Top 10 News', type: 'AI News', link: '/tech-news', icon: 'ph-bold ph-newspaper', color: 'text-rose-400', borderClass: 'border-rose', category: 'Main' },
   ],
   OLevel: [
     { id: 'syllabus', name: 'Syllabus', type: 'Info', link: '/syllabus', icon: 'ph-bold ph-list-bullets', color: 'text-gray-300', borderClass: 'border-slate', category: 'OLevel' },

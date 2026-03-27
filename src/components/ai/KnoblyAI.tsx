@@ -2,6 +2,16 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { Sparkles, ChevronDown, ArrowUpRight, ArrowUp } from 'lucide-react';
+
+const AIIcon = ({ size = 24, className = "", color = "currentColor" }) => {
+    // Ensuring that if it's meant to be white, it strictly renders as white.
+    const appliedColor = (className.includes("text-white") || color === "white" || color === "#ffffff") ? "#ffffff" : color;
+    
+    return (
+        <Sparkles size={size} color={appliedColor} fill={appliedColor === "#ffffff" ? "rgba(255,255,255,0.2)" : "none"} strokeWidth={2.2} className={className} />
+    );
+};
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface Message {
@@ -51,47 +61,15 @@ export default function KnoblyAI() {
 
     // Hide AI completely on test pages and python lab page
     if (isTestPage || isPythonLabPage) return null;
+
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [hovered, setHovered] = useState(false);
     const [isDark, setIsDark] = useState(true);
-    const [particles, setParticles] = useState<any[]>([]);
 
-    useEffect(() => {
-        setParticles(
-            Array.from({ length: 6 }, (_, i) => ({
-                id: i,
-                size: 2 + Math.random() * 3,
-                x: Math.random() * 100,
-                y: Math.random() * 100,
-                duration: 3 + Math.random() * 4,
-                delay: Math.random() * 2,
-            }))
-        );
-    }, []);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        if (open) {
-            setTimeout(() => inputRef.current?.focus(), 250);
-            if (messages.length === 0) {
-                setMessages([{
-                    role: 'assistant',
-                    content: '👋 **Namaste!** Main KnoblyAI hoon — aapka personal assistant.\n\nKya karna chahte ho? Neeche se choose karo ya kuch bhi poochho!',
-                    navOptions: [
-                        { path: '/python', label: '🐍 Python Course' },
-                        { path: '/html', label: '🌐 HTML Course' },
-                        { path: '/mcq', label: '📝 MCQ Practice' },
-                        { path: '/notes', label: '📒 Study Notes' },
-                        { path: '/', label: '🏠 Home Page' },
-                    ]
-                }]);
-            }
-        }
-    }, [open]);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
 
     // Detect theme
     useEffect(() => {
@@ -103,10 +81,16 @@ export default function KnoblyAI() {
     }, []);
 
     useEffect(() => {
+        if (open) {
+            setTimeout(() => inputRef.current?.focus(), 250);
+        }
+    }, [open]);
+
+    useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, loading]);
 
-    // Listen for external toggle event (from home sidebar CTA)
+    // Listen for external toggle event
     useEffect(() => {
         const handler = () => setOpen(prev => !prev);
         window.addEventListener('toggle-knobly-ai', handler);
@@ -172,297 +156,290 @@ export default function KnoblyAI() {
         }
     };
 
-    // ─── Render ──────────────────────────────────────────────────────────────────
+    const suggestedPrompts = [
+        "I want to learn Python programming",
+        "I need handwritten notes for O-Level",
+        "I want to practice MCQ questions"
+    ];
+
+    const tags = ["Python", "HTML", "Notes", "MCQ"];
+
     return (
         <>
-            {/* ═══════════════════ FLOATING TRIGGER (hidden on desktop home, visible on mobile home) ═══════════════════ */}
-            <div
-                className={`fixed bottom-20 sm:bottom-5 right-5 z-[9999] select-none ${isHomePage ? 'xl:hidden' : ''}`}
-                onMouseEnter={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
-            >
-                {/* Gradient ring with pulse glow */}
-                <div
-                    className="relative p-[2px] rounded-full transition-all duration-500"
+            {/* ═══════════════════ FLOATING TRIGGER BUTTON ═══════════════════ */}
+            <div className={`fixed bottom-24 md:bottom-6 right-6 z-[9999] select-none ${isHomePage ? 'xl:hidden' : ''} transition-all duration-300 ${open ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}>
+                <button
+                    onClick={() => setOpen(true)}
+                    className="flex items-center gap-2.5 px-6 py-3.5 rounded-full shadow-xl transition-all hover:scale-105 active:scale-95"
                     style={{
-                        background: 'linear-gradient(135deg, #8b5cf6, #38bdf8, #a855f7)',
-                        boxShadow: hovered
-                            ? '0 0 25px rgba(139,92,246,0.6), 0 0 50px rgba(56,189,248,0.25)'
-                            : '0 0 14px rgba(139,92,246,0.35)',
-                        animation: 'breathe 2.5s ease-in-out infinite',
+                        background: '#6d28d9',
+                        color: '#ffffff', // Ensures the actual text inherits absolute white
                     }}
                 >
-                    <button
-                        onClick={() => setOpen(o => !o)}
-                        className="relative flex items-center justify-center transition-all duration-500 overflow-hidden"
-                        style={{
-                            width: 52,
-                            height: 52,
-                            borderRadius: '50%',
-                            background: 'linear-gradient(145deg, #0c1631 0%, #1a1145 50%, #0f172a 100%)',
-                            transform: `scale(${hovered ? 1.08 : 1})`,
-                        }}
-                        title="KnoblyAI Assistant"
-                    >
-                        {open ? (
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="url(#closeGrad2)" strokeWidth="2.5" strokeLinecap="round">
-                                <defs><linearGradient id="closeGrad2" x1="0" y1="0" x2="24" y2="24"><stop stopColor="#c084fc" /><stop offset="1" stopColor="#38bdf8" /></linearGradient></defs>
-                                <path d="M18 6L6 18M6 6l12 12" />
-                            </svg>
-                        ) : (
-                            <span style={{
-                                fontSize: 16,
-                                fontWeight: 900,
-                                letterSpacing: '0.04em',
-                                background: 'linear-gradient(135deg, #c4b5fd 0%, #38bdf8 50%, #a78bfa 100%)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                            }}>AI</span>
-                        )}
-                    </button>
-                </div>
+                    <AIIcon size={22} color="#ffffff" />
+                    <span className="font-semibold text-[15px] tracking-wide" style={{ color: '#ffffff' }}>Ask Knobly</span>
+                </button>
             </div>
 
             {/* ═══════════════════ CHAT PANEL ═══════════════════ */}
             <div
-                className={`fixed z-[9998] transition-all duration-500 ease-out ${open
+                className={`fixed z-[9998] transition-all duration-300 ease-out flex flex-col bottom-24 md:bottom-6 right-6 ${open
                     ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
-                    : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
+                    : 'opacity-0 translate-y-8 scale-95 pointer-events-none'
                     }`}
                 style={{
-                    bottom: 80,
-                    right: 20,
-                    width: 'min(400px, calc(100vw - 32px))',
+                    width: 'min(420px, calc(100vw - 32px))',
+                    height: 'min(700px, calc(100vh - 48px))',
                     transformOrigin: 'bottom right',
+                    background: isDark ? '#111827' : '#ffffff',
+                    borderRadius: '24px',
+                    boxShadow: isDark 
+                        ? '0 0 0 1px rgba(255,255,255,0.1), 0 24px 48px -12px rgba(0,0,0,0.5)'
+                        : '0 0 0 1px rgba(0,0,0,0.06), 0 24px 48px -12px rgba(0,0,0,0.15)',
                 }}
             >
-                <div
-                    className="rounded-[28px] overflow-hidden flex flex-col"
-                    style={{
-                        maxHeight: 'min(560px, calc(100vh - 120px))',
-                        background: isDark
-                            ? 'linear-gradient(180deg, #080d1f 0%, #0c1229 50%, #0a0f1e 100%)'
-                            : 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-                        border: isDark ? '1px solid rgba(139,92,246,0.2)' : '1px solid rgba(139,92,246,0.15)',
-                        boxShadow: isDark
-                            ? '0 0 80px rgba(139,92,246,0.1), 0 0 40px rgba(56,189,248,0.08), 0 24px 48px rgba(0,0,0,0.7)'
-                            : '0 8px 40px rgba(0,0,0,0.12), 0 0 20px rgba(139,92,246,0.08)',
-                    }}
-                >
-                    {/* ── Header ── */}
-                    <div className="relative px-4 py-3 flex items-center gap-3 overflow-hidden" style={{ borderBottom: '1px solid rgba(139,92,246,0.15)' }}>
-                        {/* Animated gradient line */}
-                        <div className="absolute bottom-0 left-0 right-0 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, #8b5cf6, #38bdf8, #ec4899, transparent)', animation: 'shimmer 3s ease-in-out infinite', backgroundSize: '200% 100%' }} />
-                        {/* Floating particles */}
-                        {particles.map(p => (
-                            <div
-                                key={p.id}
-                                className="absolute rounded-full"
-                                style={{
-                                    width: p.size,
-                                    height: p.size,
-                                    left: `${p.x}%`,
-                                    top: `${p.y}%`,
-                                    background: ['#8b5cf6', '#38bdf8', '#ec4899', '#22c55e', '#f59e0b', '#ef4444'][p.id],
-                                    opacity: 0.3,
-                                    animation: `float ${p.duration}s ease-in-out ${p.delay}s infinite alternate`,
-                                }}
-                            />
-                        ))}
+                {/* ── Header ── */}
+                <div className="flex items-center justify-between px-5 py-4 shrink-0 transition-colors rounded-t-[24px]"
+                    style={{ background: '#111827', borderBottom: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)' }}>
+                    <div className="flex items-center gap-2">
+                        <AIIcon size={22} className="text-white" />
+                        <span className="font-bold text-[16px] tracking-wide text-white">KnoblyAI</span>
+                    </div>
+                    <button
+                        onClick={() => setOpen(false)}
+                        className="p-1.5 rounded-full transition-colors"
+                        style={{ color: '#9ca3af' }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                        <ChevronDown size={22} />
+                    </button>
+                </div>
 
-                        {/* Avatar */}
-                        <div className="relative h-10 w-10 rounded-2xl flex items-center justify-center flex-shrink-0"
-                            style={{
-                                background: 'linear-gradient(135deg, #8b5cf6, #38bdf8)',
-                                boxShadow: '0 0 20px rgba(139,92,246,0.4)',
-                            }}>
-                            <span style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>K</span>
-                            <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full" style={{ background: '#22c55e', border: isDark ? '2px solid #0a0f1e' : '2px solid #fff' }} />
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                                <span style={{ fontSize: 15, fontWeight: 700, color: isDark ? '#fff' : '#1e293b' }}>KnoblyAI</span>
-                                <span style={{ fontSize: 9, padding: '1px 6px', borderRadius: 6, background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', color: '#fff', fontWeight: 600, letterSpacing: 0.5 }}>PRO</span>
+                {/* ── Chat Messages Area ── */}
+                <div className="flex-1 overflow-y-auto w-full relative" style={{ scrollbarWidth: 'none' }}>
+                    {messages.length === 0 ? (
+                        /* Empty State / Welcome Screen */
+                        <div className="flex flex-col h-full fade-in pb-4">
+                            <div className="flex flex-col items-center justify-center pt-8 pb-6 px-4">
+                                <div className="w-14 h-14 flex items-center justify-center rounded-2xl mb-4 bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg ring-4 ring-purple-50 dark:ring-purple-900/20">
+                                    <AIIcon size={30} className="text-white" />
+                                </div>
+                                <h2 className="text-[24px] font-bold mb-1 tracking-tight" style={{ color: isDark ? '#f9fafb' : '#111827' }}>Hello 👋</h2>
+                                <p className="text-[15px]" style={{ color: isDark ? '#9ca3af' : '#4b5563' }}>How can I help you today?</p>
                             </div>
-                            <div style={{ fontSize: 10, color: isDark ? '#64748b' : '#94a3b8', marginTop: 1 }}>⚡ Instant responses · Navigate anywhere</div>
-                        </div>
 
+                            <div className="flex-1 px-5 flex flex-col mt-2 space-y-3">
+                                {suggestedPrompts.map((prompt, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => send(prompt)}
+                                        className="flex items-center gap-3 w-full text-left py-3.5 border-b transition-colors group"
+                                        style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }}
+                                    >
+                                        <ArrowUpRight size={18} className="shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" style={{ color: isDark ? '#d1d5db' : '#374151' }} />
+                                        <span className="text-[14px] leading-snug group-hover:underline decoration-1 underline-offset-2"
+                                            style={{ color: isDark ? '#e5e7eb' : '#1f2937' }}>
+                                            {prompt}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        /* Messages List */
+                        <div className="px-5 py-6 space-y-6">
+                            {messages.map((m, i) => (
+                                <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'} max-w-full`}>
+                                    <div
+                                        className="text-[15px] leading-relaxed break-words shadow-sm"
+                                        style={m.role === 'user'
+                                            ? {
+                                                background: isDark ? '#374151' : '#f3f4f6',
+                                                color: isDark ? '#f9fafb' : '#111827',
+                                                padding: '12px 18px',
+                                                borderRadius: '20px',
+                                                borderBottomRightRadius: '4px',
+                                                maxWidth: '90%'
+                                            }
+                                            : {
+                                                background: 'transparent',
+                                                color: isDark ? '#e5e7eb' : '#374151',
+                                                maxWidth: '100%'
+                                            }
+                                        }
+                                    >
+                                        {m.role === 'assistant' && (
+                                            <div className="flex items-center gap-2 mb-2 opacity-90">
+                                                <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                                    <AIIcon size={14} className="text-purple-600 dark:text-purple-400" />
+                                                </div>
+                                                <span className="font-semibold text-[13px] text-purple-600 dark:text-purple-400">KnoblyAI</span>
+                                            </div>
+                                        )}
+                                        <div 
+                                            dangerouslySetInnerHTML={{
+                                                __html: m.content
+                                                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                                    .replace(/\n/g, '<br/>')
+                                            }}
+                                            className="space-y-2"
+                                        />
+                                    </div>
+
+                                    {/* Navigation Option Cards */}
+                                    {m.navOptions && m.navOptions.length > 0 && (
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            {m.navOptions.map((opt, j) => (
+                                                <button
+                                                    key={j}
+                                                    onClick={() => navigateTo(opt.path)}
+                                                    className="text-[13px] px-4 py-2 rounded-full font-medium transition-all border shadow-sm"
+                                                    style={{
+                                                        background: isDark ? 'rgba(31, 41, 55, 0.4)' : '#ffffff',
+                                                        borderColor: isDark ? '#4b5563' : '#e5e7eb',
+                                                        color: isDark ? '#d1d5db' : '#4b5563',
+                                                    }}
+                                                    onMouseEnter={e => {
+                                                        e.currentTarget.style.borderColor = '#8b5cf6';
+                                                        e.currentTarget.style.color = '#8b5cf6';
+                                                        e.currentTarget.style.boxShadow = '0 2px 4px rgba(139,92,246,0.1)';
+                                                    }}
+                                                    onMouseLeave={e => {
+                                                        e.currentTarget.style.borderColor = isDark ? '#4b5563' : '#e5e7eb';
+                                                        e.currentTarget.style.color = isDark ? '#d1d5db' : '#4b5563';
+                                                        e.currentTarget.style.boxShadow = 'none';
+                                                    }}
+                                                >
+                                                    {opt.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+
+                            {/* Loading Indicator */}
+                            {loading && (
+                                <div className="flex flex-col items-start max-w-full">
+                                    <div className="flex items-center gap-2 mb-2 opacity-90">
+                                        <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                            <AIIcon size={14} className="text-purple-600 dark:text-purple-400" />
+                                        </div>
+                                        <span className="font-semibold text-[13px] text-purple-600 dark:text-purple-400">KnoblyAI</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 py-3 px-2">
+                                        <span className="animate-bounce w-1.5 h-1.5 rounded-full bg-purple-500" style={{ animationDelay: '0ms' }} />
+                                        <span className="animate-bounce w-1.5 h-1.5 rounded-full bg-purple-500" style={{ animationDelay: '150ms' }} />
+                                        <span className="animate-bounce w-1.5 h-1.5 rounded-full bg-purple-500" style={{ animationDelay: '300ms' }} />
+                                    </div>
+                                </div>
+                            )}
+
+                            <div ref={messagesEndRef} />
+                        </div>
+                    )}
+                </div>
+
+                {/* ── Input Area ── */}
+                <div className="shrink-0 pt-2 pb-5 px-5 relative z-10 w-full"
+                    style={{ background: isDark ? '#111827' : '#ffffff' }}>
+                    
+                    {/* Tags */}
+                    {messages.length === 0 && (
+                        <div className="flex items-center justify-start gap-2 mb-3 overflow-x-auto no-scrollbar pb-1 w-full" style={{ scrollBehavior: 'smooth' }}>
+                            {tags.map((tag, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setInput(tag)}
+                                    className="shrink-0 text-[12px] px-3.5 py-1.5 rounded-full border transition-all shadow-sm border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap"
+                                    style={{ color: isDark ? '#e5e7eb' : '#4b5563' }}
+                                >
+                                    {tag}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Input Box - Made super premium and padded correctly */}
+                    <div 
+                        className="relative flex items-center rounded-3xl transition-all w-full box-border overflow-hidden"
+                        style={{
+                            border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
+                            boxShadow: `0 2px 10px ${isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.04)'}`,
+                            background: isDark ? '#1f2937' : '#ffffff'
+                        }}
+                        onFocusCapture={(e) => {
+                            e.currentTarget.style.borderColor = '#8b5cf6';
+                            e.currentTarget.style.boxShadow = `0 0 0 3px ${isDark ? 'rgba(139,92,246,0.2)' : 'rgba(139,92,246,0.15)'}`;
+                        }}
+                        onBlurCapture={(e) => {
+                            e.currentTarget.style.borderColor = isDark ? '#374151' : '#e5e7eb';
+                            e.currentTarget.style.boxShadow = `0 2px 10px ${isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.04)'}`;
+                        }}
+                    >
+                        <textarea
+                            ref={inputRef as any}
+                            value={input}
+                            onChange={e => {
+                                setInput(e.target.value);
+                                e.target.style.height = '52px';
+                                e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    send();
+                                }
+                            }}
+                            placeholder="Ask Knobly anything..."
+                            className="bg-transparent outline-none w-full box-border resize-none leading-[52px] pl-5 pr-14 font-normal"
+                            style={{
+                                color: isDark ? '#f9fafb' : '#111827',
+                                height: 52,
+                                minHeight: 52,
+                                maxHeight: 120,
+                                paddingTop: input.includes('\n') || input.length > 35 ? '14px' : '0',
+                                lineHeight: input.includes('\n') || input.length > 35 ? '1.5' : '52px',
+                            }}
+                        />
+
+                        {/* Send Button */}
                         <button
-                            onClick={() => setOpen(false)}
-                            className="flex items-center justify-center transition-all flex-shrink-0"
-                            style={{ width: 28, height: 28, borderRadius: '50%', background: isDark ? 'rgba(139,92,246,0.15)' : 'rgba(139,92,246,0.1)', color: '#a78bfa', border: isDark ? '1px solid rgba(139,92,246,0.2)' : '1px solid rgba(139,92,246,0.15)' }}
+                            onClick={() => send()}
+                            disabled={!input.trim() || loading}
+                            className="absolute right-2.5 bottom-2.5 shrink-0 w-[34px] h-[34px] rounded-full flex items-center justify-center transition-all shadow-sm"
+                            style={{
+                                background: input.trim() && !loading ? (isDark ? '#f3f4f6' : '#111827') : (isDark ? '#374151' : '#f3f4f6'),
+                                color: input.trim() && !loading ? (isDark ? '#111827' : '#ffffff') : (isDark ? '#9ca3af' : '#9ca3af'),
+                                cursor: input.trim() && !loading ? 'pointer' : 'default',
+                                transform: input.trim() && !loading ? 'scale(1)' : 'scale(0.95)',
+                            }}
                         >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                            <ArrowUp size={16} strokeWidth={2.5} />
                         </button>
                     </div>
 
-                    {/* ── Messages ── */}
-                    <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 min-h-0" style={{ scrollbarWidth: 'thin' }}>
-                        {messages.map((m, i) => (
-                            <div key={i}>
-                                <div className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-1.5`}>
-                                    {m.role === 'assistant' && (
-                                        <div className="flex-shrink-0 mt-0.5" style={{ width: 24, height: 24, borderRadius: '50%', background: 'linear-gradient(135deg, #8b5cf6, #38bdf8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <span style={{ fontSize: 10, fontWeight: 800, color: '#fff' }}>K</span>
-                                        </div>
-                                    )}
-                                    <div
-                                        className={`max-w-[82%] px-3.5 py-2.5 text-[13px] leading-relaxed whitespace-pre-wrap ${m.role === 'user' ? 'rounded-2xl rounded-tr-md' : 'rounded-2xl rounded-tl-md'}`}
-                                        style={m.role === 'user'
-                                            ? { background: 'linear-gradient(135deg, #4f46e5, #7c3aed)', color: '#f0e6ff', boxShadow: '0 4px 12px rgba(139,92,246,0.3)' }
-                                            : { background: isDark ? 'rgba(30,41,59,0.8)' : 'rgba(241,245,249,0.9)', border: isDark ? '1px solid rgba(139,92,246,0.12)' : '1px solid rgba(139,92,246,0.1)', color: isDark ? '#e2e8f0' : '#334155' }
-                                        }
-                                        dangerouslySetInnerHTML={{
-                                            __html: m.content
-                                                .replace(/\*\*(.*?)\*\*/g, `<strong style="color:${isDark ? '#c4b5fd' : '#7c3aed'};font-weight:700">$1</strong>`)
-                                                .replace(/\n/g, '<br/>')
-                                        }}
-                                    />
-                                </div>
-
-                                {/* ── Navigation Option Cards ── */}
-                                {m.navOptions && m.navOptions.length > 0 && (
-                                    <div className="ml-8 mt-2 flex flex-wrap gap-1.5">
-                                        {m.navOptions.map((opt, j) => (
-                                            <button
-                                                key={j}
-                                                onClick={() => navigateTo(opt.path)}
-                                                className="transition-all duration-200"
-                                                style={{
-                                                    fontSize: 12,
-                                                    padding: '6px 12px',
-                                                    borderRadius: 12,
-                                                    background: 'rgba(139,92,246,0.1)',
-                                                    border: '1px solid rgba(139,92,246,0.25)',
-                                                    color: '#c4b5fd',
-                                                    fontWeight: 500,
-                                                    cursor: 'pointer',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 4,
-                                                }}
-                                                onMouseEnter={e => {
-                                                    (e.target as HTMLElement).style.background = 'rgba(139,92,246,0.25)';
-                                                    (e.target as HTMLElement).style.borderColor = 'rgba(139,92,246,0.5)';
-                                                    (e.target as HTMLElement).style.color = '#e9d5ff';
-                                                    (e.target as HTMLElement).style.transform = 'translateY(-1px)';
-                                                    (e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(139,92,246,0.2)';
-                                                }}
-                                                onMouseLeave={e => {
-                                                    (e.target as HTMLElement).style.background = 'rgba(139,92,246,0.1)';
-                                                    (e.target as HTMLElement).style.borderColor = 'rgba(139,92,246,0.25)';
-                                                    (e.target as HTMLElement).style.color = '#c4b5fd';
-                                                    (e.target as HTMLElement).style.transform = 'translateY(0)';
-                                                    (e.target as HTMLElement).style.boxShadow = 'none';
-                                                }}
-                                            >
-                                                {opt.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-
-                        {/* Typing indicator */}
-                        {loading && (
-                            <div className="flex justify-start gap-1.5">
-                                <div className="flex-shrink-0 mt-0.5" style={{ width: 24, height: 24, borderRadius: '50%', background: 'linear-gradient(135deg, #8b5cf6, #38bdf8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <span style={{ fontSize: 10, fontWeight: 800, color: '#fff' }}>K</span>
-                                </div>
-                                <div className="flex items-center gap-1.5 px-4 py-3 rounded-2xl rounded-tl-md" style={{ background: isDark ? 'rgba(30,41,59,0.8)' : 'rgba(241,245,249,0.9)', border: isDark ? '1px solid rgba(139,92,246,0.12)' : '1px solid rgba(139,92,246,0.1)' }}>
-                                    <span className="animate-bounce" style={{ width: 6, height: 6, borderRadius: '50%', background: '#8b5cf6', animationDelay: '0ms' }} />
-                                    <span className="animate-bounce" style={{ width: 6, height: 6, borderRadius: '50%', background: '#38bdf8', animationDelay: '150ms' }} />
-                                    <span className="animate-bounce" style={{ width: 6, height: 6, borderRadius: '50%', background: '#ec4899', animationDelay: '300ms' }} />
-                                </div>
-                            </div>
-                        )}
-                        <div ref={messagesEndRef} />
-                    </div>
-
-
-                    {/* ── Premium Ask Bar ── */}
-                    <div className="px-4 pb-4 pt-2">
-                        {/* Outer animated gradient border */}
-                        <div className="relative rounded-[20px] p-[1.5px] overflow-hidden" style={{ background: 'linear-gradient(90deg, #8b5cf6, #38bdf8, #ec4899, #8b5cf6)', backgroundSize: '200% 100%', animation: 'gradientSlide 4s linear infinite' }}>
-                            {/* Inner container */}
-                            <div className="rounded-[19px] flex items-center gap-2 pl-4 pr-2 py-2" style={{
-                                background: isDark
-                                    ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
-                                    : '#ffffff',
-                            }}>
-                                <input
-                                    ref={inputRef}
-                                    value={input}
-                                    onChange={e => setInput(e.target.value)}
-                                    onKeyDown={onKeyDown}
-                                    placeholder="Message KnoblyAI..."
-                                    className="flex-1 bg-transparent outline-none min-w-0"
-                                    style={{
-                                        fontSize: 14,
-                                        fontWeight: 500,
-                                        color: isDark ? '#e2e8f0' : '#1e293b',
-                                        caretColor: '#a855f7',
-                                    }}
-                                />
-
-                                {/* Send Button */}
-                                <button
-                                    onClick={() => send()}
-                                    disabled={!input.trim() || loading}
-                                    className="flex items-center justify-center transition-all duration-300 flex-shrink-0"
-                                    style={{
-                                        width: 38,
-                                        height: 38,
-                                        borderRadius: 14,
-                                        background: input.trim() && !loading
-                                            ? 'linear-gradient(135deg, #8b5cf6, #6366f1, #38bdf8)'
-                                            : isDark ? 'rgba(51,65,85,0.6)' : 'rgba(226,232,240,0.8)',
-                                        color: input.trim() && !loading ? '#fff' : isDark ? '#64748b' : '#94a3b8',
-                                        cursor: input.trim() && !loading ? 'pointer' : 'default',
-                                        boxShadow: input.trim() && !loading
-                                            ? '0 0 20px rgba(139,92,246,0.4), 0 4px 12px rgba(99,102,241,0.3)'
-                                            : 'none',
-                                        transform: input.trim() && !loading ? 'scale(1)' : 'scale(0.88)',
-                                    }}
-                                    onMouseEnter={e => { if (input.trim() && !loading) { (e.currentTarget).style.transform = 'scale(1.1) translateY(-1px)'; (e.currentTarget).style.boxShadow = '0 0 28px rgba(139,92,246,0.5), 0 6px 20px rgba(99,102,241,0.4)'; } }}
-                                    onMouseLeave={e => { if (input.trim() && !loading) { (e.currentTarget).style.transform = 'scale(1)'; (e.currentTarget).style.boxShadow = '0 0 20px rgba(139,92,246,0.4), 0 4px 12px rgba(99,102,241,0.3)'; } }}
-                                >
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ transform: input.trim() && !loading ? 'rotate(0deg)' : 'rotate(90deg)', transition: 'transform 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}>
-                                        <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div style={{ textAlign: 'center', marginTop: 8, fontSize: 9, fontWeight: 500, color: isDark ? '#475569' : '#94a3b8', letterSpacing: '0.06em' }}>
-                            POWERED BY KNOBLYAI
-                        </div>
+                    <div className="text-center mt-3.5 text-[11px]" style={{ color: isDark ? '#6b7280' : '#9ca3af' }}>
+                        KnoblyAI can make mistakes. Double-check replies.
                     </div>
                 </div>
             </div>
 
-            {/* ═══════════════════ KEYFRAMES ═══════════════════ */}
             <style jsx global>{`
-                @keyframes float {
-                    0% { transform: translateY(0) translateX(0); }
-                    100% { transform: translateY(-8px) translateX(4px); }
+                .no-scrollbar::-webkit-scrollbar {
+                    display: none;
                 }
-                @keyframes shimmer {
-                    0% { background-position: -200% 0; }
-                    100% { background-position: 200% 0; }
+                .no-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
                 }
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
+                .fade-in {
+                    animation: fadeIn 0.4s ease-out forwards;
                 }
-                @keyframes breathe {
-                    0%, 100% { transform: scale(1); opacity: 0.4; }
-                    50% { transform: scale(1.15); opacity: 0.7; }
-                }
-                @keyframes gradientSlide {
-                    0% { background-position: 0% 50%; }
-                    100% { background-position: 300% 50%; }
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(5px); }
+                    to { opacity: 1; transform: translateY(0); }
                 }
             `}</style>
         </>
