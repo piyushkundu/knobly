@@ -167,17 +167,17 @@ export default function KnoblyAI() {
     return (
         <>
             {/* ═══════════════════ FLOATING TRIGGER BUTTON ═══════════════════ */}
-            <div className={`fixed bottom-24 md:bottom-6 right-6 z-[9999] select-none ${isHomePage ? 'xl:hidden' : ''} transition-all duration-300 ${open ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}>
+            <div className={`fixed bottom-24 md:bottom-6 right-6 z-[9999] select-none ${isHomePage ? 'hidden md:block xl:hidden' : ''} transition-all duration-300 ${open ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'}`}>
                 <button
                     onClick={() => setOpen(true)}
-                    className="flex items-center gap-2.5 px-6 py-3.5 rounded-full shadow-xl transition-all hover:scale-105 active:scale-95"
+                    className="flex items-center justify-center gap-2.5 px-6 py-3.5 max-md:px-0 max-md:py-0 max-md:w-[56px] max-md:h-[56px] rounded-full shadow-xl transition-all hover:scale-105 active:scale-95"
                     style={{
                         background: '#6d28d9',
                         color: '#ffffff', // Ensures the actual text inherits absolute white
                     }}
                 >
-                    <AIIcon size={22} color="#ffffff" />
-                    <span className="font-semibold text-[15px] tracking-wide" style={{ color: '#ffffff' }}>Ask Knobly</span>
+                    <AIIcon size={24} color="#ffffff" className="shrink-0" />
+                    <span className="hidden md:inline font-semibold text-[15px] tracking-wide whitespace-nowrap" style={{ color: '#ffffff' }}>Ask Knobly</span>
                 </button>
             </div>
 
