@@ -67,6 +67,7 @@ const tocItems = [
     { icon: <Code2 size={13} />, label: 'String Manipulations', id: 'string', color: '#a855f7' },
     { icon: <BoxSelect size={13} />, label: 'String Methods', id: 'string-methods', color: '#c084fc' },
     { icon: <Repeat size={13} />, label: 'Date & Time', id: 'datetime', color: '#d946ef' },
+    { icon: <Brain size={13} />, label: 'Practice Questions', id: 'practice', color: '#ec4899' },
 ];
 
 const navLinks = [
@@ -491,6 +492,44 @@ Backward index → -6 -5 -4 -3 -2 -1`}
                             <MethodCard name="(8) weekday()" desc="given date का weekday code return करता है" color="#84cc16">
                                 <CB code={`import calendar\nprint(calendar.weekday(2019, 4, 12))`} />
                             </MethodCard>
+                        </div>
+                    </Sec>
+
+                    {/* Practice Questions */}
+                    <Sec id="practice" title="Practice Questions :" icon={<Brain size={18} className="text-purple-600" />}>
+                        <p className="mb-4 text-slate-700">Math Module से सम्बंधित महत्वपूर्ण प्रश्न (इन्हें Python में solve करने का प्रयास करें):</p>
+                        <div className="space-y-3">
+                            {[
+                                "√(25 + 36) + log₁₀(100) + e²",
+                                "ceil(3.4) + floor(7.8) + √(49)",
+                                "√(16 + 9) + sin(30°) + cos(60°)",
+                                "e³ + log(10) + √(81)",
+                                "floor(9.7) + ceil(2.1) + tan(45°)",
+                                "√( (5² + 12²) ) + log₁₀(1000)",
+                                "e² + sin(90°) + cos(0°) + √(64)",
+                                "ceil(5.2) + floor(3.9) + log(2.5)",
+                                "√(100 + 25) + e³ + tan(45°)",
+                                "log₁₀(100) + √(49) + ceil(6.1) + floor(8.9)"
+                            ].map((q, idx) => (
+                                <div key={idx} className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md hover:border-purple-300">
+                                    <div className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-xl bg-purple-50 text-purple-700 font-extrabold text-sm">
+                                        Q{idx + 1}
+                                    </div>
+                                    <div className="text-slate-800 font-bold font-mono text-[14px]">
+                                        {q}
+                                    </div>
+                                    <button 
+                                        onClick={() => {
+                                            const event = new CustomEvent('toggle-knobly-ai');
+                                            window.dispatchEvent(event);
+                                        }}
+                                        className="ml-auto w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-purple-100 hover:text-purple-600 transition-colors"
+                                        title="Ask AI to Explain"
+                                    >
+                                        <Sparkles size={14} />
+                                    </button>
+                                </div>
+                            ))}
                         </div>
                     </Sec>
                 </main>
