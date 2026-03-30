@@ -326,17 +326,29 @@ export function PythonLab() {
     collectedInputsRef.current = [];
     inputResolveRef.current = null;
 
-    // Pick the right executor based on file extension
-    const execute = isCFile ? executeC : executePython;
+    // Accumulate streamed output in a ref so the callback always has the latest value
+    const streamedRef = { current: '' };
+
+    // Streaming callback — called on every print() char/chunk from Python
+    const onStream = isCFile ? undefined : (chunk: string) => {
+      streamedRef.current += chunk;
+      setOutput(streamedRef.current.trimEnd());
+    };
 
     try {
       // Re-run loop: execute code, if it needs input, prompt user, accumulate, re-run
       let done = false;
       while (!done) {
-        const result = await execute(code, collectedInputsRef.current);
+        // Reset streamed output for each re-run attempt
+        streamedRef.current = '';
+        setOutput('');
+
+        const result = await (isCFile
+          ? executeC(code, collectedInputsRef.current)
+          : executePython(code, collectedInputsRef.current, onStream));
 
         if (result.needsInput) {
-          // Show the prompt in terminal lines
+          // Show whatever was streamed so far, then show the prompt
           const promptText = result.inputPrompt || '';
           const newLines = [...terminalLinesRef.current, { type: 'prompt' as const, text: promptText }];
           terminalLinesRef.current = newLines;
@@ -357,6 +369,7 @@ export function PythonLab() {
           setTerminalLines([]);
           terminalLinesRef.current = [];
           setWaitingForInput(false);
+          // Use final result.output (full accumulated) as source of truth
           setOutput(result.output);
 
           if (result.error) {
