@@ -13,8 +13,9 @@ export async function GET(request: Request) {
       try {
         docRef = doc(db, "dailyTechNews", today);
         const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          return NextResponse.json({ success: true, fromCache: true, data: docSnap.data() });
+        const data = docSnap.data() as any;
+        if (docSnap.exists() && data?.daily_summary_en) {
+          return NextResponse.json({ success: true, fromCache: true, data });
         }
       } catch (err) {
         console.warn("Firebase cache read failed, bypassing cache...", err);
@@ -96,6 +97,9 @@ export async function GET(request: Request) {
         };
       });
 
+      var daily_summary_en = aiResponse.daily_summary_en || "";
+      var daily_summary_hi = aiResponse.daily_summary_hi || "";
+
     } catch (aiError) {
       console.error("AI Explanation failed:", aiError);
       finalNewsList = articles.slice(0, 10).map(a => ({
@@ -109,10 +113,14 @@ export async function GET(request: Request) {
         image: a.image || null,
         publishedAt: a.publishedAt
       }));
+      var daily_summary_en = "Top 10 Global News Flash for today.";
+      var daily_summary_hi = "आज के टॉप 10 मुख्य समाचार यहाँ दिए गए हैं।";
     }
 
     const newsDoc = {
       date: today,
+      daily_summary_en,
+      daily_summary_hi,
       newsList: finalNewsList
     };
 

@@ -1,7 +1,7 @@
 'use client';
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Home, BookOpen, Copy, Check, LayoutDashboard, StickyNote, Code2, Brain, Keyboard as KBIcon, Sparkles, Play, Zap, Globe, Cpu, Terminal, FileCode2, Hash, Type, ToggleLeft, CircleDot, Braces, Printer, Keyboard, Menu, X, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Home, BookOpen, Copy, Check, LayoutDashboard, StickyNote, Code2, Brain, Keyboard as KBIcon, Sparkles, Play, Zap, Globe, Cpu, Terminal, FileCode2, Hash, Type, ToggleLeft, CircleDot, Braces, Printer, Keyboard, Menu, X, ChevronRight, Leaf, TreePine } from 'lucide-react';
 import MCQSection from '@/components/content/MCQSection';
 
 /* ─── Code Block ─── */
@@ -20,6 +20,39 @@ function CB({ code, lang = 'python' }: { code: string; lang?: string }) {
                 </button>
             </div>
             <pre className="p-4 overflow-x-auto text-sm text-slate-200"><code>{code}</code></pre>
+                    {/* Global Styles */}
+            <style jsx global>{`
+                @keyframes float-slow {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    50% {transform: translateY(-20px) rotate(3deg); }
+                }
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    50% {transform: translateY(-15px) rotate(-3deg); }
+                }
+                @keyframes float-delayed {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    50% {transform: translateY(-10px) rotate(2deg); }
+                }
+                @keyframes snake-hero {
+                    0%, 100% { transform: translateY(-50%) translateX(0px) rotate(0deg); }
+                    25% {transform: translateY(-50%) translateX(10px) rotate(2deg); }
+                    50% {transform: translateY(-50%) translateX(0px) rotate(0deg); }
+                    75% {transform: translateY(-50%) translateX(-10px) rotate(-2deg); }
+                }
+                .animate-float-slow {
+                    animation: float-slow 8s ease-in-out infinite;
+                }
+                .animate-float {
+                    animation: float 6s ease-in-out infinite;
+                }
+                .animate-float-delayed {
+                    animation: float-delayed 7s ease-in-out infinite;
+                }
+                .animate-snake-hero {
+                    animation: snake-hero 5s ease-in-out infinite;
+                }
+            `}</style>
         </div>
     );
 }
@@ -44,19 +77,19 @@ function IB({ type = 'tip', children }: { type?: 'tip' | 'note' | 'warning'; chi
 
 /* ─── Highlight box for simple definitions ─── */
 function Def({ children }: { children: ReactNode }) {
-    return <div className="rounded-xl p-4 my-3 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', border: '1px solid #c7d2fe', color: '#3730a3' }}>{children}</div>;
+    return <div className="rounded-xl p-4 my-3 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)', border: '1px solid #a7f3d0', color: '#065f46' }}>{children}</div>;
 }
 
 function TH({ children }: { children: ReactNode }) {
-    return <tr style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }} className="text-white">{children}</tr>;
+    return <tr style={{ background: 'linear-gradient(135deg, #10b981, #14b8a6)' }} className="text-white">{children}</tr>;
 }
 
 const tocItems = [
-    { icon: <Globe size={13} />, label: 'Introduction', id: 'intro', color: '#6366f1' },
-    { icon: <Cpu size={13} />, label: 'Versions', id: 'versions', color: '#8b5cf6' },
-    { icon: <Zap size={13} />, label: 'Advantages', id: 'advantages', color: '#a855f7' },
-    { icon: <Terminal size={13} />, label: 'Working', id: 'working', color: '#c084fc' },
-    { icon: <FileCode2 size={13} />, label: 'Modules', id: 'modules', color: '#d946ef' },
+    { icon: <Globe size={13} />, label: 'Introduction', id: 'intro', color: '#10b981' },
+    { icon: <Cpu size={13} />, label: 'Versions', id: 'versions', color: '#14b8a6' },
+    { icon: <Zap size={13} />, label: 'Advantages', id: 'advantages', color: '#0d9488' },
+    { icon: <Terminal size={13} />, label: 'Working', id: 'working', color: '#2dd4bf' },
+    { icon: <FileCode2 size={13} />, label: 'Modules', id: 'modules', color: '#34d399' },
     { icon: <Code2 size={13} />, label: 'Tokens', id: 'tokens', color: '#ec4899' },
     { icon: <Type size={13} />, label: 'Literals', id: 'literals', color: '#f43f5e' },
     { icon: <ToggleLeft size={13} />, label: 'Variables', id: 'variables', color: '#ef4444' },
@@ -65,8 +98,8 @@ const tocItems = [
     { icon: <Printer size={13} />, label: 'Print', id: 'print', color: '#22c55e' },
     { icon: <Keyboard size={13} />, label: 'Input', id: 'input', color: '#14b8a6' },
     { icon: <Code2 size={13} />, label: 'Strings', id: 'strings', color: '#06b6d4' },
-    { icon: <Brain size={13} />, label: 'MCQ Quiz', id: 'mcq', color: '#6366f1' },
-    { icon: <BookOpen size={13} />, label: 'Practice', id: 'practice', color: '#8b5cf6' },
+    { icon: <Brain size={13} />, label: 'MCQ Quiz', id: 'mcq', color: '#10b981' },
+    { icon: <BookOpen size={13} />, label: 'Practice', id: 'practice', color: '#14b8a6' },
 ];
 
 const navLinks = [
@@ -83,20 +116,95 @@ export default function PythonFundamentals() {
     const [activeSection, setActiveSection] = useState('intro');
 
     return (
-        <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 30%, #e2e8f0 100%)' }}>
+        <div className="min-h-screen bg-white relative">
+
+            {/* Animated Jungle Background */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                {/* Gradient Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/30" />
+
+                {/* Animated Leaves Pattern */}
+                <div className="absolute top-0 left-0 w-full h-full opacity-[0.03]">
+                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="jungle-pattern" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+                                <path d="M60 10 Q80 30 60 70 Q40 30 60 10" fill="#10b981" />
+                                <path d="M10 60 Q30 40 70 60 Q30 80 10 60" fill="#059669" />
+                                <path d="M100 40 Q120 60 100 100 Q80 60 100 40" fill="#34d399" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#jungle-pattern)" />
+                    </svg>
+                </div>
+
+                {/* Animated Snake Path - Top */}
+                <svg className="absolute top-20 left-0 w-full h-32 opacity-20" viewBox="0 0 1200 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="snakeGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#10b981" />
+                            <stop offset="50%" stopColor="#f59e0b" />
+                            <stop offset="100%" stopColor="#3b82f6" />
+                        </linearGradient>
+                    </defs>
+                    <path
+                        d="M-50,50 Q100,20 250,50 T550,50 T850,50 T1150,50 T1450,50"
+                        fill="none"
+                        stroke="url(#snakeGradient1)"
+                        strokeWidth="6"
+                        strokeLinecap="round"
+                        strokeDasharray="15,10,5,10"
+                    >
+                        <animate attributeName="stroke-dashoffset" from="0" to="40" dur="3s" repeatCount="indefinite" />
+                    </path>
+                </svg>
+
+                {/* Animated Snake Path - Bottom */}
+                <svg className="absolute bottom-40 left-0 w-full h-32 opacity-15" viewBox="0 0 1200 100" preserveAspectRatio="none">
+                    <path
+                        d="M-50,50 Q150,80 300,50 T600,50 T900,50 T1200,50 T1500,50"
+                        fill="none"
+                        stroke="url(#snakeGradient1)"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        strokeDasharray="10,8,4,8"
+                    >
+                        <animate attributeName="stroke-dashoffset" from="40" to="0" dur="4s" repeatCount="indefinite" />
+                    </path>
+                </svg>
+
+                {/* Floating Python Logos */}
+                <div className="absolute top-32 right-20 w-40 h-40 opacity-[0.08] animate-float-slow">
+                    <svg viewBox="0 0 100 100" className="w-full h-full">
+                        <path d="M50 15 C35 15 25 25 25 40 L25 48 L37 48 L37 40 C37 35 42 32 50 32 C58 32 63 35 63 40 L63 48 L75 48 L75 40 C75 25 65 15 50 15" fill="#3776ab" />
+                        <circle cx="37" cy="58" r="4" fill="white" />
+                        <path d="M50 85 C65 85 75 75 75 60 L75 52 L63 52 L63 60 C63 65 58 68 50 68 C42 68 37 65 37 60 L37 52 L25 52 L25 60 C25 75 35 85 50 85" fill="#ffd43b" />
+                        <circle cx="63" cy="42" r="4" fill="#333" />
+                    </svg>
+                </div>
+
+                {/* Decorative Jungle Elements */}
+                <div className="absolute top-40 left-10 w-20 h-20 opacity-[0.06] animate-float">
+                    <Leaf className="w-full h-full text-emerald-600" />
+                </div>
+                <div className="absolute bottom-60 right-10 w-16 h-16 opacity-[0.05] animate-float-delayed">
+                    <TreePine className="w-full h-full text-emerald-700" />
+                </div>
+            </div>
+
+            
 
             {/* ══════ WHITE PREMIUM NAVBAR ══════ */}
             <header className="sticky top-0 z-50" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.03)' }}>
                 <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href="/python" className="flex items-center justify-center w-9 h-9 rounded-xl transition-all hover:scale-105 hover:shadow-lg" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 2px 8px rgba(99,102,241,0.3)' }}>
+                        <Link href="/python" className="flex items-center justify-center w-9 h-9 rounded-xl transition-all hover:scale-105 hover:shadow-lg" style={{ background: 'linear-gradient(135deg, #10b981, #14b8a6)', boxShadow: '0 2px 8px rgba(99,102,241,0.3)' }}>
                             <ArrowLeft size={16} className="text-white" />
                         </Link>
                         <div>
                             <h1 className="text-sm font-extrabold" style={{ color: '#1e293b' }}>Python Fundamentals</h1>
                             <div className="flex items-center gap-1.5">
-                                <Sparkles size={8} style={{ color: '#6366f1' }} />
-                                <span className="text-[9px] uppercase tracking-[0.18em] font-bold" style={{ color: '#6366f1' }}>Complete Guide</span>
+                                <Sparkles size={8} style={{ color: '#10b981' }} />
+                                <span className="text-[9px] uppercase tracking-[0.18em] font-bold" style={{ color: '#10b981' }}>Complete Guide</span>
                             </div>
                         </div>
                     </div>
@@ -104,17 +212,17 @@ export default function PythonFundamentals() {
                         {navLinks.map(l => (
                             <Link key={l.href} href={l.href} className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold transition-all hover:scale-105"
                                 style={{ color: '#64748b' }}
-                                onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#6366f1'; }}
+                                onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#10b981'; }}
                                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748b'; }}>
                                 {l.icon}<span>{l.label}</span>
                             </Link>
                         ))}
                         <button onClick={() => setTocOpen(!tocOpen)} className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl transition-all hover:shadow-md" style={{ background: '#f1f5f9', border: '1px solid #e2e8f0' }}>
-                            {tocOpen ? <X size={18} style={{ color: '#6366f1' }} /> : <Menu size={18} style={{ color: '#6366f1' }} />}
+                            {tocOpen ? <X size={18} style={{ color: '#10b981' }} /> : <Menu size={18} style={{ color: '#10b981' }} />}
                         </button>
                     </div>
                 </div>
-                <div className="h-[2px]" style={{ background: 'linear-gradient(90deg, #6366f1, #a855f7, #ec4899, #f97316, #6366f1)' }} />
+                <div className="h-[2px]" style={{ background: 'linear-gradient(90deg, #10b981, #0d9488, #ec4899, #f97316, #10b981)' }} />
             </header>
 
             <div className="max-w-7xl mx-auto flex relative">
@@ -123,7 +231,7 @@ export default function PythonFundamentals() {
                     style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', borderRight: '1px solid #e2e8f0', boxShadow: tocOpen ? '4px 0 24px rgba(0,0,0,0.08)' : 'none' }}>
                     <div className="p-4">
                         <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid #e2e8f0' }}>
-                            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #10b981, #14b8a6)' }}>
                                 <Hash size={12} className="text-white" />
                             </div>
                             <span className="text-xs font-extrabold uppercase tracking-wider" style={{ color: '#1e293b' }}>Contents</span>
@@ -149,7 +257,7 @@ export default function PythonFundamentals() {
                 <main className="flex-1 min-w-0 px-4 py-6 lg:pl-6">
 
                     {/* HERO */}
-                    <section className="relative rounded-3xl overflow-hidden mb-6" style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 30%, #8b5cf6 60%, #a855f7 100%)', boxShadow: '0 8px 32px rgba(99,102,241,0.25)' }}>
+                    <section className="relative rounded-3xl overflow-hidden mb-6" style={{ background: 'linear-gradient(135deg, #059669 0%, #10b981 30%, #14b8a6 60%, #0d9488 100%)', boxShadow: '0 8px 32px rgba(99,102,241,0.25)' }}>
                         <div className="absolute inset-0 overflow-hidden pointer-events-none">
                             <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%)' }} />
                             <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%)' }} />
@@ -191,7 +299,7 @@ export default function PythonFundamentals() {
 
                     {/* ═══════ CONTENT SECTIONS ═══════ */}
 
-                    <Sec id="intro" title="Introduction to Python" icon={<Globe size={16} className="text-indigo-500" />}>
+                    <Sec id="intro" title="Introduction to Python" icon={<Globe size={16} className="text-emerald-500" />}>
                         <Def>🐍 <strong>Python</strong> ek high-level, interpreted programming language hai jo simple aur readable hoti hai. Isko <strong>Guido van Rossum</strong> ne banaya tha aur <strong>1991</strong> mein pehli baar release hua tha.</Def>
                         <p><strong>Simple explanation:</strong> Python ek aisi programming language hai jisme aap English jaisi simple bhasha mein code likh sakte ho. Ye beginners ke liye sabse best language hai kyunki iska code padhna aur likhna bahut aasan hai.</p>
                         <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>Python kyun banaya gaya?</h3>
@@ -212,20 +320,20 @@ export default function PythonFundamentals() {
                         <IB type="tip">Python mein curly braces {'{ }'} ki jagah <strong>indentation</strong> (spaces) use hoti hai. Isse code saaf aur clean dikhta hai.</IB>
                     </Sec>
 
-                    <Sec id="versions" title="Python Versions" icon={<Cpu size={16} className="text-violet-500" />}>
+                    <Sec id="versions" title="Python Versions" icon={<Cpu size={16} className="text-teal-500" />}>
                         <Def>📦 Python ke alag-alag versions release hue hain jisme har baar naye features aur improvements mile hain.</Def>
                         <div className="overflow-x-auto my-3 rounded-xl" style={{ border: '1px solid #e2e8f0' }}><table className="w-full text-sm border-collapse"><thead><TH><th className="p-3 text-left">Version</th><th className="p-3 text-left">Year</th><th className="p-3 text-left">Kya Naya Aaya?</th></TH></thead><tbody>
                             {[['Python 1.0', '1994', 'Sabse pehla major release'], ['Python 2.0', '2000', 'List comprehensions aaye'], ['Python 2.7', '2010', 'Python 2 ka aakhri version'], ['Python 3.0', '2008', 'Bahut bade changes — naya Python!'], ['Python 3.11', '2022', 'Bahut fast + better error messages'], ['Python 3.12', '2023', 'Latest version ✨ — Use this!']].map(([v, y, d], i) => (
-                                <tr key={i} style={{ background: i % 2 ? '#f8fafc' : '#fff', borderBottom: '1px solid #f1f5f9' }}><td className="p-3 font-mono font-semibold" style={{ color: '#6366f1' }}>{v}</td><td className="p-3">{y}</td><td className="p-3">{d}</td></tr>
+                                <tr key={i} style={{ background: i % 2 ? '#f8fafc' : '#fff', borderBottom: '1px solid #f1f5f9' }}><td className="p-3 font-mono font-semibold" style={{ color: '#10b981' }}>{v}</td><td className="p-3">{y}</td><td className="p-3">{d}</td></tr>
                             ))}
                         </tbody></table></div>
                         <IB type="warning">Python 2 ab band ho gaya hai (January 2020 se). Hamesha <strong>Python 3</strong> use karo!</IB>
                     </Sec>
 
-                    <Sec id="advantages" title="Advantages of Python" icon={<Zap size={16} className="text-purple-500" />}>
+                    <Sec id="advantages" title="Advantages of Python" icon={<Zap size={16} className="text-emerald-500" />}>
                         <Def>🌟 Python ke bahut saare faayde hain jo ise duniya ki sabse popular language banate hain.</Def>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-3">
-                            {[{ t: '📚 Easy to Learn', d: 'Python ka code English jaisa hota hai. Beginners sirf kuch hi dino mein Python seekh sakte hain.', bg: '#eef2ff', bc: '#c7d2fe', tc: '#4338ca' }, { t: '🚀 Versatile', d: 'Web apps, AI, data analysis, games — Python se sab kuch bana sakte ho!', bg: '#ecfdf5', bc: '#a7f3d0', tc: '#166534' }, { t: '📦 Huge Library', d: 'Thousands of ready-made libraries available hain — aapko sab kuch scratch se nahi banana padta.', bg: '#f5f3ff', bc: '#ddd6fe', tc: '#5b21b6' }, { t: '⚡ Interpreted', d: 'Code ek ek line execute hota hai. Error aaye to turant pata chal jaata hai!', bg: '#fff7ed', bc: '#fed7aa', tc: '#9a3412' }, { t: '🔓 Free & Open Source', d: 'Python free hai! Koi bhi download karke use kar sakta hai — commercial use bhi!', bg: '#f0fdfa', bc: '#99f6e4', tc: '#115e59' }, { t: '🤝 Big Community', d: 'Lakho developers worldwide. Koi bhi problem ho — Stack Overflow par answer mil jaata hai!', bg: '#fdf2f8', bc: '#fbcfe8', tc: '#9d174d' }].map((item, i) => (
+                            {[{ t: '📚 Easy to Learn', d: 'Python ka code English jaisa hota hai. Beginners sirf kuch hi dino mein Python seekh sakte hain.', bg: '#ecfdf5', bc: '#a7f3d0', tc: '#4338ca' }, { t: '🚀 Versatile', d: 'Web apps, AI, data analysis, games — Python se sab kuch bana sakte ho!', bg: '#ecfdf5', bc: '#a7f3d0', tc: '#166534' }, { t: '📦 Huge Library', d: 'Thousands of ready-made libraries available hain — aapko sab kuch scratch se nahi banana padta.', bg: '#f5f3ff', bc: '#ddd6fe', tc: '#5b21b6' }, { t: '⚡ Interpreted', d: 'Code ek ek line execute hota hai. Error aaye to turant pata chal jaata hai!', bg: '#fff7ed', bc: '#fed7aa', tc: '#9a3412' }, { t: '🔓 Free & Open Source', d: 'Python free hai! Koi bhi download karke use kar sakta hai — commercial use bhi!', bg: '#f0fdfa', bc: '#99f6e4', tc: '#115e59' }, { t: '🤝 Big Community', d: 'Lakho developers worldwide. Koi bhi problem ho — Stack Overflow par answer mil jaata hai!', bg: '#fdf2f8', bc: '#fbcfe8', tc: '#9d174d' }].map((item, i) => (
                                 <div key={i} className="p-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style={{ background: item.bg, border: `1px solid ${item.bc}` }}>
                                     <h4 className="font-bold text-sm mb-1" style={{ color: item.tc }}>{item.t}</h4>
                                     <p className="text-xs" style={{ color: '#64748b' }}>{item.d}</p>
@@ -234,40 +342,40 @@ export default function PythonFundamentals() {
                         </div>
                     </Sec>
 
-                    <Sec id="working" title="Working with Python" icon={<Terminal size={16} className="text-fuchsia-500" />}>
+                    <Sec id="working" title="Working with Python" icon={<Terminal size={16} className="text-teal-500" />}>
                         <Def>🖥️ Python mein kaam karne ke liye pehle ise install karna hota hai, phir aap code likh aur chala sakte ho.</Def>
 
                         <h3 className="text-base font-bold mt-4 mb-2" style={{ color: '#1e293b' }}>Step 1: Python Install Karo</h3>
                         <ol className="list-decimal ml-6 space-y-2 mb-4">
-                            <li><strong>Download karo:</strong> <a href="https://www.python.org/downloads/" className="text-indigo-600 underline font-semibold" target="_blank" rel="noopener noreferrer">python.org/downloads</a> par jaake latest version download karo</li>
+                            <li><strong>Download karo:</strong> <a href="https://www.python.org/downloads/" className="text-emerald-600 underline font-semibold" target="_blank" rel="noopener noreferrer">python.org/downloads</a> par jaake latest version download karo</li>
                             <li><strong>Install karo:</strong> Installer open karo. ⚠️ <strong>&quot;Add Python to PATH&quot;</strong> checkbox zaroor tick karo!</li>
                             <li><strong>Check karo:</strong> Command Prompt open karo aur type karo:</li>
                         </ol>
                         <CB code="python --version\n# Output: Python 3.12.x" />
 
                         <h3 className="text-base font-bold mt-6 mb-2" style={{ color: '#1e293b' }}>Step 2: Interactive Mode (Direct Typing)</h3>
-                        <p>Command Prompt mein <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">python</code> type karo aur directly code likho. Ye testing ke liye best hai!</p>
+                        <p>Command Prompt mein <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">python</code> type karo aur directly code likho. Ye testing ke liye best hai!</p>
                         <CB code={`>>> print("Hello, World!")\nHello, World!\n\n>>> 2 + 3\n5\n\n>>> name = "Python"\n>>> print(f"I love {name}!")\nI love Python!\n\n>>> exit()  # Interactive mode se bahar aane ke liye`} />
 
                         <h3 className="text-base font-bold mt-6 mb-2" style={{ color: '#1e293b' }}>Step 3: Program Mode (File mein Code)</h3>
-                        <p>Bade programs ke liye code ek <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">.py</code> file mein likho:</p>
+                        <p>Bade programs ke liye code ek <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">.py</code> file mein likho:</p>
                         <CB code={`# hello.py file banao aur ye likho:\nprint("Namaste! Mera naam Python hai!")\nprint("Mein ek programming language hoon.")\n\nfor i in range(1, 6):\n    print(f"Counting: {i}")`} />
-                        <p>Phir terminal mein run karo: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">python hello.py</code></p>
+                        <p>Phir terminal mein run karo: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">python hello.py</code></p>
                     </Sec>
 
-                    <Sec id="modules" title="Modules and Program Files" icon={<FileCode2 size={16} className="text-pink-500" />}>
+                    <Sec id="modules" title="Modules and Program Files" icon={<FileCode2 size={16} className="text-emerald-500" />}>
                         <Def>📁 <strong>Module</strong> ek Python file hoti hai (.py extension ke saath) jisme aap apna code likhte ho. Aap dusre modules ko <code>import</code> karke use bhi kar sakte ho.</Def>
                         <h3 className="text-base font-bold mt-4 mb-2" style={{ color: '#1e293b' }}>Python File kaise banaye?</h3>
                         <ol className="list-decimal ml-6 space-y-1 mb-4">
                             <li>Koi bhi text editor kholo (VSCode, Notepad++, PyCharm)</li>
                             <li>Naya file banao aur Python code likho</li>
-                            <li>File ko <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">.py</code> extension ke saath save karo (jaise: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">calculator.py</code>)</li>
+                            <li>File ko <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">.py</code> extension ke saath save karo (jaise: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">calculator.py</code>)</li>
                         </ol>
                         <CB code={`# calculator.py - ek simple calculator\nnum1 = 10\nnum2 = 5\n\nprint(f"Jod (Sum): {num1 + num2}")      # 15\nprint(f"Ghata (Diff): {num1 - num2}")    # 5\nprint(f"Guna (Multiply): {num1 * num2}") # 50\nprint(f"Bhaag (Divide): {num1 / num2}")  # 2.0`} />
-                        <p>Run karo: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-600 font-mono text-xs">python calculator.py</code></p>
+                        <p>Run karo: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">python calculator.py</code></p>
                     </Sec>
 
-                    <Sec id="tokens" title="Python Tokens" icon={<Code2 size={16} className="text-rose-500" />}>
+                    <Sec id="tokens" title="Python Tokens" icon={<Code2 size={16} className="text-teal-500" />}>
                         <Def>🧩 <strong>Token</strong> Python code ka sabse chhota hissa hai. Jaise sentence mein words hote hain, waise hi code mein tokens hote hain. Python mein 5 type ke tokens hote hain.</Def>
 
                         <h3 className="text-base font-bold mt-5 mb-2" style={{ color: '#1e293b' }}>1. Identifiers (Naam)</h3>
@@ -285,7 +393,7 @@ export default function PythonFundamentals() {
                         <p><strong>Simple definition:</strong> Keywords woh special words hain jo Python ne pehle se book kar rakhe hain. Inhe aap apne variable naam ke roop mein use nahi kar sakte.</p>
                         <div className="overflow-x-auto my-3 rounded-xl" style={{ border: '1px solid #e2e8f0' }}><table className="w-full text-sm border-collapse"><thead><TH><th className="p-3 text-left" colSpan={5}>Python ke 35 Keywords</th></TH></thead><tbody>
                             {[['False', 'None', 'True', 'and', 'as'], ['assert', 'async', 'await', 'break', 'class'], ['continue', 'def', 'del', 'elif', 'else'], ['except', 'finally', 'for', 'from', 'global'], ['if', 'import', 'in', 'is', 'lambda'], ['nonlocal', 'not', 'or', 'pass', 'raise'], ['return', 'try', 'while', 'with', 'yield']].map((row, i) => (
-                                <tr key={i} style={{ background: i % 2 ? '#f8fafc' : '#fff', borderBottom: '1px solid #f1f5f9' }}>{row.map((k, j) => <td key={j} className="p-2 font-mono font-semibold" style={{ color: '#6366f1' }}>{k}</td>)}</tr>
+                                <tr key={i} style={{ background: i % 2 ? '#f8fafc' : '#fff', borderBottom: '1px solid #f1f5f9' }}>{row.map((k, j) => <td key={j} className="p-2 font-mono font-semibold" style={{ color: '#10b981' }}>{k}</td>)}</tr>
                             ))}
                         </tbody></table></div>
                         <CB code={`# Keywords check karne ka tarika:\nimport keyword\nprint(keyword.kwlist)\nprint(f"Total keywords: {len(keyword.kwlist)}")`} />
@@ -323,7 +431,7 @@ export default function PythonFundamentals() {
                         <h3 className="text-base font-bold mt-4 mb-2" style={{ color: '#1e293b' }}>Arithmetic Operators (Math wale)</h3>
                         <div className="overflow-x-auto my-3 rounded-xl" style={{ border: '1px solid #e2e8f0' }}><table className="w-full text-sm border-collapse"><thead><TH><th className="p-3">Symbol</th><th className="p-3">Kaam</th><th className="p-3">Example</th><th className="p-3">Answer</th></TH></thead><tbody>
                             {[['+', 'Jod (Add)', '10 + 3', '13'], ['-', 'Ghatao (Subtract)', '10 - 3', '7'], ['*', 'Guna (Multiply)', '10 * 3', '30'], ['/', 'Bhaag (Divide)', '10 / 3', '3.33'], ['//', 'Floor Division', '10 // 3', '3'], ['%', 'Remainder', '10 % 3', '1'], ['**', 'Power', '2 ** 3', '8']].map(([o, n, e, r], i) => (
-                                <tr key={i} style={{ background: i % 2 ? '#f8fafc' : '#fff', borderBottom: '1px solid #f1f5f9' }}><td className="p-2 text-center font-mono font-bold" style={{ color: '#6366f1' }}>{o}</td><td className="p-2">{n}</td><td className="p-2 font-mono">{e}</td><td className="p-2 font-semibold">{r}</td></tr>
+                                <tr key={i} style={{ background: i % 2 ? '#f8fafc' : '#fff', borderBottom: '1px solid #f1f5f9' }}><td className="p-2 text-center font-mono font-bold" style={{ color: '#10b981' }}>{o}</td><td className="p-2">{n}</td><td className="p-2 font-mono">{e}</td><td className="p-2 font-semibold">{r}</td></tr>
                             ))}
                         </tbody></table></div>
                         <CB code={`a = 10\nb = 3\nprint(f"Jod: {a + b}")        # 13\nprint(f"Ghatao: {a - b}")     # 7\nprint(f"Guna: {a * b}")       # 30\nprint(f"Bhaag: {a / b}")      # 3.333...\nprint(f"Floor: {a // b}")     # 3 (decimal hata do)\nprint(f"Remainder: {a % b}")  # 1\nprint(f"Power: {a ** b}")     # 1000`} />
@@ -388,16 +496,16 @@ export default function PythonFundamentals() {
                     </Sec>
 
                     {/* ═══ MCQ QUIZ ═══ */}
-                    <Sec id="mcq" title="MCQ Quiz — Apna Knowledge Test Karo!" icon={<Brain size={16} className="text-indigo-500" />}>
+                    <Sec id="mcq" title="MCQ Quiz — Apna Knowledge Test Karo!" icon={<Brain size={16} className="text-emerald-500" />}>
                         <p className="mb-4">Neeche <strong>10 important MCQs</strong> hain — har ek question ka answer select karo aur check karo kitna samjhe!</p>
                         <MCQSection />
                     </Sec>
 
                     {/* ═══ PRACTICE ═══ */}
-                    <Sec id="practice" title="Practice Questions — Khud Karo!" icon={<BookOpen size={16} className="text-violet-500" />}>
+                    <Sec id="practice" title="Practice Questions — Khud Karo!" icon={<BookOpen size={16} className="text-teal-500" />}>
                         <p className="mb-3">In questions ka output khud socho, phir code chalake check karo! 💪</p>
                         <div className="space-y-3">
-                            {[{ q: 'Arithmetic Operators', h: 'Floor division, modulus aur power calculate karo.', code: 'a = 10\nb = 3\nprint(a // b)   # ?\nprint(a % b)    # ?\nprint(a ** b)   # ?', bg: '#eef2ff', bc: '#c7d2fe', tc: '#4338ca' }, { q: 'Comparison & Logical', h: 'Har expression ko step by step solve karo.', code: 'x = 5\ny = 10\nprint(x == 5)          # ?\nprint(x != y)          # ?\nprint(x > y or x == 5) # ?', bg: '#f5f3ff', bc: '#ddd6fe', tc: '#5b21b6' }, { q: 'Identity vs Equality', h: '== value check karta hai, is object check karta hai.', code: 'list1 = [1, 2, 3]\nlist2 = [1, 2, 3]\nlist3 = list1\nprint(list1 == list2)  # ?\nprint(list1 is list2)  # ?\nprint(list1 is list3)  # ?', bg: '#fdf2f8', bc: '#fbcfe8', tc: '#9d174d' }, { q: 'Assignment Operators', h: 'Har step mein x ki value calculate karo.', code: 'x = 10\nx += 5    # x = 10 + 5 = ?\nx *= 2    # x = ? * 2 = ?\nx //= 3   # x = ? // 3 = ?\nprint(x)  # Final answer?', bg: '#ecfdf5', bc: '#a7f3d0', tc: '#166534' }].map((item, i) => (
+                            {[{ q: 'Arithmetic Operators', h: 'Floor division, modulus aur power calculate karo.', code: 'a = 10\nb = 3\nprint(a // b)   # ?\nprint(a % b)    # ?\nprint(a ** b)   # ?', bg: '#ecfdf5', bc: '#a7f3d0', tc: '#4338ca' }, { q: 'Comparison & Logical', h: 'Har expression ko step by step solve karo.', code: 'x = 5\ny = 10\nprint(x == 5)          # ?\nprint(x != y)          # ?\nprint(x > y or x == 5) # ?', bg: '#f5f3ff', bc: '#ddd6fe', tc: '#5b21b6' }, { q: 'Identity vs Equality', h: '== value check karta hai, is object check karta hai.', code: 'list1 = [1, 2, 3]\nlist2 = [1, 2, 3]\nlist3 = list1\nprint(list1 == list2)  # ?\nprint(list1 is list2)  # ?\nprint(list1 is list3)  # ?', bg: '#fdf2f8', bc: '#fbcfe8', tc: '#9d174d' }, { q: 'Assignment Operators', h: 'Har step mein x ki value calculate karo.', code: 'x = 10\nx += 5    # x = 10 + 5 = ?\nx *= 2    # x = ? * 2 = ?\nx //= 3   # x = ? // 3 = ?\nprint(x)  # Final answer?', bg: '#ecfdf5', bc: '#a7f3d0', tc: '#166534' }].map((item, i) => (
                                 <div key={i} className="rounded-2xl overflow-hidden" style={{ background: item.bg, border: `1px solid ${item.bc}` }}>
                                     <div className="px-4 py-3 flex items-center gap-2" style={{ borderBottom: `1px solid ${item.bc}` }}>
                                         <span className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black text-white" style={{ background: item.tc }}>{i + 1}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import NewsLoader from "./NewsLoader";
 
 interface NewsItem {
@@ -17,6 +18,8 @@ interface NewsItem {
 
 interface NewsData {
   date: string;
+  daily_summary_en?: string;
+  daily_summary_hi?: string;
   newsList: NewsItem[];
 }
 
@@ -101,7 +104,22 @@ export default function TechNewsCard() {
           padding: .65rem 2.5rem;
           border-bottom: 1px solid #e5e5e5;
         }
-        .kw-meta { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: #888; }
+        
+        .kw-home-btn {
+          display: flex; align-items: center; justify-content: center; gap: .4rem;
+          padding: .4rem .9rem; border-radius: 4px; border: 1.5px solid #111;
+          background: transparent; color: #111; text-decoration: none;
+          font-family: 'Newsreader', serif; font-size: .65rem; font-weight: 800;
+          letter-spacing: .15em; text-transform: uppercase; cursor: pointer;
+          transition: all .2s ease;
+        }
+        .kw-home-btn:hover {
+          background: #111; color: #fff;
+          transform: translateY(-2px);
+          box-shadow: 2px 2px 0 #e63946;
+        }
+
+        .kw-meta { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: #888; display: flex; align-items: center; gap: 1.5rem; }
 
         .kw-header-brand {
           display: flex; flex-direction: column; align-items: center;
@@ -412,11 +430,19 @@ export default function TechNewsCard() {
         <header className="kw-header">
           {/* Top bar */}
           <div className="kw-header-top">
-            <span className="kw-meta">
-              {data?.date
-                ? new Date(data.date).toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
-                : new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-            </span>
+            <div className="kw-meta">
+              <Link href="/" style={{ textDecoration: 'none' }}>
+                <button className="kw-home-btn" title="Back to Home">
+                  <i className="ph-bold ph-house-line text-lg" style={{ fontSize: '1rem' }} />
+                  Home
+                </button>
+              </Link>
+              <span>
+                {data?.date
+                  ? new Date(data.date).toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
+                  : new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+              </span>
+            </div>
             <div className="kw-controls">
               <button className={`kw-lang-btn ${lang === "en" ? "active" : ""}`} onClick={() => setLang("en")}>EN</button>
               <button className={`kw-lang-btn ${lang === "hi" ? "active" : ""}`} onClick={() => setLang("hi")}>हिं</button>
@@ -455,6 +481,21 @@ export default function TechNewsCard() {
 
         {/* ══ MAIN ══ */}
         <main className="kw-main">
+
+          {/* DAILY SUMMARY */}
+          {(data.daily_summary_en || data.daily_summary_hi) && (
+            <div style={{ marginBottom: '3.5rem', padding: '1.75rem 2.25rem', border: '2px solid #ddd', backgroundColor: '#fff', borderLeft: '5px solid #111', borderRadius: '4px' }}>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.25rem', marginBottom: '0.8rem', color: '#111', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" color="#f59e0b">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                {lang === "en" ? "Today's Briefing" : "आज की प्रमुख खबरें"}
+              </h3>
+              <p className={lang === "hi" ? "hi" : ""} style={{ fontFamily: lang === "hi" ? "'Noto Sans Devanagari', sans-serif" : "inherit", fontSize: lang === "hi" ? '1rem' : '1.05rem', lineHeight: 1.8, color: '#333' }}>
+                {lang === "en" ? data.daily_summary_en : data.daily_summary_hi}
+              </p>
+            </div>
+          )}
 
           {/* FEATURED */}
           {featured && (() => {

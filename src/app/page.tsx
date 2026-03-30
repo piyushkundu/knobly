@@ -23,6 +23,7 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
     { id: 'c-lab', name: 'C Compiler', type: 'With AI', link: '/c-lab', icon: 'ph-bold ph-terminal-window', color: 'text-green-500', borderClass: 'border-green', category: 'Main' },
     { id: 'test-journey', name: 'Test Journey', type: 'Dashboard', link: '/dashboard', icon: 'ph-bold ph-trophy', color: 'text-amber-400', borderClass: 'border-amber', category: 'Main' },
     { id: 'top10-news', name: 'Top 10 News', type: 'AI News', link: '/tech-news', icon: 'ph-bold ph-newspaper', color: 'text-rose-400', borderClass: 'border-rose', category: 'Main' },
+    { id: 'topic-explainer', name: 'Topic Explainer', type: 'AI Explain', link: '__topic_explainer__', icon: 'ph-duotone ph-magic-wand', color: 'text-fuchsia-400', borderClass: 'border-fuchsia', category: 'Main' },
   ],
   OLevel: [
     { id: 'syllabus', name: 'Syllabus', type: 'Info', link: '/syllabus', icon: 'ph-bold ph-list-bullets', color: 'text-gray-300', borderClass: 'border-slate', category: 'OLevel' },
@@ -159,6 +160,12 @@ export default function HomePage() {
       setExistingUserId(null);
     }
   }, [user, getUserIdForCurrentUser]);
+
+  // ── Topic Explainer Modal ──
+  const [showTopicExplainer, setShowTopicExplainer] = useState(false);
+  const [teSubject, setTeSubject] = useState('');
+  const [teTopic, setTeTopic] = useState('');
+  const [teLang, setTeLang] = useState<'en' | 'hi'>('hi');
 
   // ── Notes ──
   const [notesText, setNotesText] = useState('');
@@ -339,6 +346,11 @@ export default function HomePage() {
 
   // ── Actions ──
   const handleAppClick = (app: KnoblyApp) => {
+    // Intercept Topic Explainer
+    if (app.link === '__topic_explainer__') {
+      setShowTopicExplainer(true);
+      return;
+    }
     // Track recent apps & persist
     setRecentApps(prev => {
       const filtered = prev.filter(a => a.id !== app.id);
@@ -1337,6 +1349,205 @@ export default function HomePage() {
 
       {/* ══════ MODALS ══════ */}
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+
+      {/* ══════ TOPIC EXPLAINER MODAL ══════ */}
+      <AnimatePresence>
+        {showTopicExplainer && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center"
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={() => setShowTopicExplainer(false)} />
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 20 }}
+              transition={{ duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
+              className="pointer-events-auto relative w-[92%] max-w-md z-50 rounded-3xl overflow-hidden"
+              style={{
+                background: isDark
+                  ? 'linear-gradient(145deg, rgba(15,10,30,0.97), rgba(20,16,50,0.97))'
+                  : 'linear-gradient(145deg, rgba(255,255,255,0.98), rgba(245,243,255,0.98))',
+                border: `1px solid ${isDark ? 'rgba(139,92,246,0.25)' : 'rgba(139,92,246,0.15)'}`,
+                boxShadow: isDark
+                  ? '0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(139,92,246,0.15), inset 0 1px 0 rgba(255,255,255,0.05)'
+                  : '0 24px 60px rgba(0,0,0,0.15), 0 0 30px rgba(139,92,246,0.08)',
+              }}
+            >
+              {/* Animated top bar */}
+              <div style={{
+                height: 3,
+                background: 'linear-gradient(90deg, #8b5cf6, #38bdf8, #ec4899, #8b5cf6)',
+                backgroundSize: '300% 100%',
+                animation: 'gradientSlide 4s linear infinite',
+              }} />
+
+              {/* Header */}
+              <div className="px-6 pt-5 pb-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
+                    style={{
+                      background: isDark
+                        ? 'linear-gradient(135deg, rgba(217,70,239,0.2), rgba(168,85,247,0.15))'
+                        : 'linear-gradient(135deg, rgba(217,70,239,0.1), rgba(168,85,247,0.08))',
+                      border: `1px solid ${isDark ? 'rgba(217,70,239,0.3)' : 'rgba(217,70,239,0.2)'}`,
+                      boxShadow: '0 0 20px rgba(217,70,239,0.15)',
+                    }}
+                  >
+                    <i className="ph-duotone ph-magic-wand text-xl" style={{ color: '#e879f9' }} />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-extrabold" style={{ color: isDark ? '#f1f5f9' : '#1e293b' }}>
+                      Topic Explainer
+                    </h3>
+                    <p className="text-[10px] font-medium" style={{ color: isDark ? '#64748b' : '#94a3b8' }}>
+                      AI-powered detailed explanation
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowTopicExplainer(false)}
+                  className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
+                  style={{
+                    background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+                    color: isDark ? '#9ca3af' : '#6b7280',
+                  }}
+                >
+                  <i className="ph-bold ph-x text-sm" />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="px-6 pb-6 flex flex-col gap-4">
+                {/* Subject (Optional) */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] font-bold uppercase tracking-[0.18em]" style={{ color: isDark ? '#64748b' : '#94a3b8' }}>
+                    Subject <span style={{ color: isDark ? '#475569' : '#cbd5e1', fontWeight: 500, textTransform: 'none' }}>(optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={teSubject}
+                    onChange={(e) => setTeSubject(e.target.value)}
+                    placeholder="e.g. Python, Computer Science, Physics..."
+                    className="w-full rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none transition-all"
+                    style={{
+                      background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+                      border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+                      color: isDark ? '#e2e8f0' : '#1e293b',
+                    }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#8b5cf6'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.12)'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'; e.currentTarget.style.boxShadow = 'none'; }}
+                  />
+                </div>
+
+                {/* Topic (Required) */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] font-bold uppercase tracking-[0.18em]" style={{ color: isDark ? '#64748b' : '#94a3b8' }}>
+                    Topic <span style={{ color: '#ef4444' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={teTopic}
+                    onChange={(e) => setTeTopic(e.target.value)}
+                    placeholder="e.g. What is a Tuple, CPU Architecture..."
+                    className="w-full rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none transition-all"
+                    style={{
+                      background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+                      border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+                      color: isDark ? '#e2e8f0' : '#1e293b',
+                    }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#8b5cf6'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.12)'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'; e.currentTarget.style.boxShadow = 'none'; }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && teTopic.trim()) {
+                        const fullTopic = teSubject.trim() ? `${teTopic.trim()} (${teSubject.trim()})` : teTopic.trim();
+                        const slug = fullTopic.toLowerCase().replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '-').slice(0, 80);
+                        setShowTopicExplainer(false);
+                        router.push(`/ai/topic/${slug}?lang=${teLang}`);
+                        setTeTopic('');
+                        setTeSubject('');
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* Language Selector */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] font-bold uppercase tracking-[0.18em]" style={{ color: isDark ? '#64748b' : '#94a3b8' }}>
+                    Language
+                  </label>
+                  <div className="flex gap-2">
+                    {[
+                      { id: 'hi' as const, label: 'हिंदी', sub: 'Hindi' },
+                      { id: 'en' as const, label: 'English', sub: 'English' },
+                    ].map((l) => (
+                      <button
+                        key={l.id}
+                        onClick={() => setTeLang(l.id)}
+                        className="flex-1 rounded-xl px-3 py-2.5 text-center transition-all"
+                        style={{
+                          background: teLang === l.id
+                            ? (isDark ? 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(56,189,248,0.12))' : 'linear-gradient(135deg, rgba(139,92,246,0.12), rgba(56,189,248,0.08))')
+                            : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'),
+                          border: `1.5px solid ${teLang === l.id ? '#8b5cf6' : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)')}`,
+                          boxShadow: teLang === l.id ? '0 0 12px rgba(139,92,246,0.15)' : 'none',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <div className="text-sm font-bold" style={{ color: teLang === l.id ? (isDark ? '#c4b5fd' : '#7c3aed') : (isDark ? '#94a3b8' : '#64748b') }}>
+                          {l.label}
+                        </div>
+                        <div className="text-[9px] font-medium mt-0.5" style={{ color: isDark ? '#475569' : '#94a3b8' }}>
+                          {l.sub}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  onClick={() => {
+                    if (!teTopic.trim()) return;
+                    const fullTopic = teSubject.trim() ? `${teTopic.trim()} (${teSubject.trim()})` : teTopic.trim();
+                    const slug = fullTopic.toLowerCase().replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '-').slice(0, 80);
+                    setShowTopicExplainer(false);
+                    router.push(`/ai/topic/${slug}?lang=${teLang}`);
+                    setTeTopic('');
+                    setTeSubject('');
+                  }}
+                  disabled={!teTopic.trim()}
+                  className="w-full py-3 rounded-xl font-bold text-sm tracking-wide transition-all relative overflow-hidden group"
+                  style={{
+                    background: teTopic.trim()
+                      ? 'linear-gradient(135deg, #8b5cf6, #6366f1, #38bdf8)'
+                      : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
+                    color: teTopic.trim() ? '#fff' : (isDark ? '#475569' : '#94a3b8'),
+                    cursor: teTopic.trim() ? 'pointer' : 'not-allowed',
+                    boxShadow: teTopic.trim() ? '0 8px 30px rgba(139,92,246,0.3), 0 0 20px rgba(56,189,248,0.15)' : 'none',
+                    border: 'none',
+                  }}
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    <i className="ph-bold ph-sparkle" />
+                    Explain with AI
+                  </span>
+                </button>
+
+                {/* Privacy note */}
+                <p className="text-[9px] text-center font-medium" style={{ color: isDark ? '#374151' : '#d1d5db' }}>
+                  Powered by KnoblyAI • Sarvam + Groq Engine
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
 
       {/* ══════ NOTES MODAL ══════ */}

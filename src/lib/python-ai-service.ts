@@ -159,12 +159,21 @@ Provide exactly this JSON structure with your custom answers:
 
 export async function generateCode(prompt: string, language: 'en' | 'hi'): Promise<string> {
   const isHindi = language === 'hi';
-  
-  const systemPrompt = isHindi
-    ? `Tum ek expert Python programmer ho. User ek question poochega aur tumhe sirf aur sirf us point par execute hone wala Python code likhna hai. Is problem ko sabse simple tareeke se solve karo. Functions (\`def\` keyword) ka bilkul use mat karna jab tak user khud na bole, ya bhut zyada zaroori na ho. Code ke bahar koi text ya markdown backticks (\`\`\`) mat dena. Sirf plain text code return karo taaki use seedha editor mein run kiya ja sake.`
-    : `You are an expert Python programmer. The user will ask a programming question or request a script. You must return ONLY raw, executable Python code. Solve this in the simplest way possible. DO NOT use functions (\`def\` keyword) unless the user explicitly asks for one or it is strictly necessary. Do not include any explanations, markdown formatting (like \`\`\`python), or wrapping text. The response should be ready to run directly in an editor.`;
 
-  const userMessage = `Write python code for this: ${prompt}`;
+  // Detect if user is asking for C language
+  const isCLang = /\b(c language|c programming|in c\b|c mein|c lang)/i.test(prompt) || /^(Write this in C|Ye C language)/i.test(prompt);
+
+  const systemPrompt = isCLang
+    ? (isHindi
+        ? `Tum ek expert C programmer ho. User ek question poochega aur tumhe sirf aur sirf us point par compile/run hone wala C code likhna hai. Code ke bahar koi text ya markdown backticks (\`\`\`) mat dena. Sirf plain text C code return karo taaki use seedha editor mein compile kiya ja sake.`
+        : `You are an expert C programmer. The user will ask a programming question or request a program. You must return ONLY raw, compilable C code. Do not include any explanations, markdown formatting (like \`\`\`c), or wrapping text. The response should be ready to compile directly.`)
+    : (isHindi
+        ? `Tum ek expert Python programmer ho. User ek question poochega aur tumhe sirf aur sirf us point par execute hone wala Python code likhna hai. Is problem ko sabse simple tareeke se solve karo. Functions (\`def\` keyword) ka bilkul use mat karna jab tak user khud na bole, ya bhut zyada zaroori na ho. Code ke bahar koi text ya markdown backticks (\`\`\`) mat dena. Sirf plain text code return karo taaki use seedha editor mein run kiya ja sake.`
+        : `You are an expert Python programmer. The user will ask a programming question or request a script. You must return ONLY raw, executable Python code. Solve this in the simplest way possible. DO NOT use functions (\`def\` keyword) unless the user explicitly asks for one or it is strictly necessary. Do not include any explanations, markdown formatting (like \`\`\`python), or wrapping text. The response should be ready to run directly in an editor.`);
+
+  const userMessage = isCLang
+    ? `Write C code for this: ${prompt}`
+    : `Write python code for this: ${prompt}`;
 
   const response = await fetchWithFallback('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -198,6 +207,8 @@ export async function generateCode(prompt: string, language: 'en' | 'hi'): Promi
   let cleanedContent = content.trim();
   if (cleanedContent.startsWith('```python')) {
     cleanedContent = cleanedContent.replace(/^```python\s*/i, '');
+  } else if (cleanedContent.startsWith('```c')) {
+    cleanedContent = cleanedContent.replace(/^```c\s*/i, '');
   } else if (cleanedContent.startsWith('```')) {
     cleanedContent = cleanedContent.replace(/^```\s*/, '');
   }

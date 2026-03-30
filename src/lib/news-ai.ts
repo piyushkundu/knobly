@@ -4,6 +4,8 @@
 // ========================================
 
 interface AIResponse {
+  daily_summary_en?: string;
+  daily_summary_hi?: string;
   top_news: any[];
 }
 
@@ -21,10 +23,11 @@ async function callSarvamAI(prompt: string): Promise<string> {
     },
     body: JSON.stringify({
       messages: [{ role: "user", content: prompt }],
-      model: "sarvam-m",
+      model: "sarvam-30b-16k",
       temperature: 0,
       max_tokens: 4000,
     }),
+    signal: AbortSignal.timeout(15000), // Prevent hanging
   });
 
   if (!response.ok) {
@@ -56,7 +59,9 @@ async function callGroqAI(prompt: string): Promise<string> {
       model: "llama-3.3-70b-versatile",
       temperature: 0,
       max_tokens: 4000,
+      response_format: { type: "json_object" }
     }),
+    signal: AbortSignal.timeout(10000),
   });
 
   if (!response.ok) {
@@ -155,10 +160,12 @@ EXAMPLES OF WHAT TO DO:
 
 ---
 
-## OUTPUT FORMAT (STRICT):
+Return ONLY a valid JSON object with the following structure:
+1. "daily_summary_en" (string: A 3-4 line engaging summary explaining what all these 10 news stories are generally about today).
+2. "daily_summary_hi" (string: Same summary translated into SIMPLE Hindi using Devanagari, explaining the overall theme of today's news).
+3. "top_news" (array of exactly 10 objects).
 
-Return ONLY a valid JSON object with a key "top_news" containing an array of objects.
-Each object must have exactly these keys:
+Each object in the "top_news" array must have exactly these keys:
 - "article_id" (string: MUST be the exact ID from the [ ] brackets, e.g. "article_5")
 - "original_title" (string: the EXACT title of the original article)
 - "category" (string: "Tech", "India", "World", or "Sports")
