@@ -831,9 +831,29 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                                 {currentQ.chapter && (
                                     <p className="text-[12px] font-bold mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-white" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', boxShadow: '0 2px 8px rgba(109,40,217,0.25)' }}>📚 {currentQ.chapter}</p>
                                 )}
-                                <p className="text-[17px] sm:text-[18px] leading-relaxed font-semibold" style={{ color: '#0f172a' }}>
-                                    {currentQ.question_text}
-                                </p>
+                                <div className="text-[17px] sm:text-[18px] leading-relaxed font-semibold" style={{ color: '#0f172a' }}>
+                                    {currentQ.question_text.split('\n').map((line: string, li: number) => {
+                                        const trimmed = line.trim();
+                                        // Detect code lines: starts with code-like pattern, not ending with ?, not bilingual
+                                        const isCode = trimmed.length > 0
+                                            && !trimmed.includes(' | ')
+                                            && !/\?$/.test(trimmed)
+                                            && (
+                                                /^(print|input|len|range|type|list|dict|set|int|str|float|bool|for|while|if|elif|else|def|class|import|from|return|try|except)\b/.test(trimmed)
+                                                || /^[a-zA-Z_$][a-zA-Z0-9_$]*\s*[=\[(]/.test(trimmed)
+                                                || /^[a-zA-Z_$][a-zA-Z0-9_$]*\s*\*/.test(trimmed)
+                                                || /^\s+/.test(line)   // indented lines = code body
+                                            );
+                                        if (isCode) {
+                                            return (
+                                                <code key={li} className="block font-mono text-[14px] sm:text-[15px] mt-1.5 px-4 py-1.5 rounded-lg" style={{ background: '#f1f5f9', color: '#1e1b4b', border: '1px solid #c7d2fe', whiteSpace: 'pre' }}>
+                                                    {line}
+                                                </code>
+                                            );
+                                        }
+                                        return trimmed ? <p key={li} className="mt-1">{line}</p> : null;
+                                    })}
+                                </div>
 
                                 <div className="mt-6 space-y-3">
                                     {(currentQ.question_type === 'MCQ' || currentQ.question_type === 'TF') && (currentQ.exam_options || []).map((opt, oi) => {

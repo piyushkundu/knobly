@@ -183,7 +183,40 @@ export function useSuperAdmin() {
             alert('Save failed: ' + (err as any).message);
         }
     };
-    const deleteQuestion = async (id: string, testId: string) => { await deleteDoc(doc(db, 'exam_questions', id)); loadQuestions(testId); };
+    const deleteQuestion = async (id: string, testId: string) => {
+        try {
+            const res = await fetch('/api/admin-delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete_question', questionId: id, testId })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'Delete failed');
+            await loadQuestions(testId);
+        } catch (err) {
+            console.error('[deleteQuestion] ERROR:', err);
+            alert('Delete failed: ' + (err as any).message);
+        }
+    };
+    const deleteAllQuestions = async (testId: string): Promise<string> => {
+        if (!window.confirm('Delete ALL questions for this test? This cannot be undone.')) return 'cancelled';
+        try {
+            const res = await fetch('/api/admin-delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete_all_questions', testId })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'Delete failed');
+            console.log(`[deleteAllQ] Deleted ${data.deletedQ} questions, ${data.deletedO} options`);
+            await loadQuestions(testId);
+            return `ok:${data.deletedQ}`;
+        } catch (err) {
+            console.error('[deleteAllQuestions] ERROR:', err);
+            alert('Failed to delete: ' + (err as any).message);
+            return 'error';
+        }
+    };
     const setCorrectOption = async (questionId: string, correctOptionId: string) => {
         const optsSnap = await getDocs(query(collection(db, 'exam_options'), where('question_id', '==', questionId)));
         const batch = writeBatch(db);
@@ -197,23 +230,20 @@ export function useSuperAdmin() {
         return snap.docs.map(d => ({ id: d.id, ...d.data() }));
     };
     const importQuestions = async (testId: string, text: string) => {
-        const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
-        const batch = writeBatch(db);
-        blocks.forEach(block => {
-            const lines = block.split(/\n/).map(l => l.trim()).filter(Boolean);
-            const qLine = lines.find(l => l.includes('?')) || lines[0];
-            const question = qLine.replace(/^\d+[.)]\s*/, "");
-            const options: any[] = [];
-            lines.forEach(l => { if (/^[A-E][.)]/.test(l)) { let c = l.replace(/^[A-E][.)]\s*/, ""); let ic = false; if (c.trim().endsWith('*')) { ic = true; c = c.trim().slice(0, -1).trim(); } options.push({ text: c, is_correct: ic }); } });
-            if (!options.find(o => o.is_correct) && options.length) options[0].is_correct = true;
-            // Points per question are auto-calculated from test total_points / total_questions
-            const qRef = doc(collection(db, 'exam_questions'));
-            batch.set(qRef, { test_id: testId, question_text: question, question_type: options.length ? 'MCQ' : 'SHORT', marks: 1, difficulty: 'EASY', created_at: serverTimestamp() });
-            options.forEach(o => { batch.set(doc(collection(db, 'exam_options')), { question_id: qRef.id, option_text: o.text, is_correct: o.is_correct }); });
+        // Route through server API (uses Firebase Admin SDK, bypasses Firestore Security Rules)
+        const res = await fetch('/api/admin-delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'import_questions', testId, text }),
         });
-        await batch.commit();
-        loadQuestions(testId);
-        return blocks.length;
+        const data = await res.json();
+        if (!data.success) {
+            console.error('[importQuestions] Server error:', data.error);
+            throw new Error(data.error || 'Import failed');
+        }
+        console.log(`[importQuestions] Imported ${data.importedCount} questions via server API`);
+        await loadQuestions(testId);
+        return data.importedCount as number;
     };
 
     const getTestPreviewData = async (testId: string) => {
@@ -362,7 +392,7 @@ export function useSuperAdmin() {
         tests, questions, users, levels, badges, results, notifications, apps, videos, leaderboard, categories,
         login, logout, refreshAll,
         saveTest, deleteTest,
-        loadQuestions, saveQuestion, deleteQuestion, setCorrectOption, getOptionsForQuestion, importQuestions, getTestPreviewData,
+        loadQuestions, saveQuestion, deleteQuestion, setCorrectOption, getOptionsForQuestion, importQuestions, getTestPreviewData, deleteAllQuestions,
         loadResults, viewAttemptDetail,
         deleteUser, deleteLeaderboardUser, updateLeaderboardPoints, getUserProfile,
         saveLevel, deleteLevel, saveBadge, deleteBadge,

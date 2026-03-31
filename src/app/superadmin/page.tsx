@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { useSuperAdmin } from './useSuperAdmin';
 import {
@@ -42,6 +42,9 @@ export default function SuperAdminPage() {
     const [importMode, setImportMode] = useState(false);
     const [importText, setImportText] = useState('');
     const [importLog, setImportLog] = useState('');
+    const [aiGenerating, setAiGenerating] = useState(false);
+    const [aiTopic, setAiTopic] = useState('');
+    const [aiCount, setAiCount] = useState(5);
     const [resTestId, setResTestId] = useState('');
     const [resUserId, setResUserId] = useState('');
     const [attemptDetail, setAttemptDetail] = useState<any>(null);
@@ -347,22 +350,87 @@ export default function SuperAdminPage() {
                                     {selTestId && <>
                                         <button onClick={() => { setQForm({ id: null, text: '', type: 'MCQ', marks: 1, difficulty: 'EASY', options: [{ text: '', is_correct: false }, { text: '', is_correct: false }] }); setShowQModal(true); }} className={`${btn} bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100`}><Plus size={12} className="inline mr-1" />Add</button>
                                         <button onClick={() => setImportMode(!importMode)} className={`${btn} bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100`}><Upload size={12} className="inline mr-1" />{importMode ? 'Close' : 'Import'}</button>
+                                        <button onClick={async (e) => {
+                                            const el = e.currentTarget;
+                                            el.disabled = true;
+                                            el.textContent = '⏳ Deleting...';
+                                            const result = await d.deleteAllQuestions(selTestId);
+                                            el.disabled = false;
+                                            if (result?.startsWith('ok:')) {
+                                                const count = result.split(':')[1];
+                                                el.textContent = `✅ Deleted ${count} Qs`;
+                                                setTimeout(() => { el.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>Delete All'; }, 3000);
+                                            } else if (result === 'empty') {
+                                                el.textContent = '📭 No questions';
+                                                setTimeout(() => { el.textContent = 'Delete All'; }, 2000);
+                                            }
+                                        }} className={`${btn} bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 ml-auto disabled:opacity-50`}><Trash2 size={12} className="inline mr-1" />Delete All</button>
                                     </>}
                                 </div>
                                 {importMode && selTestId && (
-                                    <div className={`${card} p-4 border border-blue-200 grid grid-cols-1 md:grid-cols-2 gap-4`}>
-                                        <div><h3 className="text-xs font-bold text-blue-600 uppercase mb-2">1. Paste Questions</h3><textarea value={importText} onChange={e => setImportText(e.target.value)} className={`${inp} h-48 font-mono text-xs`} placeholder="Paste formatted text..." /></div>
-                                        <div>
-                                            <div className="flex items-center justify-between mb-2">
-                                                <h3 className="text-xs font-bold text-emerald-600 uppercase">2. Format (A-D)</h3>
-                                                <button onClick={() => { navigator.clipboard.writeText("What is CPU?\nA. Monitor\nB. Processor*\nC. Mouse\nD. Keys\n\nWhat is RAM?\nA. Storage\nB. Memory*\nC. Display\nD. Speaker"); const btn = document.getElementById('copyFmtBtn'); if(btn) { btn.textContent = '✅ Copied!'; setTimeout(() => btn.textContent = '📋 Copy Format', 1500); } }} id="copyFmtBtn" className="text-[9px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 transition">📋 Copy Format</button>
+                                    <div className={`${card} p-4 border border-blue-200 grid grid-cols-1 md:grid-cols-2 gap-5`}>
+                                        <div className="flex flex-col gap-3">
+                                            <div>
+                                                <h3 className="text-[10px] font-black uppercase text-blue-600 mb-2 flex items-center gap-1">1. Paste Raw Questions (AI Will Form & Import)</h3>
+                                                <textarea value={importText} onChange={e => setImportText(e.target.value)} className={`${inp} h-[210px] text-xs leading-relaxed`} placeholder="Paste ANY unstructured questions here.&#10;&#10;The AI will automatically understand them, perfectly format them, and import them into your test without changing your language!&#10;&#10;Example:&#10;Q1. What is HTML?&#10;1. Language&#10;2. Browser&#10;Ans: 1" />
+                                                <button disabled={aiGenerating || !importText.trim()} onClick={async () => {
+                                                    setAiGenerating(true); setImportLog('🤖 AI is reading & formatting your questions...');
+                                                    try {
+                                                        const res = await fetch('/api/admin-ai-format', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({input: importText, mode: 'format'})});
+                                                        const data = await res.json();
+                                                        if (data.result) { 
+                                                            setImportLog('✅ AI structured perfectly. Importing to database...'); 
+                                                            const c = await d.importQuestions(selTestId, data.result); 
+                                                            setImportLog(`🎉 Success! AI perfectly imported ${c} questions.`); 
+                                                            setImportText(''); 
+                                                        }
+                                                        else throw new Error(data.error);
+                                                    } catch(e) { console.error(e); setImportLog('Error: ' + e); }
+                                                    setAiGenerating(false);
+                                                }} className="w-full mt-3 py-3 text-white font-bold rounded-xl text-xs shadow-md transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed group" style={{ background: 'linear-gradient(135deg, #3b82f6, #6366f1)' }}>
+                                                    {aiGenerating ? <Loader2 size={16} className="animate-spin inline mr-2" /> : <Crown size={16} className="inline mr-2 group-hover:scale-110 transition-transform"/>} Magic Process & Import
+                                                </button>
                                             </div>
-                                            <div className="bg-gray-50 p-3 rounded-xl text-[10px] font-mono text-gray-600 border border-gray-200">
-                                                <div className="text-indigo-600">What is CPU?<br />A. Monitor<br />B. Processor*<br />C. Mouse<br />D. Keys</div>
-                                                <div className="text-gray-400 mt-2 text-[9px]">* = Correct answer • Empty line between Qs<br />⚡ Points per Q = Total Points ÷ Total Questions (auto)</div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-3 h-full">
+                                            <div className="p-4 rounded-xl border border-purple-100 h-full flex flex-col justify-center" style={{ background: 'linear-gradient(135deg, #faf5ff, #f3e8ff)' }}>
+                                                <h3 className="text-xs font-black uppercase text-purple-700 mb-4 flex items-center justify-center gap-2"><Crown size={16}/> Auto-Generate Questions</h3>
+                                                <div className="space-y-3">
+                                                    <div>
+                                                        <label className="text-[10px] font-bold text-purple-400 uppercase block mb-1">Topic Name</label>
+                                                        <input value={aiTopic} onChange={e => setAiTopic(e.target.value)} placeholder="e.g. Python Dictionary" className={`${inp} w-full`} style={{ borderColor: '#e9d5ff' }} />
+                                                    </div>
+                                                    <div>
+                                                        <label className="text-[10px] font-bold text-purple-400 uppercase block mb-1">Number of Questions</label>
+                                                        <input value={aiCount} onChange={e => setAiCount(Number(e.target.value))} type="number" min="1" max="20" className={`${inp} w-full`} style={{ borderColor: '#e9d5ff' }} />
+                                                    </div>
+                                                    <button onClick={async () => {
+                                                        if (!aiTopic.trim()) return alert("Enter a topic!");
+                                                        setAiGenerating(true); setImportLog('🤖 AI is writing fresh questions...');
+                                                        try {
+                                                            const res = await fetch('/api/admin-ai-format', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({input: aiTopic, num_questions: aiCount, mode: 'generate'})});
+                                                            const data = await res.json();
+                                                            if (data.result) { 
+                                                                setImportLog('✅ AI created them. Importing to database...');
+                                                                const c = await d.importQuestions(selTestId, data.result);
+                                                                setImportLog(`🎉 Success! AI generated and imported ${c} questions.`); 
+                                                                setAiTopic('');
+                                                            }
+                                                            else throw new Error(data.error);
+                                                        } catch(e) { console.error(e); setImportLog('Error with AI generation.'); }
+                                                        setAiGenerating(false);
+                                                    }} disabled={aiGenerating || !aiTopic.trim()} className={`${btn} w-full py-3 shadow-md flex items-center justify-center disabled:opacity-50 mt-2`} style={{ background: 'linear-gradient(135deg, #a855f7, #d946ef)', color: '#fff' }}>
+                                                        {aiGenerating ? <Loader2 size={16} className="animate-spin" /> : 'Generate & Import'}
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <button onClick={async () => { setImportLog('Importing...'); const c = await d.importQuestions(selTestId, importText); setImportLog(`✅ Imported ${c} questions!`); setImportText(''); }} className="w-full mt-3 py-2.5 text-white font-bold rounded-xl text-xs shadow-md" style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}>Process & Import</button>
-                                            {importLog && <div className="mt-2 text-[10px] font-mono text-emerald-600 bg-emerald-50 p-2 rounded-xl border border-emerald-200">{importLog}</div>}
+                                            
+                                            {importLog && (
+                                                <div className={`text-[11px] items-center gap-2 flex font-bold p-3 rounded-xl border shadow-sm ${importLog.includes('Error') ? 'text-red-500 bg-red-50 border-red-200' : 'text-emerald-600 bg-emerald-50 border-emerald-200'}`}>
+                                                    {aiGenerating && <Loader2 size={14} className="animate-spin"/>} {importLog}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -375,7 +443,7 @@ export default function SuperAdminPage() {
                                                 {d.questions.map((q: any, i) => (
                                                     <tr key={q.id} className="hover:bg-gray-50/50 transition">
                                                         <td className="p-3 text-center text-gray-400 font-bold">{i + 1}</td>
-                                                        <td className="p-3 text-gray-700 truncate max-w-lg">{q.question_text}</td>
+                                                         <td className="p-3 text-gray-700 max-w-lg text-sm leading-relaxed">{q.question_text.split('\n').map((line: string, li: number) => { const isCode = /^[a-zA-Z_$].*[=(\[{]|^print\(|^#/.test(line.trim()) && !/\?$/.test(line.trim()) && !line.includes('|'); return isCode ? <code key={li} className="block font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded mt-0.5 text-violet-700">{line}</code> : <span key={li} className="block">{line}</span>; })}</td>
                                                         <td className="p-3"><span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold">{q.question_type}</span></td>
                                                         <td className="p-3 text-center font-bold text-gray-900">1</td>
                                                         <td className="p-3 text-center flex justify-center gap-2">
@@ -890,7 +958,14 @@ export default function SuperAdminPage() {
                                 <div key={q.id} className={`p-4 rounded-xl border transition-colors ${aiFeedback[q.id] ? 'bg-amber-50 border-amber-300' : 'bg-gray-50 border-gray-200'}`}>
                                     <div className="text-sm font-bold text-gray-900 mb-3 flex items-start gap-2">
                                         <span className="text-indigo-500 shrink-0">Q{i + 1}.</span> 
-                                        <span className="flex-1">{q.question_text}</span>
+                                        <span className="flex-1 whitespace-pre-wrap leading-relaxed">
+                                                {q.question_text.split('\n').map((line: string, li: number) => {
+                                                    const isCode = /^[a-zA-Z_$].*[=(\[{]|^print\(|^#|^>>>/.test(line.trim()) && !/\?$/.test(line.trim()) && !line.includes('|');
+                                                    return isCode
+                                                        ? <code key={li} className="block font-mono text-xs bg-gray-100 px-2 py-0.5 rounded mt-0.5 text-violet-700">{line}</code>
+                                                        : <span key={li} className="block">{line}</span>;
+                                                })}
+                                        </span>
                                         <div className="flex items-center gap-2 shrink-0">
                                             <span className="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full whitespace-nowrap">{q.question_type}</span>
                                             <button onClick={async () => {
