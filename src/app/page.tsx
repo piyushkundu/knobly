@@ -24,6 +24,7 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
     { id: 'test-journey', name: 'Test Journey', type: 'Dashboard', link: '/dashboard', icon: 'ph-bold ph-trophy', color: 'text-amber-400', borderClass: 'border-amber', category: 'Main' },
     { id: 'top10-news', name: 'Top 10 News', type: 'AI News', link: '/tech-news', icon: 'ph-bold ph-newspaper', color: 'text-rose-400', borderClass: 'border-rose', category: 'Main' },
     { id: 'topic-explainer', name: 'Topic Explainer', type: 'AI Explain', link: '__topic_explainer__', icon: 'ph-duotone ph-magic-wand', color: 'text-fuchsia-400', borderClass: 'border-fuchsia', category: 'Main' },
+    { id: 'map-game', name: 'Map Game', type: 'Play', link: 'https://createme.in', icon: 'ph-bold ph-map-trifold', color: 'text-emerald-500', borderClass: 'border-emerald', category: 'Main' },
   ],
   OLevel: [
     { id: 'syllabus', name: 'Syllabus', type: 'Info', link: '/syllabus', icon: 'ph-bold ph-list-bullets', color: 'text-gray-300', borderClass: 'border-slate', category: 'OLevel' },
