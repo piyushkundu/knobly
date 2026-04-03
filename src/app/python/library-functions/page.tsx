@@ -498,7 +498,7 @@ Backward index → -6 -5 -4 -3 -2 -1`}
                     {/* Practice Questions */}
                     <Sec id="practice" title="Practice Questions :" icon={<Brain size={18} className="text-purple-600" />}>
                         <p className="mb-4 text-slate-700">Math Module से सम्बंधित महत्वपूर्ण प्रश्न (इन्हें Python में solve करने का प्रयास करें):</p>
-                        <div className="space-y-3">
+                        <div className="space-y-3 mb-8">
                             {[
                                 "√(25 + 36) + log₁₀(100) + e²",
                                 "ceil(3.4) + floor(7.8) + √(49)",
@@ -527,6 +527,56 @@ Backward index → -6 -5 -4 -3 -2 -1`}
                                         title="Ask AI to Explain"
                                     >
                                         <Sparkles size={14} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+
+                        <p className="mb-4 text-slate-700 font-bold border-t border-slate-200 pt-6">Programming Practice Questions :</p>
+                        <div className="space-y-3">
+                            {[
+                                "Write a program to take a number and display its square, cube, and square root.",
+                                "Write a program to input a name and display it in uppercase and lowercase.",
+                                "Write a program to generate a random number between 1 to 10 and print it.",
+                                "Write a program to display the current date and time.",
+                                "Write a program to count the length of a string.",
+                                "Write a program to take a number and print whether it is positive, negative, or zero.",
+                                "Write a program to reverse a given string.",
+                                "Write a program to generate a random OTP (4 digits).",
+                                "Write a program to print today’s date in DD-MM-YYYY format.",
+                                "Write a program to count the number of vowels in a string.",
+                                "Write a program to find the maximum of two numbers.",
+                                "Write a program to check whether a string is a palindrome.",
+                                "Write a program to simulate a dice roll (1–6).",
+                                "Write a program to display only the current year.",
+                                "Write a program to count the number of words in a sentence.",
+                                "Write a program to find the area of a circle.",
+                                "Write a program to replace spaces in a string with '-'.",
+                                "Write a program to pick a random item from a list.",
+                                "Write a program to check whether the current year is leap year.",
+                                "Write a program to count digits in a number.",
+                                "Write a program to find the factorial of a number.",
+                                "Write a program to convert a string into title case.",
+                                "Write a program to simulate a coin toss.",
+                                "Write a program to display current time in 12-hour format.",
+                                "Write a program to count uppercase letters in a string."
+                            ].map((q, idx) => (
+                                <div key={idx} className="flex items-start gap-4 p-4 rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md hover:border-purple-300">
+                                    <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 text-purple-700 font-extrabold text-[15px] border border-purple-100/50 shadow-sm">
+                                        Q{idx + 1}
+                                    </div>
+                                    <div className="text-slate-800 font-medium text-[15px] leading-relaxed pt-2">
+                                        {q}
+                                    </div>
+                                    <button 
+                                        onClick={() => {
+                                            const event = new CustomEvent('toggle-knobly-ai');
+                                            window.dispatchEvent(event);
+                                        }}
+                                        className="ml-auto w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-purple-100 hover:text-purple-600 transition-colors"
+                                        title="Ask AI to Explain"
+                                    >
+                                        <Sparkles size={16} />
                                     </button>
                                 </div>
                             ))}
