@@ -1532,3 +1532,39 @@ html {
     background-position: 300% 50%;
   }
 }
+
+/* ──── TYPING APP: Blinking Block Cursor ──── */
+.typing-cursor-active {
+  animation: typingCursorBlink 1s ease-in-out infinite;
+  border-radius: 3px;
+}
+
+@keyframes typingCursorBlink {
+  0%, 100% {
+    background: rgba(34, 211, 238, 0.25);
+    border-bottom-color: #22d3ee;
+    box-shadow: 0 2px 8px rgba(34, 211, 238, 0.3);
+  }
+  50% {
+    background: rgba(34, 211, 238, 0.08);
+    border-bottom-color: rgba(34, 211, 238, 0.3);
+    box-shadow: 0 2px 4px rgba(34, 211, 238, 0.1);
+  }
+}
+
+body.light-mode .typing-cursor-active {
+  animation: typingCursorBlinkLight 1s ease-in-out infinite;
+}
+
+@keyframes typingCursorBlinkLight {
+  0%, 100% {
+    background: rgba(2, 132, 199, 0.2);
+    border-bottom-color: #0284c7;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+  }
+  50% {
+    background: rgba(2, 132, 199, 0.06);
+    border-bottom-color: rgba(2, 132, 199, 0.25);
+    box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08);
+  }
+}

@@ -131,6 +131,20 @@ const pythonTopics = [
         duration: '3 Hours',
         lessons: 15,
         locked: false,
+        completed: true,
+    },
+    {
+        title: 'Scope and Module',
+        href: '/python/scope-module',
+        icon: <GitBranch size={24} />,
+        color: '#059669',
+        bgColor: '#ecfdf5',
+        borderColor: '#34d399',
+        desc: 'Variable scope, LEGB rule, global keyword, creating & importing modules',
+        chapter: 9,
+        duration: '2.5 Hours',
+        lessons: 14,
+        locked: false,
         completed: false,
         current: true,
     },
@@ -142,7 +156,7 @@ const pythonTopics = [
         bgColor: '#ecfeff',
         borderColor: '#22d3ee',
         desc: 'Arrays, operations, broadcasting, statistics & linear algebra',
-        chapter: 9,
+        chapter: 10,
         duration: '4 Hours',
         lessons: 20,
         locked: true,
@@ -414,7 +428,7 @@ export default function PythonPage() {
                     {/* Horizontal Timeline for Desktop */}
                     <div className="hidden lg:block relative">
                         <div className="absolute top-8 left-0 right-0 h-1 bg-gradient-to-r from-emerald-300 via-amber-300 to-gray-200 rounded-full" />
-                        <div className="relative grid grid-cols-8 gap-2">
+                        <div className="relative grid grid-cols-10 gap-2">
                             {pythonTopics.map((topic, index) => (
                                 <div key={topic.chapter} className="flex flex-col items-center">
                                     <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-3 transition-all duration-300 ${topic.completed
