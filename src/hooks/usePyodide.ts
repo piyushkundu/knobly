@@ -21,6 +21,42 @@ interface PyodideInterface {
   runPythonAsync: (code: string) => Promise<unknown>;
   setStdout: (config: { batched: (msg: string) => void }) => void;
   setStderr: (config: { batched: (msg: string) => void }) => void;
+  loadPackage: (packages: string | string[], options?: Record<string, unknown>) => Promise<void>;
+  loadedPackages: Record<string, string>;
+}
+
+// Packages that are part of Pyodide's distribution and can be loaded on demand
+const PYODIDE_PACKAGES: Record<string, string[]> = {
+  numpy: ['numpy'],
+  np: ['numpy'],
+  pandas: ['pandas'],
+  pd: ['pandas'],
+  matplotlib: ['matplotlib'],
+  plt: ['matplotlib'],
+  scipy: ['scipy'],
+  sklearn: ['scikit-learn'],
+  cv2: ['opencv-python'],
+  PIL: ['Pillow'],
+  sympy: ['sympy'],
+};
+
+/**
+ * Detect which packages need to be loaded based on import statements in user code.
+ */
+function detectRequiredPackages(code: string): string[] {
+  const needed = new Set<string>();
+  // Match: import X, from X import ..., import X as Y
+  const importRegex = /^\s*(?:import|from)\s+([a-zA-Z_][a-zA-Z0-9_]*)/gm;
+  let match;
+  while ((match = importRegex.exec(code)) !== null) {
+    const mod = match[1];
+    if (PYODIDE_PACKAGES[mod]) {
+      for (const pkg of PYODIDE_PACKAGES[mod]) {
+        needed.add(pkg);
+      }
+    }
+  }
+  return Array.from(needed);
 }
 
 const EXECUTION_TIMEOUT = 30000;
@@ -130,6 +166,13 @@ export function usePyodide() {
 
         if (!mounted) return;
 
+        // Pre-load numpy so it's available immediately
+        try {
+          await pyodide.loadPackage('numpy');
+        } catch (e) {
+          console.warn('Failed to pre-load numpy:', e);
+        }
+
         pyodideRef.current = pyodide;
         setIsReady(true);
         setIsLoading(false);
@@ -151,6 +194,16 @@ export function usePyodide() {
   ): Promise<ExecuteResult> => {
     if (!pyodideRef.current) {
       return { output: '', error: 'Python runtime not loaded yet. Please wait.', errorLine: null };
+    }
+
+    // Auto-load any required packages (numpy, pandas, etc.)
+    const requiredPackages = detectRequiredPackages(code);
+    if (requiredPackages.length > 0) {
+      try {
+        await pyodideRef.current.loadPackage(requiredPackages);
+      } catch (e) {
+        console.warn('Failed to load packages:', requiredPackages, e);
+      }
     }
 
     // Pre-process: guard infinite loops, then optionally make async
