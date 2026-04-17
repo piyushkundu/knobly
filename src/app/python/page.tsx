@@ -145,8 +145,7 @@ const pythonTopics = [
         duration: '2.5 Hours',
         lessons: 14,
         locked: false,
-        completed: false,
-        current: true,
+        completed: true,
     },
     {
         title: 'NumPy Basics',
@@ -159,8 +158,9 @@ const pythonTopics = [
         chapter: 10,
         duration: '4 Hours',
         lessons: 20,
-        locked: true,
+        locked: false,
         completed: false,
+        current: true,
     },
 ];
 
