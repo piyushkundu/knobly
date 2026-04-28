@@ -39,6 +39,8 @@ const tocItems = [
     { icon: <Radio size={13} />, label: 'Communication', id: 'communication', color: '#8b5cf6' },
     { icon: <Wifi size={13} />, label: 'How IoT Works', id: 'how-iot-works', color: '#10b981' },
     { icon: <Cpu size={13} />, label: 'Four Concepts', id: 'four-concepts', color: '#f97316' },
+    { icon: <Globe size={13} />, label: 'IoT Applications', id: 'iot-applications', color: '#06b6d4' },
+    { icon: <Layers size={13} />, label: 'Building Blocks', id: 'building-blocks', color: '#8b5cf6' },
 ];
 
 export default function IoTIntroduction() {
@@ -437,6 +439,183 @@ export default function IoTIntroduction() {
                         </div>
 
                         <IB type="tip">Ye 4 concepts milkar ek <strong>complete IoT system</strong> banate hain — Sensor → Connect → Process → User!</IB>
+                    </Sec>
+
+                    {/* ═══ IoT Applications ═══ */}
+                    <Sec id="iot-applications" title="🔹 IoT Applications" icon={<Globe size={16} className="text-cyan-500" />}>
+                        <Def>🌍 IoT ka use <strong>different fields</strong> mein bahut zyada hota hai — devices smart ho jaate hain aur automatic kaam karte hain.</Def>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 my-4">
+                            {[{ e: '⌚', t: 'Wearable', c: '#06b6d4' }, { e: '🏥', t: 'Health', c: '#ef4444' }, { e: '🚦', t: 'Traffic', c: '#f97316' }, { e: '🌾', t: 'Agriculture', c: '#10b981' }, { e: '🏠', t: 'Smart Home', c: '#8b5cf6' }, { e: '🏙️', t: 'Smart City', c: '#eab308' }, { e: '🏭', t: 'Industrial', c: '#ec4899' }, { e: '📹', t: 'Surveillance', c: '#64748b' }].map((a, i) => (
+                                <div key={i} className="p-3 rounded-xl text-center hover:scale-105 transition-transform" style={{ background: `${a.c}10`, border: `1px solid ${a.c}30` }}>
+                                    <div className="text-2xl mb-1">{a.e}</div>
+                                    <h5 className="font-bold text-[11px]" style={{ color: a.c }}>{a.t}</h5>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Wearable */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #ecfeff, #cffafe)', border: '1px solid #67e8f9' }}>
+                            <h4 className="font-bold text-cyan-700 mb-2">⌚ (1) Wearable</h4>
+                            <p className="text-xs text-cyan-800 mb-2">Wearable devices wo hote hain jo hum <strong>body par pehnte hain</strong>.</p>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {['⌚ Smart Watch', '❤️ Heart Rate Monitor', '🩸 Glucose Monitor', '📍 GPS Tracker'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-white text-cyan-700 text-xs font-semibold border border-cyan-200">{s}</span>
+                                ))}
+                            </div>
+                            <div className="text-xs text-cyan-700 space-y-0.5">
+                                <p>👉 Sensors body ka data collect karte hain aur health/activity monitor karte hain</p>
+                                <p>👉 Ye devices <strong>kam energy consume</strong> karte hain aur <strong>continuous data collect</strong> karte hain</p>
+                            </div>
+                        </div>
+
+                        {/* Health */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #fef2f2, #fee2e2)', border: '1px solid #fca5a5' }}>
+                            <h4 className="font-bold text-red-700 mb-2">🏥 (2) Health</h4>
+                            <p className="text-xs text-red-800 mb-2">IoT ka use <strong>health sector</strong> mein bahut important hai.</p>
+                            <div className="grid grid-cols-2 gap-2 mb-2">
+                                <div className="p-2 rounded-lg bg-white border border-red-200"><p className="text-[11px] text-red-700 font-semibold">🛏️ Smart beds</p><p className="text-[10px] text-gray-500">Patients ki condition monitor karte hain</p></div>
+                                <div className="p-2 rounded-lg bg-white border border-red-200"><p className="text-[11px] text-red-700 font-semibold">📊 Real-time Data</p><p className="text-[10px] text-gray-500">Temperature, BP, Pulse rate</p></div>
+                            </div>
+                            <p className="text-xs text-red-700">👉 Doctor patient ko <strong>easily monitor</strong> kar sakta hai — real-time data milta hai</p>
+                        </div>
+
+                        {/* Traffic */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '1px solid #fdba74' }}>
+                            <h4 className="font-bold text-orange-700 mb-2">🚦 (3) Traffic Monitoring</h4>
+                            <p className="text-xs text-orange-800 mb-2">IoT ka use <strong>traffic control</strong> mein bhi hota hai.</p>
+                            <div className="text-xs text-orange-700 space-y-1">
+                                <p>👉 Vehicles ki <strong>speed detect</strong> karta hai</p>
+                                <p>👉 Traffic condition <strong>analyse</strong> karta hai</p>
+                                <p>👉 Traffic rules follow karwana easy hota hai — Traffic jam control hota hai</p>
+                                <p>👉 Computer system <strong>automatically data analyse</strong> karta hai</p>
+                            </div>
+                        </div>
+
+                        {/* Agriculture */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #86efac' }}>
+                            <h4 className="font-bold text-green-700 mb-2">🌾 (4) Agriculture</h4>
+                            <p className="text-xs text-green-800 mb-2">IoT ka use <strong>farming</strong> mein bhi hota hai.</p>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {['💧 Humidity', '🌿 Nutrients', '⚗️ Acidity'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-green-50 text-green-700 text-xs font-semibold border border-green-200">{s}</span>
+                                ))}
+                            </div>
+                            <p className="text-xs text-green-700">👉 <strong>Better crop production</strong> aur <strong>smart irrigation</strong> possible hoti hai</p>
+                        </div>
+
+                        {/* Smart Home */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', border: '1px solid #c4b5fd' }}>
+                            <h4 className="font-bold text-purple-700 mb-2">🏠 (5) Smart Home</h4>
+                            <p className="text-xs text-purple-800 mb-2">IoT ka <strong>sabse common use</strong> smart home mein hota hai.</p>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {['❄️ AC', '📺 Smart TV', '🧊 Refrigerator', '💡 LED Bulb', '🌀 Fan', '🚪 Smart Door', '🫧 Washing Machine'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-purple-50 text-purple-700 text-xs font-semibold border border-purple-200">{s}</span>
+                                ))}
+                            </div>
+                            <p className="text-xs text-purple-700">👉 User <strong>mobile se control</strong> kar sakta hai — jaise mobile se light ON/OFF karna</p>
+                        </div>
+
+                        {/* Smart City */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #fefce8, #fef9c3)', border: '1px solid #fde047' }}>
+                            <h4 className="font-bold text-yellow-700 mb-2">🏙️ (6) Smart City</h4>
+                            <p className="text-xs text-yellow-800 mb-2">IoT ka use <strong>smart city</strong> banane mein hota hai.</p>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {['🚦 Traffic Control', '🗑️ Waste Management', '💧 Water Distribution', '⚡ Electricity', '🌫️ Pollution Checking'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-yellow-50 text-yellow-700 text-xs font-semibold border border-yellow-300">{s}</span>
+                                ))}
+                            </div>
+                            <p className="text-xs text-yellow-700">👉 City <strong>efficient aur automated</strong> ho jaati hai</p>
+                        </div>
+
+                        {/* Industrial */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #fdf2f8, #fce7f3)', border: '1px solid #f9a8d4' }}>
+                            <h4 className="font-bold text-pink-700 mb-2">🏭 (7) Industrial Automation</h4>
+                            <p className="text-xs text-pink-800 mb-2">IoT <strong>industries mein production improve</strong> karta hai.</p>
+                            <div className="text-xs text-pink-700 space-y-1">
+                                <p>👉 Machines <strong>automatically kaam</strong> karti hain</p>
+                                <p>👉 <strong>Human effort kam</strong> hota hai — Production fast hota hai</p>
+                                <p>👉 Automation <strong>bina human interaction</strong> ke possible hai</p>
+                            </div>
+                        </div>
+
+                        {/* Surveillance */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                            <h4 className="font-bold text-slate-700 mb-2">📹 (8) Surveillance</h4>
+                            <p className="text-xs text-slate-700 mb-2">IoT ka use <strong>security aur monitoring</strong> mein hota hai.</p>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {['🏠 Home', '🏢 Office', '✈️ Airport', '🚉 Railway Station'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">{s}</span>
+                                ))}
+                            </div>
+                            <p className="text-xs text-slate-600">👉 CCTV cameras mein sensors lage hote hain — system activity detect karta hai aur <strong>owner ko alert/message</strong> bhejta hai</p>
+                        </div>
+
+                        <IB type="note">CCTV = <strong>Closed Circuit Television</strong> — ek surveillance system jisme cameras security, monitoring aur recording ke liye use hote hain.</IB>
+                    </Sec>
+
+                    {/* ═══ Building Blocks of IoT ═══ */}
+                    <Sec id="building-blocks" title="🔴 Building Blocks of IoT" icon={<Layers size={16} className="text-purple-500" />}>
+                        <Def>🧱 IoT system ko banane ke liye <strong>4 main building blocks</strong> hote hain — har block ka apna important role hota hai.</Def>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+                            {[{ n: '1', e: '📡', t: 'Sensors', c: '#06b6d4' }, { n: '2', e: '⚙️', t: 'Processor', c: '#8b5cf6' }, { n: '3', e: '🌐', t: 'Gateway', c: '#10b981' }, { n: '4', e: '📱', t: 'Application', c: '#f97316' }].map((b, i) => (
+                                <div key={i} className="p-3 rounded-2xl text-center" style={{ background: `${b.c}10`, border: `1px solid ${b.c}30` }}>
+                                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black mx-auto mb-1" style={{ background: b.c }}>{b.n}</div>
+                                    <div className="text-xl mb-1">{b.e}</div>
+                                    <h5 className="font-bold text-[11px]" style={{ color: b.c }}>{b.t}</h5>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Block 1 - Sensors */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #ecfeff, #cffafe)', border: '1px solid #67e8f9' }}>
+                            <h4 className="font-bold text-cyan-700 mb-2">📡 (1) Sensors</h4>
+                            <p className="text-xs text-cyan-800 mb-2">Sensors IoT device ka <strong>front-end</strong> hote hain — ye environment se data receive karte hain.</p>
+                            <div className="flex flex-wrap gap-2">
+                                {['📐 Accelerometer', '🌡️ Temperature', '📍 Proximity', '💨 Gas Sensor', '🏃 Motion', '💧 Water Sensor'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-white text-cyan-700 text-xs font-semibold border border-cyan-200">{s}</span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Block 2 - Processor */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', border: '1px solid #c4b5fd' }}>
+                            <h4 className="font-bold text-purple-700 mb-2">⚙️ (2) Processor</h4>
+                            <p className="text-xs text-purple-800 mb-2">Processor ek <strong>electrical system</strong> hota hai — sensors se aane wale raw data ko process karta hai.</p>
+                            <div className="text-xs text-purple-700 space-y-1 mb-2">
+                                <p>• Data ko <strong>information mein convert</strong> karna</p>
+                                <p>• Data ko <strong>control</strong> karna</p>
+                                <p>• <strong>Encryption / Decryption</strong> karna</p>
+                            </div>
+                            <div className="flex gap-2">
+                                {['🔬 Microcontroller', '💻 Embedded Hardware'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-purple-50 text-purple-700 text-xs font-semibold border border-purple-200">{s}</span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Block 3 - Gateway */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #86efac' }}>
+                            <h4 className="font-bold text-green-700 mb-2">🌐 (3) Gateway</h4>
+                            <p className="text-xs text-green-800 mb-2">Gateway <strong>data transfer ka main medium</strong> hota hai — data ko network mein bhejta hai aur communication establish karta hai.</p>
+                            <div className="flex gap-2">
+                                {['🔗 LAN', '🌍 WAN', '📶 PAN'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-green-50 text-green-700 text-xs font-semibold border border-green-200">{s}</span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Block 4 - Application */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '1px solid #fdba74' }}>
+                            <h4 className="font-bold text-orange-700 mb-2">📱 (4) Application</h4>
+                            <p className="text-xs text-orange-800 mb-2">Application <strong>user side</strong> hoti hai — data collect karti hai aur user ko information provide karti hai.</p>
+                            <div className="flex flex-wrap gap-2">
+                                {['📱 Mobile Apps', '🔒 Security Apps', '🏭 Industrial Apps'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-orange-50 text-orange-700 text-xs font-semibold border border-orange-200">{s}</span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <IB type="tip">IoT Building Blocks ka flow: <strong>Sensors → Processor → Gateway → Application</strong> — data collect se lekar user tak pahunchne ka complete path!</IB>
                     </Sec>
 
                     {/* Navigation */}
