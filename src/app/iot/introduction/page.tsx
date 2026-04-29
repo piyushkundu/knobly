@@ -43,6 +43,7 @@ const tocItems = [
     { icon: <Layers size={13} />, label: 'Building Blocks', id: 'building-blocks', color: '#8b5cf6' },
     { icon: <Wifi size={13} />, label: 'IoT Ecosystem', id: 'iot-ecosystem', color: '#10b981' },
     { icon: <Radio size={13} />, label: 'Types of Network', id: 'types-of-network', color: '#f97316' },
+    { icon: <Zap size={13} />, label: 'Technologies & Protocols', id: 'tech-protocols', color: '#8b5cf6' },
 ];
 
 export default function IoTIntroduction() {
@@ -746,6 +747,126 @@ export default function IoTIntroduction() {
                         </div>
 
                         <IB type="note">Network size order: <strong>PAN &lt; LAN &lt; MAN &lt; WAN</strong> — chhote personal devices se lekar poori duniya tak!</IB>
+                    </Sec>
+
+                    {/* ═══ Technologies & Protocols ═══ */}
+                    <Sec id="tech-protocols" title="🔹 Various Technologies & Protocols" icon={<Zap size={16} className="text-purple-500" />}>
+                        <Def>📡 IoT system mein data communication aur device connectivity ke liye <strong>different wireless technologies</strong> ka use hota hai. Har technology ka apna range, speed aur use case hota hai.</Def>
+
+                        {/* Quick Reference Table */}
+                        <div className="overflow-x-auto my-4 rounded-2xl" style={{ border: '1px solid #e2e8f0' }}>
+                            <table className="w-full text-xs">
+                                <thead><tr style={{ background: 'linear-gradient(135deg, #6d28d9, #8b5cf6)' }} className="text-white"><th className="px-3 py-2 text-left">Technology</th><th className="px-3 py-2 text-left">Range</th><th className="px-3 py-2 text-left">Standard</th><th className="px-3 py-2 text-left">Use Case</th></tr></thead>
+                                <tbody>
+                                    {[
+                                        ['🔵 Bluetooth', '~10m', 'IEEE 802.15.1', 'Headphones, Watch'],
+                                        ['⚡ BLE', 'Short', 'BT 4.0+', 'Fitness Band, IoT'],
+                                        ['📶 WiFi', '50-100m', 'IEEE 802.11', 'Home, Office'],
+                                        ['💡 LiFi', 'Room', 'IEEE 802.15.7', 'High-speed Indoor'],
+                                        ['📡 Cellular', 'Wide', 'GSM/LTE/5G', 'Mobile, Remote IoT'],
+                                        ['🏠 Z-Wave', '30m', 'Z-Wave Alliance', 'Smart Home'],
+                                        ['🏷️ RFID', 'cm–100m', 'ISO 18000', 'Tracking, ID Cards'],
+                                        ['📲 NFC', '~4cm', 'ISO 14443', 'Payments, Cards'],
+                                        ['🕸️ Zigbee', '10-100m', 'IEEE 802.15.4', 'Sensor Network'],
+                                        ['🌐 6LoWPAN', 'Short', 'IETF IPv6', 'IoT + Internet'],
+                                        ['📞 GSM', 'Wide', 'GSM (2G)', 'Calls, SMS'],
+                                        ['📦 GPRS', 'Wide', '2.5G', 'Basic Internet'],
+                                        ['🚀 LTE', 'Wide', '4G (3GPP)', 'High-speed Data'],
+                                    ].map(([t, r, s, u], i) => (
+                                        <tr key={i} style={{ background: i % 2 === 0 ? '#fafafa' : '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                                            <td className="px-3 py-2 font-semibold text-gray-700">{t}</td>
+                                            <td className="px-3 py-2 text-gray-500">{r}</td>
+                                            <td className="px-3 py-2 text-purple-600 font-mono text-[10px]">{s}</td>
+                                            <td className="px-3 py-2 text-gray-500">{u}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Cards - Short Range */}
+                        <h4 className="font-bold text-gray-700 mt-5 mb-3">📶 Short Range Technologies</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                            {[
+                                { emoji: '🔵', title: 'Bluetooth', std: 'IEEE 802.15.1', freq: '2.4 GHz', range: '~10m', color: '#3b82f6', uses: ['Mobile data transfer', 'Wireless earphones', 'Smart watch'], features: ['Low power', 'Easy connectivity', 'Wireless'] },
+                                { emoji: '⚡', title: 'BLE (Bluetooth Low Energy)', std: 'Bluetooth 4.0+', freq: '2.4 GHz', range: 'Short', color: '#06b6d4', uses: ['Fitness band', 'Health monitors', 'IoT sensors'], features: ['Very low power', 'Long battery', 'Fast connection'] },
+                                { emoji: '📶', title: 'WiFi', std: 'IEEE 802.11', freq: '2.4 / 5 GHz', range: '50–100m', color: '#10b981', uses: ['Smart TV', 'Home IoT', 'Office'], features: ['High speed', 'Internet access', 'Wide coverage'] },
+                                { emoji: '💡', title: 'LiFi (Light Fidelity)', std: 'IEEE 802.15.7', freq: 'Light (LED)', range: 'Room only', color: '#f59e0b', uses: ['Indoor high-speed', 'Secure zones'], features: ['Very high speed', 'Secure', '⚠️ No wall penetration'] },
+                            ].map((t, i) => (
+                                <div key={i} className="rounded-2xl p-4" style={{ background: `${t.color}08`, border: `1px solid ${t.color}25` }}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-xl">{t.emoji}</span>
+                                        <div><h5 className="font-bold text-sm" style={{ color: t.color }}>{t.title}</h5><span className="text-[10px] font-mono text-gray-400">{t.std}</span></div>
+                                        <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: t.color }}>{t.range}</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1 mb-2">{t.uses.map((u, j) => <span key={j} className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${t.color}15`, color: t.color }}>{u}</span>)}</div>
+                                    <div className="text-[11px] text-gray-500">{t.features.join(' · ')}</div>
+                                    {t.freq && <div className="text-[10px] text-gray-400 mt-1">📡 {t.freq}</div>}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Cards - Home & IoT */}
+                        <h4 className="font-bold text-gray-700 mt-4 mb-3">🏠 Home Automation & Identification</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                            {[
+                                { emoji: '🏠', title: 'Z-Wave', std: 'Z-Wave Alliance', freq: '800–900 MHz', range: '~30m', color: '#8b5cf6', uses: ['Smart lighting', 'Security', 'Home automation'], features: ['Low power', 'Less interference', 'Reliable'] },
+                                { emoji: '🕸️', title: 'Zigbee', std: 'IEEE 802.15.4', freq: '2.4 GHz', range: '10–100m', color: '#10b981', uses: ['Smart home', 'Sensor networks', 'Industrial'], features: ['Low power', 'Mesh network', 'Long battery'] },
+                                { emoji: '🏷️', title: 'RFID', std: 'ISO/IEC 18000', freq: 'Radio Waves', range: 'cm–100m', color: '#ef4444', uses: ['Tracking', 'Inventory', 'Security'], features: ['Active (battery) or Passive (no battery)', 'Automatic ID'] },
+                                { emoji: '📲', title: 'NFC', std: 'ISO/IEC 14443', freq: '13.56 MHz', range: '~4cm', color: '#f97316', uses: ['Google Pay / PhonePe', 'Smart cards', 'Access control'], features: ['Instant connection', 'Secure', 'No pairing needed'] },
+                            ].map((t, i) => (
+                                <div key={i} className="rounded-2xl p-4" style={{ background: `${t.color}08`, border: `1px solid ${t.color}25` }}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-xl">{t.emoji}</span>
+                                        <div><h5 className="font-bold text-sm" style={{ color: t.color }}>{t.title}</h5><span className="text-[10px] font-mono text-gray-400">{t.std}</span></div>
+                                        <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: t.color }}>{t.range}</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1 mb-2">{t.uses.map((u, j) => <span key={j} className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${t.color}15`, color: t.color }}>{u}</span>)}</div>
+                                    <div className="text-[11px] text-gray-500">{t.features.join(' · ')}</div>
+                                    <div className="text-[10px] text-gray-400 mt-1">📡 {t.freq}</div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* RFID Types detail */}
+                        <div className="rounded-2xl p-4 mb-4" style={{ background: 'linear-gradient(135deg, #fef2f2, #fee2e2)', border: '1px solid #fca5a5' }}>
+                            <h4 className="font-bold text-red-700 mb-3">🏷️ RFID Tag Types</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="p-3 rounded-xl bg-white border border-red-100">
+                                    <p className="font-bold text-sm text-green-700 mb-1">🟢 Active RFID Tag</p>
+                                    <p className="text-xs text-gray-600 mb-2">Battery hoti hai — long range, strong signal, continuous transmission</p>
+                                    <div className="flex gap-2">{['Vehicle Tracking', 'Large Systems'].map((s, i) => <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">{s}</span>)}</div>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white border border-red-100">
+                                    <p className="font-bold text-sm text-blue-700 mb-1">🔵 Passive RFID Tag</p>
+                                    <p className="text-xs text-gray-600 mb-2">Battery nahi — reader ki energy se kaam karta hai, short range, low cost</p>
+                                    <div className="flex gap-2">{['ID Cards', 'Access Control'].map((s, i) => <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">{s}</span>)}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Wide Area / Cellular */}
+                        <h4 className="font-bold text-gray-700 mt-4 mb-3">📡 Wide Area & Cellular Technologies</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                            {[
+                                { emoji: '📡', title: 'Cellular Network', std: 'GSM / LTE / 5G NR', range: 'Nationwide', color: '#6d28d9', uses: ['Mobile IoT', 'Remote devices'], features: ['2G · 3G · 4G · 5G', 'Long distance', 'High coverage'] },
+                                { emoji: '🌐', title: '6LoWPAN', std: 'IETF IPv6', range: 'Short + Internet', color: '#0891b2', uses: ['IoT + Internet', 'Sensor networks'], features: ['Low power', 'IPv6 support', 'Direct internet comm.'] },
+                                { emoji: '📞', title: 'GSM', std: 'GSM (2G)', range: 'Wide', color: '#64748b', uses: ['Mobile calls', 'SMS'], features: ['900/1800 MHz', 'SIM-based', 'Wide coverage'] },
+                                { emoji: '📦', title: 'GPRS', std: '2.5G (GSM ext.)', range: 'Wide', color: '#78716c', uses: ['Basic internet', 'Data services'], features: ['Packet-based', 'Always-on', '56–114 kbps'] },
+                                { emoji: '🚀', title: 'LTE (4G)', std: '4G LTE (3GPP)', range: 'Wide', color: '#dc2626', uses: ['4G internet', 'High-speed IoT'], features: ['100 Mbps+', 'Low latency', 'Best performance'] },
+                            ].map((t, i) => (
+                                <div key={i} className="rounded-2xl p-4" style={{ background: `${t.color}08`, border: `1px solid ${t.color}25` }}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-xl">{t.emoji}</span>
+                                        <div><h5 className="font-bold text-sm" style={{ color: t.color }}>{t.title}</h5><span className="text-[10px] font-mono text-gray-400">{t.std}</span></div>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1 mb-2">{t.uses.map((u, j) => <span key={j} className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${t.color}15`, color: t.color }}>{u}</span>)}</div>
+                                    <div className="text-[11px] text-gray-500">{t.features.join(' · ')}</div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <IB type="tip">Range comparison: <strong>NFC (4cm) &lt; Bluetooth (10m) &lt; Zigbee (100m) &lt; WiFi (100m) &lt; Cellular (nationwide)</strong></IB>
                     </Sec>
 
                     {/* Navigation */}
