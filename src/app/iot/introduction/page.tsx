@@ -41,6 +41,8 @@ const tocItems = [
     { icon: <Cpu size={13} />, label: 'Four Concepts', id: 'four-concepts', color: '#f97316' },
     { icon: <Globe size={13} />, label: 'IoT Applications', id: 'iot-applications', color: '#06b6d4' },
     { icon: <Layers size={13} />, label: 'Building Blocks', id: 'building-blocks', color: '#8b5cf6' },
+    { icon: <Wifi size={13} />, label: 'IoT Ecosystem', id: 'iot-ecosystem', color: '#10b981' },
+    { icon: <Radio size={13} />, label: 'Types of Network', id: 'types-of-network', color: '#f97316' },
 ];
 
 export default function IoTIntroduction() {
@@ -616,6 +618,134 @@ export default function IoTIntroduction() {
                         </div>
 
                         <IB type="tip">IoT Building Blocks ka flow: <strong>Sensors → Processor → Gateway → Application</strong> — data collect se lekar user tak pahunchne ka complete path!</IB>
+                    </Sec>
+
+                    {/* ═══ IoT Ecosystem ═══ */}
+                    <Sec id="iot-ecosystem" title="🔹 IoT Ecosystem" icon={<Globe size={16} className="text-emerald-500" />}>
+                        <Def>🌐 IoT Ecosystem ek <strong>complete system</strong> hota hai jisme different components milkar kaam karte hain taaki IoT system properly function kar sake.</Def>
+                        <p>IoT ecosystem mein multiple elements hote hain jo ek dusre ke saath interact karte hain aur data ko <strong>collect, process aur use</strong> karte hain.</p>
+
+                        <h4 className="font-bold mt-4 mb-3 text-gray-800">🔸 Main Components of IoT Ecosystem</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                            {[{ e: '📡', t: 'Devices / Sensors', c: '#06b6d4' }, { e: '🔗', t: 'Connectivity', c: '#8b5cf6' }, { e: '⚙️', t: 'Data Processing', c: '#10b981' }, { e: '📱', t: 'User Interface', c: '#f97316' }].map((x, i) => (
+                                <div key={i} className="p-3 rounded-xl text-center" style={{ background: `${x.c}10`, border: `1px solid ${x.c}30` }}>
+                                    <div className="text-2xl mb-1">{x.e}</div>
+                                    <h5 className="font-bold text-[11px]" style={{ color: x.c }}>{x.t}</h5>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #ecfeff, #cffafe)', border: '1px solid #67e8f9' }}>
+                            <h4 className="font-bold text-cyan-700 mb-2">📡 (1) Devices / Sensors</h4>
+                            <p className="text-xs text-cyan-800 mb-2">Ye ecosystem ka <strong>starting point</strong> hote hain — sensors environment se data collect karte hain.</p>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {['🌡️ Temperature', '🏃 Motion', '💡 Light Sensor'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-white text-cyan-700 text-xs font-semibold border border-cyan-200">{s}</span>
+                                ))}
+                            </div>
+                            <p className="text-xs text-cyan-700">👉 Ye real-world data ko <strong>digital form</strong> mein convert karte hain</p>
+                        </div>
+
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', border: '1px solid #c4b5fd' }}>
+                            <h4 className="font-bold text-purple-700 mb-2">🔗 (2) Connectivity</h4>
+                            <p className="text-xs text-purple-800 mb-2">Devices se data ko aage bhejne ke liye <strong>connectivity</strong> use hoti hai.</p>
+                            <div className="flex flex-wrap gap-2">
+                                {['📶 WiFi', '🔵 Bluetooth', '📡 Cellular Network', '🌐 Internet'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-purple-50 text-purple-700 text-xs font-semibold border border-purple-200">{s}</span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #86efac' }}>
+                            <h4 className="font-bold text-green-700 mb-2">⚙️ (3) Data Processing</h4>
+                            <p className="text-xs text-green-800 mb-2">Jo data sensors collect karte hain, use <strong>process</strong> kiya jata hai.</p>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-xs font-semibold">☁️ Cloud / Local Server</span>
+                                <span className="text-green-400">→</span>
+                                <span className="px-3 py-1.5 rounded-lg bg-teal-100 text-teal-700 text-xs font-semibold">✅ Useful Information</span>
+                            </div>
+                        </div>
+
+                        <div className="rounded-2xl p-4 mb-4" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '1px solid #fdba74' }}>
+                            <h4 className="font-bold text-orange-700 mb-2">📱 (4) User Interface</h4>
+                            <p className="text-xs text-orange-800 mb-2">User interface wo medium hai jahan <strong>user data dekhta hai</strong>.</p>
+                            <div className="flex gap-2 mb-2">
+                                {['📱 Mobile App', '🌐 Web Application'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-orange-50 text-orange-700 text-xs font-semibold border border-orange-200">{s}</span>
+                                ))}
+                            </div>
+                            <p className="text-xs text-orange-700">👉 User data dekh sakta hai aur <strong>device ko control</strong> kar sakta hai</p>
+                        </div>
+
+                        <div className="rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #86efac' }}>
+                            <h4 className="font-bold text-green-700 mb-3">🔄 Working of IoT Ecosystem</h4>
+                            <div className="flex flex-wrap items-center gap-2 text-xs">
+                                <span className="px-3 py-2 rounded-xl bg-cyan-100 text-cyan-700 font-bold">📡 Sensors data collect</span>
+                                <span className="text-gray-400 font-bold">→</span>
+                                <span className="px-3 py-2 rounded-xl bg-purple-100 text-purple-700 font-bold">🌐 Network se bheja</span>
+                                <span className="text-gray-400 font-bold">→</span>
+                                <span className="px-3 py-2 rounded-xl bg-green-100 text-green-700 font-bold">⚙️ Process hota</span>
+                                <span className="text-gray-400 font-bold">→</span>
+                                <span className="px-3 py-2 rounded-xl bg-orange-100 text-orange-700 font-bold">👤 User ko info</span>
+                            </div>
+                            <p className="text-xs text-green-700 mt-2">👉 Ye pura system <strong>automatically kaam karta hai</strong></p>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ Types of Network ═══ */}
+                    <Sec id="types-of-network" title="🔴 Types of Network" icon={<Radio size={16} className="text-orange-500" />}>
+                        <Def>📡 IoT system mein <strong>alag-alag type ke networks</strong> use hote hain data communication ke liye.</Def>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+                            {[{ n: 'PAN', full: 'Personal Area', e: '📱', c: '#06b6d4', r: '~10m' }, { n: 'LAN', full: 'Local Area', e: '🏫', c: '#10b981', r: 'Small Area' }, { n: 'MAN', full: 'Metropolitan', e: '🏙️', c: '#8b5cf6', r: 'City Level' }, { n: 'WAN', full: 'Wide Area', e: '🌍', c: '#f97316', r: 'Global' }].map((net, i) => (
+                                <div key={i} className="p-3 rounded-2xl text-center" style={{ background: `${net.c}10`, border: `1px solid ${net.c}30` }}>
+                                    <div className="text-2xl mb-1">{net.e}</div>
+                                    <h5 className="font-black text-sm" style={{ color: net.c }}>{net.n}</h5>
+                                    <p className="text-[10px] text-gray-500">{net.full} Network</p>
+                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full text-white mt-1 inline-block" style={{ background: net.c }}>{net.r}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #ecfeff, #cffafe)', border: '1px solid #67e8f9' }}>
+                            <h4 className="font-bold text-cyan-700 mb-2">📱 (1) PAN — Personal Area Network</h4>
+                            <p className="text-xs text-cyan-800 mb-2">PAN ek <strong>small range network</strong> hota hai — personal devices ke liye use hota hai.</p>
+                            <div className="flex items-center gap-4">
+                                <div className="flex flex-wrap gap-2">
+                                    {['🔵 Bluetooth', '📡 Mobile Hotspot'].map((s, i) => (
+                                        <span key={i} className="px-2 py-1 rounded-lg bg-white text-cyan-700 text-xs font-semibold border border-cyan-200">{s}</span>
+                                    ))}
+                                </div>
+                                <span className="text-xs font-bold text-cyan-600 whitespace-nowrap">📏 ~10 meter</span>
+                            </div>
+                        </div>
+
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #86efac' }}>
+                            <h4 className="font-bold text-green-700 mb-2">🏫 (2) LAN — Local Area Network</h4>
+                            <p className="text-xs text-green-800 mb-2">LAN ek <strong>limited area network</strong> hota hai — school, office ya building mein use hota hai.</p>
+                            <div className="flex items-center gap-4">
+                                <span className="px-2 py-1 rounded-lg bg-green-50 text-green-700 text-xs font-semibold border border-green-200">📶 WiFi Network</span>
+                                <span className="text-xs font-bold text-green-600">📏 Small Area</span>
+                            </div>
+                        </div>
+
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', border: '1px solid #c4b5fd' }}>
+                            <h4 className="font-bold text-purple-700 mb-2">🏙️ (3) MAN — Metropolitan Area Network</h4>
+                            <p className="text-xs text-purple-800 mb-2">MAN ek <strong>city level network</strong> hota hai — city mein communication ke liye use hota hai.</p>
+                            <div className="flex flex-wrap gap-2">
+                                {['📺 Cable TV Network', '🌐 City-wide Internet'].map((s, i) => (
+                                    <span key={i} className="px-2 py-1 rounded-lg bg-purple-50 text-purple-700 text-xs font-semibold border border-purple-200">{s}</span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '1px solid #fdba74' }}>
+                            <h4 className="font-bold text-orange-700 mb-2">🌍 (4) WAN — Wide Area Network</h4>
+                            <p className="text-xs text-orange-800 mb-2">WAN <strong>sabse bada network</strong> hota hai — large area cover karta hai aur countries/continents tak connect kar sakta hai.</p>
+                            <span className="px-2 py-1 rounded-lg bg-orange-50 text-orange-700 text-xs font-semibold border border-orange-200">🌐 Internet</span>
+                        </div>
+
+                        <IB type="note">Network size order: <strong>PAN &lt; LAN &lt; MAN &lt; WAN</strong> — chhote personal devices se lekar poori duniya tak!</IB>
                     </Sec>
 
                     {/* Navigation */}
