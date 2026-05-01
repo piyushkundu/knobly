@@ -44,6 +44,8 @@ const tocItems = [
     { icon: <Wifi size={13} />, label: 'IoT Ecosystem', id: 'iot-ecosystem', color: '#10b981' },
     { icon: <Radio size={13} />, label: 'Types of Network', id: 'types-of-network', color: '#f97316' },
     { icon: <Zap size={13} />, label: 'Technologies & Protocols', id: 'tech-protocols', color: '#8b5cf6' },
+    { icon: <Layers size={13} />, label: 'OSI Model in IoT', id: 'osi-model', color: '#ec4899' },
+    { icon: <Cpu size={13} />, label: 'IoT Protocols Detail', id: 'iot-protocols-detail', color: '#0891b2' },
 ];
 
 export default function IoTIntroduction() {
@@ -867,6 +869,473 @@ export default function IoTIntroduction() {
                         </div>
 
                         <IB type="tip">Range comparison: <strong>NFC (4cm) &lt; Bluetooth (10m) &lt; Zigbee (100m) &lt; WiFi (100m) &lt; Cellular (nationwide)</strong></IB>
+                    </Sec>
+
+                    {/* ═══ OSI Model in IoT ═══ */}
+                    <Sec id="osi-model" title="🔹 OSI Model in IoT — Layer-wise Protocols" icon={<Layers size={16} className="text-pink-500" />}>
+                        <Def>📡 IoT protocols ko <strong>OSI (Open Systems Interconnection) model</strong> ke layers ke according organize kiya jata hai jisse communication properly aur systematically ho sake.</Def>
+                        <p>OSI model mein <strong>7 layers</strong> hoti hain — har layer ka apna specific kaam hota hai. IoT mein har layer par <strong>different protocols</strong> use hote hain jo data ko ek device se dusri device tak pahunchate hain.</p>
+
+                        {/* OSI Layer Diagram */}
+                        <div className="my-6">
+                            <h4 className="font-bold text-gray-800 mb-4 text-center">📊 OSI Model — IoT Protocol Stack</h4>
+                            <div className="relative max-w-2xl mx-auto">
+                                {/* Layer 7 - Application */}
+                                <div className="rounded-t-2xl p-4 text-center relative" style={{ background: 'linear-gradient(135deg, #ec4899, #f472b6)', border: '2px solid #ec4899' }}>
+                                    <div className="flex items-center justify-between">
+                                        <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm">7</span>
+                                        <div className="flex-1 mx-3">
+                                            <h5 className="font-black text-white text-sm">Application Layer</h5>
+                                            <p className="text-[10px] text-white/80 mt-0.5">User ke saath direct interaction</p>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 justify-end max-w-[55%]">
+                                            {['HTTP', 'CoAP', 'MQTT', 'XMPP'].map((p, i) => (
+                                                <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white font-bold border border-white/30">{p}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Arrow */}
+                                <div className="flex justify-center -my-0.5 relative z-10"><div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[8px] border-l-transparent border-r-transparent" style={{ borderTopColor: '#ec4899' }} /></div>
+
+                                {/* Layer 6 - Presentation */}
+                                <div className="p-4 text-center" style={{ background: 'linear-gradient(135deg, #a855f7, #c084fc)', border: '2px solid #a855f7', borderTop: 'none' }}>
+                                    <div className="flex items-center justify-between">
+                                        <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm">6</span>
+                                        <div className="flex-1 mx-3">
+                                            <h5 className="font-black text-white text-sm">Presentation Layer</h5>
+                                            <p className="text-[10px] text-white/80 mt-0.5">Data format, encryption &amp; compression</p>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 justify-end max-w-[55%]">
+                                            {['GDS', 'Web Sockets', 'AMQP'].map((p, i) => (
+                                                <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white font-bold border border-white/30">{p}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Arrow */}
+                                <div className="flex justify-center -my-0.5 relative z-10"><div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[8px] border-l-transparent border-r-transparent" style={{ borderTopColor: '#a855f7' }} /></div>
+
+                                {/* Layer 5 - Session */}
+                                <div className="p-4 text-center" style={{ background: 'linear-gradient(135deg, #8b5cf6, #a78bfa)', border: '2px solid #8b5cf6', borderTop: 'none' }}>
+                                    <div className="flex items-center justify-between">
+                                        <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm">5</span>
+                                        <div className="flex-1 mx-3">
+                                            <h5 className="font-black text-white text-sm">Session Layer</h5>
+                                            <p className="text-[10px] text-white/80 mt-0.5">Connection establish, maintain &amp; terminate</p>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 justify-end max-w-[55%]">
+                                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white/70 font-medium border border-white/20 italic">Session Mgmt</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Arrow */}
+                                <div className="flex justify-center -my-0.5 relative z-10"><div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[8px] border-l-transparent border-r-transparent" style={{ borderTopColor: '#8b5cf6' }} /></div>
+
+                                {/* Layer 4 - Transport */}
+                                <div className="p-4 text-center" style={{ background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', border: '2px solid #3b82f6', borderTop: 'none' }}>
+                                    <div className="flex items-center justify-between">
+                                        <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm">4</span>
+                                        <div className="flex-1 mx-3">
+                                            <h5 className="font-black text-white text-sm">Transport Layer</h5>
+                                            <p className="text-[10px] text-white/80 mt-0.5">Data delivery &amp; error handling</p>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 justify-end max-w-[55%]">
+                                            {['TCP', 'UDP'].map((p, i) => (
+                                                <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white font-bold border border-white/30">{p}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Arrow */}
+                                <div className="flex justify-center -my-0.5 relative z-10"><div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[8px] border-l-transparent border-r-transparent" style={{ borderTopColor: '#3b82f6' }} /></div>
+
+                                {/* Layer 3 - Network */}
+                                <div className="p-4 text-center" style={{ background: 'linear-gradient(135deg, #06b6d4, #22d3ee)', border: '2px solid #06b6d4', borderTop: 'none' }}>
+                                    <div className="flex items-center justify-between">
+                                        <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm">3</span>
+                                        <div className="flex-1 mx-3">
+                                            <h5 className="font-black text-white text-sm">Network Layer</h5>
+                                            <p className="text-[10px] text-white/80 mt-0.5">Routing &amp; addressing</p>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 justify-end max-w-[55%]">
+                                            {['IPv4', 'IPv6', '6LoWPAN'].map((p, i) => (
+                                                <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white font-bold border border-white/30">{p}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Arrow */}
+                                <div className="flex justify-center -my-0.5 relative z-10"><div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[8px] border-l-transparent border-r-transparent" style={{ borderTopColor: '#06b6d4' }} /></div>
+
+                                {/* Layer 2 - Data Link */}
+                                <div className="p-4 text-center" style={{ background: 'linear-gradient(135deg, #10b981, #34d399)', border: '2px solid #10b981', borderTop: 'none' }}>
+                                    <div className="flex items-center justify-between">
+                                        <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm">2</span>
+                                        <div className="flex-1 mx-3">
+                                            <h5 className="font-black text-white text-sm">Data Link Layer</h5>
+                                            <p className="text-[10px] text-white/80 mt-0.5">Node-to-node data transfer</p>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 justify-end max-w-[55%]">
+                                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white font-bold border border-white/30">MAC Address</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Arrow */}
+                                <div className="flex justify-center -my-0.5 relative z-10"><div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[8px] border-l-transparent border-r-transparent" style={{ borderTopColor: '#10b981' }} /></div>
+
+                                {/* Layer 1 - Physical */}
+                                <div className="rounded-b-2xl p-4 text-center" style={{ background: 'linear-gradient(135deg, #f97316, #fb923c)', border: '2px solid #f97316', borderTop: 'none' }}>
+                                    <div className="flex items-center justify-between">
+                                        <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm">1</span>
+                                        <div className="flex-1 mx-3">
+                                            <h5 className="font-black text-white text-sm">Physical Layer</h5>
+                                            <p className="text-[10px] text-white/80 mt-0.5">Physical medium — wires, signals</p>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 justify-end max-w-[55%]">
+                                            {['802.3 Ethernet', '802.16 WiMax', '802.11 WiFi', 'Cellular'].map((p, i) => (
+                                                <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white font-bold border border-white/30">{p}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Layer-wise Detailed Explanation */}
+                        <h4 className="font-bold text-gray-800 mt-6 mb-3">📌 Layer-wise Protocol Details</h4>
+
+                        {/* Layer 7 Detail */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #fdf2f8, #fce7f3)', border: '1px solid #f9a8d4' }}>
+                            <h4 className="font-bold text-pink-700 mb-2">📱 Layer 7 — Application Layer</h4>
+                            <p className="text-xs text-pink-800 mb-2">Ye layer <strong>user ke sabse close</strong> hoti hai — yahan protocols directly applications se interact karte hain.</p>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                {[
+                                    { p: 'HTTP', d: 'Web browsing ke liye' },
+                                    { p: 'CoAP', d: 'Lightweight IoT protocol' },
+                                    { p: 'MQTT', d: 'Publish-subscribe messaging' },
+                                    { p: 'XMPP', d: 'Real-time messaging' },
+                                ].map((item, i) => (
+                                    <div key={i} className="p-2 rounded-xl bg-white border border-pink-200 text-center">
+                                        <p className="font-black text-xs text-pink-700">{item.p}</p>
+                                        <p className="text-[10px] text-gray-500 mt-0.5">{item.d}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Layer 6 Detail */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', border: '1px solid #c4b5fd' }}>
+                            <h4 className="font-bold text-purple-700 mb-2">🔄 Layer 6 — Presentation Layer</h4>
+                            <p className="text-xs text-purple-800 mb-2">Data ko <strong>format, encrypt aur compress</strong> karta hai taaki dono sides samajh sakein.</p>
+                            <div className="grid grid-cols-3 gap-2">
+                                {[
+                                    { p: 'GDS', d: 'Data structure format' },
+                                    { p: 'Web Sockets', d: 'Full-duplex communication' },
+                                    { p: 'AMQP', d: 'Advanced message queuing' },
+                                ].map((item, i) => (
+                                    <div key={i} className="p-2 rounded-xl bg-white border border-purple-200 text-center">
+                                        <p className="font-black text-xs text-purple-700">{item.p}</p>
+                                        <p className="text-[10px] text-gray-500 mt-0.5">{item.d}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Layer 5 Detail */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', border: '1px solid #a5b4fc' }}>
+                            <h4 className="font-bold text-indigo-700 mb-2">🤝 Layer 5 — Session Layer</h4>
+                            <p className="text-xs text-indigo-800">Ye layer <strong>connection ko establish, maintain aur terminate</strong> karta hai. IoT mein session management ke through devices ke beech communication sessions handle hote hain.</p>
+                        </div>
+
+                        {/* Layer 4 Detail */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #eff6ff, #dbeafe)', border: '1px solid #93c5fd' }}>
+                            <h4 className="font-bold text-blue-700 mb-2">🚚 Layer 4 — Transport Layer</h4>
+                            <p className="text-xs text-blue-800 mb-2">Data ko <strong>reliably deliver</strong> karta hai — error checking aur flow control karta hai.</p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="p-3 rounded-xl bg-white border border-blue-200">
+                                    <p className="font-black text-sm text-blue-700 mb-1">TCP</p>
+                                    <p className="text-[10px] text-gray-500">Transmission Control Protocol — <strong>reliable</strong>, connection-oriented, data loss nahi hota</p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white border border-blue-200">
+                                    <p className="font-black text-sm text-blue-700 mb-1">UDP</p>
+                                    <p className="text-[10px] text-gray-500">User Datagram Protocol — <strong>fast</strong>, connectionless, IoT sensors ke liye best</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Layer 3 Detail */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #ecfeff, #cffafe)', border: '1px solid #67e8f9' }}>
+                            <h4 className="font-bold text-cyan-700 mb-2">🗺️ Layer 3 — Network Layer</h4>
+                            <p className="text-xs text-cyan-800 mb-2">Data ko <strong>source se destination tak route</strong> karta hai — IP addressing use hoti hai.</p>
+                            <div className="grid grid-cols-3 gap-2">
+                                {[
+                                    { p: 'IPv4', d: '32-bit address' },
+                                    { p: 'IPv6', d: '128-bit address — IoT future' },
+                                    { p: '6LoWPAN', d: 'IPv6 over low-power networks' },
+                                ].map((item, i) => (
+                                    <div key={i} className="p-2 rounded-xl bg-white border border-cyan-200 text-center">
+                                        <p className="font-black text-xs text-cyan-700">{item.p}</p>
+                                        <p className="text-[10px] text-gray-500 mt-0.5">{item.d}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Layer 2 Detail */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #86efac' }}>
+                            <h4 className="font-bold text-green-700 mb-2">🔗 Layer 2 — Data Link Layer</h4>
+                            <p className="text-xs text-green-800 mb-2">Ye layer <strong>node-to-node data transfer</strong> karta hai aur error detection handle karta hai.</p>
+                            <div className="p-3 rounded-xl bg-white border border-green-200 inline-block">
+                                <p className="font-black text-xs text-green-700">MAC Address</p>
+                                <p className="text-[10px] text-gray-500 mt-0.5">Har device ka unique physical address — device identify karne ke liye</p>
+                            </div>
+                        </div>
+
+                        {/* Layer 1 Detail */}
+                        <div className="rounded-2xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '1px solid #fdba74' }}>
+                            <h4 className="font-bold text-orange-700 mb-2">⚡ Layer 1 — Physical Layer</h4>
+                            <p className="text-xs text-orange-800 mb-2">Ye layer <strong>actual physical medium</strong> hai jiske through data bits transfer hote hain.</p>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                {[
+                                    { p: '802.3', d: 'Ethernet (Wired)' },
+                                    { p: '802.16', d: 'WiMax (Long range)' },
+                                    { p: '802.11', d: 'WiFi (Wireless LAN)' },
+                                    { p: 'Cellular', d: '2G / 3G / LTE / 5G' },
+                                ].map((item, i) => (
+                                    <div key={i} className="p-2 rounded-xl bg-white border border-orange-200 text-center">
+                                        <p className="font-black text-xs text-orange-700">{item.p}</p>
+                                        <p className="text-[10px] text-gray-500 mt-0.5">{item.d}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Quick Summary Table */}
+                        <h4 className="font-bold text-gray-800 mt-5 mb-3">📋 Quick Summary Table</h4>
+                        <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid #e2e8f0' }}>
+                            <table className="w-full text-xs">
+                                <thead><tr style={{ background: 'linear-gradient(135deg, #ec4899, #8b5cf6)' }} className="text-white"><th className="px-3 py-2 text-left">Layer</th><th className="px-3 py-2 text-left">Name</th><th className="px-3 py-2 text-left">Protocols / Standards</th><th className="px-3 py-2 text-left">Kaam</th></tr></thead>
+                                <tbody>
+                                    {[
+                                        ['7', 'Application', 'HTTP, CoAP, MQTT, XMPP', 'User interaction'],
+                                        ['6', 'Presentation', 'GDS, Web Sockets, AMQP', 'Data format & encryption'],
+                                        ['5', 'Session', 'Session Management', 'Connection manage'],
+                                        ['4', 'Transport', 'TCP, UDP', 'Data delivery'],
+                                        ['3', 'Network', 'IPv4, IPv6, 6LoWPAN', 'Routing & addressing'],
+                                        ['2', 'Data Link', 'MAC Address', 'Node-to-node transfer'],
+                                        ['1', 'Physical', '802.3, 802.16, 802.11, Cellular', 'Physical signals'],
+                                    ].map(([l, n, p, k], i) => (
+                                        <tr key={i} style={{ background: i % 2 === 0 ? '#fafafa' : '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                                            <td className="px-3 py-2 font-black text-pink-600">{l}</td>
+                                            <td className="px-3 py-2 font-semibold text-gray-700">{n}</td>
+                                            <td className="px-3 py-2 text-purple-600 font-mono text-[10px]">{p}</td>
+                                            <td className="px-3 py-2 text-gray-500">{k}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <IB type="tip">OSI Model ko yaad rakhne ka trick: <strong>&quot;All People Seem To Need Data Processing&quot;</strong> — Application → Presentation → Session → Transport → Network → Data Link → Physical (top to bottom)</IB>
+                        <IB type="note">IoT mein mostly <strong>UDP</strong> prefer hota hai TCP ke comparison mein kyunki IoT devices ko <strong>fast aur lightweight</strong> communication chahiye!</IB>
+                    </Sec>
+
+                    {/* ═══ IoT Protocols Detail ═══ */}
+                    <Sec id="iot-protocols-detail" title="🔹 IoT Protocols — Detailed Explanation" icon={<Cpu size={16} className="text-cyan-600" />}>
+                        <Def>📡 IoT mein different <strong>application layer protocols</strong> use hote hain jo devices ke beech communication ko possible banate hain. Har protocol ka apna specific use case aur working style hota hai.</Def>
+
+                        {/* ── HTTP ── */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #eff6ff, #dbeafe)', border: '2px solid #93c5fd' }}>
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}>1</span>
+                                <div><h4 className="font-black text-blue-800 text-base">🌐 HTTP</h4><p className="text-[10px] text-blue-500 font-mono">Hyper Text Transfer Protocol</p></div>
+                            </div>
+                            <img src="/iot/http-diagram.png" alt="HTTP Request-Response Diagram" className="w-full rounded-xl mb-3 border border-blue-200" />
+                            <p className="text-xs text-blue-900 mb-3">HTTP ek <strong>request-response protocol</strong> hai. Iska use internet mein browser ke dwara kisi host par communication karne ke liye kiya jata hai.</p>
+                            <div className="rounded-xl p-3 mb-3 bg-white border border-blue-200">
+                                <h5 className="font-bold text-xs text-blue-700 mb-2">⚙️ Kaise kaam karta hai?</h5>
+                                <div className="flex flex-wrap items-center gap-2 text-xs">
+                                    <span className="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 font-semibold">🖥️ Client (Browser)</span>
+                                    <span className="text-blue-400 font-bold">→ Request →</span>
+                                    <span className="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 font-semibold">🌐 Server</span>
+                                    <span className="text-blue-400 font-bold">→ Response →</span>
+                                    <span className="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 font-semibold">🖥️ Client</span>
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {['GET — Data lena', 'POST — Data bhejna', 'PUT — Data update', 'DELETE — Data delete'].map((s, i) => (
+                                    <span key={i} className="text-[10px] px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-semibold border border-blue-200">{s}</span>
+                                ))}
+                            </div>
+                            <IB type="note">HTTP website par communication establish karta hai — ye IoT ka <strong>sabse common protocol</strong> hai web-based applications ke liye.</IB>
+                        </div>
+
+                        {/* ── CoAP ── */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '2px solid #86efac' }}>
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>2</span>
+                                <div><h4 className="font-black text-green-800 text-base">📡 CoAP</h4><p className="text-[10px] text-green-500 font-mono">Constrained Application Protocol</p></div>
+                            </div>
+                            <img src="/iot/coap-diagram.png" alt="CoAP Protocol Diagram" className="w-full rounded-xl mb-3 border border-green-200" />
+                            <p className="text-xs text-green-900 mb-3">Ye protocol internet par communication karne ke liye use hota hai. Ye ek <strong>lightweight protocol</strong> hai jo <strong>low power devices</strong> ke liye useful hota hai.</p>
+                            <div className="rounded-xl p-3 mb-3 bg-white border border-green-200">
+                                <h5 className="font-bold text-xs text-green-700 mb-2">🔄 HTTP vs CoAP</h5>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="p-2 rounded-lg bg-blue-50 border border-blue-200 text-center">
+                                        <p className="font-bold text-xs text-blue-700">HTTP</p>
+                                        <p className="text-[10px] text-gray-500">Heavy · TCP · Web ke liye</p>
+                                    </div>
+                                    <div className="p-2 rounded-lg bg-green-50 border border-green-200 text-center">
+                                        <p className="font-bold text-xs text-green-700">CoAP ✅</p>
+                                        <p className="text-[10px] text-gray-500">Light · UDP · IoT ke liye</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {['🪶 Lightweight', '⚡ UDP Based', '🔄 RESTful', '📱 IoT Optimized'].map((s, i) => (
+                                    <span key={i} className="text-[10px] px-2.5 py-1 rounded-lg bg-green-50 text-green-700 font-semibold border border-green-200">{s}</span>
+                                ))}
+                            </div>
+                            <IB type="tip">CoAP ko samjho <strong>HTTP ka chhota bhai</strong> — same kaam karta hai lekin IoT devices ke liye zyada suitable hai kyunki <strong>kam power aur bandwidth</strong> use karta hai!</IB>
+                        </div>
+
+                        {/* ── MQTT ── */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', border: '2px solid #c4b5fd' }}>
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}>3</span>
+                                <div><h4 className="font-black text-purple-800 text-base">📨 MQTT</h4><p className="text-[10px] text-purple-500 font-mono">Message Queue Telemetry Transport</p></div>
+                            </div>
+                            <img src="/iot/mqtt-diagram.png" alt="MQTT Publish-Subscribe Diagram" className="w-full rounded-xl mb-3 border border-purple-200" />
+                            <p className="text-xs text-purple-900 mb-3">Ye <strong>machine to machine communication</strong> ke liye use hota hai. Ye ek <strong>publish-subscribe protocol</strong> hai jo TCP par kaam karta hai.</p>
+                            <div className="rounded-xl p-3 mb-3 bg-white border border-purple-200">
+                                <h5 className="font-bold text-xs text-purple-700 mb-2">🔄 MQTT Working Flow</h5>
+                                <div className="flex flex-wrap items-center gap-2 text-xs">
+                                    <span className="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 font-semibold">📡 Publisher</span>
+                                    <span className="text-purple-400 font-bold">→ Data →</span>
+                                    <span className="px-3 py-2 rounded-lg bg-purple-200 text-purple-800 font-black">🏢 BROKER</span>
+                                    <span className="text-purple-400 font-bold">→ Data →</span>
+                                    <span className="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 font-semibold">📱 Subscriber</span>
+                                </div>
+                            </div>
+                            <div className="text-xs text-purple-800 space-y-1.5 mb-3 p-3 rounded-xl bg-purple-50 border border-purple-200">
+                                <p>👉 Client <strong>publisher ya subscriber</strong> ho sakta hai</p>
+                                <p>👉 Ek <strong>broker</strong> hota hai jo data ko manage karta hai</p>
+                                <p>👉 Client TCP ke madhyam se broker se <strong>connected</strong> rehta hai</p>
+                                <p>👉 Client <strong>publish aur subscribe dono</strong> kar sakta hai</p>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {['🪶 Lightweight', '📤 Publish-Subscribe', '🔗 TCP Based', '🤖 M2M Communication'].map((s, i) => (
+                                    <span key={i} className="text-[10px] px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 font-semibold border border-purple-200">{s}</span>
+                                ))}
+                            </div>
+                            <IB type="tip">MQTT IoT ka <strong>sabse popular protocol</strong> hai — jahan bhi sensor data ko efficiently bhejne ki zarurat ho, wahan MQTT use hota hai!</IB>
+                        </div>
+
+                        {/* ── XMPP ── */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '2px solid #fdba74' }}>
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)' }}>4</span>
+                                <div><h4 className="font-black text-orange-800 text-base">💬 XMPP</h4><p className="text-[10px] text-orange-500 font-mono">Extensible Messaging and Presence Protocol</p></div>
+                            </div>
+                            <img src="/iot/xmpp-diagram.png" alt="XMPP Protocol Diagram" className="w-full rounded-xl mb-3 border border-orange-200" />
+                            <p className="text-xs text-orange-900 mb-3">Ye protocol <strong>XML language</strong> par aadharit hota hai. Iska use communication ke liye kiya jata hai jisme <strong>message transfer</strong> kiya jata hai.</p>
+                            <div className="text-xs text-orange-800 space-y-1.5 mb-3 p-3 rounded-xl bg-orange-50 border border-orange-200">
+                                <p>👉 Isse different devices ke beech <strong>extensible data share</strong> kiya ja sakta hai</p>
+                                <p>👉 IoT network mein ye <strong>publish-subscribe system</strong> ke roop mein bhi use hota hai</p>
+                                <p>👉 <strong>Real-time messaging</strong> aur <strong>presence detection</strong> support karta hai</p>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {['📝 XML Based', '💬 Real-time Messaging', '👤 Presence Detection', '🔄 Extensible'].map((s, i) => (
+                                    <span key={i} className="text-[10px] px-2.5 py-1 rounded-lg bg-orange-50 text-orange-700 font-semibold border border-orange-200">{s}</span>
+                                ))}
+                            </div>
+                            <IB type="note">XMPP ka use pehle <strong>WhatsApp aur Google Talk</strong> jaise messaging apps mein hota tha — ab IoT mein bhi device messaging ke liye use hota hai!</IB>
+                        </div>
+
+                        {/* ── DDS ── */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #fef2f2, #fee2e2)', border: '2px solid #fca5a5' }}>
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)' }}>5</span>
+                                <div><h4 className="font-black text-red-800 text-base">⚡ DDS</h4><p className="text-[10px] text-red-500 font-mono">Data Distribution Service</p></div>
+                            </div>
+                            <img src="/iot/dds-diagram.png" alt="DDS Protocol Diagram" className="w-full rounded-xl mb-3 border border-red-200" />
+                            <p className="text-xs text-red-900 mb-3">Ye protocol <strong>OS aur software ke beech data transfer</strong> karne ke liye use hota hai. Iska use <strong>real-time communication</strong> ke liye kiya jata hai.</p>
+                            <div className="rounded-xl p-3 mb-3 bg-white border border-red-200">
+                                <h5 className="font-bold text-xs text-red-700 mb-2">🔄 DDS vs MQTT</h5>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="p-2 rounded-lg bg-purple-50 border border-purple-200 text-center">
+                                        <p className="font-bold text-xs text-purple-700">MQTT</p>
+                                        <p className="text-[10px] text-gray-500">Broker zaruri · Centralized</p>
+                                    </div>
+                                    <div className="p-2 rounded-lg bg-red-50 border border-red-200 text-center">
+                                        <p className="font-bold text-xs text-red-700">DDS ✅</p>
+                                        <p className="text-[10px] text-gray-500">No Broker · Peer-to-Peer</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {['⚡ Real-time', '🔗 Peer-to-Peer', '🚫 No Broker', '🏭 Industrial Use'].map((s, i) => (
+                                    <span key={i} className="text-[10px] px-2.5 py-1 rounded-lg bg-red-50 text-red-700 font-semibold border border-red-200">{s}</span>
+                                ))}
+                            </div>
+                            <IB type="warning">DDS ka use mostly <strong>military, healthcare aur industrial systems</strong> mein hota hai jahan <strong>real-time data</strong> bahut important hota hai!</IB>
+                        </div>
+
+                        {/* ── AMQP ── */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #ecfeff, #cffafe)', border: '2px solid #67e8f9' }}>
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{ background: 'linear-gradient(135deg, #0891b2, #0e7490)' }}>6</span>
+                                <div><h4 className="font-black text-cyan-800 text-base">📦 AMQP</h4><p className="text-[10px] text-cyan-500 font-mono">Advanced Message Queuing Protocol</p></div>
+                            </div>
+                            <img src="/iot/amqp-diagram.png" alt="AMQP Protocol Diagram" className="w-full rounded-xl mb-3 border border-cyan-200" />
+                            <p className="text-xs text-cyan-900 mb-3">Iska use <strong>devices ko jodne</strong> ke liye kiya jata hai. Ye protocol devices ke beech <strong>data transfer ke saath-saath data ko store</strong> bhi karta hai.</p>
+                            <div className="rounded-xl p-3 mb-3 bg-white border border-cyan-200">
+                                <h5 className="font-bold text-xs text-cyan-700 mb-2">⚙️ AMQP Working</h5>
+                                <div className="flex flex-wrap items-center gap-2 text-xs">
+                                    <span className="px-3 py-1.5 rounded-lg bg-cyan-100 text-cyan-700 font-semibold">📤 Producer</span>
+                                    <span className="text-cyan-400 font-bold">→</span>
+                                    <span className="px-3 py-1.5 rounded-lg bg-cyan-100 text-cyan-700 font-semibold">📬 Exchange</span>
+                                    <span className="text-cyan-400 font-bold">→</span>
+                                    <span className="px-3 py-2 rounded-lg bg-cyan-200 text-cyan-800 font-black">📦 Queue (Store)</span>
+                                    <span className="text-cyan-400 font-bold">→</span>
+                                    <span className="px-3 py-1.5 rounded-lg bg-cyan-100 text-cyan-700 font-semibold">📥 Consumer</span>
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {['📦 Message Queuing', '💾 Store & Forward', '🔗 Device Connecting', '🔒 Reliable Delivery'].map((s, i) => (
+                                    <span key={i} className="text-[10px] px-2.5 py-1 rounded-lg bg-cyan-50 text-cyan-700 font-semibold border border-cyan-200">{s}</span>
+                                ))}
+                            </div>
+                            <IB type="tip">AMQP ka special feature hai ki ye <strong>data ko store karke rakhta hai</strong> — agar receiver offline ho to bhi message baad mein deliver ho jata hai!</IB>
+                        </div>
+
+                        {/* Protocol Comparison Table */}
+                        <h4 className="font-bold text-gray-800 mt-5 mb-3">📋 All Protocols — Quick Comparison</h4>
+                        <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid #e2e8f0' }}>
+                            <table className="w-full text-xs">
+                                <thead><tr style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }} className="text-white"><th className="px-3 py-2 text-left">Protocol</th><th className="px-3 py-2 text-left">Full Form</th><th className="px-3 py-2 text-left">Type</th><th className="px-3 py-2 text-left">Use Case</th></tr></thead>
+                                <tbody>
+                                    {[
+                                        ['🌐 HTTP', 'Hyper Text Transfer Protocol', 'Request-Response', 'Web browsing'],
+                                        ['📡 CoAP', 'Constrained Application Protocol', 'Request-Response (UDP)', 'Low power IoT'],
+                                        ['📨 MQTT', 'Message Queue Telemetry Transport', 'Publish-Subscribe', 'Sensor data, M2M'],
+                                        ['💬 XMPP', 'Extensible Messaging & Presence', 'XML Messaging', 'Real-time chat, IoT'],
+                                        ['⚡ DDS', 'Data Distribution Service', 'Peer-to-Peer', 'Real-time systems'],
+                                        ['📦 AMQP', 'Advanced Message Queuing', 'Message Queue', 'Device connectivity'],
+                                    ].map(([p, f, t, u], i) => (
+                                        <tr key={i} style={{ background: i % 2 === 0 ? '#fafafa' : '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                                            <td className="px-3 py-2 font-bold text-gray-700">{p}</td>
+                                            <td className="px-3 py-2 text-gray-500 text-[10px]">{f}</td>
+                                            <td className="px-3 py-2 text-cyan-600 font-semibold">{t}</td>
+                                            <td className="px-3 py-2 text-gray-500">{u}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <IB type="tip">IoT mein sabse zyada use hone wale protocols: <strong>MQTT</strong> (sensor data), <strong>CoAP</strong> (lightweight IoT), aur <strong>HTTP</strong> (web apps) hain!</IB>
                     </Sec>
 
                     {/* Navigation */}
