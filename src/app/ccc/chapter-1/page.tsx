@@ -228,7 +228,7 @@ export default function CccChapter1() {
                             <div className="mt-4 p-4 rounded-xl bg-orange-50 border border-orange-100">
                                 <p className="text-sm text-orange-800 leading-relaxed">
                                     <strong>CPU (Central Processing Unit):</strong> CPU computer ka 'brain' hota hai jo sari processing karta hai. Iske 3 main components hote hain:
-                                    <br/>- <strong>ALU (Arithmetic Logic Unit):</strong> Math operations (add, subtract) aur logical decisions (AND, OR, <, >) ke liye.
+                                    <br/>- <strong>ALU (Arithmetic Logic Unit):</strong> Math operations (add, subtract) aur logical decisions (AND, OR, &lt;, &gt;) ke liye.
                                     <br/>- <strong>CU (Control Unit):</strong> Computer ke saare operations ko control karna.
                                     <br/>- <strong>MU (Memory Unit):</strong> Processing ke dauran data ko temporarily store karna.
                                 </p>
