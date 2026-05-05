@@ -46,6 +46,9 @@ const tocItems = [
     { icon: <Zap size={13} />, label: 'Technologies & Protocols', id: 'tech-protocols', color: '#8b5cf6' },
     { icon: <Layers size={13} />, label: 'OSI Model in IoT', id: 'osi-model', color: '#ec4899' },
     { icon: <Cpu size={13} />, label: 'IoT Protocols Detail', id: 'iot-protocols-detail', color: '#0891b2' },
+    { icon: <Globe size={13} />, label: 'Network Layer ', id: 'network-layer-deep', color: '#06b6d4' },
+    { icon: <Zap size={13} />, label: 'Physical Layer ', id: 'physical-layer-deep', color: '#f97316' },
+    { icon: <Radio size={13} />, label: 'Comm. Models', id: 'comm-models', color: '#10b981' },
 ];
 
 export default function IoTIntroduction() {
@@ -1336,6 +1339,291 @@ export default function IoTIntroduction() {
                         </div>
 
                         <IB type="tip">IoT mein sabse zyada use hone wale protocols: <strong>MQTT</strong> (sensor data), <strong>CoAP</strong> (lightweight IoT), aur <strong>HTTP</strong> (web apps) hain!</IB>
+                    </Sec>
+
+                    {/* ═══ Network Layer (Deep Theory) ═══ */}
+                    <Sec id="network-layer-deep" title="🔹 Network Layer" icon={<Globe size={16} className="text-cyan-500" />}>
+                        <Def>🌐 Network layer IoT communication system ka ek bahut important part hota hai jo data ko source (sender) se destination (receiver) tak pahunchane ka kaam karta hai.</Def>
+
+                        <div className="rounded-2xl p-4 my-4" style={{ background: 'linear-gradient(135deg, #ecfeff, #cffafe)', border: '1px solid #67e8f9' }}>
+                            <h4 className="font-bold text-cyan-700 mb-2">🎯 Network Layer ke main functions</h4>
+                            <div className="space-y-2 text-sm text-cyan-800">
+                                <p>👉 <strong>Addressing:</strong> Har device ko ek unique IP address diya jata hai</p>
+                                <p>👉 <strong>Routing:</strong> Data kis path se jayega (shortest / fastest route) ye decide karta hai</p>
+                                <p>👉 <strong>Packet forwarding:</strong> Data packets ko next device tak forward karta hai</p>
+                            </div>
+                        </div>
+
+                        <IB type="tip">Simple samajh: <strong>&quot;Network layer = data ko sahi raste se sahi jagah tak pahunchana&quot;</strong></IB>
+
+                        <h4 className="font-bold text-gray-800 mt-5 mb-3">📌 Use hone wale protocols</h4>
+
+                        {/* IPv4 Section */}
+                        <div className="rounded-2xl p-5 mb-4" style={{ background: 'linear-gradient(135deg, #fef2f2, #fee2e2)', border: '1px solid #fca5a5' }}>
+                            <h4 className="font-bold text-red-700 mb-2 flex items-center gap-2">🔴 IPv4 (Internet Protocol Version 4)</h4>
+                            <p className="text-sm text-red-800 mb-3">IPv4 ek addressing system hai jo devices ko internet par identify karne ke liye use hota hai.</p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                                <div className="p-3 rounded-xl bg-white border border-red-200">
+                                    <p className="font-bold text-xs text-red-700 mb-1">⚙️ Isme kya hota hai?</p>
+                                    <ul className="text-[10px] text-gray-600 space-y-1">
+                                        <li>• 32-bit address hota hai</li>
+                                        <li>• Address ko 4 parts me divide kiya jata hai</li>
+                                        <li>• Har part 8-bit ka hota hai (0–255 range)</li>
+                                    </ul>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white border border-red-200">
+                                    <p className="font-bold text-xs text-red-700 mb-1">📝 Format &amp; Limitations</p>
+                                    <p className="text-[10px] text-gray-600"><strong>Example:</strong> 192.168.1.1</p>
+                                    <p className="text-[10px] text-gray-600 mt-1"><strong>Limitation:</strong> Limited addresses (approx 4.3 billion) — IoT me devices bahut zyada hote hain isliye address shortage hoti hai.</p>
+                                </div>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-red-50 border border-red-100">
+                                <h5 className="font-bold text-xs text-red-700 mb-1">🔄 Working samajh</h5>
+                                <p className="text-[11px] text-red-800">Jab koi device internet par data bhejta hai, sender aur receiver dono ka IP address use hota hai. Data packet ke header me address attach hota hai aur network us address ke basis par data deliver karta hai.</p>
+                            </div>
+                        </div>
+
+                        {/* IPv6 Section */}
+                        <div className="rounded-2xl p-5 mb-4" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', border: '1px solid #c4b5fd' }}>
+                            <h4 className="font-bold text-purple-700 mb-2 flex items-center gap-2">🟣 IPv6 (Internet Protocol Version 6)</h4>
+                            <p className="text-sm text-purple-800 mb-3">IPv6 IPv4 ka upgraded version hai jo address shortage problem ko solve karta hai.</p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                                <div className="p-3 rounded-xl bg-white border border-purple-200">
+                                    <p className="font-bold text-xs text-purple-700 mb-1">⚙️ Isme kya hota hai?</p>
+                                    <ul className="text-[10px] text-gray-600 space-y-1">
+                                        <li>• 128-bit address hota hai</li>
+                                        <li>• Bahut huge number of addresses available hote hain</li>
+                                    </ul>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white border border-purple-200">
+                                    <p className="font-bold text-xs text-purple-700 mb-1">📝 Format</p>
+                                    <p className="text-[10px] text-gray-600 break-all"><strong>Example:</strong><br />2001:0db8:85a3:0000:0000:8a2e:0370:7334</p>
+                                </div>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-purple-50 border border-purple-100">
+                                <h5 className="font-bold text-xs text-purple-700 mb-1">🌟 Features &amp; Importance in IoT</h5>
+                                <div className="flex flex-wrap gap-2 text-[10px]">
+                                    <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-lg border border-purple-200">Unlimited space</span>
+                                    <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-lg border border-purple-200">Better security</span>
+                                    <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-lg border border-purple-200">Faster routing</span>
+                                </div>
+                                <p className="text-[11px] text-purple-800 mt-2">IoT me millions of devices hote hain → har device ko unique address chahiye. Isliye IPv6 use hota hai.</p>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ Physical Layer (Deep Theory) ═══ */}
+                    <Sec id="physical-layer-deep" title="🔹 Physical Layer" icon={<Zap size={16} className="text-orange-500" />}>
+                        <Def>⚡ Physical layer OSI model ki sabse lowest layer hoti hai jo actual hardware level par data transmission karti hai.</Def>
+
+                        <div className="rounded-2xl p-4 my-4" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '1px solid #fdba74' }}>
+                            <h4 className="font-bold text-orange-700 mb-2">⚙️ Is layer ka kaam</h4>
+                            <div className="space-y-2 text-sm text-orange-800">
+                                <p>👉 Data ko <strong>electrical signals / radio signals</strong> me convert karna</p>
+                                <p>👉 <strong>Physical medium</strong> (wire ya wireless) ke through data bhejna</p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 mb-4">
+                            <span className="text-xs font-bold text-gray-700 mr-2">Examples:</span>
+                            {['Ethernet', 'WiFi', 'LTE', 'Fiber'].map((s, i) => (
+                                <span key={i} className="text-[10px] px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 font-semibold border border-gray-200">{s}</span>
+                            ))}
+                        </div>
+
+                        <IB type="tip">Simple samajh: <strong>&quot;Physical layer = real world me data ka travel (wire ya signal ke through)&quot;</strong></IB>
+
+                        {/* Ethernet Section */}
+                        <div className="rounded-2xl p-5 mt-5" style={{ background: 'linear-gradient(135deg, #eff6ff, #dbeafe)', border: '1px solid #93c5fd' }}>
+                            <h4 className="font-bold text-blue-700 mb-2 flex items-center gap-2">🔌 IEEE 802.3 Ethernet (Very Important)</h4>
+                            <p className="text-sm text-blue-800 mb-3">IEEE 802.3 Ethernet ek <strong>wired communication technology</strong> hai jo LAN (Local Area Network) me use hoti hai.</p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                                <div className="p-3 rounded-xl bg-white border border-blue-200">
+                                    <p className="font-bold text-xs text-blue-700 mb-1">✅ Ethernet kya karta hai?</p>
+                                    <ul className="text-[11px] text-gray-600 space-y-1">
+                                        <li>• Devices ko cable ke through connect karta hai</li>
+                                        <li>• Data ko fast aur reliable tarike se transfer karta hai</li>
+                                    </ul>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white border border-blue-200">
+                                    <p className="font-bold text-xs text-blue-700 mb-1">🌟 Features of Ethernet</p>
+                                    <ul className="text-[11px] text-gray-600 space-y-1">
+                                        <li>• High speed data transfer</li>
+                                        <li>• Reliable communication</li>
+                                        <li>• Stable connection (wire hone ki wajah se)</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="p-3 rounded-xl bg-blue-50 border border-blue-100">
+                                    <h5 className="font-bold text-xs text-blue-700 mb-1">🔄 Working samajh</h5>
+                                    <p className="text-[10px] text-blue-800">Devices LAN cable se connect hote hain. Data frames ke form me bheja jata hai aur MAC address ke through identify hota hai.</p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-blue-50 border border-blue-100">
+                                    <h5 className="font-bold text-xs text-blue-700 mb-1">📍 Use kaha hota hai?</h5>
+                                    <div className="flex flex-wrap gap-1 mt-1">
+                                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] rounded-md border border-blue-200">Office network</span>
+                                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] rounded-md border border-blue-200">School labs</span>
+                                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] rounded-md border border-blue-200">Industrial networks</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ IoT Communication Models ═══ */}
+                    <Sec id="comm-models" title="🔹 IoT Communication Models" icon={<Radio size={16} className="text-emerald-500" />}>
+                        <Def>📡 IoT me devices ek dusre ke saath communicate karne ke liye <strong>alag-alag models</strong> use karte hain. Har model ka apna working style aur use case hota hai.</Def>
+                        
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 my-4">
+                            {[{ n: '1', t: 'Request-Response', c: '#3b82f6' }, { n: '2', t: 'Publish-Subscribe', c: '#8b5cf6' }, { n: '3', t: 'Push-Pull', c: '#f59e0b' }, { n: '4', t: 'Exclusive Pair', c: '#10b981' }].map((m, i) => (
+                                <div key={i} className="p-3 rounded-2xl text-center" style={{ background: `${m.c}10`, border: `1px solid ${m.c}30` }}>
+                                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black mx-auto mb-1" style={{ background: m.c }}>{m.n}</div>
+                                    <h5 className="font-bold text-[11px]" style={{ color: m.c }}>{m.t}</h5>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Model 1: Request-Response */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #eff6ff, #dbeafe)', border: '1px solid #93c5fd' }}>
+                            <h4 className="font-bold text-blue-700 mb-2 flex items-center gap-2">🔄 (1) Request-Response Model</h4>
+                            <p className="text-sm text-blue-800 mb-3">Ye ek basic communication model hai jo <strong>client-server architecture</strong> par based hota hai.</p>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                                <div className="p-3 rounded-xl bg-white border border-blue-200">
+                                    <p className="font-bold text-xs text-blue-700 mb-1">⚙️ Working</p>
+                                    <ul className="text-[11px] text-gray-600 space-y-1">
+                                        <li>• Client request bhejta hai</li>
+                                        <li>• Server request ko process karta hai</li>
+                                        <li>• Server response client ko bhejta hai</li>
+                                    </ul>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white border border-blue-200">
+                                    <p className="font-bold text-xs text-blue-700 mb-1">📌 Important</p>
+                                    <ul className="text-[11px] text-gray-600 space-y-1">
+                                        <li>• Communication request ke bina start nahi hota</li>
+                                        <li>• HTTP protocol me yahi use hota hai</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-xl bg-white border border-blue-200 mb-3 shadow-sm overflow-hidden flex justify-center">
+                                <img src="/iot/req-res-diagram.png" alt="Request-Response Diagram" className="max-w-full h-auto rounded-lg" />
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-blue-50 border border-blue-100">
+                                <p className="font-bold text-xs text-blue-700 mb-1">💡 Example (PDF/Web Concept)</p>
+                                <p className="text-[11px] text-blue-800">Jab hum browser me kisi website ko open karte hain: Browser (client) request bhejta hai, aur Server website ka data bhejta hai.</p>
+                            </div>
+                        </div>
+
+                        {/* Model 2: Publish-Subscribe */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', border: '1px solid #c4b5fd' }}>
+                            <h4 className="font-bold text-purple-700 mb-2 flex items-center gap-2">📢 (2) Publish-Subscribe Model</h4>
+                            <p className="text-sm text-purple-800 mb-3">Ye model <strong>MQTT</strong> jaise protocols me use hota hai, jisme 3 components hote hain: Publisher, Broker, Subscriber.</p>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                                <div className="p-3 rounded-xl bg-white border border-purple-200">
+                                    <p className="font-bold text-xs text-purple-700 mb-1">⚙️ Working</p>
+                                    <ul className="text-[11px] text-gray-600 space-y-1">
+                                        <li>• Publisher data ko publish karta hai</li>
+                                        <li>• Data broker ke paas jata hai</li>
+                                        <li>• Broker us data ko subscribers tak bhejta hai</li>
+                                        <li>• Subscriber directly publisher se connect nahi hota</li>
+                                    </ul>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white border border-purple-200">
+                                    <p className="font-bold text-xs text-purple-700 mb-1">📌 Important Points</p>
+                                    <ul className="text-[11px] text-gray-600 space-y-1">
+                                        <li>• Data topics ke basis par share hota hai</li>
+                                        <li>• Loose coupling (direct connection nahi)</li>
+                                        <li>• IoT systems ke liye bahut efficient hai</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-xl bg-white border border-purple-200 mb-3 shadow-sm overflow-hidden flex justify-center">
+                                <img src="/iot/pub-sub-diagram.png" alt="Publish-Subscribe Diagram" className="max-w-full h-auto rounded-lg" />
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-purple-50 border border-purple-100">
+                                <p className="font-bold text-xs text-purple-700 mb-1">💡 Example</p>
+                                <p className="text-[11px] text-purple-800">Temperature sensor data ko publish karta hai, aur User ki Mobile app us data ko receive karne ke liye subscribe karti hai.</p>
+                            </div>
+                        </div>
+
+                        {/* Model 3: Push-Pull */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '1px solid #fdba74' }}>
+                            <h4 className="font-bold text-orange-700 mb-2 flex items-center gap-2">📥 (3) Push-Pull Model</h4>
+                            <p className="text-sm text-orange-800 mb-3">Ye model data ko <strong>queue</strong> ke through transfer karta hai. Isme 2 roles hote hain: Producer (Push) aur Consumer (Pull).</p>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                                <div className="p-3 rounded-xl bg-white border border-orange-200">
+                                    <p className="font-bold text-xs text-orange-700 mb-1">⚙️ Working</p>
+                                    <ul className="text-[11px] text-gray-600 space-y-1">
+                                        <li>• Producer data ko queue me push karta hai</li>
+                                        <li>• Consumer queue se data pull karta hai</li>
+                                        <li>• Queue ek buffer ki tarah kaam karta hai</li>
+                                    </ul>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white border border-orange-200">
+                                    <p className="font-bold text-xs text-orange-700 mb-1">📌 Important Points</p>
+                                    <ul className="text-[11px] text-gray-600 space-y-1">
+                                        <li>• Data temporarily store hota hai</li>
+                                        <li>• Multiple consumers ek hi queue use kar sakte hain</li>
+                                        <li>• Load balancing bahut easy hota hai</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-xl bg-white border border-orange-200 mb-3 shadow-sm overflow-hidden flex justify-center">
+                                <img src="/iot/push-pull-diagram.png" alt="Push-Pull Diagram" className="max-w-full h-auto rounded-lg" />
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-orange-50 border border-orange-100">
+                                <p className="font-bold text-xs text-orange-700 mb-1">💡 Example</p>
+                                <p className="text-[11px] text-orange-800">Sensor data lagatar queue me store hota rehta hai, aur multiple systems apne hisab se us data ko read (pull) karte rehte hain.</p>
+                            </div>
+                        </div>
+
+                        {/* Model 4: Exclusive Pair */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #86efac' }}>
+                            <h4 className="font-bold text-green-700 mb-2 flex items-center gap-2">🤝 (4) Exclusive Pair Model</h4>
+                            <p className="text-sm text-green-800 mb-3">Ye ek <strong>one-to-one communication model</strong> hai jisme sirf do devices direct connect hote hain aur ek dusre ko message bhej sakte hain.</p>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                                <div className="p-3 rounded-xl bg-white border border-green-200">
+                                    <p className="font-bold text-xs text-green-700 mb-1">⚙️ Working</p>
+                                    <ul className="text-[11px] text-gray-600 space-y-1">
+                                        <li>• Continuous connection maintain hota hai</li>
+                                        <li>• Full duplex communication (dono side se ek saath) hota hai</li>
+                                    </ul>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white border border-green-200">
+                                    <p className="font-bold text-xs text-green-700 mb-1">📌 Important Points</p>
+                                    <ul className="text-[11px] text-gray-600 space-y-1">
+                                        <li>• Direct communication hota hai</li>
+                                        <li>• Koi third party ya broker nahi hota</li>
+                                        <li>• Secure connection hota hai</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-xl bg-white border border-green-200 mb-3 shadow-sm overflow-hidden flex justify-center">
+                                <img src="/iot/exclusive-pair-diagram.png" alt="Exclusive Pair Diagram" className="max-w-full h-auto rounded-lg" />
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-green-50 border border-green-100">
+                                <p className="font-bold text-xs text-green-700 mb-1">💡 Example</p>
+                                <p className="text-[11px] text-green-800">Client ↔ Server ke beech direct websocket communication ya phir <strong>Bluetooth pairing</strong> (jaise Mobile aur Wireless Earphones ka connection).</p>
+                            </div>
+                        </div>
                     </Sec>
 
                     {/* Navigation */}
