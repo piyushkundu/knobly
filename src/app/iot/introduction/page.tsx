@@ -49,6 +49,7 @@ const tocItems = [
     { icon: <Globe size={13} />, label: 'Network Layer ', id: 'network-layer-deep', color: '#06b6d4' },
     { icon: <Zap size={13} />, label: 'Physical Layer ', id: 'physical-layer-deep', color: '#f97316' },
     { icon: <Radio size={13} />, label: 'Comm. Models', id: 'comm-models', color: '#10b981' },
+    { icon: <Cpu size={13} />, label: 'Dev Tools', id: 'dev-tools', color: '#8b5cf6' },
 ];
 
 export default function IoTIntroduction() {
@@ -1622,6 +1623,216 @@ export default function IoTIntroduction() {
                             <div className="p-3 rounded-xl bg-green-50 border border-green-100">
                                 <p className="font-bold text-xs text-green-700 mb-1">💡 Example</p>
                                 <p className="text-[11px] text-green-800">Client ↔ Server ke beech direct websocket communication ya phir <strong>Bluetooth pairing</strong> (jaise Mobile aur Wireless Earphones ka connection).</p>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ Development Tools ═══ */}
+                    <Sec id="dev-tools" title="🔴 Development Tools Used in IoT" icon={<Cpu size={16} className="text-purple-500" />}>
+                        <Def>🛠️ IoT systems banane ke liye sirf idea kaafi nahi hota, balki hume kuch <strong>special hardware aur software tools</strong> ki zarurat hoti hai jinke through hum sensors se data collect, process aur control kar paate hain.</Def>
+                        
+                        <p className="mb-2">Ye tools developers ko help karte hain:</p>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                            {['💻 Devices ko program karne me', '⚙️ Data process karne me', '📱 IoT applications banane me'].map((s, i) => (
+                                <span key={i} className="px-3 py-1.5 rounded-lg bg-gray-50 text-gray-700 text-xs font-semibold border border-gray-200">{s}</span>
+                            ))}
+                        </div>
+
+                        {/* (1) Arduino */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #ecfeff, #cffafe)', border: '1px solid #67e8f9' }}>
+                            <div className="flex items-center gap-3 mb-3">
+                                <h4 className="font-bold text-cyan-800 text-base">🔹 (1) Arduino</h4>
+                            </div>
+                            <p className="text-sm text-cyan-900 mb-3">Arduino ek <strong>open-source platform</strong> hai jo hardware aur software dono provide karta hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <div className="p-3 rounded-xl bg-white border border-cyan-200 mb-3 shadow-sm">
+                                        <p className="font-bold text-xs text-cyan-700 mb-1">👉 Ye ek small electronic board hota hai jisme:</p>
+                                        <ul className="text-[11px] text-gray-600 space-y-1 ml-2">
+                                            <li>• Microcontroller (CPU) hota hai</li>
+                                            <li>• Input/Output pins hoti hain</li>
+                                        </ul>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-white border border-cyan-200 shadow-sm">
+                                        <p className="font-bold text-xs text-cyan-700 mb-1">🔸 Important Points</p>
+                                        <ul className="text-[11px] text-gray-600 space-y-1 ml-2">
+                                            <li>• Real-time system ki tarah kaam karta hai</li>
+                                            <li>• Input (sensor data) ko read karta hai</li>
+                                            <li>• Output (LED, motor etc.) ko control karta hai</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-3">
+                                    <div className="p-2 rounded-xl bg-white border border-cyan-200 shadow-sm flex items-center justify-center flex-1 min-h-[140px]">
+                                        <img src="/iot/arduino.png" alt="Arduino Board" className="w-full max-w-[200px] h-auto object-contain drop-shadow-md rounded-lg" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                                <div className="p-3 rounded-xl bg-cyan-50 border border-cyan-100">
+                                    <p className="font-bold text-xs text-cyan-700 mb-1">🔸 Use kaha hota hai</p>
+                                    <p className="text-[11px] text-cyan-800">Smart home systems, Automation projects, IoT prototypes</p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-cyan-50 border border-cyan-100">
+                                    <p className="font-bold text-xs text-cyan-700 mb-1">💡 Example Workflow</p>
+                                    <p className="text-[11px] text-cyan-800 font-semibold">Temperature sensor → Arduino → Fan ON/OFF</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* (2) Raspberry Pi */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #86efac' }}>
+                            <div className="flex items-center gap-3 mb-3">
+                                <h4 className="font-bold text-green-800 text-base">🔹 (2) Raspberry Pi</h4>
+                            </div>
+                            <p className="text-sm text-green-900 mb-3">Raspberry Pi ek credit-card size ka <strong>mini computer</strong> hota hai jo Linux operating system par kaam karta hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div className="flex flex-col gap-3">
+                                    <div className="p-2 rounded-xl bg-white border border-green-200 shadow-sm flex items-center justify-center flex-1 min-h-[140px]">
+                                        <img src="/iot/raspberry_pi.png" alt="Raspberry Pi" className="w-full max-w-[200px] h-auto object-contain drop-shadow-md rounded-lg" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="p-3 rounded-xl bg-white border border-green-200 mb-3 shadow-sm">
+                                        <p className="font-bold text-xs text-green-700 mb-1">👉 Ye Arduino se powerful hota hai kyunki:</p>
+                                        <ul className="text-[11px] text-gray-600 space-y-1 ml-2">
+                                            <li>• Isme OS run hota hai</li>
+                                            <li>• Storage aur networking support hota hai</li>
+                                        </ul>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-white border border-green-200 shadow-sm">
+                                        <p className="font-bold text-xs text-green-700 mb-1">🔸 Important Points</p>
+                                        <ul className="text-[11px] text-gray-600 space-y-1 ml-2">
+                                            <li>• Memory card (SD card) use hota hai</li>
+                                            <li>• WiFi aur HDMI support hota hai</li>
+                                            <li>• TV ya monitor se connect ho sakta hai</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                                <div className="p-3 rounded-xl bg-green-50 border border-green-100">
+                                    <p className="font-bold text-xs text-green-700 mb-1">🔸 Use kaha hota hai</p>
+                                    <p className="text-[11px] text-green-800">Smart surveillance system, Cloud-based IoT system, AI + IoT projects</p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-green-50 border border-green-100">
+                                    <p className="font-bold text-xs text-green-700 mb-1">💡 Example</p>
+                                    <p className="text-[11px] text-green-800 font-semibold">CCTV camera → Raspberry Pi → Live monitoring</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* (3) Tessel 2 */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', border: '1px solid #c4b5fd' }}>
+                            <div className="flex items-center gap-3 mb-3">
+                                <h4 className="font-bold text-purple-800 text-base">🔹 (3) Tessel 2</h4>
+                            </div>
+                            <p className="text-sm text-purple-900 mb-3">Tessel 2 ek development board hai jo specially <strong>IoT applications</strong> ke liye design kiya gaya hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <div className="p-3 rounded-xl bg-white border border-purple-200 mb-3 shadow-sm">
+                                        <p className="font-bold text-xs text-purple-700 mb-1">👉 Features:</p>
+                                        <ul className="text-[11px] text-gray-600 space-y-1 ml-2">
+                                            <li>• Built-in WiFi hota hai</li>
+                                            <li>• JavaScript (Node.js) par kaam karta hai</li>
+                                            <li>• Fast development aur easy programming</li>
+                                        </ul>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-purple-50 border border-purple-100 shadow-sm">
+                                        <p className="font-bold text-xs text-purple-700 mb-1">🔸 Tessel 2 ka kaam</p>
+                                        <p className="text-[11px] text-purple-800">IoT devices ko internet se connect karna, Sensors se data lena, Cloud me data bhejna.</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col justify-center">
+                                    <div className="p-2 rounded-xl bg-white border border-purple-200 shadow-sm flex items-center justify-center flex-1 min-h-[140px]">
+                                        <img src="/iot/tessel_2.png" alt="Tessel 2" className="w-full max-w-[200px] h-auto object-contain drop-shadow-md rounded-lg" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="p-3 rounded-xl bg-purple-50 border border-purple-100">
+                                <p className="font-bold text-xs text-purple-700 mb-1">💡 Example Workflow</p>
+                                <p className="text-[11px] text-purple-800 font-semibold">Sensor data → Tessel → Cloud</p>
+                            </div>
+                        </div>
+
+                        {/* (4) Kinoma Create */}
+                        <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '1px solid #fdba74' }}>
+                            <div className="flex items-center gap-3 mb-3">
+                                <h4 className="font-bold text-orange-800 text-base">🔹 (4) Kinoma Create</h4>
+                            </div>
+                            <p className="text-sm text-orange-900 mb-3">Kinoma Create ek aisa tool hai jo IoT devices ke beech <strong>communication setup</strong> karne ke liye use hota hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div className="flex flex-col justify-center">
+                                    <div className="p-2 rounded-xl bg-white border border-orange-200 shadow-sm flex items-center justify-center flex-1 min-h-[140px]">
+                                        <img src="/iot/kinoma.png" alt="Kinoma Create" className="w-full max-w-[200px] h-auto object-contain drop-shadow-md rounded-lg" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="p-3 rounded-xl bg-white border border-orange-200 mb-3 shadow-sm">
+                                        <p className="font-bold text-xs text-orange-700 mb-1">👉 Ye developers ko help karta hai:</p>
+                                        <ul className="text-[11px] text-gray-600 space-y-1 ml-2">
+                                            <li>• Devices ke beech communication establish karne me</li>
+                                            <li>• IoT apps develop karne me</li>
+                                        </ul>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-orange-50 border border-orange-100 shadow-sm">
+                                        <p className="font-bold text-xs text-orange-700 mb-1">🔸 Important Points</p>
+                                        <ul className="text-[11px] text-orange-800 space-y-1 ml-2">
+                                            <li>• JavaScript based hai</li>
+                                            <li>• Fast prototyping aur easy interface</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="p-3 rounded-xl bg-orange-50 border border-orange-100">
+                                <p className="font-bold text-xs text-orange-700 mb-1">💡 Example</p>
+                                <p className="text-[11px] text-orange-800 font-semibold">Smart home system ka control panel banana</p>
+                            </div>
+                        </div>
+
+                        {/* (5) Eclipse IoT */}
+                        <div className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', border: '1px solid #cbd5e1' }}>
+                            <div className="flex items-center gap-3 mb-3">
+                                <h4 className="font-bold text-slate-800 text-base">🔹 (5) Eclipse IoT</h4>
+                            </div>
+                            <p className="text-sm text-slate-700 mb-3">Eclipse IoT ek <strong>open-source platform</strong> hai jo IoT development ke liye use hota hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <div className="p-3 rounded-xl bg-white border border-slate-300 mb-3 shadow-sm">
+                                        <p className="font-bold text-xs text-slate-700 mb-1">👉 Features:</p>
+                                        <ul className="text-[11px] text-gray-600 space-y-1 ml-2">
+                                            <li>• Ye Java-based tools provide karta hai</li>
+                                            <li>• Open-source aur Scalable hai</li>
+                                            <li>• Enterprise level use ke liye best hai</li>
+                                        </ul>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-white border border-slate-300 shadow-sm">
+                                        <p className="font-bold text-xs text-slate-700 mb-1">🔸 Eclipse IoT ka kaam</p>
+                                        <ul className="text-[11px] text-gray-600 space-y-1 ml-2">
+                                            <li>• IoT devices, cloud aur gateway ko connect karna</li>
+                                            <li>• Large-scale IoT applications develop karna</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col justify-center">
+                                    <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center flex-1 min-h-[140px]">
+                                        <img src="/iot/eclipse.png" alt="Eclipse IoT" className="w-full max-w-[200px] h-auto object-contain drop-shadow-md rounded-lg" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-slate-100 border border-slate-300">
+                                <p className="font-bold text-xs text-slate-700 mb-1">💡 Example</p>
+                                <p className="text-[11px] text-slate-800 font-semibold">Smart city system develop karna</p>
                             </div>
                         </div>
                     </Sec>
