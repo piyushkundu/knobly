@@ -16,8 +16,8 @@ const iotTopics = [
         duration: '3 Hours',
         lessons: 15,
         locked: false,
-        completed: false,
-        current: true,
+        completed: true,
+        current: false,
     },
     {
         title: 'Things and Connections',
@@ -30,8 +30,9 @@ const iotTopics = [
         chapter: 2,
         duration: '2.5 Hours',
         lessons: 12,
-        locked: true,
+        locked: false,
         completed: false,
+        current: true,
     },
     {
         title: 'Sensors, Actuators & Microcontrollers',
@@ -283,11 +284,13 @@ export default function IoTPage() {
                                     {!topic.locked && (
                                         <div className="space-y-2">
                                             <div className="flex justify-between text-xs">
-                                                <span className={`font-semibold ${topic.current ? 'text-cyan-600' : 'text-gray-500'}`}>{topic.current ? 'In Progress' : 'Not Started'}</span>
-                                                <span className="text-gray-400">{topic.current ? '15%' : '0%'}</span>
+                                                <span className={`font-semibold ${topic.completed ? 'text-emerald-600' : topic.current ? 'text-cyan-600' : 'text-gray-500'}`}>
+                                                    {topic.completed ? 'Completed' : topic.current ? 'In Progress' : 'Not Started'}
+                                                </span>
+                                                <span className="text-gray-400">{topic.completed ? '100%' : topic.current ? '15%' : '0%'}</span>
                                             </div>
                                             <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
-                                                <div className={`h-full rounded-full transition-all duration-1000 ${topic.current ? 'bg-gradient-to-r from-cyan-400 to-blue-500' : 'bg-gray-300'}`} style={{ width: topic.current ? '15%' : '0%' }} />
+                                                <div className={`h-full rounded-full transition-all duration-1000 ${topic.completed ? 'bg-emerald-500' : topic.current ? 'bg-gradient-to-r from-cyan-400 to-blue-500' : 'bg-gray-300'}`} style={{ width: topic.completed ? '100%' : topic.current ? '15%' : '0%' }} />
                                             </div>
                                         </div>
                                     )}
