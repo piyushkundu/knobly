@@ -2,6 +2,7 @@
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Wifi, Cpu, Radio, Shield, Zap, BookOpen, Menu, X, ChevronRight, Hash, Sparkles, Globe, Eye, Activity, Layers } from 'lucide-react';
+import IoTChap1MCQ from '@/components/content/IoTChap1MCQ';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -50,6 +51,7 @@ const tocItems = [
     { icon: <Zap size={13} />, label: 'Physical Layer ', id: 'physical-layer-deep', color: '#f97316' },
     { icon: <Radio size={13} />, label: 'Comm. Models', id: 'comm-models', color: '#10b981' },
     { icon: <Cpu size={13} />, label: 'Dev Tools', id: 'dev-tools', color: '#8b5cf6' },
+    { icon: <BookOpen size={13} />, label: 'Important MCQs', id: 'mcqs', color: '#0ea5e9' },
 ];
 
 export default function IoTIntroduction() {
@@ -1835,6 +1837,12 @@ export default function IoTIntroduction() {
                                 <p className="text-[11px] text-slate-800 font-semibold">Smart city system develop karna</p>
                             </div>
                         </div>
+                    </Sec>
+
+                    {/* ═══ MCQs ═══ */}
+                    <Sec id="mcqs" title="📝 Important MCQs (50 Questions)" icon={<BookOpen size={16} className="text-sky-500" />}>
+                        <Def>🎯 Niche diye gaye 50 MCQs ki practice karein. Sahi answer dekhne ke liye options par click karein ya "Check Answer" dabayein.</Def>
+                        <IoTChap1MCQ />
                     </Sec>
 
                     {/* Navigation */}

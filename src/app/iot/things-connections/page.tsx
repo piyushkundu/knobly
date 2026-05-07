@@ -1,7 +1,7 @@
 'use client';
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Settings, Activity, Gauge, Thermometer, Repeat, Target, Clock, Zap, Cpu } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Settings, Activity, Gauge, Thermometer, Repeat, Target, Clock, Zap, Cpu, Layers, Network, Globe, ArrowRightLeft, Wifi, Server } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -28,6 +28,13 @@ const tocItems = [
     { icon: <Target size={13} />, label: 'Open Loop', id: 'open-loop', color: '#f97316' },
     { icon: <Activity size={13} />, label: 'Closed Loop', id: 'closed-loop', color: '#10b981' },
     { icon: <Clock size={13} />, label: 'Real Time System', id: 'real-time', color: '#ef4444' },
+    { icon: <Thermometer size={13} />, label: 'Thermostat', id: 'thermostat', color: '#f59e0b' },
+    { icon: <Layers size={13} />, label: 'OSI Model', id: 'osi-model', color: '#06b6d4' },
+    { icon: <Network size={13} />, label: 'TCP/IP Model', id: 'tcp-ip', color: '#ec4899' },
+    { icon: <ArrowRightLeft size={13} />, label: 'Transmission Mode', id: 'transmission-mode', color: '#8b5cf6' },
+    { icon: <Zap size={13} />, label: 'Transmission Media', id: 'transmission-media', color: '#10b981' },
+    { icon: <Zap size={13} />, label: 'Guided Media', id: 'guided-media', color: '#0ea5e9' },
+    { icon: <Wifi size={13} />, label: 'Unguided Media', id: 'unguided-media', color: '#8b5cf6' },
 ];
 
 export default function IoTThingsConnections() {
@@ -301,6 +308,487 @@ export default function IoTThingsConnections() {
                         </div>
                         <IB type="tip">Ye systems real-time data ko process karte hain aur <strong>turant decision lete hain!</strong></IB>
                     </Sec>
+
+                    {/* ═══ SECTION: Thermostat ═══ */}
+                    <Sec id="thermostat" title="🔹 What is Thermostat" icon={<Thermometer size={16} className="text-amber-500" />}>
+                        <Def>🌡️ <strong>Thermostat</strong> ek aisa component ya device hota hai jo kisi physical system ke temperature ko control karta hai aur feedback provide karta hai taaki system ka temperature desired point ke aas-paas bana rahe.</Def>
+                        
+                        <div className="flex flex-col md:flex-row gap-5 items-center my-4">
+                            <div className="flex-1 space-y-3">
+                                <p>Thermostat ka main kaam <strong>temperature ko monitor karna</strong> aur uske according heating ya cooling ko control karna hota hai. Jab temperature fixed limit se jyada ya kam ho jata hai to thermostat automatically system ko ON ya OFF kar deta hai.</p>
+                                <IB type="note">Ye ek <strong>closed loop control device</strong> hota hai kyunki isme continuously feedback use hota hai.</IB>
+                            </div>
+                            <div className="w-full md:w-1/3 flex justify-center">
+                                <img src="/iot/thermostat.png" alt="Smart Thermostat" className="w-full max-w-[200px] rounded-2xl shadow-lg border border-gray-100" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+                            <div className="rounded-2xl p-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+                                <h4 className="font-bold text-amber-800 mb-3 flex items-center gap-2">⚙️ Working of Thermostat</h4>
+                                <ul className="space-y-2 text-sm text-amber-900">
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div> Environment ka temperature sense karta hai</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div> Desired temperature se compare karta hai</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div> Temperature kam ho to heating start karta hai</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div> Temperature jyada ho to heating band kar deta hai</li>
+                                </ul>
+                                <p className="text-xs font-semibold text-amber-700 mt-3">👉 Is process ki wajah se system ka temperature stable bana rehta hai.</p>
+                            </div>
+                            
+                            <div className="rounded-2xl p-4 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200">
+                                <h4 className="font-bold text-blue-800 mb-3 flex items-center gap-2">💡 Uses of Thermostat</h4>
+                                <p className="text-sm text-blue-900 mb-2">Thermostat ka use different devices aur systems me kiya jata hai:</p>
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                    {['🏢 Building heating system', '❄️ Air Conditioner (AC)', '💧 Water heater', '♨️ Oven'].map((u, i) => (
+                                        <span key={i} className="px-2 py-1 bg-white rounded-md text-xs font-semibold text-blue-800 shadow-sm border border-blue-100">{u}</span>
+                                    ))}
+                                </div>
+                                <div className="p-2 bg-blue-100 rounded-lg text-xs text-blue-800">
+                                    <strong>👉 Example:</strong> AC me thermostat room temperature ko maintain karta hai.
+                                </div>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: OSI Model ═══ */}
+                    <Sec id="osi-model" title="🔹 OSI Model (Open System Interconnection)" icon={<Layers size={16} className="text-cyan-500" />}>
+                        <Def>🌐 <strong>OSI Model</strong> ek reference model hai jo ISO (International Organization for Standardization) ne 1984 me develop kiya tha.</Def>
+                        <p>Ye model network communication ko samajhne ke liye use hota hai. OSI model communication process ko different layers me divide karta hai taaki data transmission easy aur organized ho sake. Is model me <strong>total 7 layers</strong> hoti hain aur har layer ka apna specific kaam hota hai.</p>
+
+                        <h4 className="font-bold mt-6 mb-4 text-gray-800 text-center">📊 Layers of OSI Model</h4>
+                        <div className="max-w-md mx-auto space-y-2 mb-6">
+                            {[
+                                { n: '7', t: 'Application Layer', c: '#ef4444', d: 'Network process to application' },
+                                { n: '6', t: 'Presentation Layer', c: '#f97316', d: 'Data representation & encryption' },
+                                { n: '5', t: 'Session Layer', c: '#eab308', d: 'Interhost communication' },
+                                { n: '4', t: 'Transport Layer', c: '#22c55e', d: 'End-to-end connections & reliability' },
+                                { n: '3', t: 'Network Layer', c: '#06b6d4', d: 'Path determination & logical addressing' },
+                                { n: '2', t: 'Data Link Layer', c: '#3b82f6', d: 'Physical addressing & MAC' },
+                                { n: '1', t: 'Physical Layer', c: '#8b5cf6', d: 'Media, signal & binary transmission' }
+                            ].map((l, i) => (
+                                <div key={i} className="flex items-center gap-3 p-3 rounded-xl transition-transform hover:scale-[1.02] cursor-default" style={{ background: `${l.c}10`, border: `1px solid ${l.c}40` }}>
+                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center font-black text-white text-sm" style={{ background: l.c }}>{l.n}</div>
+                                    <div className="flex-1">
+                                        <h5 className="font-bold text-sm" style={{ color: l.c }}>{l.t}</h5>
+                                        <p className="text-[10px] text-gray-500">{l.d}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Detail sections for each layer */}
+                        <div className="space-y-4">
+                            <div className="p-4 rounded-xl border border-purple-200 bg-purple-50">
+                                <h5 className="font-bold text-purple-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs">1</span> Physical Layer</h5>
+                                <p className="text-xs text-purple-800 mb-2">Ye OSI model ki sabse lowest layer hoti hai. Is layer ka kaam data ko electrical signals, radio signals ya optical signals me convert karke transmit karna hota hai.</p>
+                                <p className="text-[11px] font-semibold text-purple-600 bg-white inline-block px-2 py-1 rounded border border-purple-100">👉 Devices: Hub, Cable, Connector</p>
+                            </div>
+                            <div className="p-4 rounded-xl border border-blue-200 bg-blue-50">
+                                <h5 className="font-bold text-blue-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs">2</span> Data Link Layer</h5>
+                                <p className="text-xs text-blue-800 mb-2">Ye layer error-free data transfer provide karti hai. Iska kaam: Data framing, Error detection, MAC addressing.</p>
+                                <p className="text-[11px] font-semibold text-blue-600 bg-white inline-block px-2 py-1 rounded border border-blue-100">👉 Device: Switch</p>
+                            </div>
+                            <div className="p-4 rounded-xl border border-cyan-200 bg-cyan-50">
+                                <h5 className="font-bold text-cyan-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center text-xs">3</span> Network Layer</h5>
+                                <p className="text-xs text-cyan-800 mb-2">Ye layer source se destination tak data ka route decide karti hai. Is layer me IP addressing aur routing ka kaam hota hai.</p>
+                                <div className="flex gap-2">
+                                    <p className="text-[11px] font-semibold text-cyan-600 bg-white inline-block px-2 py-1 rounded border border-cyan-100">👉 Protocols: IPv4, IPv6</p>
+                                    <p className="text-[11px] font-semibold text-cyan-600 bg-white inline-block px-2 py-1 rounded border border-cyan-100">👉 Device: Router</p>
+                                </div>
+                            </div>
+                            <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50">
+                                <h5 className="font-bold text-emerald-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">4</span> Transport Layer</h5>
+                                <p className="text-xs text-emerald-800 mb-2">Ye layer end-to-end communication provide karti hai. Iska kaam: Data delivery, Error control, Flow control.</p>
+                                <p className="text-[11px] font-semibold text-emerald-600 bg-white inline-block px-2 py-1 rounded border border-emerald-100">👉 Protocols: TCP, UDP</p>
+                            </div>
+                            <div className="p-4 rounded-xl border border-yellow-200 bg-yellow-50">
+                                <h5 className="font-bold text-yellow-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-yellow-500 text-white flex items-center justify-center text-xs">5</span> Session Layer</h5>
+                                <p className="text-xs text-yellow-800">Ye layer communication sessions ko establish, manage aur terminate karti hai. Yani devices ke beech connection ko maintain karti hai.</p>
+                            </div>
+                            <div className="p-4 rounded-xl border border-orange-200 bg-orange-50">
+                                <h5 className="font-bold text-orange-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs">6</span> Presentation Layer</h5>
+                                <p className="text-xs text-orange-800 mb-2">Ye layer data ko readable format me convert karti hai. Iska kaam: Encryption, Decryption, Data formatting.</p>
+                            </div>
+                            <div className="p-4 rounded-xl border border-red-200 bg-red-50">
+                                <h5 className="font-bold text-red-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs">7</span> Application Layer</h5>
+                                <p className="text-xs text-red-800 mb-2">Ye topmost layer hoti hai jahan user directly interact karta hai. Ye layer network services provide karti hai.</p>
+                                <p className="text-[11px] font-semibold text-red-600 bg-white inline-block px-2 py-1 rounded border border-red-100">👉 Examples: HTTP, FTP, SMTP</p>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: TCP/IP Model ═══ */}
+                    <Sec id="tcp-ip" title="🔹 TCP/IP Model" icon={<Network size={16} className="text-pink-500" />}>
+                        <Def>🌐 <strong>TCP/IP model</strong> internet communication ka practical model hai.</Def>
+                        <p>Ye WWW (World Wide Web) ka main protocol model hai jiska use internet par packets send karne ke liye kiya jata hai. TCP/IP model end-to-end communication provide karta hai. Is model ko 1970 aur 1980 ke beech Department of Defense ne develop kiya tha.</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6 items-center">
+                            <div>
+                                <h4 className="font-bold mb-3 text-pink-800 text-center">📊 TCP/IP Layers</h4>
+                                <div className="space-y-2">
+                                    {[
+                                        { n: '4', t: 'Application Layer', c: '#ec4899', d: 'Covers Application, Presentation, Session layers of OSI' },
+                                        { n: '3', t: 'Transport Layer', c: '#d946ef', d: 'Covers Transport layer of OSI' },
+                                        { n: '2', t: 'Internet Layer', c: '#a855f7', d: 'Covers Network layer of OSI' },
+                                        { n: '1', t: 'Network Access Layer', c: '#8b5cf6', d: 'Covers Data Link and Physical layers of OSI' }
+                                    ].map((l, i) => (
+                                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: `${l.c}10`, border: `1px solid ${l.c}40` }}>
+                                            <div className="w-8 h-8 rounded-lg flex items-center justify-center font-black text-white text-sm" style={{ background: l.c }}>{l.n}</div>
+                                            <div className="flex-1">
+                                                <h5 className="font-bold text-sm" style={{ color: l.c }}>{l.t}</h5>
+                                                <p className="text-[10px] text-gray-500">{l.d}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                <div className="p-4 rounded-xl border border-pink-200 bg-pink-50">
+                                    <h5 className="font-bold text-pink-700 text-sm mb-1">1. Application Layer</h5>
+                                    <p className="text-xs text-pink-800 mb-1">Ye layer application, presentation aur session layer ka combined form hoti hai. User ko network services provide karti hai.</p>
+                                    <p className="text-[10px] font-bold text-pink-600">👉 Protocols: HTTP, FTP, SMTP</p>
+                                </div>
+                                <div className="p-4 rounded-xl border border-fuchsia-200 bg-fuchsia-50">
+                                    <h5 className="font-bold text-fuchsia-700 text-sm mb-1">2. Transport Layer</h5>
+                                    <p className="text-xs text-fuchsia-800 mb-1">Ye layer reliable communication provide karti hai.</p>
+                                    <p className="text-[10px] font-bold text-fuchsia-600">👉 Protocols: TCP, UDP</p>
+                                </div>
+                                <div className="p-4 rounded-xl border border-purple-200 bg-purple-50">
+                                    <h5 className="font-bold text-purple-700 text-sm mb-1">3. Internet Layer</h5>
+                                    <p className="text-xs text-purple-800 mb-1">Ye layer routing aur addressing ka kaam karti hai.</p>
+                                    <p className="text-[10px] font-bold text-purple-600">👉 Protocol: IP (Internet Protocol)</p>
+                                </div>
+                                <div className="p-4 rounded-xl border border-violet-200 bg-violet-50">
+                                    <h5 className="font-bold text-violet-700 text-sm mb-1">4. Network Access Layer</h5>
+                                    <p className="text-xs text-violet-800">Ye layer physical transmission aur hardware communication ka kaam karti hai. Isme data link aur physical layer dono include hoti hain.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Transmission Mode ═══ */}
+                    <Sec id="transmission-mode" title="🔹 Transmission Mode" icon={<ArrowRightLeft size={16} className="text-indigo-500" />}>
+                        <Def>📡 <strong>Transmission mode</strong> batata hai ki data ek device se doosri device tak kis direction me transfer ho raha hai.</Def>
+                        <p>Communication ke flow ko transmission mode kehte hain. Transmission mode mainly <strong>3 prakar</strong> ke hote hain: Simplex, Half-Duplex, Full-Duplex.</p>
+
+                        {/* 1. Simplex */}
+                        <div className="rounded-2xl p-5 my-5" style={{ background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', border: '1px solid #e2e8f0' }}>
+                            <h4 className="font-bold text-slate-800 mb-2">🔴 1. Simplex Mode</h4>
+                            <p className="text-sm text-slate-700 mb-4">Simplex mode me communication <strong>sirf ek direction me</strong> hota hai. Yani sender data bhej sakta hai lekin receiver data wapas send nahi kar sakta.</p>
+                            
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center">
+                                <div className="flex items-center gap-4 w-full max-w-sm justify-between">
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold mb-2">A</div>
+                                        <span className="text-xs font-semibold text-slate-500">Sender</span>
+                                    </div>
+                                    <div className="flex-1 relative flex items-center justify-center">
+                                        <div className="w-full h-1 bg-indigo-500 relative">
+                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 border-t-2 border-r-2 border-indigo-500 rotate-45 transform origin-center translate-x-[2px]"></div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 font-bold mb-2">B</div>
+                                        <span className="text-xs font-semibold text-slate-500">Receiver</span>
+                                    </div>
+                                </div>
+                                <div className="mt-4 flex gap-2">
+                                    <span className="text-xs px-2 py-1 bg-slate-100 rounded-md font-semibold text-slate-600">📻 Radio</span>
+                                    <span className="text-xs px-2 py-1 bg-slate-100 rounded-md font-semibold text-slate-600">📺 TV</span>
+                                    <span className="text-xs px-2 py-1 bg-slate-100 rounded-md font-semibold text-slate-600">🎛️ Remote</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 2. Half Duplex */}
+                        <div className="rounded-2xl p-5 my-5" style={{ background: 'linear-gradient(135deg, #f0fdfa, #ccfbf1)', border: '1px solid #5eead4' }}>
+                            <h4 className="font-bold text-teal-800 mb-2">🔴 2. Half-Duplex Mode</h4>
+                            <p className="text-sm text-teal-900 mb-4">Half-duplex mode me <strong>dono directions me communication possible</strong> hota hai, lekin ek samay par <strong>sirf ek direction me</strong> communication hota hai. (Semi-duplex)</p>
+                            
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-teal-200 flex flex-col items-center">
+                                <div className="flex items-center gap-4 w-full max-w-sm justify-between">
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 font-bold mb-2">A</div>
+                                    </div>
+                                    <div className="flex-1 flex flex-col gap-2">
+                                        <div className="w-full h-1 bg-teal-500 relative">
+                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 border-t-2 border-r-2 border-teal-500 rotate-45 transform origin-center translate-x-[2px]"></div>
+                                        </div>
+                                        <div className="w-full h-1 bg-slate-300 relative border-b border-dashed border-slate-400">
+                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 border-b-2 border-l-2 border-slate-400 rotate-45 transform origin-center translate-x-[-2px]"></div>
+                                        </div>
+                                        <span className="text-[10px] text-center text-teal-600 font-bold">One direction at a time</span>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 font-bold mb-2">B</div>
+                                    </div>
+                                </div>
+                                <div className="mt-4 flex gap-2">
+                                    <span className="text-xs px-2 py-1 bg-teal-50 rounded-md font-semibold text-teal-700">📻 Walkie-Talkie</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 3. Full Duplex */}
+                        <div className="rounded-2xl p-5 my-5" style={{ background: 'linear-gradient(135deg, #eff6ff, #dbeafe)', border: '1px solid #bfdbfe' }}>
+                            <h4 className="font-bold text-blue-800 mb-2">🔴 3. Full-Duplex Mode</h4>
+                            <p className="text-sm text-blue-900 mb-4">Full-duplex mode me dono devices <strong>ek hi samay par</strong> data send aur receive kar sakte hain. Ye sabse fast communication mode hota hai.</p>
+                            
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-200 flex flex-col items-center">
+                                <div className="flex items-center gap-4 w-full max-w-sm justify-between">
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold mb-2">A</div>
+                                    </div>
+                                    <div className="flex-1 flex flex-col gap-2">
+                                        <div className="w-full h-1 bg-blue-500 relative">
+                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 border-t-2 border-r-2 border-blue-500 rotate-45 transform origin-center translate-x-[2px]"></div>
+                                        </div>
+                                        <div className="w-full h-1 bg-blue-500 relative">
+                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 border-b-2 border-l-2 border-blue-500 rotate-45 transform origin-center translate-x-[-2px]"></div>
+                                        </div>
+                                        <span className="text-[10px] text-center text-blue-600 font-bold">Simultaneously</span>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold mb-2">B</div>
+                                    </div>
+                                </div>
+                                <div className="mt-4 flex gap-2">
+                                    <span className="text-xs px-2 py-1 bg-blue-50 rounded-md font-semibold text-blue-700">📱 Mobile Phone</span>
+                                    <span className="text-xs px-2 py-1 bg-blue-50 rounded-md font-semibold text-blue-700">💻 Internet</span>
+                                </div>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Transmission Media ═══ */}
+                    <Sec id="transmission-media" title="🔹 Transmission Media" icon={<Zap size={16} className="text-emerald-500" />}>
+                        <Def>🌐 <strong>Transmission media</strong> ek communication path hota hai jiske through data ek device se doosri device tak transfer kiya jata hai.</Def>
+                        <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50 my-4">
+                            <p className="text-emerald-800 font-medium">Simple words me: <strong className="text-emerald-900">“Transmission media = data travel karne ka medium”</strong></p>
+                        </div>
+                        <p>Jab bhi do devices aapas me communicate karte hain to data kisi na kisi medium ke through transmit hota hai. Ye medium <strong>wired</strong> bhi ho sakta hai aur <strong>wireless</strong> bhi.</p>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+                            <div className="p-5 rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-sky-100/50 hover:shadow-md transition-all">
+                                <div className="text-sky-500 mb-2"><Zap size={24} /></div>
+                                <h4 className="font-bold text-sky-800 text-lg mb-1">1. Guided Media</h4>
+                                <p className="text-sm text-sky-700">Wired media jisme data physical cables ke through transfer hota hai.</p>
+                            </div>
+                            <div className="p-5 rounded-2xl border border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100/50 hover:shadow-md transition-all">
+                                <div className="text-purple-500 mb-2"><Wifi size={24} /></div>
+                                <h4 className="font-bold text-purple-800 text-lg mb-1">2. Unguided Media</h4>
+                                <p className="text-sm text-purple-700">Wireless media jisme data hawa (air) me electromagnetic waves ke form me transfer hota hai.</p>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Guided Media ═══ */}
+                    <Sec id="guided-media" title="🔴 1. Guided Media (Wired Transmission Media)" icon={<Zap size={16} className="text-sky-500" />}>
+                        <p>Guided media me devices ke beech <strong>physical connection</strong> hota hai. Yani data cables ya wires ke through transmit hota hai. Isme signals ek fixed path follow karte hain.</p>
+                        
+                        <div className="flex flex-wrap gap-2 my-3">
+                            {['🔒 High security', '✅ Stable communication', '⚡ Fast data transfer', '🔇 Noise kam hota hai'].map((f, i) => (
+                                <span key={i} className="px-3 py-1.5 rounded-lg bg-white text-sky-800 text-xs font-bold border border-sky-200 shadow-sm">{f}</span>
+                            ))}
+                        </div>
+
+                        {/* Twisted Pair Cable */}
+                        <div className="mt-8 mb-6 p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
+                            <div className="flex flex-col md:flex-row gap-6 items-center">
+                                <div className="flex-1">
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs">1</span> Twisted Pair Cable</h4>
+                                    <p className="text-sm text-gray-600 mb-3">Ye data transmission ka sabse common aur sasta medium hota hai. Isme do copper wires hoti hain jinko plastic cover se insulated kiya jata hai aur dono wires ko aapas me <strong>twist kiya jata hai</strong>.</p>
+                                    <IB type="tip">Twisting ka main purpose <strong>noise aur interference ko kam karna</strong> hota hai.</IB>
+                                    
+                                    <div className="grid grid-cols-2 gap-4 mt-4">
+                                        <div>
+                                            <h5 className="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2">Features</h5>
+                                            <ul className="space-y-1 text-sm text-gray-700">
+                                                <li>✔️ Low cost</li>
+                                                <li>✔️ Easy installation</li>
+                                                <li>✔️ Flexible cable</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h5 className="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2">Uses</h5>
+                                            <ul className="space-y-1 text-sm text-gray-700">
+                                                <li>📞 Telephone lines</li>
+                                                <li>💻 LAN network</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full md:w-1/3 flex justify-center">
+                                    <img src="/iot/twisted_pair.png" alt="Twisted Pair Cable" className="w-full max-w-[220px] rounded-xl shadow-md border border-gray-200 object-cover" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Coaxial Cable */}
+                        <div className="mb-6 p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
+                            <div className="flex flex-col md:flex-row-reverse gap-6 items-center">
+                                <div className="flex-1">
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs">2</span> Coaxial Cable</h4>
+                                    <p className="text-sm text-gray-600 mb-3">Iska use heavy signals aur video signals ko transmit karne ke liye kiya jata hai. Jahan twisted pair proper signal transfer nahi kar pati, wahan coaxial cable use hoti hai.</p>
+                                    
+                                    <div className="bg-orange-50 p-3 rounded-lg border border-orange-100 mb-4 text-sm text-orange-900">
+                                        <strong className="block mb-1">Structure:</strong>
+                                        <span className="inline-block mr-3">1. Center copper wire</span>
+                                        <span className="inline-block mr-3">2. Plastic insulation</span>
+                                        <span className="inline-block mr-3">3. Metallic shield</span>
+                                        <span className="inline-block">4. Outer plastic cover</span>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <h5 className="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2">Features</h5>
+                                            <ul className="space-y-1 text-sm text-gray-700">
+                                                <li>✔️ Better signal quality</li>
+                                                <li>✔️ Long distance</li>
+                                                <li>✔️ Noise resistance</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h5 className="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2">Uses</h5>
+                                            <ul className="space-y-1 text-sm text-gray-700">
+                                                <li>📺 Cable TV network</li>
+                                                <li>🌐 Internet connection</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full md:w-1/3 flex justify-center">
+                                    <img src="/iot/coaxial_cable.png" alt="Coaxial Cable" className="w-full max-w-[220px] rounded-xl shadow-md border border-gray-200 object-cover" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Fiber Optics Cable */}
+                        <div className="p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
+                            <div className="flex flex-col md:flex-row gap-6 items-center">
+                                <div className="flex-1">
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center text-xs">3</span> Fiber Optics Cable</h4>
+                                    <p className="text-sm text-gray-600 mb-3">Ye <strong>sabse fast</strong> transmission medium mana jata hai. Is cable me digital data ko light signals ke form me transmit kiya jata hai (Electrical signal ki jagah light ka use).</p>
+                                    
+                                    <div className="bg-cyan-50 p-3 rounded-lg border border-cyan-100 mb-4">
+                                        <div className="flex items-center gap-2 text-sm font-bold text-cyan-800">
+                                            <span>Light Source</span> <ChevronRight size={14} /> <span>Fiber Tube</span> <ChevronRight size={14} /> <span>Detector</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <h5 className="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2">Features</h5>
+                                            <ul className="space-y-1 text-sm text-gray-700">
+                                                <li>🚀 Very high speed</li>
+                                                <li>🌍 Long distance</li>
+                                                <li>🔒 Secure & No EMI</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h5 className="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2">Uses</h5>
+                                            <ul className="space-y-1 text-sm text-gray-700">
+                                                <li>🌐 Internet backbone</li>
+                                                <li>📡 Telecom networks</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full md:w-1/3 flex justify-center">
+                                    <img src="/iot/fiber_optics.png" alt="Fiber Optics Cable" className="w-full max-w-[220px] rounded-xl shadow-md border border-gray-200 object-cover" />
+                                </div>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Unguided Media ═══ */}
+                    <Sec id="unguided-media" title="🔴 2. Unguided Media (Wireless Transmission Media)" icon={<Wifi size={16} className="text-purple-500" />}>
+                        <p>Unguided media me devices ke beech <strong>koi physical connection nahi hota</strong>. Isme data air ke through electromagnetic waves ke form me transfer hota hai.</p>
+                        
+                        <div className="flex flex-wrap gap-2 my-3">
+                            {['📶 No physical cable', '📱 Mobility support', '🌍 Large area coverage', '⚡ Easy communication'].map((f, i) => (
+                                <span key={i} className="px-3 py-1.5 rounded-lg bg-white text-purple-800 text-xs font-bold border border-purple-200 shadow-sm">{f}</span>
+                            ))}
+                        </div>
+
+                        {/* Radio Waves */}
+                        <div className="mt-8 mb-6 p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
+                            <div className="flex flex-col md:flex-row gap-6 items-center">
+                                <div className="flex-1">
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs">1</span> Radio Waves</h4>
+                                    <p className="text-sm text-gray-600 mb-2">Radio waves ko generate karna aur use karna bahut easy hota hai. Ye long distance communication ke liye use hoti hain aur <strong>objects ke through bhi travel kar sakti hain</strong>.</p>
+                                    <p className="text-xs font-bold text-indigo-600 mb-4">Range: 3 KHz – 300 GHz</p>
+                                    
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <h5 className="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2">Features</h5>
+                                            <ul className="space-y-1 text-sm text-gray-700">
+                                                <li>✔️ Long distance</li>
+                                                <li>✔️ Omnidirectional</li>
+                                                <li>✔️ Large coverage</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h5 className="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2">Uses</h5>
+                                            <ul className="space-y-1 text-sm text-gray-700">
+                                                <li>📻 Radio communication</li>
+                                                <li>📺 TV broadcasting</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full md:w-1/3 flex justify-center">
+                                    <img src="/iot/radio_waves.png" alt="Radio Waves" className="w-full max-w-[220px] rounded-xl shadow-md border border-gray-200 object-cover" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Microwave */}
+                        <div className="mb-6 p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
+                            <div className="flex flex-col md:flex-row-reverse gap-6 items-center">
+                                <div className="flex-1">
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-xs">2</span> Microwave</h4>
+                                    <p className="text-sm text-gray-600 mb-3">Microwave waves mainly long distance communication ke liye use hoti hain. Ye <strong>direct line-of-sight communication</strong> follow karti hain, isliye towers ko face-to-face hona zaruri hai.</p>
+                                    <IB type="note">Inki wavelength 1 meter se 1 millimeter ke beech hoti hai.</IB>
+                                    
+                                    <div className="mt-4">
+                                        <h5 className="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2">Uses</h5>
+                                        <div className="flex gap-2">
+                                            <span className="text-xs px-2 py-1 bg-pink-50 text-pink-700 rounded-md font-semibold border border-pink-100">📡 Satellite</span>
+                                            <span className="text-xs px-2 py-1 bg-pink-50 text-pink-700 rounded-md font-semibold border border-pink-100">📱 Mobile Comm.</span>
+                                            <span className="text-xs px-2 py-1 bg-pink-50 text-pink-700 rounded-md font-semibold border border-pink-100">🛰️ Radar Systems</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full md:w-1/3 flex justify-center">
+                                    <img src="/iot/microwave_tower.png" alt="Microwave Communication" className="w-full max-w-[220px] rounded-xl shadow-md border border-gray-200 object-cover" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Infrared Waves */}
+                        <div className="p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
+                            <div className="flex flex-col md:flex-row gap-6 items-center">
+                                <div className="flex-1">
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs">3</span> Infrared Waves</h4>
+                                    <p className="text-sm text-gray-600 mb-3">Infrared waves ka use <strong>short-range communication</strong> ke liye kiya jata hai. Ye waves solid objects (jaise walls) ke through pass nahi ho sakti.</p>
+                                    
+                                    <div className="mt-4">
+                                        <h5 className="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2">Uses</h5>
+                                        <div className="flex gap-2">
+                                            <span className="text-xs px-2 py-1 bg-red-50 text-red-700 rounded-md font-semibold border border-red-100">🎛️ TV Remote</span>
+                                            <span className="text-xs px-2 py-1 bg-red-50 text-red-700 rounded-md font-semibold border border-red-100">📶 Short-range Wireless</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full md:w-1/3 flex justify-center">
+                                    <img src="/iot/infrared_remote.png" alt="Infrared Waves" className="w-full max-w-[220px] rounded-xl shadow-md border border-gray-200 object-cover" />
+                                </div>
+                            </div>
+                        </div>
+                    </Sec>
+
                 </main>
             </div>
         </div>
