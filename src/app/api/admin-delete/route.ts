@@ -37,10 +37,35 @@ export async function POST(req: NextRequest) {
         if (action === 'import_questions' && testId && text) {
             const isOptionLine = (l: string) => /^[A-Ea-e][.)]\s+/.test(l.trim());
 
-            const blocks = (text as string).split(/\n\s*\n/).map((b: string) => b.trim()).filter(Boolean);
+            // ── STEP 1: Split into raw blocks ──
+            let rawBlocks: string[];
+            if (text.includes('###---###')) {
+                // Use the explicit delimiter
+                rawBlocks = (text as string).split('###---###').map((b: string) => b.trim()).filter(Boolean);
+            } else {
+                // Fallback: split by empty lines
+                rawBlocks = (text as string).split(/\n\s*\n/).map((b: string) => b.trim()).filter(Boolean);
+            }
+
+            // ── STEP 2: Merge orphan blocks (blocks without options) into previous question ──
+            // A block is an "orphan" if it has NO option lines (A./B./C./D.) — it's probably
+            // a code snippet that got separated from its question by an empty line.
+            const mergedBlocks: string[] = [];
+            for (const block of rawBlocks) {
+                const lines = block.split(/\n/).map((l: string) => l.trimEnd()).filter(Boolean);
+                const hasOptions = lines.some((l: string) => isOptionLine(l));
+
+                if (!hasOptions && mergedBlocks.length > 0) {
+                    // This block has no options — it's orphan code/text. Merge it into previous block.
+                    mergedBlocks[mergedBlocks.length - 1] += '\n' + block;
+                } else {
+                    mergedBlocks.push(block);
+                }
+            }
+
             let importedCount = 0;
 
-            for (const block of blocks) {
+            for (const block of mergedBlocks) {
                 const lines = block.split(/\n/).map((l: string) => l.trimEnd()).filter(Boolean);
                 const firstOptionIndex = lines.findIndex((l: string) => isOptionLine(l));
 
@@ -66,26 +91,31 @@ export async function POST(req: NextRequest) {
                     const trimmed = l.trim();
                     if (!isOptionLine(trimmed)) continue;
                     let c = trimmed.replace(/^[A-Ea-e][.)]\s*/, '');
-                    let ic = false;
-
-                    // Check * at end of whole option
-                    if (c.trim().endsWith('*')) {
-                        ic = true;
-                        c = c.trim().slice(0, -1).trim();
-                    }
-                    // Check * after English part, before " | Hindi" part
-                    if (!ic && c.includes(' | ')) {
-                        const pipeIdx = c.indexOf(' | ');
-                        const leftPart = c.slice(0, pipeIdx);
-                        if (leftPart.trim().endsWith('*')) {
-                            ic = true;
-                            c = leftPart.trim().slice(0, -1).trim() + ' | ' + c.slice(pipeIdx + 3);
-                        }
-                    }
+                    
+                    // Bulletproof * detection: if ANY * exists anywhere in the option, it's the correct answer
+                    const ic = c.includes('*');
+                    // Remove ALL asterisks from the option text
+                    c = c.replace(/\*/g, '').trim();
+                    // Clean up any double spaces left after removing *
+                    c = c.replace(/\s{2,}/g, ' ').trim();
+                    
                     options.push({ text: c, is_correct: ic });
                 }
 
                 if (!options.find(o => o.is_correct) && options.length) options[0].is_correct = true;
+
+                // Skip blocks that have no options AND look like pure code (orphan remnants)
+                // This is a safety net — if somehow an orphan block wasn't merged
+                if (options.length === 0) {
+                    const looksLikeCode = lines.every((l: string) => {
+                        const t = l.trim();
+                        return !t.includes(' | ') && !t.endsWith('?') && !t.endsWith('？');
+                    });
+                    if (looksLikeCode && mergedBlocks.length > 1) {
+                        console.log('[import] Skipping orphan code block:', questionText.substring(0, 60));
+                        continue;
+                    }
+                }
 
                 // Write to Firestore using Admin SDK (bypasses security rules)
                 const qRef = db.collection('exam_questions').doc();

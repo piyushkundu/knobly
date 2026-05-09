@@ -2,59 +2,114 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 
-const SYSTEM_PROMPT = `You are an expert AI question generation and formatting assistant for the Knobly Web learning platform.
-Your ONLY job is to output perfectly formatted multiple-choice questions (MCQs).
+// ── Pre-parse raw user input into structured question objects ──
+// This is deterministic — no AI involved — so count is ALWAYS correct.
+function preParseQuestions(raw: string) {
+    // Split by "Q{n}." or "Q{n})" pattern
+    const chunks = raw.split(/(?=Q\d+[\.\)]\s)/i).filter(s => s.trim());
+    const questions: { text: string; code: string; options: { text: string; correct: boolean }[] }[] = [];
 
-CRITICAL RULES FOR FORMATTING & TRANSLATION:
-1. Every question text MUST be bilingual in the format: English text | Hindi text
-2. If the user provides a code snippet or programming code, DO NOT TRANSLATE THE CODE. Keep the code exactly as is, on separate lines BELOW the bilingual question text.
-3. Hindi translation must be in pure Devanagari script.
-4. You MUST strictly follow this exact plain text structure:
+    for (const chunk of chunks) {
+        const t = chunk.trim();
+        if (!/^Q\d+[\.\)]\s/i.test(t)) continue;
 
-Question English text | Question Hindi text
-code_line_1_if_exists
-code_line_2_if_exists
-A. Option 1 English | Option 1 Hindi
-B. Option 2 English | Option 2 Hindi
-C. Option 3 English | Option 3 Hindi
-D. Option 4 English | Option 4 Hindi
+        // Remove "Q{n}. " prefix
+        const body = t.replace(/^Q\d+[\.\)]\s*/i, '');
 
-(Empty line MUST separate different questions)
+        // Find "Options:" and "Answer:" markers
+        const optIdx = body.search(/\nOptions:\s*\n/i);
+        const ansIdx = body.search(/\nAnswer:\s*/i);
+        if (optIdx === -1) continue;
 
-5. VERY IMPORTANT - OPTION TRANSLATION RULE:
-   - If the option text is a NUMBER, CODE OUTPUT, or SYMBOL (like: 129, [1, 2, 3], True, None, Error, 8|8 ← NO!, 0.5, etc.), write it ONLY ONCE. Do NOT repeat it as "value | value".
-   - Only translate option text that is actual ENGLISH WORDS that have a Hindi equivalent.
-   - Examples of options that should NOT be duplicated:
-       WRONG: A. 129* | 129*   ← DO NOT DO THIS
-       WRONG: B. [1, 2, 1, 2] | [1, 2, 1, 2]   ← DO NOT DO THIS
-       WRONG: C. 8 | 8   ← DO NOT DO THIS
-       CORRECT: A. 129*   ← Just write once
-       CORRECT: B. [1, 2, 1, 2]   ← Just write once
-       CORRECT: C. 8   ← Just write once
-   - Examples of options that SHOULD be translated:
-       CORRECT: A. Storage Device | स्टोरेज डिवाइस
-       CORRECT: B. Error | त्रुटि
-       CORRECT: C. None of the above | उपरोक्त में से कोई नहीं
+        // ── Extract question text + code (everything before "Options:") ──
+        let qPart = body.slice(0, optIdx).trim();
 
-6. Mark the correct answer with an asterisk (*) at the very end. Example: OptionText*
-7. NEVER use markdown like \`\`\` or bold text (**). Output ONLY the raw text. No introductions or explanations.
+        // Separate question text from code snippet
+        // Code starts after "Snippet:\n\nPython\n" or just "Python\n"
+        let questionText = qPart;
+        let code = '';
+        const snippetMatch = qPart.match(/\n\s*Snippet:\s*\n+\s*Python\s*\n/i);
+        const pythonMatch = qPart.match(/\n\s*Python\s*\n/i);
 
-Example WITHOUT code snippet:
-What is a CPU? | CPU क्या है?
-A. Storage Device | स्टोरेज डिवाइस
-B. Processing Unit* | प्रोसेसिंग यूनिट*
-C. Display Device | डिस्प्ले डिवाइस
-D. Power Supply | पावर सप्लाई
+        if (snippetMatch) {
+            questionText = qPart.slice(0, snippetMatch.index!).trim();
+            code = qPart.slice(snippetMatch.index! + snippetMatch[0].length).trim();
+        } else if (pythonMatch) {
+            questionText = qPart.slice(0, pythonMatch.index!).trim();
+            code = qPart.slice(pythonMatch.index! + pythonMatch[0].length).trim();
+        }
 
-Example WITH code snippet (note: number/code outputs in options are NOT repeated):
-What will be the output of this Python code? | इस पाइथन कोड का आउटपुट क्या होगा?
-x = [1, 2]
-print(x * 2)
-A. Error | त्रुटि
-B. [1, 2, 1, 2]*
-C. [2, 4]
-D. None | कोई नहीं
-`;
+        // ── Extract options (between "Options:" and "Answer:") ──
+        const optRaw = ansIdx !== -1
+            ? body.slice(optIdx + body.slice(optIdx).match(/\nOptions:\s*\n/i)![0].length, ansIdx)
+            : body.slice(optIdx + body.slice(optIdx).match(/\nOptions:\s*\n/i)![0].length);
+        const optTexts = optRaw.split('\n').map(l => l.trim()).filter(Boolean);
+
+        // ── Extract correct answer ──
+        let correctAns = '';
+        if (ansIdx !== -1) {
+            correctAns = body.slice(ansIdx).replace(/^\nAnswer:\s*/i, '').trim();
+            // Remove parenthetical Hindi explanations like "(Tuples are immutable...)"
+            correctAns = correctAns.replace(/\s*\(.*$/, '').replace(/\.\s*$/, '').trim();
+        }
+
+        // ── Match correct answer to options ──
+        const options = optTexts.map(opt => {
+            const optClean = opt.replace(/\.\s*$/, '').trim().toLowerCase();
+            const ansClean = correctAns.replace(/\.\s*$/, '').trim().toLowerCase();
+            const isCorrect = optClean === ansClean || ansClean.startsWith(optClean) || optClean.startsWith(ansClean)
+                || ansClean.includes(optClean) || optClean.includes(ansClean);
+            return { text: opt, correct: isCorrect };
+        });
+
+        // Ensure exactly one correct answer
+        const correctCount = options.filter(o => o.correct).length;
+        if (correctCount === 0 && options.length > 0) options[0].correct = true;
+        if (correctCount > 1) {
+            let found = false;
+            options.forEach(o => { if (o.correct && found) o.correct = false; if (o.correct) found = true; });
+        }
+
+        questions.push({ text: questionText, code, options });
+    }
+    return questions;
+}
+
+// Format pre-parsed questions into the clean output (English only)
+function formatParsed(qs: ReturnType<typeof preParseQuestions>) {
+    return qs.map(q => {
+        let block = '###---###\n' + q.text + '\n';
+        if (q.code) block += q.code + '\n';
+        q.options.forEach((o, i) => {
+            block += `${String.fromCharCode(65 + i)}. ${o.text}${o.correct ? '*' : ''}\n`;
+        });
+        return block;
+    }).join('\n');
+}
+
+const TRANSLATE_PROMPT = `You are a translation assistant. You will receive pre-formatted MCQ questions separated by ###---###.
+Your ONLY job: add Hindi translation after " | " for question text lines and translatable option lines.
+
+RULES:
+1. Keep ###---### delimiters EXACTLY as they are.
+2. Do NOT add, remove, merge, or split any questions. Output the EXACT same number of question blocks.
+3. Do NOT touch code lines. Code stays as-is.
+4. For option lines starting with A./B./C./D.: if the option is a number, code output, list, or symbol — do NOT translate, keep as-is.
+5. Only translate actual English words to Hindi (Devanagari).
+6. Keep the * marker for correct answers exactly where it is.
+7. No markdown, no explanations, just the formatted output.`;
+
+const GENERATE_PROMPT = `You are an MCQ generator. Generate questions in this exact format:
+
+###---###
+Question English | Question Hindi
+code_if_any
+A. Option (translate if words, keep if number/code)
+B. Option
+C. Option
+D. Option
+
+Mark correct answer with *. Separate questions with ###---###. Every question MUST have 4 options.`;
 
 
 export async function POST(req: NextRequest) {
@@ -63,31 +118,38 @@ export async function POST(req: NextRequest) {
         const { input, mode = 'format', num_questions = 5 } = body;
 
         let userPrompt = '';
+        let systemPrompt = '';
+
         if (mode === 'generate') {
-            userPrompt = `Please automatically generate ${num_questions} multiple-choice questions about the topic: "${input}". 
-Ensure they are formatted EXACTLY as instructed, separated by a blank line, with the correct option marked by an asterisk (*).`;
+            systemPrompt = GENERATE_PROMPT;
+            userPrompt = `Generate EXACTLY ${num_questions} MCQs about: "${input}". Use ###---### before each question. Mark correct with *.`;
         } else {
-            userPrompt = `Please carefully reformat and TRANSLATE the following unformatted/messy text into the strict bilingual English | Hindi A-D format required.
-If any code snippets exist, PRESERVE them exactly underneath the question text.
-Here is the text to process:\n\n${input}`;
+            // ── FORMAT MODE: Pre-parse first, then send to AI for translation only ──
+            const parsed = preParseQuestions(input);
+
+            if (parsed.length === 0) {
+                // Fallback: if pre-parser can't understand the format, send raw to AI
+                systemPrompt = TRANSLATE_PROMPT;
+                userPrompt = `Reformat these questions. Keep EXACTLY the same number. Use ###---### separator.\n\n${input}`;
+            } else {
+                // Pre-parsed successfully! Format and send for translation only
+                const preFormatted = formatParsed(parsed);
+                systemPrompt = TRANSLATE_PROMPT;
+                userPrompt = `Translate ONLY the English text parts to Hindi (add after " | "). Keep everything else identical. There are exactly ${parsed.length} questions — output exactly ${parsed.length} question blocks.\n\n${preFormatted}`;
+            }
         }
-
-
 
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${GROQ_API_KEY}`,
-            },
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_API_KEY}` },
             body: JSON.stringify({
                 model: 'llama-3.3-70b-versatile',
                 messages: [
-                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'system', content: systemPrompt },
                     { role: 'user', content: userPrompt }
                 ],
-                max_tokens: 3000,
-                temperature: 0.3, // Lower temperature for strict formatting
+                max_tokens: 8000,
+                temperature: 0.15,
             }),
         });
 
@@ -99,26 +161,31 @@ Here is the text to process:\n\n${input}`;
 
         const data = await response.json();
         let formattedText = data.choices?.[0]?.message?.content ?? '';
-
-        // Remove markdown code fences the AI sometimes adds
         formattedText = formattedText.replace(/^```[a-z]*\n?/gim, '').replace(/```$/gm, '').trim();
 
-        // ── POST-PROCESSING: Remove "X | X" duplicates in option lines ────────
-        // If both sides of " | " are identical (numbers, code outputs, symbols),
-        // keep only the left side. e.g: "129* | 129*" → "129*", "8 | 8" → "8"
+        // ── SAFETY CHECK: Verify AI didn't change the question count ──
+        if (mode === 'format') {
+            const parsed = preParseQuestions(input);
+            if (parsed.length > 0) {
+                const aiBlockCount = formattedText.split('###---###').filter((b: string) => b.trim()).length;
+                if (aiBlockCount !== parsed.length) {
+                    console.warn(`[AI Format] AI returned ${aiBlockCount} blocks but expected ${parsed.length}. Using English-only fallback.`);
+                    formattedText = formatParsed(parsed);
+                }
+            }
+        }
+
+        // ── POST-PROCESSING: Remove "X | X" duplicates in option lines ──
         formattedText = formattedText.split('\n').map((line: string) => {
-            const optMatch = line.match(/^([A-Ea-e][.)]\ +)(.+)$/);
+            const optMatch = line.match(/^([A-Ea-e][.)]\  +)(.+)$/);
             if (!optMatch) return line;
             const prefix = optMatch[1];
-            const body = optMatch[2];
-            if (!body.includes(' | ')) return line;
-            const pipeIdx = body.indexOf(' | ');
-            const left = body.slice(0, pipeIdx).trim();
-            const right = body.slice(pipeIdx + 3).trim();
-            // Normalize: strip trailing * for comparison
-            const leftNorm = left.replace(/\*+$/, '').trim();
-            const rightNorm = right.replace(/\*+$/, '').trim();
-            if (leftNorm === rightNorm) return prefix + left; // duplicate → keep left only
+            const b = optMatch[2];
+            if (!b.includes(' | ')) return line;
+            const pipeIdx = b.indexOf(' | ');
+            const left = b.slice(0, pipeIdx).trim();
+            const right = b.slice(pipeIdx + 3).trim();
+            if (left.replace(/\*+$/, '').trim() === right.replace(/\*+$/, '').trim()) return prefix + left;
             return line;
         }).join('\n');
 
