@@ -1,0 +1,452 @@
+'use client';
+import { useState, ReactNode } from 'react';
+import Link from 'next/link';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Thermometer, Radio, Lightbulb, Move, Gauge, Waves, Hand, Flame, Droplets, Wind, Volume2 } from 'lucide-react';
+
+function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
+    return (
+        <section id={id} className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20 transition-all duration-300 hover:shadow-lg bg-white" style={{ border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+            <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #f1f5f9' }}>{icon}<h2 className="text-base md:text-lg font-extrabold text-gray-800">{title}</h2></div>
+            <div className="text-sm leading-relaxed space-y-3 text-gray-600">{children}</div>
+        </section>
+    );
+}
+
+function Def({ children }: { children: ReactNode }) {
+    return <div className="rounded-xl p-4 my-3 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '1px solid #fed7aa', color: '#c2410c' }}>{children}</div>;
+}
+
+function IB({ type = 'tip', children }: { type?: 'tip' | 'note' | 'warning'; children: ReactNode }) {
+    const s: Record<string, { bg: string; bc: string; tc: string; emoji: string }> = { tip: { bg: '#ecfeff', bc: '#67e8f9', tc: '#0e7490', emoji: '💡' }, note: { bg: '#eff6ff', bc: '#93c5fd', tc: '#1e40af', emoji: '📝' }, warning: { bg: '#fefce8', bc: '#fde047', tc: '#854d0e', emoji: '⚠️' } };
+    const st = s[type];
+    return <div className="rounded-xl p-3.5 text-xs font-medium my-3" style={{ background: st.bg, border: `1px solid ${st.bc}`, color: st.tc }}>{st.emoji} {children}</div>;
+}
+
+const tocItems = [
+    { icon: <Zap size={13} />, label: 'Transducer', id: 'transducer', color: '#8b5cf6' },
+    { icon: <Eye size={13} />, label: 'Sensor', id: 'sensor', color: '#06b6d4' },
+    { icon: <Sun size={13} />, label: 'LDR Example', id: 'ldr', color: '#f59e0b' },
+    { icon: <Cpu size={13} />, label: 'Types of Sensors', id: 'types-of-sensors', color: '#ef4444' },
+];
+
+export default function IoTSensors() {
+    const [tocOpen, setTocOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState('transducer');
+
+    return (
+        <div className="min-h-screen bg-white relative">
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30" />
+            </div>
+
+            <header className="sticky top-0 z-50" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Link href="/iot" className="flex items-center justify-center w-9 h-9 rounded-xl text-white" style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)' }}><ArrowLeft size={16} /></Link>
+                        <div>
+                            <h1 className="text-sm font-extrabold text-gray-800">Sensors, Actuators & Microcontrollers</h1>
+                            <div className="flex items-center gap-1.5"><Sparkles size={8} className="text-orange-500" /><span className="text-[9px] uppercase tracking-[0.18em] font-bold text-orange-500">Chapter 3</span></div>
+                        </div>
+                    </div>
+                    <button onClick={() => setTocOpen(!tocOpen)} className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-gray-100 border border-gray-200">
+                        {tocOpen ? <X size={18} className="text-orange-500" /> : <Menu size={18} className="text-orange-500" />}
+                    </button>
+                </div>
+                <div className="h-[2px]" style={{ background: 'linear-gradient(90deg, #f97316, #f59e0b, #ef4444, #f97316)' }} />
+            </header>
+
+            <div className="max-w-7xl mx-auto flex relative">
+                <aside className={`${tocOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:sticky top-[52px] left-0 z-40 lg:z-10 w-64 lg:w-56 xl:w-64 h-[calc(100vh-52px)] overflow-y-auto transition-transform duration-300 lg:flex-shrink-0 bg-white/95 backdrop-blur-xl`} style={{ borderRight: '1px solid #e2e8f0' }}>
+                    <div className="p-4">
+                        <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid #e2e8f0' }}>
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)' }}><Hash size={12} className="text-white" /></div>
+                            <span className="text-xs font-extrabold uppercase tracking-wider text-gray-800">Contents</span>
+                        </div>
+                        <nav className="space-y-0.5">
+                            {tocItems.map(item => (
+                                <a key={item.id} href={`#${item.id}`} onClick={() => { setActiveSection(item.id); setTocOpen(false); }}
+                                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200"
+                                    style={{ background: activeSection === item.id ? `${item.color}15` : 'transparent', border: activeSection === item.id ? `1px solid ${item.color}30` : '1px solid transparent', color: activeSection === item.id ? item.color : '#64748b' }}>
+                                    <span style={{ color: item.color }}>{item.icon}</span>{item.label}
+                                    {activeSection === item.id && <ChevronRight size={10} className="ml-auto" />}
+                                </a>
+                            ))}
+                        </nav>
+                    </div>
+                </aside>
+                {tocOpen && <div className="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm lg:hidden" onClick={() => setTocOpen(false)} />}
+
+                <main className="flex-1 min-w-0 px-4 py-6 lg:pl-6">
+                    {/* Hero */}
+                    <section className="relative rounded-3xl overflow-hidden mb-6" style={{ background: 'linear-gradient(135deg, #ea580c 0%, #f97316 30%, #f59e0b 60%, #eab308 100%)', boxShadow: '0 8px 32px rgba(249,115,22,0.25)' }}>
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%)' }} />
+                        </div>
+                        <div className="relative z-10 p-6 md:p-10">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold mb-4" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', color: '#fff' }}>
+                                <Sparkles size={10} /> Chapter 3 — O-Level M4-R5
+                            </div>
+                            <h2 className="text-2xl md:text-4xl font-black mb-3 text-white" style={{ lineHeight: '1.2' }}>Sensors, Actuators and Microcontrollers</h2>
+                            <p className="text-sm md:text-base max-w-2xl mb-5 text-white/85">Real-world data collect karne aur devices ko control karne ke liye use hone wale components ke baare mein seekhiye.</p>
+                        </div>
+                    </section>
+
+                    {/* ═══ SECTION: Transducer ═══ */}
+                    <Sec id="transducer" title="🔹 Transducer" icon={<Zap size={16} className="text-purple-500" />}>
+                        <Def>⚡ <strong>Transducer</strong> ek electronic device hoti hai jo energy ko ek form se doosre form me convert karti hai.</Def>
+                        <p>Yani agar kisi system me <strong>mechanical, electrical, light, chemical, thermal ya electromagnetic</strong> energy ko kisi doosri energy me badla jaye to us process me transducer ka use hota hai.</p>
+                        
+                        <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 my-4">
+                            <p className="text-sm text-purple-900 font-semibold text-center mb-2">Transducer ka main kaam:</p>
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                                <span className="px-4 py-2 bg-white rounded-lg border border-purple-200 text-purple-700 shadow-sm font-bold text-xs">📥 Input Energy Receive karna</span>
+                                <ChevronRight className="text-purple-400 rotate-90 sm:rotate-0" />
+                                <span className="px-4 py-2 bg-purple-600 rounded-lg text-white shadow-md font-bold text-xs">🔄 Convert</span>
+                                <ChevronRight className="text-purple-400 rotate-90 sm:rotate-0" />
+                                <span className="px-4 py-2 bg-white rounded-lg border border-purple-200 text-purple-700 shadow-sm font-bold text-xs">📤 Output Energy Produce karna</span>
+                            </div>
+                        </div>
+
+                        <h4 className="font-bold text-gray-800 mt-6 mb-4 flex items-center gap-2">🌟 Examples of Transducer</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="p-4 rounded-2xl border border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50 hover:shadow-md transition-shadow">
+                                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-xl mb-3 shadow-sm border border-yellow-100">☀️</div>
+                                <h5 className="font-bold text-yellow-800 mb-1">Solar Cell</h5>
+                                <p className="text-xs text-yellow-700">Light energy ko electrical energy me convert karta hai.</p>
+                            </div>
+                            <div className="p-4 rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 hover:shadow-md transition-shadow">
+                                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-xl mb-3 shadow-sm border border-blue-100">⚙️</div>
+                                <h5 className="font-bold text-blue-800 mb-1">Motor</h5>
+                                <p className="text-xs text-blue-700">Electrical energy ko mechanical motion me convert karti hai.</p>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Sensor ═══ */}
+                    <Sec id="sensor" title="🔹 Sensor" icon={<Eye size={16} className="text-cyan-500" />}>
+                        <Def>👁️ <strong>Sensor</strong> shabd ka arth hota hai "sense karna" ya "feel karna".</Def>
+                        <p>Sensor ek aisa device hota hai jo environment se <strong>input data collect karta hai</strong> aur usse readable form me display karta hai. Ye environment me hone wale changes ko detect karta hai.</p>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 my-5">
+                            {['🏃 Velocity', '⏱️ Pressure', '🌡️ Temperature', '💡 Light', '🚶 Motion'].map((c, i) => (
+                                <div key={i} className="px-2 py-3 rounded-xl bg-cyan-50 border border-cyan-100 text-center shadow-sm hover:bg-cyan-100 transition-colors">
+                                    <span className="text-xs font-bold text-cyan-800">{c}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 mt-5">
+                            <p className="text-sm text-slate-700 mb-3">Sensor physical quantity ko <strong>electrical signal</strong> me convert karta hai taaki system us data ko process kar sake.</p>
+                            <p className="text-sm text-slate-700 mb-3">Sensor ka output signal human readable form me display kiya ja sakta hai ya kisi controller/system ko bheja ja sakta hai.</p>
+                            <IB type="tip">IoT systems me sensors bahut important role nibhate hain kyunki bina sensors ke real-world data collect karna possible nahi hota.</IB>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: LDR Example ═══ */}
+                    <Sec id="ldr" title="🔹 Example of Sensor – LDR" icon={<Sun size={16} className="text-amber-500" />}>
+                        <p><strong>LDR (Light Dependent Resistor)</strong> ek light sensor hota hai jiska resistance light ke according change hota hai.</p>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                            <div className="p-5 rounded-2xl bg-slate-800 border border-slate-700 text-white flex flex-col items-center justify-center text-center shadow-md">
+                                <div className="text-4xl mb-3 opacity-50">🌑</div>
+                                <h5 className="font-bold text-slate-200 mb-1">Jab Light Kam Hoti Hai</h5>
+                                <p className="text-sm font-semibold text-amber-400 mt-2 bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-600">📈 Resistance Badh Jata Hai</p>
+                            </div>
+                            <div className="p-5 rounded-2xl bg-amber-100 border border-amber-300 text-amber-900 flex flex-col items-center justify-center text-center shadow-md">
+                                <div className="text-4xl mb-3">☀️</div>
+                                <h5 className="font-bold text-amber-800 mb-1">Jab Light Jyada Hoti Hai</h5>
+                                <p className="text-sm font-semibold text-emerald-600 mt-2 bg-white px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm">📉 Resistance Kam Ho Jata Hai</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-5 p-4 bg-amber-50 rounded-xl border border-amber-100 text-center">
+                            <p className="text-sm font-bold text-amber-800">👉 Isi wajah se LDR ko light sensor kaha jata hai.</p>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Types of Sensors ═══ */}
+                    <Sec id="types-of-sensors" title="🔴 Types of Sensors" icon={<Cpu size={16} className="text-red-500" />}>
+                        <p className="mb-4">Sensors alag-alag physical quantities ko detect aur measure karne ke liye use kiye jate hain. Har sensor ka apna specific kaam hota hai aur ye environment ke different parameters ko monitor karta hai.</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            {/* 1. Temperature Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-red-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-500 group-hover:text-white transition-colors"><Thermometer size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">1. Temperature Sensor</h4>
+                                        <p className="text-xs text-gray-500">Measures temperature changes</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Temperature sensor kisi bhi vastu ya environment ke temperature ko measure karta hai. Ye changes ko detect karke electrical signal generate karta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/temp_sensor.png" alt="Temperature Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Examples:</strong> LM35, Thermocouple, Thermometer</p>
+                                    <p><strong>Uses:</strong> AC system, Refrigerator, Weather monitoring</p>
+                                </div>
+                            </div>
+
+                            {/* 2. Proximity Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-indigo-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-indigo-50 text-indigo-500 rounded-xl group-hover:bg-indigo-500 group-hover:text-white transition-colors"><Radio size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">2. Proximity Sensor</h4>
+                                        <p className="text-xs text-gray-500">Detects object presence without touch</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Proximity sensor kisi object ki presence ya distance ko bina touch kiye detect karta hai. Ye nearby object ka pata bahut aasani se laga leta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/proximity_sensor.png" alt="Proximity Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Types:</strong> Inductive, Capacitive, Magnetic</p>
+                                    <p><strong>Uses:</strong> Smartphone screen control, Robot navigation</p>
+                                </div>
+                            </div>
+
+                            {/* 3. Infrared Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-pink-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-pink-50 text-pink-500 rounded-xl group-hover:bg-pink-500 group-hover:text-white transition-colors"><Zap size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">3. Infrared (IR) Sensor</h4>
+                                        <p className="text-xs text-gray-500">Uses IR rays for detection</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Ise IR blaster ya remote sensor bhi kaha jata hai. Isme Transmitter aur Receiver hote hain. Jab light reflect hokar wapas aati hai to object detect hota hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/ir_sensor.png" alt="IR Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Types:</strong> Reflective Type, Transmissive Type</p>
+                                    <p><strong>Uses:</strong> TV remote, Automatic door system, Obstacle detection</p>
+                                </div>
+                            </div>
+
+                            {/* 4. Light Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-yellow-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-yellow-50 text-yellow-500 rounded-xl group-hover:bg-yellow-500 group-hover:text-white transition-colors"><Lightbulb size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">4. Light Sensor</h4>
+                                        <p className="text-xs text-gray-500">Converts light energy to electrical signal</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Light sensor ek photo-electric device hota hai. Ye light intensity ko detect karta hai aur uske according output signal generate karta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/light_sensor.png" alt="Light Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Examples:</strong> Photo diode, Photo resistor, Photo transistor</p>
+                                    <p><strong>Uses:</strong> Mobile brightness, Street lights, Security systems</p>
+                                </div>
+                            </div>
+
+                            {/* 5. Accelerometer Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-blue-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-blue-50 text-blue-500 rounded-xl group-hover:bg-blue-500 group-hover:text-white transition-colors"><Move size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">5. Accelerometer Sensor</h4>
+                                        <p className="text-xs text-gray-500">Measures motion and direction</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Accelerometer kisi moving device ki speed, motion aur direction ko measure karta hai. Ye acceleration detect karta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/accelerometer_sensor.png" alt="Accelerometer" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Example:</strong> Mobile rotate karne par screen rotate hona.</p>
+                                    <p><strong>Uses:</strong> Smartphones, Robots, Aircraft, Rotating devices</p>
+                                </div>
+                            </div>
+
+                            {/* 6. Pressure Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-emerald-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-emerald-50 text-emerald-500 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors"><Gauge size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">6. Pressure Sensor</h4>
+                                        <p className="text-xs text-gray-500">Detects pressure levels</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Pressure sensor pressure ko detect karta hai aur usse electrical signal me convert karta hai. Ye controller ko information deta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/pressure_sensor.png" alt="Pressure Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Examples:</strong> Pressure transmitter, Piezometer</p>
+                                    <p><strong>Uses:</strong> Pneumatic system, Hydraulic system, Vacuum system</p>
+                                </div>
+                            </div>
+
+                            {/* 7. Ultrasonic Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-sky-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-sky-50 text-sky-500 rounded-xl group-hover:bg-sky-500 group-hover:text-white transition-colors"><Waves size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">7. Ultrasonic Sensor</h4>
+                                        <p className="text-xs text-gray-500">Uses sound waves for distance</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Ye ultrasonic sound waves ka use karke object ki distance aur velocity measure karta hai. Reflected waves detect hoti hain.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/ultrasonic_sensor.png" alt="Ultrasonic Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Working:</strong> Transmit waves → Hit object → Return → Detect → Calculate</p>
+                                    <p><strong>Uses:</strong> Self-driving robots, Distance measurement</p>
+                                </div>
+                            </div>
+
+                            {/* 8. Touch Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-rose-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-rose-50 text-rose-500 rounded-xl group-hover:bg-rose-500 group-hover:text-white transition-colors"><Hand size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">8. Touch Sensor</h4>
+                                        <p className="text-xs text-gray-500">Tactile human touch detection</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Touch sensor ko tactile sensor bhi kaha jata hai. Ye human touch ko detect karta hai aur uske according signal generate karta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/touch_sensor.png" alt="Touch Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Uses:</strong> Light switch, Remote control, Laptop touchpad, Smartphone screen</p>
+                                </div>
+                            </div>
+
+                            {/* 9. Smoke and Gas Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-slate-100 text-slate-500 rounded-xl group-hover:bg-slate-500 group-hover:text-white transition-colors"><Flame size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">9. Smoke & Gas Sensor</h4>
+                                        <p className="text-xs text-gray-500">Detects harmful gases and smoke</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Smoke aur gas sensor harmful gases aur smoke ko detect karne ke liye use hota hai. Ye security systems me important role nibhata hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/smoke_sensor.png" alt="Smoke Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Types:</strong> Hydrogen sensor, CO sensor, Air pollution sensor</p>
+                                    <p><strong>Uses:</strong> Building security, Airplane safety, Industry safety</p>
+                                </div>
+                            </div>
+
+                            {/* 10. Humidity Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-cyan-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-cyan-50 text-cyan-500 rounded-xl group-hover:bg-cyan-500 group-hover:text-white transition-colors"><Droplets size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">10. Humidity Sensor</h4>
+                                        <p className="text-xs text-gray-500">Measures moisture/water vapor</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Humidity sensor environment me moisture ya water vapor ki quantity ko measure karta hai. Ye temperature dono ko monitor karta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/humidity_sensor.png" alt="Humidity Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Examples:</strong> DHT11, DHT22, AM2302</p>
+                                    <p><strong>Uses:</strong> AC systems, Weather monitoring, Agriculture</p>
+                                </div>
+                            </div>
+
+                            {/* 11. Flow Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-blue-200 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-blue-50 text-blue-500 rounded-xl group-hover:bg-blue-500 group-hover:text-white transition-colors"><Wind size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">11. Flow Sensor</h4>
+                                        <p className="text-xs text-gray-500">Measures liquid or gas flow rate</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Flow sensor kisi liquid ya gas ke flow rate ko measure karta hai. Isme magnetic device aur switch liquid movement ko detect karte hain.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/flow_sensor.png" alt="Flow Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Uses:</strong> Water control devices, Oil industry, Power plants</p>
+                                </div>
+                            </div>
+
+                            {/* 12. Sound Sensor */}
+                            <div className="p-5 rounded-2xl bg-white border border-purple-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-purple-50 text-purple-500 rounded-xl group-hover:bg-purple-500 group-hover:text-white transition-colors"><Volume2 size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">12. Sound Sensor</h4>
+                                        <p className="text-xs text-gray-500">Detects sound waves</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Sound sensor sound waves ko detect karta hai aur unhe electrical signals me convert karta hai. Ye microphone ki tarah kaam karta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/sound_sensor.png" alt="Sound Sensor" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Uses:</strong> Security system, Home automation, Smart phone, Audio amplifier</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </Sec>
+
+                </main>
+            </div>
+        </div>
+    );
+}

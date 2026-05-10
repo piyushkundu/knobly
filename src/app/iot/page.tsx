@@ -31,8 +31,8 @@ const iotTopics = [
         duration: '2.5 Hours',
         lessons: 12,
         locked: false,
-        completed: false,
-        current: true,
+        completed: true,
+        current: false,
     },
     {
         title: 'Sensors, Actuators & Microcontrollers',
@@ -45,8 +45,9 @@ const iotTopics = [
         chapter: 3,
         duration: '3.5 Hours',
         lessons: 18,
-        locked: true,
+        locked: false,
         completed: false,
+        current: true,
     },
     {
         title: 'Building IoT Applications',
