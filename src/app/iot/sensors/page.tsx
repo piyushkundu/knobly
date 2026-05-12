@@ -1,7 +1,7 @@
 'use client';
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Thermometer, Radio, Lightbulb, Move, Gauge, Waves, Hand, Flame, Droplets, Wind, Volume2 } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Thermometer, Radio, Lightbulb, Move, Gauge, Waves, Hand, Flame, Droplets, Wind, Volume2, Settings, Cog, ArrowRight } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -27,6 +27,8 @@ const tocItems = [
     { icon: <Eye size={13} />, label: 'Sensor', id: 'sensor', color: '#06b6d4' },
     { icon: <Sun size={13} />, label: 'LDR Example', id: 'ldr', color: '#f59e0b' },
     { icon: <Cpu size={13} />, label: 'Types of Sensors', id: 'types-of-sensors', color: '#ef4444' },
+    { icon: <Settings size={13} />, label: 'Actuator', id: 'actuator', color: '#10b981' },
+    { icon: <Cog size={13} />, label: 'Types of Actuators', id: 'types-of-actuators', color: '#8b5cf6' },
 ];
 
 export default function IoTSensors() {
@@ -439,6 +441,223 @@ export default function IoTSensors() {
                                 </div>
                                 <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
                                     <p><strong>Uses:</strong> Security system, Home automation, Smart phone, Audio amplifier</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Actuator ═══ */}
+                    <Sec id="actuator" title="🔹 Actuator" icon={<Settings size={16} className="text-emerald-500" />}>
+                        <Def>⚙️ <strong>Actuator</strong> ek machine component ya device hota hai jo kisi system ki movement ya mechanism ko control karta hai.</Def>
+                        <p>Ye control signal aur power source ki help se kaam karta hai. Jab actuator ko <strong>electrical signal</strong> milta hai to ye us signal ko <strong>physical movement</strong> me convert kar deta hai.</p>
+
+                        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 my-4 text-center">
+                            <p className="text-sm font-bold text-emerald-800">👉 &quot;Actuator signal ko motion me convert karta hai&quot;</p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-4 my-5">
+                            <div className="flex-1">
+                                <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">🔹 Working of Actuator</h4>
+                                <div className="space-y-2">
+                                    {['Controller actuator ko signal bhejta hai', 'Actuator signal receive karta hai', 'Signal ko motion ya force me convert karta hai', 'Machine ya device movement perform karti hai'].map((step, i) => (
+                                        <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-emerald-50 border border-emerald-100">
+                                            <span className="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
+                                            <span className="text-xs font-medium text-emerald-800">{step}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="w-full sm:w-36 flex-shrink-0 flex justify-center items-center">
+                                <img src="/iot/actuator_main.png" alt="Actuator" className="w-32 h-32 object-contain" />
+                            </div>
+                        </div>
+
+                        <h4 className="font-bold text-gray-800 mt-6 mb-3 flex items-center gap-2">🔹 Power Sources of Actuator</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 text-center hover:shadow-md transition-shadow">
+                                <div className="text-2xl mb-2">⚡</div>
+                                <p className="text-xs font-bold text-blue-800">Electric voltage/current</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-teal-50 to-teal-100 border border-teal-200 text-center hover:shadow-md transition-shadow">
+                                <div className="text-2xl mb-2">💧</div>
+                                <p className="text-xs font-bold text-teal-800">Hydraulic pressure</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 border border-sky-200 text-center hover:shadow-md transition-shadow">
+                                <div className="text-2xl mb-2">💨</div>
+                                <p className="text-xs font-bold text-sky-800">Pneumatic pressure</p>
+                            </div>
+                        </div>
+
+                        <h4 className="font-bold text-gray-800 mt-6 mb-3 flex items-center gap-2">🔹 Applications of Actuator</h4>
+                        <p className="mb-3">Actuator ka use industries aur automation systems me bahut jyada hota hai. Ye systems me <strong>motion control</strong> provide karta hai.</p>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {['⚡ Electric motor', '🔌 Relay', '💧 Hydraulic piston', '🔧 Solenoid valve', '🤖 Robotics system', '🏭 Industrial automation'].map((item, i) => (
+                                <div key={i} className="p-3 rounded-xl bg-gray-50 border border-gray-200 text-center hover:bg-emerald-50 hover:border-emerald-200 transition-colors">
+                                    <span className="text-xs font-bold text-gray-700">{item}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Types of Actuators ═══ */}
+                    <Sec id="types-of-actuators" title="🔴 Types of Actuators" icon={<Cog size={16} className="text-purple-500" />}>
+                        <p className="mb-3">Actuators ko <strong>motion</strong> aur <strong>power source</strong> ke basis par divide kiya jata hai.</p>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
+                                <h5 className="font-bold text-purple-800 mb-2 text-sm">🔹 According to Type of Motion</h5>
+                                <div className="space-y-1">
+                                    <p className="text-xs font-medium text-purple-700">• Linear Actuator</p>
+                                    <p className="text-xs font-medium text-purple-700">• Rotary Actuator</p>
+                                </div>
+                            </div>
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200">
+                                <h5 className="font-bold text-orange-800 mb-2 text-sm">🔹 According to Type of Power</h5>
+                                <div className="space-y-1">
+                                    <p className="text-xs font-medium text-orange-700">• Hydraulic Actuator</p>
+                                    <p className="text-xs font-medium text-orange-700">• Pneumatic Actuator</p>
+                                    <p className="text-xs font-medium text-orange-700">• Electrical Actuator</p>
+                                    <p className="text-xs font-medium text-orange-700">• Mechanical Actuator</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            {/* 1. Linear Actuator */}
+                            <div className="p-5 rounded-2xl bg-white border border-orange-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-orange-50 text-orange-500 rounded-xl group-hover:bg-orange-500 group-hover:text-white transition-colors"><ArrowRight size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">1. Linear Actuator</h4>
+                                        <p className="text-xs text-gray-500">Converts energy to straight-line motion</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Linear actuator energy ko <strong>straight-line motion</strong> me convert karta hai. Ye <strong>push aur pull</strong> function perform karta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/linear_actuator.png" alt="Linear Actuator" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Uses:</strong> Positioning applications, Sliding systems, Automation devices</p>
+                                    <p><strong>Example:</strong> Linear motor</p>
+                                </div>
+                            </div>
+
+                            {/* 2. Rotary Actuator */}
+                            <div className="p-5 rounded-2xl bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-teal-50 text-teal-500 rounded-xl group-hover:bg-teal-500 group-hover:text-white transition-colors"><Cog size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">2. Rotary Actuator</h4>
+                                        <p className="text-xs text-gray-500">Converts energy to rotational motion</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Rotary actuator energy ko <strong>rotational motion</strong> me convert karta hai. Ye <strong>circular movement</strong> produce karta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/rotary_actuator.png" alt="Rotary Actuator" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Examples:</strong> AC motor, DC motor</p>
+                                </div>
+                            </div>
+
+                            {/* 3. Hydraulic Actuator */}
+                            <div className="p-5 rounded-2xl bg-white border border-blue-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-blue-50 text-blue-500 rounded-xl group-hover:bg-blue-500 group-hover:text-white transition-colors"><Droplets size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">3. Hydraulic Actuator</h4>
+                                        <p className="text-xs text-gray-500">Uses hydraulic fluid pressure</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Hydraulic actuator <strong>hydraulic fluid aur pressure</strong> ki help se mechanical movement produce karta hai. Isme cylinder aur motor ka use hota hai. Ye linear, rotary aur oscillatory motion generate kar sakta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/hydraulic_actuator.png" alt="Hydraulic Actuator" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Features:</strong> Heavy load handle kar sakta hai, High force produce karta hai</p>
+                                    <p><strong>Uses:</strong> Construction equipment, Industrial machines</p>
+                                </div>
+                            </div>
+
+                            {/* 4. Pneumatic Actuator */}
+                            <div className="p-5 rounded-2xl bg-white border border-sky-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-sky-50 text-sky-500 rounded-xl group-hover:bg-sky-500 group-hover:text-white transition-colors"><Wind size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">4. Pneumatic Actuator</h4>
+                                        <p className="text-xs text-gray-500">Uses compressed air pressure</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Pneumatic actuator <strong>compressed air ya vacuum pressure</strong> par kaam karta hai. Ye air pressure ko motion me convert karta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/pneumatic_actuator.png" alt="Pneumatic Actuator" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Features:</strong> Fast response, Clean operation, Low maintenance</p>
+                                    <p><strong>Uses:</strong> Robotics, Automation systems, Air control systems</p>
+                                </div>
+                            </div>
+
+                            {/* 5. Electrical Actuator */}
+                            <div className="p-5 rounded-2xl bg-white border border-violet-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-violet-50 text-violet-500 rounded-xl group-hover:bg-violet-500 group-hover:text-white transition-colors"><Zap size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">5. Electrical Actuator</h4>
+                                        <p className="text-xs text-gray-500">Converts electrical to mechanical energy</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Electrical actuator <strong>electrical energy ko mechanical energy</strong> me convert karta hai. Ye sabse common actuator hota hai aur AC ya DC current se kaam karta hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/electrical_actuator.png" alt="Electrical Actuator" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Features:</strong> Easy control, High efficiency, Simple technology</p>
+                                    <p><strong>Example:</strong> Solenoid valve</p>
+                                </div>
+                            </div>
+
+                            {/* 6. Mechanical Actuator */}
+                            <div className="p-5 rounded-2xl bg-white border border-amber-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-amber-50 text-amber-500 rounded-xl group-hover:bg-amber-500 group-hover:text-white transition-colors"><Settings size={24} /></div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-lg">6. Mechanical Actuator</h4>
+                                        <p className="text-xs text-gray-500">Converts rotary to linear motion</p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                                    <div className="flex-1 text-sm text-gray-600">
+                                        <p>Mechanical actuator <strong>rotary motion ko linear motion</strong> me convert karta hai. Ye purely <strong>mechanical mechanism</strong> par based hota hai.</p>
+                                    </div>
+                                    <div className="w-full sm:w-28 flex-shrink-0 flex justify-center items-center">
+                                        <img src="/iot/mechanical_actuator.png" alt="Mechanical Actuator" className="w-24 h-24 object-contain" />
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg text-xs space-y-2 border border-gray-100">
+                                    <p><strong>Examples:</strong> Chain block, Hoisting system, Jack system</p>
                                 </div>
                             </div>
 
