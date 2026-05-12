@@ -1,7 +1,7 @@
 'use client';
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Thermometer, Radio, Lightbulb, Move, Gauge, Waves, Hand, Flame, Droplets, Wind, Volume2, Settings, Cog, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Thermometer, Radio, Lightbulb, Move, Gauge, Waves, Hand, Flame, Droplets, Wind, Volume2, Settings, Cog, ArrowRight, Microchip, CircuitBoard, GitCompare, BatteryLow, Clock, Binary, Box, HardDrive, Server } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -29,6 +29,9 @@ const tocItems = [
     { icon: <Cpu size={13} />, label: 'Types of Sensors', id: 'types-of-sensors', color: '#ef4444' },
     { icon: <Settings size={13} />, label: 'Actuator', id: 'actuator', color: '#10b981' },
     { icon: <Cog size={13} />, label: 'Types of Actuators', id: 'types-of-actuators', color: '#8b5cf6' },
+    { icon: <Cpu size={13} />, label: 'Microcontroller', id: 'microcontroller', color: '#0ea5e9' },
+    { icon: <Zap size={13} />, label: 'Features', id: 'mc-features', color: '#f97316' },
+    { icon: <Activity size={13} />, label: 'MC vs MP', id: 'mc-vs-mp', color: '#ef4444' },
 ];
 
 export default function IoTSensors() {
@@ -662,6 +665,166 @@ export default function IoTSensors() {
                             </div>
 
                         </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Microcontroller ═══ */}
+                    <Sec id="microcontroller" title="🔴 Microcontroller" icon={<Cpu size={16} className="text-sky-500" />}>
+                        <Def>🔲 <strong>Microcontroller</strong> ek embedded system ko control karne ke liye design kiya gaya programmable IC (Integrated Circuit) device hota hai.</Def>
+                        <p>Ye ek <strong>small computer</strong> ki tarah kaam karta hai jiske andar processor, memory aur input-output peripherals ek hi chip me available hote hain.</p>
+                        <p className="mt-2">Microcontroller ka use <strong>electronic systems aur automated devices</strong> ko control karne ke liye kiya jata hai.</p>
+
+                        <div className="flex flex-col sm:flex-row gap-5 my-5">
+                            <div className="flex-1">
+                                <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">🔹 Working of Microcontroller</h4>
+                                <p className="text-sm text-gray-600 mb-3">Microcontroller input devices se data receive karta hai, us data ko process karta hai aur output devices ko control karta hai.</p>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                    {['🧠 Processor', '💾 Memory', '📦 RAM', '📀 ROM', '🔌 I/O Ports', '📡 Serial Ports'].map((item, i) => (
+                                        <div key={i} className="p-2.5 rounded-lg bg-sky-50 border border-sky-100 text-center">
+                                            <span className="text-xs font-bold text-sky-800">{item}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="w-full sm:w-36 flex-shrink-0 flex justify-center items-center">
+                                <img src="/iot/microcontroller.png" alt="Microcontroller" className="w-32 h-32 object-contain" />
+                            </div>
+                        </div>
+
+                        <h4 className="font-bold text-gray-800 mt-6 mb-3 flex items-center gap-2">🔹 Uses of Microcontroller</h4>
+                        <p className="mb-3">Microcontroller ka use different <strong>embedded systems</strong> me kiya jata hai:</p>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            {['🤖 Robots', '🏥 Medical Equipment', '📻 Radio Transmitter', '🏠 Home Appliances', '💻 PC', '📱 Mobile Phone', '📟 Tablet', '🔊 Receiver'].map((item, i) => (
+                                <div key={i} className="p-3 rounded-xl bg-gradient-to-br from-sky-50 to-blue-50 border border-sky-100 text-center hover:shadow-md hover:border-sky-300 transition-all">
+                                    <span className="text-xs font-bold text-sky-800">{item}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Features of Microcontroller ═══ */}
+                    <Sec id="mc-features" title="🔴 Features of Microcontroller" icon={<Zap size={16} className="text-orange-500" />}>
+                        <p className="mb-4">Microcontroller ki important features:</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            {/* Feature 1 */}
+                            <div className="p-5 rounded-2xl bg-white border border-emerald-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-emerald-50 text-emerald-500 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                        <Box size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-base">🔹 1. Low Cost and Small Size</h4>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-600">Microcontroller ka size bahut <strong>chhota</strong> hota hai aur iska <strong>cost bhi kam</strong> hota hai. Isliye ise small electronic devices me easily use kiya jata hai.</p>
+                            </div>
+
+                            {/* Feature 2 */}
+                            <div className="p-5 rounded-2xl bg-white border border-blue-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-blue-50 text-blue-500 rounded-xl group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                                        <Clock size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-base">🔹 2. Operates on Clock Rate</h4>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-600">Ye <strong>clock rate/frequency</strong> par operate karta hai. Microcontroller different clock frequencies par kaam kar sakta hai.</p>
+                            </div>
+
+                            {/* Feature 3 */}
+                            <div className="p-5 rounded-2xl bg-white border border-purple-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-purple-50 text-purple-500 rounded-xl group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                                        <Binary size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-base">🔹 3. Bit Processing</h4>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-600">Microcontroller <strong>8-bit, 16-bit aur 32-bit</strong> processing support karta hai. Jitna jyada bit size hoga, utni <strong>fast processing</strong> hogi.</p>
+                            </div>
+
+                            {/* Feature 4 */}
+                            <div className="p-5 rounded-2xl bg-white border border-green-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-green-50 text-green-500 rounded-xl group-hover:bg-green-500 group-hover:text-white transition-colors">
+                                        <BatteryLow size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-base">🔹 4. Low Power Consumption</h4>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-600">Microcontroller bahut <strong>kam power consume</strong> karta hai. Isliye <strong>battery-operated devices</strong> me iska use bahut hota hai.</p>
+                            </div>
+
+                            {/* Feature 5 */}
+                            <div className="p-5 rounded-2xl bg-white border border-cyan-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-cyan-50 text-cyan-500 rounded-xl group-hover:bg-cyan-500 group-hover:text-white transition-colors">
+                                        <Cpu size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-base">🔹 5. Embedded Device Support</h4>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-600">Microcontroller specially <strong>embedded systems</strong> ke liye design kiya gaya hai. Ye real-world devices ko <strong>directly control</strong> kar sakta hai.</p>
+                            </div>
+
+                            {/* Feature 6 */}
+                            <div className="p-5 rounded-2xl bg-white border border-orange-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <div className="flex items-start gap-4 mb-3">
+                                    <div className="p-3 bg-orange-50 text-orange-500 rounded-xl group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                                        <HardDrive size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 text-base">🔹 6. Program Storage</h4>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-600">Microcontroller me programs <strong>ROM memory</strong> me permanently store kiye ja sakte hain. Isliye system repeatedly <strong>same instructions execute</strong> kar sakta hai.</p>
+                            </div>
+
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Microcontroller vs Microprocessor ═══ */}
+                    <Sec id="mc-vs-mp" title="🔴 Microcontroller vs Microprocessor" icon={<Activity size={16} className="text-red-500" />}>
+                        <p className="mb-4">Microcontroller aur Microprocessor me important differences:</p>
+
+                        <div className="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm">
+                            <table className="w-full text-xs">
+                                <thead>
+                                    <tr className="bg-gradient-to-r from-sky-500 to-blue-600 text-white">
+                                        <th className="p-3 text-left font-bold rounded-tl-xl">🔲 Microcontroller</th>
+                                        <th className="p-3 text-left font-bold rounded-tr-xl">🖥️ Microprocessor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {[
+                                        ['Ye embedded applications ke liye use hota hai', 'Ye multitasking systems ke liye use hota hai'],
+                                        ['Single tasking ke liye suitable hota hai', 'Multiple tasking perform kar sakta hai'],
+                                        ['Iske andar RAM, ROM aur I/O components already chip me hote hain', 'Isme external RAM, ROM aur I/O devices lagane padte hain'],
+                                        ['Cost kam hoti hai', 'Cost jyada hoti hai'],
+                                        ['Power consumption kam hota hai', 'Power consumption jyada hota hai'],
+                                        ['Power saving mode available hota hai', 'Usually power saving mode nahi hota'],
+                                        ['Washing machine, MP3 player etc. me use hota hai', 'PC aur laptop me use hota hai'],
+                                        ['Small size aur compact design hota hai', 'Size comparatively bada hota hai'],
+                                    ].map((row, i) => (
+                                        <tr key={i} className={`${i % 2 === 0 ? 'bg-white' : 'bg-sky-50/50'} hover:bg-sky-100/50 transition-colors`}>
+                                            <td className="p-3 border-t border-gray-100 text-gray-700 font-medium">
+                                                <span className="text-sky-500 mr-1.5">✦</span>{row[0]}
+                                            </td>
+                                            <td className="p-3 border-t border-gray-100 text-gray-700 font-medium">
+                                                <span className="text-red-400 mr-1.5">✦</span>{row[1]}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <IB type="tip">Microcontroller embedded systems me use hota hai jabki Microprocessor general purpose computing ke liye use hota hai.</IB>
                     </Sec>
 
                 </main>
