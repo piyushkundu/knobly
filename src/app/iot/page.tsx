@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, Home, BookOpen, ChevronRight, Sparkles, Play, Zap, Lock, CheckCircle2, Clock, Wifi, Cpu, Shield, Radio, Settings, Lightbulb, Users, Award, TrendingUp, Target, Star, Compass } from 'lucide-react';
+import { ArrowLeft, Home, BookOpen, ChevronRight, Sparkles, Play, Zap, Lock, CheckCircle2, Clock, Wifi, Cpu, Shield, Radio, Settings, Lightbulb, Users, Award, TrendingUp, Target, Star, Compass, PenTool, Download, FileText } from 'lucide-react';
 
 const iotTopics = [
     {
@@ -309,6 +309,39 @@ export default function IoTPage() {
                             </Link>
                         ))}
                     </div>
+                </div>
+
+                {/* Handwritten Notes Banner */}
+                <div className="relative overflow-hidden rounded-[1.5rem] bg-white border-2 border-amber-200 shadow-xl shadow-amber-100/40 mb-12 group hover:shadow-2xl hover:shadow-amber-200/50 hover:border-amber-300 transition-all duration-500">
+                    <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-orange-500 to-red-500" />
+                    <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-amber-100/30 to-orange-100/30 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3" />
+                    <div className="absolute bottom-0 left-0 w-56 h-56 bg-gradient-to-tr from-yellow-100/20 to-red-100/20 rounded-full blur-3xl transform -translate-x-1/4 translate-y-1/4" />
+                    <Link href="/iot/notes" className="relative z-10 flex flex-col md:flex-row items-center gap-6 p-8 md:p-10">
+                        <div className="flex-shrink-0 w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-xl shadow-amber-200/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                            <PenTool size={36} />
+                        </div>
+                        <div className="flex-1 text-center md:text-left">
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
+                                <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-[11px] font-bold uppercase tracking-wider border border-amber-200">New ✨</span>
+                                <span className="px-3 py-1 rounded-full bg-red-50 text-red-600 text-[11px] font-bold uppercase tracking-wider border border-red-200">PDF Notes</span>
+                            </div>
+                            <h3 className="text-2xl md:text-3xl font-black text-gray-900 mb-2 group-hover:text-amber-700 transition-colors">
+                                📝 Handwritten Notes — Chapter 1 & 2
+                            </h3>
+                            <p className="text-gray-600 text-sm md:text-base leading-relaxed max-w-2xl">
+                                IoT Chapter 1 aur Chapter 2 ke detailed handwritten notes — exam revision ke liye perfect! Download karo aur offline padho.
+                            </p>
+                        </div>
+                        <div className="flex-shrink-0 flex flex-col items-center gap-3">
+                            <div className="px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold shadow-lg shadow-amber-200 group-hover:shadow-xl group-hover:scale-105 transition-all duration-300 flex items-center gap-2">
+                                <Download size={18} />View & Download
+                            </div>
+                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                                <span className="flex items-center gap-1"><FileText size={12} className="text-amber-500" />2 PDFs</span>
+                                <span className="flex items-center gap-1"><BookOpen size={12} className="text-blue-500" />Ch 1 & 2</span>
+                            </div>
+                        </div>
+                    </Link>
                 </div>
 
                 {/* Features */}
