@@ -31,7 +31,10 @@ const tocItems = [
     { icon: <Cog size={13} />, label: 'Types of Actuators', id: 'types-of-actuators', color: '#8b5cf6' },
     { icon: <Cpu size={13} />, label: 'Microcontroller', id: 'microcontroller', color: '#0ea5e9' },
     { icon: <Zap size={13} />, label: 'Features', id: 'mc-features', color: '#f97316' },
+    { icon: <GitCompare size={13} />, label: 'Types of MC', id: 'mc-types', color: '#ec4899' },
     { icon: <Activity size={13} />, label: 'MC vs MP', id: 'mc-vs-mp', color: '#ef4444' },
+    { icon: <Microchip size={13} />, label: 'MC Brands', id: 'mc-technologies', color: '#6366f1' },
+    { icon: <CircuitBoard size={13} />, label: 'Elements', id: 'mc-elements', color: '#14b8a6' },
 ];
 
 export default function IoTSensors() {
@@ -100,7 +103,7 @@ export default function IoTSensors() {
                     <Sec id="transducer" title="🔹 Transducer" icon={<Zap size={16} className="text-purple-500" />}>
                         <Def>⚡ <strong>Transducer</strong> ek electronic device hoti hai jo energy ko ek form se doosre form me convert karti hai.</Def>
                         <p>Yani agar kisi system me <strong>mechanical, electrical, light, chemical, thermal ya electromagnetic</strong> energy ko kisi doosri energy me badla jaye to us process me transducer ka use hota hai.</p>
-                        
+
                         <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 my-4">
                             <p className="text-sm text-purple-900 font-semibold text-center mb-2">Transducer ka main kaam:</p>
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -150,7 +153,7 @@ export default function IoTSensors() {
                     {/* ═══ SECTION: LDR Example ═══ */}
                     <Sec id="ldr" title="🔹 Example of Sensor – LDR" icon={<Sun size={16} className="text-amber-500" />}>
                         <p><strong>LDR (Light Dependent Resistor)</strong> ek light sensor hota hai jiska resistance light ke according change hota hai.</p>
-                        
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                             <div className="p-5 rounded-2xl bg-slate-800 border border-slate-700 text-white flex flex-col items-center justify-center text-center shadow-md">
                                 <div className="text-4xl mb-3 opacity-50">🌑</div>
@@ -787,7 +790,6 @@ export default function IoTSensors() {
 
                         </div>
                     </Sec>
-
                     {/* ═══ SECTION: Microcontroller vs Microprocessor ═══ */}
                     <Sec id="mc-vs-mp" title="🔴 Microcontroller vs Microprocessor" icon={<Activity size={16} className="text-red-500" />}>
                         <p className="mb-4">Microcontroller aur Microprocessor me important differences:</p>
@@ -825,6 +827,489 @@ export default function IoTSensors() {
                         </div>
 
                         <IB type="tip">Microcontroller embedded systems me use hota hai jabki Microprocessor general purpose computing ke liye use hota hai.</IB>
+                    </Sec>
+                    {/* ═══ SECTION: Different Types of Microcontroller ═══ */}
+                    <Sec id="mc-types" title="🔴 Different Types of Microcontroller" icon={<GitCompare size={16} className="text-pink-500" />}>
+                        <p className="mb-4">Microcontrollers ko unki processing capability, memory structure, instruction set aur architecture ke basis par alag-alag categories me divide kiya jata hai.</p>
+
+                        <div className="space-y-6 mt-6 mb-6">
+
+                            {/* 1. On the Basis of Bit */}
+                            <div className="p-5 rounded-2xl bg-white border border-purple-100 shadow-sm hover:shadow-md transition-shadow">
+                                <h4 className="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2">
+                                    <div className="p-2 bg-purple-50 text-purple-500 rounded-lg"><Binary size={20} /></div>
+                                    🔹 1. On the Basis of Bit
+                                </h4>
+                                <div className="flex flex-col md:flex-row gap-5">
+                                    <div className="flex-1 space-y-4">
+                                        <p className="text-sm text-gray-600">Microcontroller ko bit size ke according divide kiya jata hai. Bit size batata hai ki microcontroller ek time me kitna data process kar sakta hai. Jitna jyada bit size hoga, utni fast aur powerful processing hogi.</p>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            <div className="p-3 bg-purple-50 rounded-xl border border-purple-100">
+                                                <h5 className="font-bold text-purple-800 mb-1 text-sm">🔸 (A) 8-bit Microcontroller</h5>
+                                                <p className="text-xs text-purple-700 mb-2">Ek baar me 8-bit data process karta hai. Simple aur low-cost applications me use hota hai.</p>
+                                                <p className="text-[10px] font-semibold text-purple-900 bg-white px-2 py-1 rounded inline-block">Ex: 8051, Toys, Home appliances</p>
+                                            </div>
+                                            <div className="p-3 bg-blue-50 rounded-xl border border-blue-100">
+                                                <h5 className="font-bold text-blue-800 mb-1 text-sm">🔸 (B) 16-bit Microcontroller</h5>
+                                                <p className="text-xs text-blue-700 mb-2">Ek time me 16-bit data process karta hai. 8-bit se jyada fast aur efficient hota hai.</p>
+                                                <p className="text-[10px] font-semibold text-blue-900 bg-white px-2 py-1 rounded inline-block">Ex: Industrial automation</p>
+                                            </div>
+                                            <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                                                <h5 className="font-bold text-emerald-800 mb-1 text-sm">🔸 (C) 32-bit Microcontroller</h5>
+                                                <p className="text-xs text-emerald-700 mb-2">High-speed processing provide karta hai. Complex calculations me use hota hai.</p>
+                                                <p className="text-[10px] font-semibold text-emerald-900 bg-white px-2 py-1 rounded inline-block">Ex: Robotics, IoT, Smart systems</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="w-full md:w-48 flex-shrink-0 flex justify-center items-center rounded-xl bg-gray-50 border border-gray-100 p-2 overflow-hidden">
+                                        <img src="/iot/mc_bits.png" alt="Microcontroller Bits" className="w-full h-auto object-contain rounded-lg" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 2. On the Basis of Memory */}
+                            <div className="p-5 rounded-2xl bg-white border border-cyan-100 shadow-sm hover:shadow-md transition-shadow">
+                                <h4 className="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2">
+                                    <div className="p-2 bg-cyan-50 text-cyan-500 rounded-lg"><HardDrive size={20} /></div>
+                                    🔹 2. On the Basis of Memory
+                                </h4>
+                                <div className="flex flex-col md:flex-row gap-5">
+                                    <div className="flex-1 space-y-4">
+                                        <p className="text-sm text-gray-600">Microcontroller ko memory architecture ke according bhi divide kiya jata hai.</p>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div className="p-3 bg-cyan-50 rounded-xl border border-cyan-100">
+                                                <h5 className="font-bold text-cyan-800 mb-1 text-sm">🔸 (A) Embedded Memory Microcontroller</h5>
+                                                <p className="text-xs text-cyan-700 mb-2">RAM, ROM aur I/O ports chip ke andar hi available hote hain. Ye compact aur low-cost hote hain.</p>
+                                                <p className="text-[10px] font-semibold text-cyan-900 bg-white px-2 py-1 rounded inline-block">Uses: Embedded systems, Smart devices</p>
+                                            </div>
+                                            <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-100">
+                                                <h5 className="font-bold text-indigo-800 mb-1 text-sm">🔸 (B) External Memory Microcontroller</h5>
+                                                <p className="text-xs text-indigo-700 mb-2">Memory externally connect ki jati hai. Jahan large memory ki zarurat hoti hai, wahan use hota hai.</p>
+                                                <p className="text-[10px] font-semibold text-indigo-900 bg-white px-2 py-1 rounded inline-block">Uses: Industrial systems</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="w-full md:w-48 flex-shrink-0 flex justify-center items-center rounded-xl bg-gray-50 border border-gray-100 p-2 overflow-hidden">
+                                        <img src="/iot/mc_memory.png" alt="Microcontroller Memory" className="w-full h-auto object-contain rounded-lg" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 3. On the Basis of Instruction Set */}
+                            <div className="p-5 rounded-2xl bg-white border border-pink-100 shadow-sm hover:shadow-md transition-shadow">
+                                <h4 className="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2">
+                                    <div className="p-2 bg-pink-50 text-pink-500 rounded-lg"><Cpu size={20} /></div>
+                                    🔹 3. On the Basis of Instruction Set
+                                </h4>
+                                <div className="flex flex-col md:flex-row gap-5">
+                                    <div className="flex-1 space-y-4">
+                                        <p className="text-sm text-gray-600">Instruction set ke basis par microcontroller ko do categories me divide kiya jata hai.</p>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div className="p-3 bg-pink-50 rounded-xl border border-pink-100">
+                                                <h5 className="font-bold text-pink-800 mb-1 text-sm">🔸 (A) CISC (Complex Instruction Set Computer)</h5>
+                                                <p className="text-xs text-pink-700 mb-2">Large aur complex instruction set hota hai. Ek hi instruction multiple tasks perform kar sakta hai.</p>
+                                                <div className="text-[10px] space-y-1 font-semibold text-pink-900">
+                                                    <p className="bg-white px-2 py-1 rounded block">✅ Program size kam hota hai</p>
+                                                    <p className="bg-white px-2 py-1 rounded block">⚠️ Hardware complexity jyada hoti hai</p>
+                                                </div>
+                                            </div>
+                                            <div className="p-3 bg-orange-50 rounded-xl border border-orange-100">
+                                                <h5 className="font-bold text-orange-800 mb-1 text-sm">🔸 (B) RISC (Reduced Instruction Set Computer)</h5>
+                                                <p className="text-xs text-orange-700 mb-2">Simple aur limited instructions hote hain. Har instruction ek simple task perform karta hai.</p>
+                                                <div className="text-[10px] space-y-1 font-semibold text-orange-900">
+                                                    <p className="bg-white px-2 py-1 rounded block">✅ Fast execution, simple design</p>
+                                                    <p className="bg-white px-2 py-1 rounded block">✅ High efficiency (Modern IoT devices)</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="w-full md:w-48 flex-shrink-0 flex justify-center items-center rounded-xl bg-gray-50 border border-gray-100 p-2 overflow-hidden">
+                                        <img src="/iot/mc_instruction.png" alt="Instruction Set" className="w-full h-auto object-contain rounded-lg" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 4. On the Basis of Architecture */}
+                            <div className="p-5 rounded-2xl bg-white border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
+                                <h4 className="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2">
+                                    <div className="p-2 bg-emerald-50 text-emerald-500 rounded-lg"><CircuitBoard size={20} /></div>
+                                    🔹 4. On the Basis of Architecture
+                                </h4>
+                                <div className="flex flex-col md:flex-row gap-5">
+                                    <div className="flex-1 space-y-4">
+                                        <p className="text-sm text-gray-600">Architecture ke basis par microcontroller ko memory access structure ke according divide kiya jata hai.</p>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                                                <h5 className="font-bold text-emerald-800 mb-1 text-sm">🔸 (A) Harvard Architecture</h5>
+                                                <p className="text-xs text-emerald-700 mb-2">Program memory aur data memory alag-alag hoti hain. Processor ek hi time par instruction fetch aur data transfer dono kar sakta hai.</p>
+                                                <div className="text-[10px] space-y-1 font-semibold text-emerald-900">
+                                                    <p className="bg-white px-2 py-1 rounded block">⚡ Fast processing, better performance</p>
+                                                    <p className="bg-white px-2 py-1 rounded block">Uses: DSP systems, Advanced embedded devices</p>
+                                                </div>
+                                            </div>
+                                            <div className="p-3 bg-sky-50 rounded-xl border border-sky-100">
+                                                <h5 className="font-bold text-sky-800 mb-1 text-sm">🔸 (B) Von Neumann Architecture</h5>
+                                                <p className="text-xs text-sky-700 mb-2">Program memory aur data memory same hoti hain. Instructions aur data dono ek hi memory aur bus share karte hain.</p>
+                                                <div className="text-[10px] space-y-1 font-semibold text-sky-900">
+                                                    <p className="bg-white px-2 py-1 rounded block">⚙️ Simple design, low cost</p>
+                                                    <p className="bg-white px-2 py-1 rounded block">⚠️ Slow processing compared to Harvard</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="w-full md:w-48 flex-shrink-0 flex justify-center items-center rounded-xl bg-gray-50 border border-gray-100 p-2 overflow-hidden">
+                                        <img src="/iot/mc_architecture.png" alt="Architecture" className="w-full h-auto object-contain rounded-lg" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Microcontroller Brands / Technologies ═══ */}
+                    <Sec id="mc-technologies" title="🔴 Types of Microcontroller" icon={<Microchip size={16} className="text-indigo-500" />}>
+                        <p className="mb-4 text-sm text-gray-600">Different companies aur technologies ke according microcontrollers ke kai types hote hain. Har microcontroller ka apna architecture, speed aur application area hota hai.</p>
+
+                        <div className="grid grid-cols-1 gap-6 mt-6">
+                            
+                            {/* 1. 8051 Microcontroller */}
+                            <div className="p-5 rounded-2xl bg-white border border-purple-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="flex flex-col md:flex-row gap-5 items-center">
+                                    <div className="w-full md:w-48 flex-shrink-0 flex justify-center items-center rounded-xl bg-purple-50/50 p-3">
+                                        <img src="/iot/8051_microcontroller.png" alt="8051 Microcontroller" className="w-32 h-32 object-contain" />
+                                    </div>
+                                    <div className="flex-1 w-full">
+                                        <h4 className="font-bold text-gray-800 text-lg mb-2 flex items-center gap-2">
+                                            <div className="p-1.5 bg-purple-100 text-purple-600 rounded-lg"><Cpu size={16} /></div>
+                                            🔹 1. 8051 Microcontroller
+                                        </h4>
+                                        <p className="text-sm text-gray-600 mb-3">8051 sabse popular aur widely used microcontroller hai. Isse <strong>Intel company</strong> ne develop kiya tha. Ye ek <strong>8-bit</strong> microcontroller hota hai jo embedded systems aur automation applications me use hota hai.</p>
+                                        
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                            <div className="bg-purple-50/50 p-3 rounded-xl border border-purple-100">
+                                                <p className="text-xs font-bold text-purple-800 mb-1">⚡ Features</p>
+                                                <ul className="text-xs text-purple-700 space-y-1 ml-4 list-disc marker:text-purple-400">
+                                                    <li>8-bit processor</li>
+                                                    <li>4 KB ROM & 128 bytes RAM</li>
+                                                    <li>32 I/O pins</li>
+                                                    <li>Serial communication support</li>
+                                                </ul>
+                                            </div>
+                                            <div className="bg-fuchsia-50/50 p-3 rounded-xl border border-fuchsia-100">
+                                                <p className="text-xs font-bold text-fuchsia-800 mb-1">🛠️ Uses</p>
+                                                <ul className="text-xs text-fuchsia-700 space-y-1 ml-4 list-disc marker:text-fuchsia-400">
+                                                    <li>Home appliances</li>
+                                                    <li>Traffic light control</li>
+                                                    <li>Robotics & Industrial automation</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 2. PIC Microcontroller */}
+                            <div className="p-5 rounded-2xl bg-white border border-red-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="flex flex-col md:flex-row gap-5 items-center md:flex-row-reverse">
+                                    <div className="w-full md:w-48 flex-shrink-0 flex justify-center items-center rounded-xl bg-red-50/50 p-3">
+                                        <img src="/iot/pic_microcontroller.png" alt="PIC Microcontroller" className="w-32 h-32 object-contain" />
+                                    </div>
+                                    <div className="flex-1 w-full">
+                                        <h4 className="font-bold text-gray-800 text-lg mb-2 flex items-center gap-2">
+                                            <div className="p-1.5 bg-red-100 text-red-600 rounded-lg"><Cpu size={16} /></div>
+                                            🔹 2. PIC Microcontroller
+                                        </h4>
+                                        <p className="text-sm text-gray-600 mb-3">PIC ka full form hota hai <strong>Peripheral Interface Controller</strong>. Ye <strong>Microchip company</strong> dwara develop kiya gaya microcontroller hai. Ye fast processing aur low power consumption ke liye famous hai.</p>
+                                        
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                            <div className="bg-red-50/50 p-3 rounded-xl border border-red-100">
+                                                <p className="text-xs font-bold text-red-800 mb-1">⚡ Features</p>
+                                                <ul className="text-xs text-red-700 space-y-1 ml-4 list-disc marker:text-red-400">
+                                                    <li>High speed execution</li>
+                                                    <li>Low power consumption</li>
+                                                    <li>Easy programming</li>
+                                                    <li>Built-in peripherals</li>
+                                                </ul>
+                                            </div>
+                                            <div className="bg-orange-50/50 p-3 rounded-xl border border-orange-100">
+                                                <p className="text-xs font-bold text-orange-800 mb-1">🛠️ Uses</p>
+                                                <ul className="text-xs text-orange-700 space-y-1 ml-4 list-disc marker:text-orange-400">
+                                                    <li>Medical devices</li>
+                                                    <li>Industrial systems</li>
+                                                    <li>Security systems</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 3. AVR Microcontroller */}
+                            <div className="p-5 rounded-2xl bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="flex flex-col md:flex-row gap-5 items-center">
+                                    <div className="w-full md:w-48 flex-shrink-0 flex justify-center items-center rounded-xl bg-teal-50/50 p-3">
+                                        <img src="/iot/avr_microcontroller.png" alt="AVR Microcontroller" className="w-32 h-32 object-contain" />
+                                    </div>
+                                    <div className="flex-1 w-full">
+                                        <h4 className="font-bold text-gray-800 text-lg mb-2 flex items-center gap-2">
+                                            <div className="p-1.5 bg-teal-100 text-teal-600 rounded-lg"><Cpu size={16} /></div>
+                                            🔹 3. AVR Microcontroller
+                                        </h4>
+                                        <p className="text-sm text-gray-600 mb-3">AVR microcontroller <strong>Atmel company</strong> ne develop kiya tha. Ye RISC architecture par based hota hai aur fast execution provide karta hai. <strong>Arduino boards</strong> me mostly AVR microcontroller use hota hai.</p>
+                                        
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                            <div className="bg-teal-50/50 p-3 rounded-xl border border-teal-100">
+                                                <p className="text-xs font-bold text-teal-800 mb-1">⚡ Features</p>
+                                                <ul className="text-xs text-teal-700 space-y-1 ml-4 list-disc marker:text-teal-400">
+                                                    <li>RISC architecture</li>
+                                                    <li>Fast processing</li>
+                                                    <li>Low power requirement</li>
+                                                    <li>Easy interfacing</li>
+                                                </ul>
+                                            </div>
+                                            <div className="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
+                                                <p className="text-xs font-bold text-emerald-800 mb-1">🛠️ Uses</p>
+                                                <ul className="text-xs text-emerald-700 space-y-1 ml-4 list-disc marker:text-emerald-400">
+                                                    <li>Arduino projects</li>
+                                                    <li>IoT systems</li>
+                                                    <li>Embedded applications</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 4. ARM Microcontroller */}
+                            <div className="p-5 rounded-2xl bg-white border border-cyan-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="flex flex-col md:flex-row gap-5 items-center md:flex-row-reverse">
+                                    <div className="w-full md:w-48 flex-shrink-0 flex justify-center items-center rounded-xl bg-cyan-50/50 p-3">
+                                        <img src="/iot/arm_microcontroller.png" alt="ARM Microcontroller" className="w-32 h-32 object-contain" />
+                                    </div>
+                                    <div className="flex-1 w-full">
+                                        <h4 className="font-bold text-gray-800 text-lg mb-2 flex items-center gap-2">
+                                            <div className="p-1.5 bg-cyan-100 text-cyan-600 rounded-lg"><Cpu size={16} /></div>
+                                            🔹 4. ARM Microcontroller
+                                        </h4>
+                                        <p className="text-sm text-gray-600 mb-3">ARM microcontroller advanced embedded systems ke liye use hota hai. Ye high-performance aur low power consumption provide karta hai. ARM processors <strong>modern smart devices</strong> me bahut jyada use hote hain.</p>
+                                        
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                            <div className="bg-cyan-50/50 p-3 rounded-xl border border-cyan-100">
+                                                <p className="text-xs font-bold text-cyan-800 mb-1">⚡ Features</p>
+                                                <ul className="text-xs text-cyan-700 space-y-1 ml-4 list-disc marker:text-cyan-400">
+                                                    <li>32-bit / 64-bit architecture</li>
+                                                    <li>High speed processing</li>
+                                                    <li>Large memory support</li>
+                                                    <li>Low power consumption</li>
+                                                </ul>
+                                            </div>
+                                            <div className="bg-sky-50/50 p-3 rounded-xl border border-sky-100">
+                                                <p className="text-xs font-bold text-sky-800 mb-1">🛠️ Uses</p>
+                                                <ul className="text-xs text-sky-700 space-y-1 ml-4 list-disc marker:text-sky-400">
+                                                    <li>Smartphones</li>
+                                                    <li>Tablets</li>
+                                                    <li>Smart devices & IoT systems</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 5. MSP Microcontroller */}
+                            <div className="p-5 rounded-2xl bg-white border border-amber-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="flex flex-col md:flex-row gap-5 items-center">
+                                    <div className="w-full md:w-48 flex-shrink-0 flex justify-center items-center rounded-xl bg-amber-50/50 p-3">
+                                        <img src="/iot/msp_microcontroller.png" alt="MSP Microcontroller" className="w-32 h-32 object-contain" />
+                                    </div>
+                                    <div className="flex-1 w-full">
+                                        <h4 className="font-bold text-gray-800 text-lg mb-2 flex items-center gap-2">
+                                            <div className="p-1.5 bg-amber-100 text-amber-600 rounded-lg"><Cpu size={16} /></div>
+                                            🔹 5. MSP Microcontroller
+                                        </h4>
+                                        <p className="text-sm text-gray-600 mb-3">MSP microcontroller <strong>Texas Instruments company</strong> dwara develop kiya gaya hai. Ye ultra-low power applications ke liye specially design kiya gaya hai.</p>
+                                        
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                            <div className="bg-amber-50/50 p-3 rounded-xl border border-amber-100">
+                                                <p className="text-xs font-bold text-amber-800 mb-1">⚡ Features</p>
+                                                <ul className="text-xs text-amber-700 space-y-1 ml-4 list-disc marker:text-amber-400">
+                                                    <li>Very low power consumption</li>
+                                                    <li>High efficiency</li>
+                                                    <li>Fast response</li>
+                                                </ul>
+                                            </div>
+                                            <div className="bg-yellow-50/50 p-3 rounded-xl border border-yellow-100">
+                                                <p className="text-xs font-bold text-yellow-800 mb-1">🛠️ Uses</p>
+                                                <ul className="text-xs text-yellow-700 space-y-1 ml-4 list-disc marker:text-yellow-400">
+                                                    <li>Battery-operated devices</li>
+                                                    <li>Wireless sensor systems</li>
+                                                    <li>Portable electronics</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Elements of Microcontroller ═══ */}
+                    <Sec id="mc-elements" title="🔴 Elements of Microcontroller" icon={<CircuitBoard size={16} className="text-teal-500" />}>
+                        <div className="flex flex-col md:flex-row gap-5 items-center mb-6 bg-gradient-to-br from-teal-50 to-emerald-50 p-5 rounded-2xl border border-teal-100 shadow-sm">
+                            <div className="flex-1">
+                                <p className="text-sm text-gray-700">Microcontroller ek complete embedded system hota hai jiske andar different hardware components hote hain. Ye sabhi elements milkar microcontroller ko processing aur control capability provide karte hain.</p>
+                            </div>
+                            <div className="w-full md:w-64 flex-shrink-0">
+                                <img src="/iot/mc_elements.png" alt="Elements of Microcontroller" className="w-full h-auto object-contain rounded-xl shadow-md border border-teal-200/50 bg-white/50 backdrop-blur-sm p-2" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+                            
+                            {/* 1. CPU */}
+                            <div className="p-4 rounded-xl bg-white border border-blue-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <h4 className="font-bold text-blue-900 text-base mb-2 flex items-center gap-2">
+                                    <div className="p-1.5 bg-blue-50 text-blue-500 rounded-lg group-hover:bg-blue-500 group-hover:text-white transition-colors"><Cpu size={18} /></div>
+                                    🔹 1. CPU (Central Processing Unit)
+                                </h4>
+                                <p className="text-xs text-gray-600 mb-3">CPU microcontroller ka sabse important part hota hai. Isse microcontroller ka “brain” bhi kaha jata hai. Ye instructions ko execute karta hai aur poore system ko control karta hai.</p>
+                                <div className="bg-blue-50/50 p-2.5 rounded-lg border border-blue-100/50">
+                                    <p className="text-[10px] font-bold text-blue-800 mb-1">⚡ Functions of CPU</p>
+                                    <ul className="text-[10px] text-blue-700 space-y-0.5 ml-4 list-disc marker:text-blue-400">
+                                        <li>Instructions execute karna</li>
+                                        <li>Arithmetic calculations karna</li>
+                                        <li>Logical operations perform karna</li>
+                                        <li>System ko control karna</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {/* 2. Memory */}
+                            <div className="p-4 rounded-xl bg-white border border-purple-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <h4 className="font-bold text-purple-900 text-base mb-2 flex items-center gap-2">
+                                    <div className="p-1.5 bg-purple-50 text-purple-500 rounded-lg group-hover:bg-purple-500 group-hover:text-white transition-colors"><HardDrive size={18} /></div>
+                                    🔹 2. Memory
+                                </h4>
+                                <p className="text-xs text-gray-600 mb-3">Memory data aur programs ko store karne ke liye use hoti hai.</p>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="bg-purple-50/50 p-2.5 rounded-lg border border-purple-100/50">
+                                        <p className="text-[10px] font-bold text-purple-800 mb-0.5">🔸 RAM (Temporary)</p>
+                                        <p className="text-[9px] text-purple-700 leading-tight">Processing ke dauran data store hota hai. Power OFF hone par data erase ho jata hai.</p>
+                                    </div>
+                                    <div className="bg-fuchsia-50/50 p-2.5 rounded-lg border border-fuchsia-100/50">
+                                        <p className="text-[10px] font-bold text-fuchsia-800 mb-0.5">🔸 ROM (Permanent)</p>
+                                        <p className="text-[9px] text-fuchsia-700 leading-tight">Programs permanently store hote hain. Power OFF hone par data delete nahi hota.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 3. I/O Ports */}
+                            <div className="p-4 rounded-xl bg-white border border-emerald-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <h4 className="font-bold text-emerald-900 text-base mb-2 flex items-center gap-2">
+                                    <div className="p-1.5 bg-emerald-50 text-emerald-500 rounded-lg group-hover:bg-emerald-500 group-hover:text-white transition-colors"><GitCompare size={18} /></div>
+                                    🔹 3. I/O Ports
+                                </h4>
+                                <p className="text-xs text-gray-600 mb-3">I/O ports external devices ko connect karne ke liye use hote hain. Input ports sensors se data receive karte hain, output ports LEDs aur motors ko control karte hain.</p>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {['Sensor interfacing', 'LED control', 'Motor control', 'Device communication'].map((use, i) => (
+                                        <span key={i} className="text-[9px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded-full">{use}</span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* 4. Timers and Counters */}
+                            <div className="p-4 rounded-xl bg-white border border-orange-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <h4 className="font-bold text-orange-900 text-base mb-2 flex items-center gap-2">
+                                    <div className="p-1.5 bg-orange-50 text-orange-500 rounded-lg group-hover:bg-orange-500 group-hover:text-white transition-colors"><Clock size={18} /></div>
+                                    🔹 4. Timers & Counters
+                                </h4>
+                                <p className="text-xs text-gray-600 mb-3">Timers aur counters time-related operations aur event counting ke liye use hote hain.</p>
+                                <div className="space-y-1.5 mb-3">
+                                    <div className="text-[10px]"><strong className="text-orange-800">🔸 Timer:</strong> <span className="text-gray-600">Specific time delay generate karta hai.</span></div>
+                                    <div className="text-[10px]"><strong className="text-orange-800">🔸 Counter:</strong> <span className="text-gray-600">External events ya pulses ko count karta hai.</span></div>
+                                </div>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {['Digital clocks', 'Frequency measurement', 'Delay generation'].map((use, i) => (
+                                        <span key={i} className="text-[9px] font-semibold text-orange-700 bg-orange-50 border border-orange-100 px-2 py-1 rounded-full">{use}</span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* 5. Oscillator */}
+                            <div className="p-4 rounded-xl bg-white border border-amber-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <h4 className="font-bold text-amber-900 text-base mb-2 flex items-center gap-2">
+                                    <div className="p-1.5 bg-amber-50 text-amber-500 rounded-lg group-hover:bg-amber-500 group-hover:text-white transition-colors"><Activity size={18} /></div>
+                                    🔹 5. Oscillator
+                                </h4>
+                                <p className="text-xs text-gray-600 mb-3">Oscillator clock signals generate karta hai jo microcontroller ki speed aur timing ko control karte hain. Ye continuous pulses provide karta hai jinke basis par CPU instructions execute karta hai.</p>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {['Clock generation', 'Timing synchronization'].map((use, i) => (
+                                        <span key={i} className="text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-2 py-1 rounded-full">{use}</span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* 6 & 7. ADC and DAC */}
+                            <div className="p-4 rounded-xl bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <h4 className="font-bold text-teal-900 text-base mb-2 flex items-center gap-2">
+                                    <div className="p-1.5 bg-teal-50 text-teal-500 rounded-lg group-hover:bg-teal-500 group-hover:text-white transition-colors"><Waves size={18} /></div>
+                                    🔹 6 & 7. ADC & DAC
+                                </h4>
+                                <div className="space-y-3">
+                                    <div className="bg-teal-50/50 p-2.5 rounded-lg border border-teal-100/50">
+                                        <p className="text-[10px] font-bold text-teal-800 mb-0.5">🔸 ADC (Analog to Digital)</p>
+                                        <p className="text-[9px] text-teal-700 leading-tight">Sensors ke analog data ko digital me convert karta hai (e.g. Temperature sensor data).</p>
+                                    </div>
+                                    <div className="bg-cyan-50/50 p-2.5 rounded-lg border border-cyan-100/50">
+                                        <p className="text-[10px] font-bold text-cyan-800 mb-0.5">🔸 DAC (Digital to Analog)</p>
+                                        <p className="text-[9px] text-cyan-700 leading-tight">Digital signals ko analog me convert karta hai (e.g. Audio systems, Analog control).</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 8. Serial Port */}
+                            <div className="p-4 rounded-xl bg-white border border-indigo-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <h4 className="font-bold text-indigo-900 text-base mb-2 flex items-center gap-2">
+                                    <div className="p-1.5 bg-indigo-50 text-indigo-500 rounded-lg group-hover:bg-indigo-500 group-hover:text-white transition-colors"><Radio size={18} /></div>
+                                    🔹 8. Serial Communication Port
+                                </h4>
+                                <p className="text-xs text-gray-600 mb-3">Serial communication ports data ko serial form me transfer karte hain. Ye microcontroller ko dusre devices ke saath communicate karne me help karte hain.</p>
+                                
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-[9px] font-bold text-indigo-800">Types:</span>
+                                    <div className="flex gap-1.5">
+                                        {['UART', 'SPI', 'I2C'].map((type, i) => (
+                                            <span key={i} className="text-[8px] font-bold text-white bg-indigo-400 px-1.5 py-0.5 rounded">{type}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="flex flex-wrap gap-1.5 mt-2">
+                                    {['Computer communication', 'Sensor interfacing', 'IoT communication'].map((use, i) => (
+                                        <span key={i} className="text-[9px] font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-full">{use}</span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* 9. Interrupt System */}
+                            <div className="p-4 rounded-xl bg-white border border-rose-100 shadow-sm hover:shadow-md transition-shadow group">
+                                <h4 className="font-bold text-rose-900 text-base mb-2 flex items-center gap-2">
+                                    <div className="p-1.5 bg-rose-50 text-rose-500 rounded-lg group-hover:bg-rose-500 group-hover:text-white transition-colors"><Zap size={18} /></div>
+                                    🔹 9. Interrupt System
+                                </h4>
+                                <p className="text-xs text-gray-600 mb-3">Interrupt system urgent events ko handle karne ke liye use hota hai. Jab koi important signal aata hai to interrupt CPU ko current task temporarily stop karke naye task ko execute karne ke liye force karta hai.</p>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {['Emergency systems', 'Real-time systems', 'Event handling'].map((use, i) => (
+                                        <span key={i} className="text-[9px] font-semibold text-rose-700 bg-rose-50 border border-rose-100 px-2 py-1 rounded-full">{use}</span>
+                                    ))}
+                                </div>
+                            </div>
+
+                        </div>
                     </Sec>
 
                 </main>
