@@ -46,8 +46,8 @@ const iotTopics = [
         duration: '3.5 Hours',
         lessons: 18,
         locked: false,
-        completed: false,
-        current: true,
+        completed: true,
+        current: false,
     },
     {
         title: 'Building IoT Applications',
@@ -60,8 +60,9 @@ const iotTopics = [
         chapter: 4,
         duration: '3 Hours',
         lessons: 14,
-        locked: true,
+        locked: false,
         completed: false,
+        current: true,
     },
     {
         title: 'Security & Future of IoT',
