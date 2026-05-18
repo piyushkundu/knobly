@@ -30,6 +30,7 @@ const tocItems = [
     { icon: <Clock size={13} />, label: 'History', id: 'arduino-history', color: '#ec4899' },
     { icon: <Shield size={13} />, label: 'Why Use Arduino', id: 'why-arduino', color: '#3b82f6' },
     { icon: <CircuitBoard size={13} />, label: 'Types of Boards', id: 'arduino-types', color: '#f43f5e' },
+    { icon: <Cpu size={13} />, label: 'Arduino Uno R3', id: 'arduino-uno-deepdive', color: '#14b8a6' },
 ];
 
 export default function IoTApplications() {
@@ -591,6 +592,160 @@ export default function IoTApplications() {
                                     </div>
                                 </div>
 
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Arduino Uno R3 Deep Dive ═══ */}
+                    <Sec id="arduino-uno-deepdive" title="🔴 Arduino Uno R3 Deep Dive" icon={<Cpu size={16} className="text-teal-500" />}>
+                        <div className="space-y-6">
+                            {/* Intro text */}
+                            <div className="bg-white p-5 rounded-2xl border border-teal-100 shadow-sm hover:shadow-md transition-shadow">
+                                <p className="text-sm text-gray-700 leading-relaxed mb-3"><strong>Arduino Uno R3</strong> duniya ka sabse popular aur sabse jyada use hone wala Arduino development board hai. Ye specially beginners, students aur IoT developers ke liye design kiya gaya hai taaki electronic projects aur embedded systems ko easily develop kiya ja sake.</p>
+                                <p className="text-sm text-gray-700 leading-relaxed mb-3">Ye <strong>ATmega328P microcontroller</strong> par based hota hai aur ye sensors, motors, LEDs aur different electronic modules ko control kar sakta hai. <br/> "R3" ka matlab hota hai "Revision 3", yani Arduino Uno ka upgraded version.</p>
+                            </div>
+
+                            {/* Detailed image section */}
+                            <div className="w-full bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                                <img src="/iot/arduino_uno_detailed_pins.png" alt="Detailed Arduino Uno R3 Pins" className="w-full h-auto rounded-xl shadow-md border border-gray-200" />
+                            </div>
+
+                            {/* Main Components Grid */}
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div className="p-1.5 bg-indigo-100 text-indigo-600 rounded-lg"><Box size={16} /></div> 🔹 Main Components of Arduino Uno R3</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="p-4 rounded-xl border border-indigo-100 bg-white shadow-sm hover:-translate-y-1 transition-transform">
+                                        <h4 className="font-bold text-indigo-900 text-sm mb-2">1. ATmega328P Microcontroller</h4>
+                                        <p className="text-xs text-gray-600">Ye Arduino Uno ka main brain hota hai. Iske andar CPU, RAM, ROM, Timers aur Input/Output ports available hote hain. Ye program instructions ko execute karta hai aur poore board ko control karta hai.</p>
+                                    </div>
+                                    <div className="p-4 rounded-xl border border-indigo-100 bg-white shadow-sm hover:-translate-y-1 transition-transform">
+                                        <h4 className="font-bold text-indigo-900 text-sm mb-2">2. USB Port</h4>
+                                        <p className="text-xs text-gray-600">USB port ka use Computer se connection, Program upload aur Power supply ke liye hota hai. USB cable ke through Arduino ko directly laptop ya PC se connect kiya jata hai.</p>
+                                    </div>
+                                    <div className="p-4 rounded-xl border border-indigo-100 bg-white shadow-sm hover:-translate-y-1 transition-transform">
+                                        <h4 className="font-bold text-indigo-900 text-sm mb-2">3. DC Power Jack</h4>
+                                        <p className="text-xs text-gray-600">Agar USB available na ho to external adapter ya battery se Arduino ko power di ja sakti hai. Usually 7V se 12V tak supply di jati hai.</p>
+                                    </div>
+                                    <div className="p-4 rounded-xl border border-indigo-100 bg-white shadow-sm hover:-translate-y-1 transition-transform">
+                                        <h4 className="font-bold text-indigo-900 text-sm mb-2">4. Reset Button</h4>
+                                        <p className="text-xs text-gray-600">Reset button board par uploaded program ko dobara start karta hai. Is button ko press karte hi Arduino fir se beginning se code execute karta hai.</p>
+                                    </div>
+                                    <div className="p-4 rounded-xl border border-indigo-100 bg-white shadow-sm hover:-translate-y-1 transition-transform md:col-span-2">
+                                        <h4 className="font-bold text-indigo-900 text-sm mb-2">5. Crystal Oscillator & Voltage Regulator</h4>
+                                        <p className="text-xs text-gray-600 flex flex-col sm:flex-row gap-4">
+                                            <span className="flex-1"><strong className="text-indigo-700">Crystal Oscillator:</strong> 16 MHz ka hota hai, ye clock signals generate karta hai jisse microcontroller ki processing speed control hoti hai.</span>
+                                            <span className="flex-1"><strong className="text-indigo-700">Voltage Regulator:</strong> Incoming voltage ko stable banata hai taaki board safe rahe aur proper voltage receive kare.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Tech Specs Table */}
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg"><Settings size={16} /></div> 🔴 Technical Specifications</h3>
+                                <div className="overflow-x-auto rounded-xl border border-emerald-200 shadow-sm">
+                                    <table className="w-full text-sm text-left">
+                                        <thead className="text-xs text-emerald-800 uppercase bg-emerald-100/50 border-b border-emerald-200">
+                                            <tr>
+                                                <th className="px-6 py-3 font-bold">Feature</th>
+                                                <th className="px-6 py-3 font-bold">Details</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-emerald-50">
+                                            <tr className="hover:bg-emerald-50/50 transition-colors"><td className="px-6 py-3 font-semibold text-gray-800">Microcontroller</td><td className="px-6 py-3 text-gray-700">ATmega328P</td></tr>
+                                            <tr className="hover:bg-emerald-50/50 transition-colors"><td className="px-6 py-3 font-semibold text-gray-800">Operating Voltage</td><td className="px-6 py-3 text-gray-700">5V</td></tr>
+                                            <tr className="hover:bg-emerald-50/50 transition-colors"><td className="px-6 py-3 font-semibold text-gray-800">Input Voltage</td><td className="px-6 py-3 text-gray-700">7V – 12V</td></tr>
+                                            <tr className="hover:bg-emerald-50/50 transition-colors"><td className="px-6 py-3 font-semibold text-gray-800">Digital I/O Pins</td><td className="px-6 py-3 text-gray-700">14 (including 6 PWM pins)</td></tr>
+                                            <tr className="hover:bg-emerald-50/50 transition-colors"><td className="px-6 py-3 font-semibold text-gray-800">Analog Input Pins</td><td className="px-6 py-3 text-gray-700">6 (A0 - A5)</td></tr>
+                                            <tr className="hover:bg-emerald-50/50 transition-colors"><td className="px-6 py-3 font-semibold text-gray-800">Flash Memory</td><td className="px-6 py-3 text-gray-700">32 KB</td></tr>
+                                            <tr className="hover:bg-emerald-50/50 transition-colors"><td className="px-6 py-3 font-semibold text-gray-800">SRAM & EEPROM</td><td className="px-6 py-3 text-gray-700">2 KB (SRAM) | 1 KB (EEPROM)</td></tr>
+                                            <tr className="hover:bg-emerald-50/50 transition-colors"><td className="px-6 py-3 font-semibold text-gray-800">Clock Speed</td><td className="px-6 py-3 text-gray-700">16 MHz</td></tr>
+                                            <tr className="hover:bg-emerald-50/50 transition-colors"><td className="px-6 py-3 font-semibold text-gray-800">USB Connection</td><td className="px-6 py-3 text-gray-700">USB Type-B</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {/* Pins of Arduino Uno R3 */}
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div className="p-1.5 bg-rose-100 text-rose-600 rounded-lg"><Zap size={16} /></div> 🔴 Pins of Arduino Uno R3</h3>
+                                <div className="space-y-4">
+                                    <div className="bg-white p-5 rounded-xl border border-rose-100 shadow-sm">
+                                        <h4 className="font-bold text-rose-800 text-base mb-2">1. Digital Pins (0–13)</h4>
+                                        <p className="text-sm text-gray-700 mb-3">Total 14 digital pins (0-13) hoti hain jo <strong>Input ya Output mode</strong> dono me kaam kar sakti hain. Input mode me sensor data read karti hain aur Output mode me LED, motor aadi control karti hain.</p>
+                                        <div className="flex flex-wrap gap-2 text-xs">
+                                            <span className="px-3 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-semibold">0 (RX): Receive Data</span>
+                                            <span className="px-3 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-semibold">1 (TX): Transmit Data</span>
+                                            <span className="px-3 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-semibold">13: Built-in LED</span>
+                                            <span className="px-3 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-semibold">10-13: SPI Communication</span>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white p-5 rounded-xl border border-orange-100 shadow-sm">
+                                        <h4 className="font-bold text-orange-800 text-base mb-2">2. PWM Pins (3, 5, 6, 9, 10, 11)</h4>
+                                        <p className="text-sm text-gray-700 mb-3">PWM (Pulse Width Modulation) pins analog-like output generate karti hain. Inka use LED brightness control, motor speed control, aur servo control me hota hai.</p>
+                                    </div>
+                                    <div className="bg-white p-5 rounded-xl border border-amber-100 shadow-sm">
+                                        <h4 className="font-bold text-amber-800 text-base mb-2">3. Analog Pins (A0–A5)</h4>
+                                        <p className="text-sm text-gray-700 mb-3">Total 6 analog input pins hoti hain jo analog signals ko read karti hain (jaise Temperature sensor, LDR, Gas sensor, Potentiometer). Arduino ka ADC (Analog to Digital Converter) is signal ko digital value (0–1023) me convert karta hai.</p>
+                                    </div>
+                                    <div className="bg-white p-5 rounded-xl border border-teal-100 shadow-sm">
+                                        <h4 className="font-bold text-teal-800 text-base mb-3">4. Power Pins & Communication Protocols</h4>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            <div className="bg-teal-50 p-3 rounded-lg border border-teal-100">
+                                                <p className="text-sm font-extrabold text-teal-900 mb-2">⚡ Power Pins</p>
+                                                <ul className="text-sm text-teal-800 space-y-1.5 list-disc ml-5 font-medium">
+                                                    <li><strong>VIN:</strong> External voltage input</li>
+                                                    <li><strong>5V / 3.3V:</strong> Output voltages for sensors</li>
+                                                    <li><strong>GND:</strong> Ground (0V)</li>
+                                                    <li><strong>RESET:</strong> Reset pin</li>
+                                                </ul>
+                                            </div>
+                                            <div className="bg-cyan-50 p-3 rounded-lg border border-cyan-100">
+                                                <p className="text-sm font-extrabold text-cyan-900 mb-2">📡 Communication Protocols</p>
+                                                <ul className="text-sm text-cyan-800 space-y-1.5 list-disc ml-5 font-medium">
+                                                    <li><strong>UART:</strong> Serial Communication (RX, TX)</li>
+                                                    <li><strong>SPI:</strong> Fast Communication (Pins 10,11,12,13)</li>
+                                                    <li><strong>I2C:</strong> 2-wire Protocol (SDA: A4, SCL: A5)</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Memory & Conclusion */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="p-5 rounded-xl border border-purple-200 bg-gradient-to-br from-purple-50 to-fuchsia-50 shadow-sm">
+                                    <h4 className="font-bold text-purple-900 text-base mb-4 flex items-center gap-2"><Microchip size={18} className="text-purple-600"/> Memory Storage</h4>
+                                    <ul className="space-y-3">
+                                        <li className="bg-white/80 p-3 rounded-lg border border-purple-100 shadow-sm text-sm">
+                                            <strong className="text-purple-800 block mb-0.5">Flash Memory (32 KB)</strong>
+                                            <span className="text-gray-600">Program code store karne ke liye use hoti hai.</span>
+                                        </li>
+                                        <li className="bg-white/80 p-3 rounded-lg border border-purple-100 shadow-sm text-sm">
+                                            <strong className="text-purple-800 block mb-0.5">SRAM (2 KB)</strong>
+                                            <span className="text-gray-600">Temporary data storage ke liye use hoti hai.</span>
+                                        </li>
+                                        <li className="bg-white/80 p-3 rounded-lg border border-purple-100 shadow-sm text-sm">
+                                            <strong className="text-purple-800 block mb-0.5">EEPROM (1 KB)</strong>
+                                            <span className="text-gray-600">Permanent data storage ke liye use hoti hai.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="p-5 rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50 md:col-span-2 shadow-sm flex flex-col justify-center">
+                                    <h4 className="font-bold text-blue-900 text-lg mb-3 flex items-center gap-2"><Sparkles size={20} className="text-blue-600"/> Final Understanding</h4>
+                                    <p className="text-sm text-gray-800 leading-relaxed mb-4 font-medium">
+                                        Arduino Uno R3 ek complete development board hai jo sensors read karta hai, data process karta hai aur output devices ko control karta hai. Isme ATmega328P microcontroller, Digital pins, Analog pins, PWM support aur Communication protocols sab available hote hain.
+                                    </p>
+                                    <div>
+                                        <p className="text-xs font-bold text-blue-800 uppercase tracking-wide mb-2">🔥 Top Applications:</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {['Home automation', 'Smart lighting system', 'Robotics', 'IoT projects', 'Security systems', 'Weather monitoring', 'Smart agriculture'].map((app, i) => (
+                                                <span key={i} className="px-3 py-1.5 bg-white border border-blue-200 hover:border-blue-300 rounded-lg text-xs font-bold text-blue-700 shadow-sm transition-colors">{app}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </Sec>
