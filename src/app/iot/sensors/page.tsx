@@ -39,7 +39,7 @@ const tocItems = [
 
 export default function IoTSensors() {
     const [tocOpen, setTocOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState('transducer');
+    const [activeSection, setActiveSection] = useSteate('transducer');
 
     return (
         <div className="min-h-screen bg-white relative">

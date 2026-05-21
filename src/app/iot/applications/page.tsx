@@ -31,6 +31,8 @@ const tocItems = [
     { icon: <Shield size={13} />, label: 'Why Use Arduino', id: 'why-arduino', color: '#3b82f6' },
     { icon: <CircuitBoard size={13} />, label: 'Types of Boards', id: 'arduino-types', color: '#f43f5e' },
     { icon: <Cpu size={13} />, label: 'Arduino Uno R3', id: 'arduino-uno-deepdive', color: '#14b8a6' },
+    { icon: <Shield size={13} />, label: 'Arduino Shield', id: 'arduino-shield', color: '#ef4444' },
+    { icon: <Monitor size={13} />, label: 'Arduino IDE Deep Dive', id: 'arduino-ide-deepdive', color: '#8b5cf6' },
 ];
 
 export default function IoTApplications() {
@@ -746,6 +748,179 @@ export default function IoTApplications() {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Arduino Shield ═══ */}
+                    <Sec id="arduino-shield" title="🔴 Arduino Shield" icon={<Shield size={16} className="text-red-500" />}>
+                        <div className="flex flex-col md:flex-row gap-5 items-center mb-6">
+                            <div className="flex-1 space-y-3">
+                                <Def>Arduino shield ek additional board hota hai jo Arduino board ke upar directly attach kiya jata hai taaki Arduino ki functionality ko increase kiya ja sake.</Def>
+                                <IB type="tip"><strong>Simple words me:</strong> "Shield = Arduino ka extension board"</IB>
+                                <p>Shield ki madad se Arduino me naye features aur capabilities add ki jati hain bina extra complex wiring ke. Ye directly Arduino Uno ya doosre compatible boards ke pins par connect hota hai.</p>
+                                <p className="text-sm">Ye board <strong>Power pins</strong>, <strong>Communication pins</strong> aur <strong>Digital/Analog pins</strong> ka use karke additional functions perform karta hai.</p>
+                            </div>
+                            <div className="w-full md:w-64 flex-shrink-0">
+                                <img src="/iot/arduino_shield.png" alt="Arduino Shield" className="w-full h-auto rounded-2xl shadow-md border border-gray-100" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                            <div className="p-4 rounded-xl bg-gray-50 border border-gray-200">
+                                <h4 className="font-bold text-gray-800 text-sm mb-2">⚡ Features of Arduino Shield</h4>
+                                <ul className="text-sm text-gray-600 space-y-1 ml-4 list-disc marker:text-gray-400">
+                                    <li>Easy installation</li>
+                                    <li>Plug and play support</li>
+                                    <li>Additional functionality</li>
+                                    <li>Sensor aur module support</li>
+                                    <li>Fast development</li>
+                                </ul>
+                            </div>
+                            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                                <h4 className="font-bold text-emerald-800 text-sm mb-2">✅ Advantages</h4>
+                                <ul className="text-sm text-emerald-700 space-y-1 ml-4 list-disc marker:text-emerald-400">
+                                    <li>Wiring complexity kam hoti hai</li>
+                                    <li>Development fast hota hai</li>
+                                    <li>Multiple features easily add kiye ja sakte hain</li>
+                                    <li>Beginners ke liye easy hota hai</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h4 className="font-bold text-gray-800 mb-3 text-lg flex items-center gap-2"><Layers size={20} className="text-red-500" /> Types of Arduino Shields</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 shadow-sm hover:shadow-md transition-shadow">
+                                <h5 className="font-bold text-blue-900 text-sm mb-1">1. Ethernet Shield</h5>
+                                <p className="text-xs text-gray-600 mb-2">Internet aur network communication ke liye use hota hai.</p>
+                                <p className="text-[11px] font-semibold text-blue-700"><span className="text-blue-500">Uses:</span> IoT networking, Web server projects</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-orange-50 border border-orange-100 shadow-sm hover:shadow-md transition-shadow">
+                                <h5 className="font-bold text-orange-900 text-sm mb-1">2. Motor Shield</h5>
+                                <p className="text-xs text-gray-600 mb-2">Motors ko control karne ke liye use hota hai.</p>
+                                <p className="text-[11px] font-semibold text-orange-700"><span className="text-orange-500">Uses:</span> Robotics, Automation systems</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-cyan-50 border border-cyan-100 shadow-sm hover:shadow-md transition-shadow">
+                                <h5 className="font-bold text-cyan-900 text-sm mb-1">3. WiFi Shield</h5>
+                                <p className="text-xs text-gray-600 mb-2">Arduino ko wireless internet se connect karne ke liye use hota hai.</p>
+                                <p className="text-[11px] font-semibold text-cyan-700"><span className="text-cyan-500">Uses:</span> Smart home systems, IoT communication</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 shadow-sm hover:shadow-md transition-shadow">
+                                <h5 className="font-bold text-indigo-900 text-sm mb-1">4. GSM Shield</h5>
+                                <p className="text-xs text-gray-600 mb-2">Mobile network communication provide karta hai.</p>
+                                <p className="text-[11px] font-semibold text-indigo-700"><span className="text-indigo-500">Uses:</span> SMS sending, Remote monitoring</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-purple-50 border border-purple-100 shadow-sm hover:shadow-md transition-shadow">
+                                <h5 className="font-bold text-purple-900 text-sm mb-1">5. Bluetooth Shield</h5>
+                                <p className="text-xs text-gray-600 mb-2">Bluetooth communication ke liye use hota hai.</p>
+                                <p className="text-[11px] font-semibold text-purple-700"><span className="text-purple-500">Uses:</span> Wireless control system, Mobile connectivity</p>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Arduino IDE Deep Dive ═══ */}
+                    <Sec id="arduino-ide-deepdive" title="🔹 Introduction to Arduino IDE" icon={<Monitor size={16} className="text-purple-500" />}>
+                        <p className="mb-4 text-sm text-gray-700">Arduino IDE (Integrated Development Environment) ek software platform hai jiska use Arduino board ko program karne ke liye kiya jata hai. Ye software user ko code likhne, compile karne aur Arduino board me upload karne ki facility provide karta hai. Arduino IDE ka interface simple aur user-friendly hota hai jiski wajah se beginners bhi easily programming kar sakte hain.</p>
+                        
+                        <h4 className="font-bold text-gray-800 mb-3 text-lg flex items-center gap-2"><Menu size={20} className="text-purple-500" /> Main Components / Menus of Arduino IDE</h4>
+                        
+                        <div className="space-y-4">
+                            {/* File Menu */}
+                            <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm">
+                                <h5 className="font-bold text-gray-900 mb-2">🔴 1. File Menu</h5>
+                                <p className="text-sm text-gray-600 mb-3">File menu ka use files aur projects ko manage karne ke liye kiya jata hai. Is menu me new sketch create karna, old sketch open karna aur files save karna jaise options available hote hain.</p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                    <div className="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                        <p className="text-sm font-semibold text-gray-800">New (Ctrl + N)</p>
+                                        <p className="text-xs text-gray-600">Naya sketch/program create karne ke liye use hota hai.</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                        <p className="text-sm font-semibold text-gray-800">Open (Ctrl + O)</p>
+                                        <p className="text-xs text-gray-600">Pehle se saved Arduino sketch ko open karne ke liye use hota hai.</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                        <p className="text-sm font-semibold text-gray-800">Save (Ctrl + S)</p>
+                                        <p className="text-xs text-gray-600">Current sketch ko save karne ke liye use hota hai.</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                        <p className="text-sm font-semibold text-gray-800">Save As</p>
+                                        <p className="text-xs text-gray-600">Existing file ko naye naam se save karne ke liye use hota hai.</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                        <p className="text-sm font-semibold text-gray-800">Examples</p>
+                                        <p className="text-xs text-gray-600">Arduino IDE me already available sample programs (Blink LED) ko open karne ke liye.</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                        <p className="text-sm font-semibold text-gray-800">Preferences</p>
+                                        <p className="text-xs text-gray-600">IDE settings change karne ke liye use hota hai (Theme, Font size).</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Edit Menu */}
+                            <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm">
+                                <h5 className="font-bold text-gray-900 mb-2">🔴 2. Edit Menu</h5>
+                                <p className="text-sm text-gray-600 mb-3">Edit menu ka use code editing ke liye hota hai. Is menu me text editing aur code formatting ke options available hote hain.</p>
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="px-3 py-1 bg-gray-100 border border-gray-200 rounded text-xs font-semibold">Undo (Ctrl + Z)</span>
+                                    <span className="px-3 py-1 bg-gray-100 border border-gray-200 rounded text-xs font-semibold">Redo (Ctrl + Y)</span>
+                                    <span className="px-3 py-1 bg-gray-100 border border-gray-200 rounded text-xs font-semibold">Cut (Ctrl + X)</span>
+                                    <span className="px-3 py-1 bg-gray-100 border border-gray-200 rounded text-xs font-semibold">Copy (Ctrl + C)</span>
+                                    <span className="px-3 py-1 bg-gray-100 border border-gray-200 rounded text-xs font-semibold">Paste (Ctrl + V)</span>
+                                    <span className="px-3 py-1 bg-gray-100 border border-gray-200 rounded text-xs font-semibold">Select All (Ctrl + A)</span>
+                                </div>
+                            </div>
+
+                            {/* Sketch Menu */}
+                            <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm">
+                                <h5 className="font-bold text-gray-900 mb-2">🔴 3. Sketch Menu</h5>
+                                <p className="text-sm text-gray-600 mb-3">Sketch menu program compiling aur library management ke liye use hota hai.</p>
+                                <ul className="text-sm text-gray-600 space-y-2 ml-4 list-disc marker:text-purple-400">
+                                    <li><strong>Verify / Compile (Ctrl + R):</strong> Program me errors check karta hai aur code ko compile karta hai.</li>
+                                    <li><strong>Upload (Ctrl + U):</strong> Compiled code ko Arduino board me upload karta hai.</li>
+                                    <li><strong>Include Library:</strong> External libraries ko add karne ke liye use hota hai. Libraries sensors aur modules ko easily use karne me help karti hain.</li>
+                                </ul>
+                            </div>
+
+                            {/* Tools & Help Menu */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm">
+                                    <h5 className="font-bold text-gray-900 mb-2">🔴 4. Tools Menu</h5>
+                                    <ul className="text-sm text-gray-600 space-y-2 ml-4 list-disc marker:text-purple-400">
+                                        <li><strong>Board:</strong> Arduino board select karne ke liye (e.g., Uno, Mega, Nano).</li>
+                                        <li><strong>Port:</strong> COM port select karne ke liye jahan Arduino connected hota hai.</li>
+                                        <li><strong>Programmer:</strong> Programming method select karne ke liye.</li>
+                                        <li><strong>Serial Monitor (Ctrl + Shift + M):</strong> Arduino aur computer ke beech serial communication display karta hai.</li>
+                                    </ul>
+                                </div>
+                                <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm">
+                                    <h5 className="font-bold text-gray-900 mb-2">🔴 5. Help Menu</h5>
+                                    <ul className="text-sm text-gray-600 space-y-2 ml-4 list-disc marker:text-purple-400">
+                                        <li>Documentation access</li>
+                                        <li>Troubleshooting</li>
+                                        <li>Reference material</li>
+                                        <li>Software information</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
+                                <h5 className="font-bold text-gray-800 text-sm mb-1">Toolbar</h5>
+                                <p className="text-xs text-gray-600">Quick-access buttons (Verify, Upload, New, Open, Save, Serial Monitor).</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
+                                <h5 className="font-bold text-gray-800 text-sm mb-1">Text Editor Area</h5>
+                                <p className="text-xs text-gray-600">Main coding area jahan variables, functions, logic likhe jate hain.</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
+                                <h5 className="font-bold text-gray-800 text-sm mb-1">Message & Console</h5>
+                                <p className="text-xs text-gray-600">Errors, warnings, successful messages aur compilation process show karta hai.</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
+                                <h5 className="font-bold text-gray-800 text-sm mb-1">Status Bar</h5>
+                                <p className="text-xs text-gray-600">Selected board, COM port, aur IDE status show karta hai.</p>
                             </div>
                         </div>
                     </Sec>
