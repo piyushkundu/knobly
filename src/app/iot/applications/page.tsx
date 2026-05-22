@@ -1,7 +1,7 @@
 'use client';
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -33,6 +33,11 @@ const tocItems = [
     { icon: <Cpu size={13} />, label: 'Arduino Uno R3', id: 'arduino-uno-deepdive', color: '#14b8a6' },
     { icon: <Shield size={13} />, label: 'Arduino Shield', id: 'arduino-shield', color: '#ef4444' },
     { icon: <Monitor size={13} />, label: 'Arduino IDE Deep Dive', id: 'arduino-ide-deepdive', color: '#8b5cf6' },
+    { icon: <BookOpen size={13} />, label: 'Arduino Library', id: 'arduino-library', color: '#d946ef' },
+    { icon: <ToggleLeft size={13} />, label: 'Input & Output Pins', id: 'arduino-pins', color: '#0ea5e9' },
+    { icon: <MousePointerClick size={13} />, label: 'Select the Board', id: 'arduino-select-board', color: '#f59e0b' },
+    { icon: <FileCode2 size={13} />, label: 'Writing & Editing Codes', id: 'arduino-sketch-edit', color: '#10b981' },
+    { icon: <Braces size={13} />, label: 'Sketch Structure', id: 'arduino-sketch-structure', color: '#8b5cf6' },
 ];
 
 export default function IoTApplications() {
@@ -921,6 +926,284 @@ export default function IoTApplications() {
                             <div className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
                                 <h5 className="font-bold text-gray-800 text-sm mb-1">Status Bar</h5>
                                 <p className="text-xs text-gray-600">Selected board, COM port, aur IDE status show karta hai.</p>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Arduino Library ═══ */}
+                    <Sec id="arduino-library" title="🔴 Arduino Library" icon={<BookOpen size={16} className="text-fuchsia-500" />}>
+                        <div className="flex flex-col md:flex-row gap-5 items-center mb-6">
+                            <div className="flex-1 space-y-3">
+                                <p>Arduino library ek pre-written code collection hoti hai jo programming ko easy banati hai. Library me already functions aur commands available hote hain jinki help se sensors, displays, motors aur modules ko easily control kiya ja sakta hai.</p>
+                                <IB type="tip"><strong>Simple words me:</strong> "Library = ready-made code collection"</IB>
+                                <p>Arduino libraries programmer ka time bachati hain aur complex coding ko simple bana deti hain.</p>
+                            </div>
+                            <div className="w-full md:w-64 flex-shrink-0">
+                                <img src="/iot/arduino_library.png" alt="Arduino Library" className="w-full h-auto rounded-2xl shadow-md border border-gray-100" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div className="p-4 rounded-xl bg-blue-50 border border-blue-200">
+                                <h4 className="font-bold text-blue-900 text-sm mb-2">⚡ Working of Arduino Library</h4>
+                                <p className="text-sm text-gray-700 mb-2">Jab kisi sensor ya module ko Arduino ke saath use karna hota hai to uske liye related library include ki jati hai. Library include karne ke baad:</p>
+                                <ul className="text-sm text-blue-800 space-y-1 ml-4 list-disc marker:text-blue-400">
+                                    <li>Ready-made functions available ho jate hain</li>
+                                    <li>Hardware ko easily control kiya ja sakta hai</li>
+                                </ul>
+                            </div>
+                            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                                <h4 className="font-bold text-emerald-800 text-sm mb-2">✅ Advantages of Arduino Library</h4>
+                                <ul className="text-sm text-emerald-700 space-y-1 ml-4 list-disc marker:text-emerald-400">
+                                    <li>Coding easy ho jati hai</li>
+                                    <li>Time saving hota hai</li>
+                                    <li>Errors kam hote hain</li>
+                                    <li>Complex devices ko easily use kiya ja sakta hai</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h4 className="font-bold text-gray-800 mb-3 text-lg">📌 Examples of Arduino Libraries</h4>
+                        <div className="overflow-x-auto mb-6">
+                            <table className="w-full text-sm text-left border-collapse">
+                                <thead className="bg-fuchsia-50 text-fuchsia-900 border-b border-fuchsia-200">
+                                    <tr>
+                                        <th className="px-4 py-3 font-semibold">Library</th>
+                                        <th className="px-4 py-3 font-semibold">Use</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr className="border-b border-gray-100 hover:bg-gray-50">
+                                        <td className="px-4 py-3 font-medium text-gray-800">Servo Library</td>
+                                        <td className="px-4 py-3 text-gray-600">Servo motor control</td>
+                                    </tr>
+                                    <tr className="border-b border-gray-100 hover:bg-gray-50">
+                                        <td className="px-4 py-3 font-medium text-gray-800">LiquidCrystal</td>
+                                        <td className="px-4 py-3 text-gray-600">LCD display control</td>
+                                    </tr>
+                                    <tr className="border-b border-gray-100 hover:bg-gray-50">
+                                        <td className="px-4 py-3 font-medium text-gray-800">WiFi Library</td>
+                                        <td className="px-4 py-3 text-gray-600">WiFi communication</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50">
+                                        <td className="px-4 py-3 font-medium text-gray-800">EEPROM Library</td>
+                                        <td className="px-4 py-3 text-gray-600">EEPROM memory access</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <h4 className="font-bold text-gray-800 text-sm mb-2">🛠️ How to Include Library</h4>
+                            <p className="text-sm text-gray-600 mb-2">Arduino IDE me library include karne ke liye:</p>
+                            <code className="px-3 py-1.5 bg-white text-purple-700 rounded-lg text-sm font-semibold border border-gray-200 shadow-sm block w-max">Sketch → Include Library</code>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Input and Output Pin ═══ */}
+                    <Sec id="arduino-pins" title="🔴 Making Input and Output Pin" icon={<ToggleLeft size={16} className="text-sky-500" />}>
+                        <div className="flex flex-col md:flex-row gap-5 items-center mb-6">
+                            <div className="flex-1 space-y-3">
+                                <p>Arduino me pins ko input ya output mode me configure kiya jata hai. Pin mode decide karta hai ki pin data receive karegi ya data send karegi.</p>
+                            </div>
+                            <div className="w-full md:w-64 flex-shrink-0">
+                                <img src="/iot/arduino_pins.png" alt="Arduino Pins" className="w-full h-auto rounded-2xl shadow-md border border-gray-100" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 bg-blue-200 text-blue-800 text-[10px] font-bold px-2 py-1 rounded-bl-lg uppercase tracking-wider">Input</div>
+                                <h4 className="font-bold text-blue-900 text-base mb-2">📥 Input Pin</h4>
+                                <p className="text-sm text-gray-700 mb-3">Input pin external devices se data receive karti hai.</p>
+                                <p className="text-xs font-semibold text-blue-800 mb-1">👉 Examples:</p>
+                                <ul className="text-sm text-blue-700 space-y-1 ml-4 list-disc marker:text-blue-400 mb-3">
+                                    <li>Sensor input</li>
+                                    <li>Push button input</li>
+                                </ul>
+                                <div className="bg-white/80 p-3 rounded-lg border border-blue-100">
+                                    <p className="text-xs font-bold text-blue-900 mb-1">⚡ Working:</p>
+                                    <p className="text-xs text-gray-600">Input mode me Arduino voltage signal ko read karta hai aur HIGH ya LOW value detect karta hai.</p>
+                                </div>
+                            </div>
+                            
+                            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 bg-rose-200 text-rose-800 text-[10px] font-bold px-2 py-1 rounded-bl-lg uppercase tracking-wider">Output</div>
+                                <h4 className="font-bold text-rose-900 text-base mb-2">📤 Output Pin</h4>
+                                <p className="text-sm text-gray-700 mb-3">Output pin external devices ko signal bhejti hai.</p>
+                                <p className="text-xs font-semibold text-rose-800 mb-1">👉 Examples:</p>
+                                <ul className="text-sm text-rose-700 space-y-1 ml-4 list-disc marker:text-rose-400 mb-3">
+                                    <li>LED control</li>
+                                    <li>Motor control</li>
+                                    <li>Buzzer control</li>
+                                </ul>
+                                <div className="bg-white/80 p-3 rounded-lg border border-rose-100">
+                                    <p className="text-xs font-bold text-rose-900 mb-1">⚡ Working:</p>
+                                    <p className="text-xs text-gray-600">Output mode me Arduino HIGH (5V) ya LOW (0V) signal provide karta hai.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 className="font-bold text-gray-800 mb-3 text-lg">📌 pinMode() Function</h4>
+                        <div className="space-y-4">
+                            <p className="text-sm">Arduino me pins ko configure karne ke liye <code>pinMode()</code> function use hota hai.</p>
+                            
+                            <div className="bg-gray-900 text-gray-100 p-4 rounded-xl shadow-inner font-mono text-sm overflow-x-auto">
+                                <p className="text-gray-400 mb-1 text-xs">// Syntax</p>
+                                <div><span className="text-orange-400">pinMode</span>(pin, mode);</div>
+                                
+                                <p className="text-gray-400 mt-4 mb-1 text-xs">// Examples</p>
+                                <div><span className="text-orange-400">pinMode</span>(<span className="text-purple-400">13</span>, <span className="text-sky-400">OUTPUT</span>); <span className="text-gray-500">// Pin 13 ko output mode me set karta hai</span></div>
+                                <div className="mt-2"><span className="text-orange-400">pinMode</span>(<span className="text-purple-400">2</span>, <span className="text-sky-400">INPUT</span>); <span className="text-gray-500">// Pin 2 ko input mode me set karta hai</span></div>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Select the Board ═══ */}
+                    <Sec id="arduino-select-board" title="🔴 How to Select the Board" icon={<MousePointerClick size={16} className="text-amber-500" />}>
+                        <div className="flex flex-col md:flex-row gap-5 items-center mb-6">
+                            <div className="flex-1 space-y-3">
+                                <p>Arduino IDE me program upload karne se pehle correct Arduino board select karna bahut important hota hai. Agar wrong board select ho jaye to code upload nahi hoga ya errors aa sakte hain.</p>
+                            </div>
+                            <div className="w-full md:w-64 flex-shrink-0">
+                                <img src="/iot/arduino_select_board.png" alt="Select Arduino Board" className="w-full h-auto rounded-2xl shadow-md border border-gray-100" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm">
+                                <h4 className="font-bold text-gray-800 text-sm mb-3">🛠️ Steps to Select Board</h4>
+                                <ul className="text-sm text-gray-600 space-y-3">
+                                    <li className="flex items-start gap-2">
+                                        <span className="w-5 h-5 flex items-center justify-center bg-gray-100 text-gray-700 rounded-full text-xs font-bold shrink-0 mt-0.5">1</span>
+                                        <span>Arduino IDE open kare</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="w-5 h-5 flex items-center justify-center bg-gray-100 text-gray-700 rounded-full text-xs font-bold shrink-0 mt-0.5">2</span>
+                                        <div>
+                                            <span>Menu bar me:</span>
+                                            <div className="mt-1"><code className="px-2 py-1 bg-gray-100 text-purple-700 rounded text-xs font-semibold border border-gray-200">Tools → Board</code> select kare</div>
+                                        </div>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="w-5 h-5 flex items-center justify-center bg-gray-100 text-gray-700 rounded-full text-xs font-bold shrink-0 mt-0.5">3</span>
+                                        <div>
+                                            <span>Required board choose kare</span>
+                                            <p className="text-xs text-gray-500 mt-1">👉 Example: Arduino Uno, Arduino Mega, Arduino Nano</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                                <h4 className="font-bold text-amber-900 text-sm mb-3">❓ Why Board Selection Important</h4>
+                                <p className="text-sm text-gray-700 mb-2">Board selection se IDE ko pata chalta hai:</p>
+                                <ul className="text-sm text-amber-800 space-y-1 ml-4 list-disc marker:text-amber-400">
+                                    <li>Kaunsa microcontroller use ho raha hai</li>
+                                    <li>Kitni memory available hai</li>
+                                    <li>Kaunsi upload settings use hongi</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Writing and Editing Codes ═══ */}
+                    <Sec id="arduino-sketch-edit" title="🔴 Writing and Editing Codes in Sketch" icon={<FileCode2 size={16} className="text-emerald-500" />}>
+                        <div className="flex flex-col md:flex-row gap-5 items-center mb-6">
+                            <div className="flex-1 space-y-3">
+                                <Def>Arduino program ko “Sketch” kaha jata hai. Sketch ek source code file hoti hai jisme program instructions likhi jati hain.</Def>
+                                <p>Arduino IDE me code text editor area me likha aur edit kiya jata hai.</p>
+                            </div>
+                            <div className="w-full md:w-64 flex-shrink-0">
+                                <img src="/iot/arduino_sketch_edit.png" alt="Editing Arduino Sketch" className="w-full h-auto rounded-2xl shadow-md border border-gray-100" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover:border-emerald-300 transition-colors">
+                                <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3"><FileCode2 size={16} /></div>
+                                <h5 className="font-bold text-gray-800 text-sm mb-2">Writing Code</h5>
+                                <p className="text-xs text-gray-600">User variables declare karta hai, functions likhta hai, aur logic create karta hai.</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover:border-blue-300 transition-colors">
+                                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-3"><Monitor size={16} /></div>
+                                <h5 className="font-bold text-gray-800 text-sm mb-2">Editing Code</h5>
+                                <p className="text-xs text-gray-600">Code ko modify karne ke liye Copy, Paste, Undo, aur Redo jaise editing options available hote hain.</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover:border-purple-300 transition-colors">
+                                <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mb-3"><Shield size={16} /></div>
+                                <h5 className="font-bold text-gray-800 text-sm mb-2">Verify / Compile</h5>
+                                <p className="text-xs text-gray-600">Code likhne ke baad <code>Verify</code> button press karke errors check kiye jate hain.</p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover:border-orange-300 transition-colors">
+                                <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center mb-3"><Zap size={16} /></div>
+                                <h5 className="font-bold text-gray-800 text-sm mb-2">Uploading Code</h5>
+                                <p className="text-xs text-gray-600">Compile successful hone ke baad <code>Upload</code> button se program Arduino board me upload kiya jata hai.</p>
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Sketch Structure ═══ */}
+                    <Sec id="arduino-sketch-structure" title="🔴 Arduino Sketch Structure" icon={<Braces size={16} className="text-purple-500" />}>
+                        <div className="flex flex-col md:flex-row gap-5 items-center mb-6">
+                            <div className="flex-1 space-y-3">
+                                <p>Arduino program mainly do important functions par based hota hai:</p>
+                                <ol className="text-sm text-gray-800 font-semibold space-y-1 ml-5 list-decimal marker:text-purple-500">
+                                    <li><code>setup()</code></li>
+                                    <li><code>loop()</code></li>
+                                </ol>
+                                
+                                <div className="bg-gray-900 text-gray-100 p-4 rounded-xl shadow-inner font-mono text-sm mt-3">
+                                    <p className="text-gray-400 mb-1 text-xs">// Basic Structure of Arduino Sketch</p>
+                                    <div><span className="text-orange-400">void</span> <span className="text-sky-400">setup</span>()</div>
+                                    <div>{'{'}</div>
+                                    <div className="ml-4 text-gray-500">// Initialization code</div>
+                                    <div>{'}'}</div>
+                                    <br/>
+                                    <div><span className="text-orange-400">void</span> <span className="text-sky-400">loop</span>()</div>
+                                    <div>{'{'}</div>
+                                    <div className="ml-4 text-gray-500">// Main program code</div>
+                                    <div>{'}'}</div>
+                                </div>
+                            </div>
+                            <div className="w-full md:w-64 flex-shrink-0">
+                                <img src="/iot/arduino_sketch_structure.png" alt="Arduino Sketch Structure" className="w-full h-auto rounded-2xl shadow-md border border-gray-100" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-4 rounded-xl bg-purple-50 border border-purple-200">
+                                <h4 className="font-bold text-purple-900 text-base mb-2 font-mono">setup() Function</h4>
+                                <p className="text-sm text-gray-700 mb-3">Ye function sirf ek baar execute hota hai jab Arduino start hota hai ya Reset hota hai.</p>
+                                <p className="text-xs font-bold text-purple-800 mb-1">⚡ Uses:</p>
+                                <ul className="text-sm text-purple-800 space-y-1 ml-4 list-disc marker:text-purple-400 mb-4">
+                                    <li>Pin mode define karna</li>
+                                    <li>Serial communication start karna</li>
+                                    <li>Initial settings configure karna</li>
+                                </ul>
+                                <div className="bg-white/80 p-3 rounded-lg border border-purple-100 font-mono text-xs text-gray-800">
+                                    <div className="text-gray-500 mb-1">// Example</div>
+                                    <div><span className="text-purple-600">void</span> <span className="text-blue-600">setup</span>() {'{'}</div>
+                                    <div className="ml-4"><span className="text-orange-600">pinMode</span>(<span className="text-blue-500">13</span>, OUTPUT);</div>
+                                    <div>{'}'}</div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-xl bg-sky-50 border border-sky-200">
+                                <h4 className="font-bold text-sky-900 text-base mb-2 font-mono">loop() Function</h4>
+                                <p className="text-sm text-gray-700 mb-3">Ye function continuously repeat hota rehta hai jab tak Arduino ON rehta hai. Isme main logic aur repeated tasks likhe jate hain.</p>
+                                <p className="text-xs font-bold text-sky-800 mb-1">⚡ Uses:</p>
+                                <ul className="text-sm text-sky-800 space-y-1 ml-4 list-disc marker:text-sky-400 mb-4">
+                                    <li>LED blinking</li>
+                                    <li>Sensor reading</li>
+                                    <li>Motor control</li>
+                                </ul>
+                                <div className="bg-white/80 p-3 rounded-lg border border-sky-100 font-mono text-xs text-gray-800">
+                                    <div className="text-gray-500 mb-1">// Example</div>
+                                    <div><span className="text-purple-600">void</span> <span className="text-blue-600">loop</span>() {'{'}</div>
+                                    <div className="ml-4"><span className="text-orange-600">digitalWrite</span>(<span className="text-blue-500">13</span>, HIGH);</div>
+                                    <div>{'}'}</div>
+                                </div>
                             </div>
                         </div>
                     </Sec>
