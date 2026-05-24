@@ -38,6 +38,11 @@ const tocItems = [
     { icon: <MousePointerClick size={13} />, label: 'Select the Board', id: 'arduino-select-board', color: '#f59e0b' },
     { icon: <FileCode2 size={13} />, label: 'Writing & Editing Codes', id: 'arduino-sketch-edit', color: '#10b981' },
     { icon: <Braces size={13} />, label: 'Sketch Structure', id: 'arduino-sketch-structure', color: '#8b5cf6' },
+    { icon: <Cog size={13} />, label: 'What is Function', id: 'what-is-function', color: '#ef4444' },
+    { icon: <Cpu size={13} />, label: 'Embedded C Language', id: 'embedded-c', color: '#0ea5e9' },
+    { icon: <Tag size={13} />, label: 'Variables', id: 'variables', color: '#f59e0b' },
+    { icon: <Shield size={13} />, label: 'Rules for Variables', id: 'variable-rules', color: '#ec4899' },
+    { icon: <Layers size={13} />, label: 'Data Types', id: 'data-types', color: '#8b5cf6' },
 ];
 
 export default function IoTApplications() {
@@ -1206,6 +1211,276 @@ export default function IoTApplications() {
                                 </div>
                             </div>
                         </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: What is Function ═══ */}
+                    <Sec id="what-is-function" title="🔴 What is Function" icon={<Cog size={16} className="text-red-500" />}>
+                        <Def>🔧 <strong>Function</strong> ek block of code hota hai jo kisi specific task ko perform karne ke liye use kiya jata hai.</Def>
+                        <p>Program me jab same task ko baar-baar perform karna ho to function ka use kiya jata hai. Isse code <strong>reusable</strong> aur <strong>easy</strong> ho jata hai.</p>
+                        <div className="rounded-2xl p-4 my-4" style={{ background: 'linear-gradient(135deg, #fef2f2, #fee2e2)', border: '1px solid #fca5a5' }}>
+                            <p className="text-sm font-bold text-red-800">👉 &quot;Function = instructions ka group jo ek specific kaam karta hai&quot;</p>
+                        </div>
+
+                        <h4 className="font-bold mt-5 mb-3 text-gray-800">🔹 Features / Points of Function</h4>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+                            <div className="p-4 rounded-2xl" style={{ background: '#ecfdf5', border: '1px solid #a7f3d0' }}>
+                                <h5 className="font-bold text-emerald-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center font-black">1</span> Reusability</h5>
+                                <p className="text-xs text-emerald-800">Ek function ko baar-baar call kiya ja sakta hai. Isse same code ko repeatedly likhne ki zarurat nahi padti.</p>
+                            </div>
+                            <div className="p-4 rounded-2xl" style={{ background: '#eff6ff', border: '1px solid #93c5fd' }}>
+                                <h5 className="font-bold text-blue-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-black">2</span> Modularity</h5>
+                                <p className="text-xs text-blue-800">Function program ko small-small parts me divide karta hai. Isse program samajhna aur manage karna easy ho jata hai.</p>
+                            </div>
+                            <div className="p-4 rounded-2xl" style={{ background: '#fefce8', border: '1px solid #fde047' }}>
+                                <h5 className="font-bold text-yellow-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-yellow-500 text-white text-xs flex items-center justify-center font-black">3</span> Reduces Complexity</h5>
+                                <p className="text-xs text-yellow-800">Large program ko simple aur organized banata hai. Program ki readability improve hoti hai.</p>
+                            </div>
+                            <div className="p-4 rounded-2xl" style={{ background: '#fdf2f8', border: '1px solid #f9a8d4' }}>
+                                <h5 className="font-bold text-pink-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-pink-500 text-white text-xs flex items-center justify-center font-black">4</span> Easy Debugging</h5>
+                                <p className="text-xs text-pink-800">Agar error aaye to specific function ko check karke error easily find kiya ja sakta hai.</p>
+                            </div>
+                        </div>
+                        <IB type="tip">Functions ka use karke program ko <strong>clean, reusable aur easy to debug</strong> banaya ja sakta hai!</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: Embedded C Language ═══ */}
+                    <Sec id="embedded-c" title="🔴 Embedded C Language" icon={<Cpu size={16} className="text-sky-500" />}>
+                        <Def>💻 <strong>Embedded C</strong> ek programming language hai jo embedded systems aur microcontrollers ko program karne ke liye use hoti hai.</Def>
+                        <p>Ye C language ka <strong>extended version</strong> hota hai jisme hardware control aur low-level programming features available hote hain.</p>
+
+                        <h4 className="font-bold mt-4 mb-3 text-gray-800">👉 Embedded C ka use kahan hota hai?</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 my-3">
+                            {[{ emoji: '🔵', t: 'Arduino' }, { emoji: '🖥️', t: 'Microcontroller' }, { emoji: '🤖', t: 'Robotics' }, { emoji: '🌐', t: 'IoT Systems' }].map((item, i) => (
+                                <div key={i} className="p-3 rounded-xl text-center hover:scale-105 transition-transform" style={{ background: '#ecfeff', border: '1px solid #67e8f9' }}>
+                                    <div className="text-2xl mb-1">{item.emoji}</div>
+                                    <h5 className="font-bold text-xs text-sky-700">{item.t}</h5>
+                                </div>
+                            ))}
+                        </div>
+
+                        <h4 className="font-bold mt-5 mb-3 text-gray-800">🔹 Features of Embedded C</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-3">
+                            {[
+                                { emoji: '⚡', t: 'Fast Execution', d: 'Code bahut tezi se execute hota hai', c: '#ef4444' },
+                                { emoji: '🔧', t: 'Hardware Control', d: 'Direct hardware ko control kar sakte hain', c: '#8b5cf6' },
+                                { emoji: '💾', t: 'Low Memory Usage', d: 'Kam memory mein bhi chalta hai', c: '#10b981' },
+                                { emoji: '⏱️', t: 'Real-time Support', d: 'Real-time programming possible hai', c: '#f97316' },
+                                { emoji: '🔄', t: 'Portable Language', d: 'Different platforms par chal sakta hai', c: '#0ea5e9' },
+                            ].map((item, i) => (
+                                <div key={i} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: `${item.c}08`, border: `1px solid ${item.c}25` }}>
+                                    <span className="text-xl">{item.emoji}</span>
+                                    <div>
+                                        <h5 className="font-bold text-sm" style={{ color: item.c }}>{item.t}</h5>
+                                        <p className="text-xs text-gray-500">{item.d}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <IB type="note">Embedded C ka use karke hum <strong>microcontrollers aur IoT devices</strong> ko smart bana sakte hain!</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: Variables ═══ */}
+                    <Sec id="variables" title="🔴 Variables" icon={<Tag size={16} className="text-amber-500" />}>
+                        <Def>📦 <strong>Variable</strong> ek memory location hoti hai jiska use data store karne ke liye kiya jata hai.</Def>
+                        <p>Program execution ke dauran variable ki value <strong>change ho sakti hai</strong>.</p>
+                        <div className="rounded-2xl p-4 my-4" style={{ background: 'linear-gradient(135deg, #fffbeb, #fef3c7)', border: '1px solid #fde68a' }}>
+                            <p className="text-sm font-bold text-amber-800">👉 &quot;Variable = data store karne ka naam&quot;</p>
+                        </div>
+
+                        <h4 className="font-bold mt-4 mb-3 text-gray-800">🔹 Example</h4>
+                        <div className="bg-gray-900 text-gray-100 p-4 rounded-xl shadow-inner font-mono text-sm">
+                            <div><span className="text-orange-400">int</span> <span className="text-sky-400">a</span> = <span className="text-green-400">10</span>;</div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 mt-3">
+                            <div className="p-3 rounded-xl text-center" style={{ background: '#eff6ff', border: '1px solid #93c5fd' }}>
+                                <p className="text-xs text-blue-700"><code className="font-bold bg-blue-100 px-1.5 py-0.5 rounded">a</code> → Variable hai</p>
+                            </div>
+                            <div className="p-3 rounded-xl text-center" style={{ background: '#f0fdf4', border: '1px solid #86efac' }}>
+                                <p className="text-xs text-green-700"><code className="font-bold bg-green-100 px-1.5 py-0.5 rounded">10</code> → Stored value hai</p>
+                            </div>
+                        </div>
+                        <IB type="tip">Variable ko samjho jaise ek <strong>box</strong> hota hai jisme data rakhte hain — aur uska ek naam hota hai!</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: Rules for Variables ═══ */}
+                    <Sec id="variable-rules" title="🔴 Rules for Variable Naming" icon={<Shield size={16} className="text-pink-500" />}>
+                        <Def>📋 Variable declare karte waqt kuch important <strong>rules</strong> follow karne padte hain.</Def>
+
+                        <div className="space-y-4 mt-4">
+                            {/* Rule 1 */}
+                            <div className="p-4 rounded-xl" style={{ background: '#ecfdf5', border: '1px solid #a7f3d0' }}>
+                                <h5 className="font-bold text-emerald-700 mb-2">🔸 1. Variable Name Alphabet ya Underscore se Start Hona Chahiye</h5>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-white p-2.5 rounded-lg border border-emerald-200">
+                                        <p className="text-[10px] font-bold text-emerald-600 mb-1">✅ Correct</p>
+                                        <code className="text-xs text-gray-800 font-mono">temp, _value</code>
+                                    </div>
+                                    <div className="bg-white p-2.5 rounded-lg border border-red-200">
+                                        <p className="text-[10px] font-bold text-red-600 mb-1">❌ Wrong</p>
+                                        <code className="text-xs text-gray-800 font-mono">1temp</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Rule 2 */}
+                            <div className="p-4 rounded-xl" style={{ background: '#eff6ff', border: '1px solid #93c5fd' }}>
+                                <h5 className="font-bold text-blue-700 mb-2">🔸 2. Space Allowed Nahi Hota</h5>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-white p-2.5 rounded-lg border border-blue-200">
+                                        <p className="text-[10px] font-bold text-emerald-600 mb-1">✅ Correct</p>
+                                        <code className="text-xs text-gray-800 font-mono">totalMarks</code>
+                                    </div>
+                                    <div className="bg-white p-2.5 rounded-lg border border-red-200">
+                                        <p className="text-[10px] font-bold text-red-600 mb-1">❌ Wrong</p>
+                                        <code className="text-xs text-gray-800 font-mono">total marks</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Rule 3 */}
+                            <div className="p-4 rounded-xl" style={{ background: '#fefce8', border: '1px solid #fde047' }}>
+                                <h5 className="font-bold text-yellow-700 mb-2">🔸 3. Special Characters Allowed Nahi Hote</h5>
+                                <p className="text-xs text-yellow-800">Special symbols jaise <code className="bg-yellow-100 px-1.5 py-0.5 rounded font-mono">@ # % &amp;</code> use nahi kar sakte.</p>
+                            </div>
+
+                            {/* Rule 4 */}
+                            <div className="p-4 rounded-xl" style={{ background: '#fdf2f8', border: '1px solid #f9a8d4' }}>
+                                <h5 className="font-bold text-pink-700 mb-2">🔸 4. Keywords Use Nahi Kar Sakte</h5>
+                                <p className="text-xs text-pink-800 mb-2">C language ke reserved keywords variable names nahi ban sakte.</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {['int', 'float', 'while', 'return', 'void'].map((k, i) => (
+                                        <span key={i} className="px-2.5 py-1 bg-white rounded-lg text-xs font-mono font-bold text-red-600 border border-red-200">{k}</span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Rule 5 */}
+                            <div className="p-4 rounded-xl" style={{ background: '#f5f3ff', border: '1px solid #c4b5fd' }}>
+                                <h5 className="font-bold text-purple-700 mb-2">🔸 5. Variable Name Meaningful Hona Chahiye</h5>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-white p-2.5 rounded-lg border border-purple-200">
+                                        <p className="text-[10px] font-bold text-emerald-600 mb-1">✅ Correct</p>
+                                        <code className="text-xs text-gray-800 font-mono">studentAge</code>
+                                    </div>
+                                    <div className="bg-white p-2.5 rounded-lg border border-red-200">
+                                        <p className="text-[10px] font-bold text-red-600 mb-1">❌ Wrong</p>
+                                        <code className="text-xs text-gray-800 font-mono">x</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Rule 6 */}
+                            <div className="p-4 rounded-xl" style={{ background: '#ecfeff', border: '1px solid #67e8f9' }}>
+                                <h5 className="font-bold text-cyan-700 mb-2">🔸 6. Variable Case Sensitive Hota Hai</h5>
+                                <div className="flex items-center justify-center gap-4 my-2">
+                                    <span className="px-4 py-2 bg-white rounded-lg text-sm font-mono font-bold text-cyan-700 border border-cyan-200">age</span>
+                                    <span className="text-lg font-bold text-red-500">≠</span>
+                                    <span className="px-4 py-2 bg-white rounded-lg text-sm font-mono font-bold text-cyan-700 border border-cyan-200">AGE</span>
+                                </div>
+                                <p className="text-xs text-cyan-800 text-center">Dono <strong>different variables</strong> hote hain.</p>
+                            </div>
+
+                            {/* Rule 7 */}
+                            <div className="p-4 rounded-xl" style={{ background: '#fff7ed', border: '1px solid #fdba74' }}>
+                                <h5 className="font-bold text-orange-700 mb-2">🔸 7. Numbers Use Kar Sakte Hain But Starting Me Nahi</h5>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-white p-2.5 rounded-lg border border-orange-200">
+                                        <p className="text-[10px] font-bold text-emerald-600 mb-1">✅ Correct</p>
+                                        <code className="text-xs text-gray-800 font-mono">mark1</code>
+                                    </div>
+                                    <div className="bg-white p-2.5 rounded-lg border border-red-200">
+                                        <p className="text-[10px] font-bold text-red-600 mb-1">❌ Wrong</p>
+                                        <code className="text-xs text-gray-800 font-mono">1mark</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Rule 8 */}
+                            <div className="p-4 rounded-xl" style={{ background: '#f0fdf4', border: '1px solid #86efac' }}>
+                                <h5 className="font-bold text-green-700 mb-2">🔸 8. Variable Length Limited Hoti Hai</h5>
+                                <p className="text-xs text-green-800">Variable ka naam bahut jyada long nahi hona chahiye aur <strong>readable</strong> hona chahiye.</p>
+                            </div>
+                        </div>
+                        <IB type="warning">In rules ko follow karna <strong>zaroori</strong> hai — warna program mein <strong>error</strong> aayega!</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: Data Types ═══ */}
+                    <Sec id="data-types" title="🔴 Data Types" icon={<Layers size={16} className="text-purple-500" />}>
+                        <Def>📊 <strong>Data type</strong> batata hai ki variable me kis type ka data store hoga.</Def>
+                        <p>Different data types alag-alag <strong>memory size</strong> aur <strong>value range</strong> support karte hain.</p>
+
+                        <h4 className="font-bold mt-5 mb-3 text-gray-800">🔹 Common Data Types in Embedded C</h4>
+                        <div className="overflow-x-auto rounded-xl border border-purple-200 my-4">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }} className="text-white">
+                                        <th className="px-4 py-3 text-left text-xs font-bold">Data Type</th>
+                                        <th className="px-4 py-3 text-left text-xs font-bold">Use</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {[
+                                        { type: 'int', use: 'Integer values' },
+                                        { type: 'float', use: 'Decimal values' },
+                                        { type: 'char', use: 'Single character' },
+                                        { type: 'double', use: 'Large decimal values' },
+                                        { type: 'void', use: 'No value' },
+                                        { type: 'long', use: 'Large integer values' },
+                                        { type: 'short', use: 'Small integer values' },
+                                        { type: 'unsigned int', use: 'Positive integers only' },
+                                    ].map((row, i) => (
+                                        <tr key={i} className={`${i % 2 === 0 ? 'bg-purple-50/50' : 'bg-white'} border-b border-purple-100`}>
+                                            <td className="px-4 py-2.5 font-mono font-bold text-purple-700 text-xs">{row.type}</td>
+                                            <td className="px-4 py-2.5 text-gray-700 text-xs">{row.use}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h4 className="font-bold mt-5 mb-3 text-gray-800">🔹 Data Types — Detail</h4>
+                        <div className="space-y-4">
+                            {/* int */}
+                            <div className="p-4 rounded-xl" style={{ background: '#eff6ff', border: '1px solid #93c5fd' }}>
+                                <h5 className="font-bold text-blue-700 mb-2">🔹 int — Integer</h5>
+                                <p className="text-xs text-blue-800 mb-2">Integer numbers store karta hai.</p>
+                                <div className="bg-gray-900 text-gray-100 p-3 rounded-lg font-mono text-xs">
+                                    <div><span className="text-orange-400">int</span> <span className="text-sky-400">age</span> = <span className="text-green-400">20</span>;</div>
+                                </div>
+                            </div>
+
+                            {/* float */}
+                            <div className="p-4 rounded-xl" style={{ background: '#ecfdf5', border: '1px solid #a7f3d0' }}>
+                                <h5 className="font-bold text-emerald-700 mb-2">🔹 float — Decimal</h5>
+                                <p className="text-xs text-emerald-800 mb-2">Decimal numbers store karta hai.</p>
+                                <div className="bg-gray-900 text-gray-100 p-3 rounded-lg font-mono text-xs">
+                                    <div><span className="text-orange-400">float</span> <span className="text-sky-400">temp</span> = <span className="text-green-400">36.5</span>;</div>
+                                </div>
+                            </div>
+
+                            {/* char */}
+                            <div className="p-4 rounded-xl" style={{ background: '#fefce8', border: '1px solid #fde047' }}>
+                                <h5 className="font-bold text-yellow-700 mb-2">🔹 char — Character</h5>
+                                <p className="text-xs text-yellow-800 mb-2">Single character store karta hai.</p>
+                                <div className="bg-gray-900 text-gray-100 p-3 rounded-lg font-mono text-xs">
+                                    <div><span className="text-orange-400">char</span> <span className="text-sky-400">grade</span> = <span className="text-green-400">&apos;A&apos;</span>;</div>
+                                </div>
+                            </div>
+
+                            {/* double */}
+                            <div className="p-4 rounded-xl" style={{ background: '#fdf2f8', border: '1px solid #f9a8d4' }}>
+                                <h5 className="font-bold text-pink-700 mb-2">🔹 double — Large Decimal</h5>
+                                <p className="text-xs text-pink-800">Large decimal precision values store karta hai. Float se zyada accurate hota hai.</p>
+                            </div>
+
+                            {/* void */}
+                            <div className="p-4 rounded-xl" style={{ background: '#f5f3ff', border: '1px solid #c4b5fd' }}>
+                                <h5 className="font-bold text-purple-700 mb-2">🔹 void — No Value</h5>
+                                <p className="text-xs text-purple-800">Jab koi value return nahi hoti tab use hota hai. Jaise <code className="bg-purple-100 px-1.5 py-0.5 rounded font-mono">void setup()</code></p>
+                            </div>
+                        </div>
+                        <IB type="tip">Sahi data type select karna <strong>memory optimize</strong> karta hai aur program ko <strong>efficient</strong> banata hai!</IB>
                     </Sec>
                 </main>
             </div>
