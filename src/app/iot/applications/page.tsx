@@ -43,6 +43,7 @@ const tocItems = [
     { icon: <Tag size={13} />, label: 'Variables', id: 'variables', color: '#f59e0b' },
     { icon: <Shield size={13} />, label: 'Rules for Variables', id: 'variable-rules', color: '#ec4899' },
     { icon: <Layers size={13} />, label: 'Data Types', id: 'data-types', color: '#8b5cf6' },
+    { icon: <Activity size={13} />, label: 'Operators in C', id: 'operators', color: '#f43f5e' },
 ];
 
 export default function IoTApplications() {
@@ -1481,6 +1482,297 @@ export default function IoTApplications() {
                             </div>
                         </div>
                         <IB type="tip">Sahi data type select karna <strong>memory optimize</strong> karta hai aur program ko <strong>efficient</strong> banata hai!</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: Operators in Embedded C ═══ */}
+                    <Sec id="operators" title="🔴 Operators in Embedded C" icon={<Activity size={16} className="text-rose-500" />}>
+                        <Def>➕ <strong>Operators</strong> special symbols hote hain jo variables aur values par operations perform karne ke liye use kiye jate hain.</Def>
+                        
+                        <div className="rounded-2xl p-4 my-4" style={{ background: 'linear-gradient(135deg, #fff1f2, #ffe4e6)', border: '1px solid #fecdd3' }}>
+                            <p className="text-sm font-bold text-rose-800">👉 &quot;Operators = calculations aur logical operations karne wale symbols&quot;</p>
+                        </div>
+                        
+                        <p className="mb-4 text-sm text-gray-700">Embedded C language me operators ka use Calculation, Comparison, Decision making, aur Logical checking ke liye kiya jata hai.</p>
+
+                        <h4 className="font-bold mt-5 mb-3 text-gray-800">🔹 Types of Operators</h4>
+                        
+                        {/* 1. Arithmetic Operators */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-sky-100 shadow-sm">
+                            <h5 className="font-bold text-sky-800 text-lg mb-2 flex items-center gap-2">
+                                <div className="p-1.5 bg-sky-100 text-sky-600 rounded-lg"><Activity size={16} /></div>
+                                1. Arithmetic Operators
+                            </h5>
+                            <p className="text-sm text-gray-600 mb-3">Arithmetic operators mathematical calculations (add, subtract, etc.) perform karne ke liye use hote hain.</p>
+                            
+                            <div className="overflow-x-auto rounded-xl border border-sky-200 mb-4">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr style={{ background: 'linear-gradient(135deg, #0ea5e9, #0284c7)' }} className="text-white">
+                                            <th className="px-4 py-3 text-left text-xs font-bold w-1/3">Operator</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold">Work</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {[
+                                            { op: '+', work: 'Addition' },
+                                            { op: '-', work: 'Subtraction' },
+                                            { op: '*', work: 'Multiplication' },
+                                            { op: '/', work: 'Division' },
+                                            { op: '%', work: 'Modulus (Remainder)' },
+                                        ].map((r, i) => (
+                                            <tr key={i} className={`${i % 2 === 0 ? 'bg-sky-50/50' : 'bg-white'} border-b border-sky-100`}>
+                                                <td className="px-4 py-2.5 font-mono font-bold text-sky-700 text-sm">{r.op}</td>
+                                                <td className="px-4 py-2.5 text-gray-700 text-xs">{r.work}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                <div className="text-gray-400 mb-2">// Example: Calculating average sensor value</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">sensor1</span> <span className="text-pink-400">=</span> <span className="text-green-400">400</span><span className="text-gray-300">;</span></div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">sensor2</span> <span className="text-pink-400">=</span> <span className="text-green-400">600</span><span className="text-gray-300">;</span></div>
+                                <div className="mt-2"><span className="text-orange-400">int</span> <span className="text-sky-300">average</span> <span className="text-pink-400">=</span> <span className="text-gray-300">(</span><span className="text-sky-300">sensor1</span> <span className="text-pink-400">+</span> <span className="text-sky-300">sensor2</span><span className="text-gray-300">)</span> <span className="text-pink-400">/</span> <span className="text-green-400">2</span><span className="text-gray-300">;</span></div>
+                                <div className="mt-2 text-gray-400">// Output average: 500</div>
+                            </div>
+                        </div>
+
+                        {/* 2. Relational Operators */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-purple-100 shadow-sm">
+                            <h5 className="font-bold text-purple-800 text-lg mb-2 flex items-center gap-2">
+                                <div className="p-1.5 bg-purple-100 text-purple-600 rounded-lg"><Activity size={16} /></div>
+                                2. Relational Operators
+                            </h5>
+                            <p className="text-sm text-gray-600 mb-3">Ye operators do values ko compare karte hain (jaise temperature limit check karna). Ye TRUE (1) ya FALSE (0) result dete hain.</p>
+                            
+                            <div className="overflow-x-auto rounded-xl border border-purple-200 mb-4">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }} className="text-white">
+                                            <th className="px-4 py-3 text-left text-xs font-bold w-1/3">Operator</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold">Meaning</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {[
+                                            { op: '==', desc: 'Equal to' },
+                                            { op: '!=', desc: 'Not equal to' },
+                                            { op: '>', desc: 'Greater than' },
+                                            { op: '<', desc: 'Less than' },
+                                            { op: '>=', desc: 'Greater than equal to' },
+                                            { op: '<=', desc: 'Less than equal to' },
+                                        ].map((r, i) => (
+                                            <tr key={i} className={`${i % 2 === 0 ? 'bg-purple-50/50' : 'bg-white'} border-b border-purple-100`}>
+                                                <td className="px-4 py-2.5 font-mono font-bold text-purple-700 text-sm">{r.op}</td>
+                                                <td className="px-4 py-2.5 text-gray-700 text-xs">{r.desc}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                <div className="text-gray-400 mb-2">// Example: Checking fire alarm condition</div>
+                                <div><span className="text-orange-400">float</span> <span className="text-sky-300">temperature</span> <span className="text-pink-400">=</span> <span className="text-green-400">45.5</span><span className="text-gray-300">;</span></div>
+                                <div className="mt-2"><span className="text-blue-400">if</span> <span className="text-gray-300">(</span><span className="text-sky-300">temperature</span> <span className="text-pink-400">&gt;=</span> <span className="text-green-400">40.0</span><span className="text-gray-300">) {'{'}</span></div>
+                                <div className="ml-4 text-gray-400">// Condition TRUE hui, Fire Alarm bajao!</div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                            </div>
+                        </div>
+
+                        {/* 3. Logical Operators */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-emerald-100 shadow-sm">
+                            <h5 className="font-bold text-emerald-800 text-lg mb-2 flex items-center gap-2">
+                                <div className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg"><Activity size={16} /></div>
+                                3. Logical Operators
+                            </h5>
+                            <p className="text-sm text-gray-600 mb-3">Jab ek se zyada conditions ko combine karna ho (e.g. agar raat hai AUR motion detect hua hai, tabhi light on karo).</p>
+                            
+                            <div className="overflow-x-auto rounded-xl border border-emerald-200 mb-4">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }} className="text-white">
+                                            <th className="px-4 py-3 text-left text-xs font-bold w-1/3">Operator</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold">Meaning</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {[
+                                            { op: '&&', desc: 'Logical AND (Dono true honge tabhi TRUE)' },
+                                            { op: '||', desc: 'Logical OR (Koi ek bhi true to TRUE)' },
+                                            { op: '!', desc: 'Logical NOT (Condition ka opposite karta hai)' },
+                                        ].map((r, i) => (
+                                            <tr key={i} className={`${i % 2 === 0 ? 'bg-emerald-50/50' : 'bg-white'} border-b border-emerald-100`}>
+                                                <td className="px-4 py-2.5 font-mono font-bold text-emerald-700 text-sm">{r.op}</td>
+                                                <td className="px-4 py-2.5 text-gray-700 text-xs">{r.desc}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                <div className="text-gray-400 mb-2">// Example: Smart street light logic</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">isNight</span> <span className="text-pink-400">=</span> <span className="text-green-400">1</span><span className="text-gray-300">;</span> <span className="text-gray-400">// 1 means True</span></div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">motionDetected</span> <span className="text-pink-400">=</span> <span className="text-green-400">1</span><span className="text-gray-300">;</span></div>
+                                <div className="mt-2"><span className="text-blue-400">if</span> <span className="text-gray-300">(</span><span className="text-sky-300">isNight</span> <span className="text-pink-400">==</span> <span className="text-green-400">1</span> <span className="text-pink-400">&amp;&amp;</span> <span className="text-sky-300">motionDetected</span> <span className="text-pink-400">==</span> <span className="text-green-400">1</span><span className="text-gray-300">) {'{'}</span></div>
+                                <div className="ml-4 text-gray-400">// Raat bhi hai AUR motion bhi hua, light ON karo!</div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                            </div>
+                        </div>
+
+                        {/* 4. Assignment Operators */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-amber-100 shadow-sm">
+                            <h5 className="font-bold text-amber-800 text-lg mb-2 flex items-center gap-2">
+                                <div className="p-1.5 bg-amber-100 text-amber-600 rounded-lg"><Activity size={16} /></div>
+                                4. Assignment Operators
+                            </h5>
+                            <p className="text-sm text-gray-600 mb-3">Ye variables me direct value store karne ke liye use hote hain. Short calculations ke liye <code className="bg-amber-50 px-1 font-mono text-amber-600">+=</code> aur <code className="bg-amber-50 px-1 font-mono text-amber-600">-=</code> zyada use hote hain.</p>
+                            
+                            <div className="overflow-x-auto rounded-xl border border-amber-200 mb-4">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }} className="text-white">
+                                            <th className="px-4 py-3 text-left text-xs font-bold w-1/3">Operator</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold">Meaning</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {[
+                                            { op: '=', desc: 'Assign value (e.g. x = 5)' },
+                                            { op: '+=', desc: 'Add & assign (x += 5 means x = x + 5)' },
+                                            { op: '-=', desc: 'Subtract & assign (x -= 5 means x = x - 5)' },
+                                            { op: '*=', desc: 'Multiply & assign' },
+                                            { op: '/=', desc: 'Divide & assign' },
+                                        ].map((r, i) => (
+                                            <tr key={i} className={`${i % 2 === 0 ? 'bg-amber-50/50' : 'bg-white'} border-b border-amber-100`}>
+                                                <td className="px-4 py-2.5 font-mono font-bold text-amber-700 text-sm">{r.op}</td>
+                                                <td className="px-4 py-2.5 text-gray-700 text-xs">{r.desc}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                <div className="text-gray-400 mb-2">// Example: Counting total distance travelled by a robot</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">totalDistance</span> <span className="text-pink-400">=</span> <span className="text-green-400">100</span><span className="text-gray-300">;</span> <span className="text-gray-400">// Pehle 100cm chala tha</span></div>
+                                <div className="mt-2"><span className="text-sky-300">totalDistance</span> <span className="text-pink-400">+=</span> <span className="text-green-400">50</span><span className="text-gray-300">;</span></div>
+                                <div className="text-gray-400">// Ab totalDistance 150cm ho jayega (100 + 50)</div>
+                            </div>
+                        </div>
+
+                        {/* 5. Increment and Decrement Operators */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-rose-100 shadow-sm">
+                            <h5 className="font-bold text-rose-800 text-lg mb-2 flex items-center gap-2">
+                                <div className="p-1.5 bg-rose-100 text-rose-600 rounded-lg"><Activity size={16} /></div>
+                                5. Increment and Decrement
+                            </h5>
+                            <p className="text-sm text-gray-600 mb-3">Kisi sensor ke counter ko 1 step aage (Increase) ya 1 step piche (Decrease) karne ke liye inka use hota hai.</p>
+                            
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl text-center">
+                                    <div className="text-2xl font-black text-rose-600 font-mono">++</div>
+                                    <div className="font-bold text-rose-800 text-sm mt-1">Increment (+1)</div>
+                                </div>
+                                <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl text-center">
+                                    <div className="text-2xl font-black text-rose-600 font-mono">--</div>
+                                    <div className="font-bold text-rose-800 text-sm mt-1">Decrement (-1)</div>
+                                </div>
+                            </div>
+
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                <div className="text-gray-400 mb-2">// Example: Visitor counter in smart room</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">visitors</span> <span className="text-pink-400">=</span> <span className="text-green-400">5</span><span className="text-gray-300">;</span> <span className="text-gray-400">// Room me 5 log the</span></div>
+                                <div className="mt-2 text-gray-400">// Ek aur person room me aaya:</div>
+                                <div><span className="text-sky-300">visitors</span><span className="text-pink-400">++</span><span className="text-gray-300">;</span> <span className="text-gray-400">// Result: Ab visitors 6 ho gaye</span></div>
+                            </div>
+                        </div>
+
+                        {/* 6. Bitwise Operators */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-indigo-100 shadow-sm">
+                            <h5 className="font-bold text-indigo-800 text-lg mb-2 flex items-center gap-2">
+                                <div className="p-1.5 bg-indigo-100 text-indigo-600 rounded-lg"><Activity size={16} /></div>
+                                6. Bitwise Operators
+                            </h5>
+                            <p className="text-sm text-gray-600 mb-3">Ye Arduino ke pin level (0 aur 1) par kaam karne ke liye (hardware registers control karne ke liye) sabse important hote hain.</p>
+                            
+                            <div className="overflow-x-auto rounded-xl border border-indigo-200 mb-4">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }} className="text-white">
+                                            <th className="px-4 py-3 text-left text-xs font-bold w-1/3">Operator</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold">Meaning</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {[
+                                            { op: '&', desc: 'Bitwise AND' },
+                                            { op: '|', desc: 'Bitwise OR' },
+                                            { op: '^', desc: 'Bitwise XOR' },
+                                            { op: '~', desc: 'Bitwise NOT' },
+                                            { op: '<<', desc: 'Left Shift (Bits ko left khiskata hai)' },
+                                            { op: '>>', desc: 'Right Shift (Bits ko right khiskata hai)' },
+                                        ].map((r, i) => (
+                                            <tr key={i} className={`${i % 2 === 0 ? 'bg-indigo-50/50' : 'bg-white'} border-b border-indigo-100`}>
+                                                <td className="px-4 py-2.5 font-mono font-bold text-indigo-700 text-sm">{r.op}</td>
+                                                <td className="px-4 py-2.5 text-gray-700 text-xs">{r.desc}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                <div className="text-gray-400 mb-2">// Example: Setting a specific bit to 1 (Bitwise OR)</div>
+                                <div><span className="text-orange-400">byte</span> <span className="text-sky-300">PORTB_Value</span> <span className="text-pink-400">=</span> <span className="text-green-400">0b00000000</span><span className="text-gray-300">;</span></div>
+                                <div className="mt-2 text-gray-400">// Turn ON 3rd bit (index 2):</div>
+                                <div><span className="text-sky-300">PORTB_Value</span> <span className="text-pink-400">=</span> <span className="text-sky-300">PORTB_Value</span> <span className="text-pink-400">|</span> <span className="text-green-400">0b00000100</span><span className="text-gray-300">;</span></div>
+                                <div className="text-gray-400">// Ab PORTB_Value ho gaya: 0b00000100</div>
+                            </div>
+                        </div>
+
+                        {/* 7. Conditional Operator */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-teal-100 shadow-sm">
+                            <h5 className="font-bold text-teal-800 text-lg mb-2 flex items-center gap-2">
+                                <div className="p-1.5 bg-teal-100 text-teal-600 rounded-lg"><Activity size={16} /></div>
+                                7. Conditional (Ternary) Operator
+                            </h5>
+                            <p className="text-sm text-gray-600 mb-3">Ye if-else statement ka short form hota hai. Isse ek hi line me decision ho jata hai.</p>
+                            
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mb-3">
+                                <div className="text-gray-400 mb-1">// Syntax:</div>
+                                <div><span className="text-gray-300">(</span><span className="text-sky-300">condition</span><span className="text-gray-300">)</span> <span className="text-pink-400">?</span> <span className="text-green-300">value_if_true</span> <span className="text-pink-400">:</span> <span className="text-rose-300">value_if_false</span><span className="text-gray-300">;</span></div>
+                            </div>
+                            
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                <div className="text-gray-400 mb-2">// Example: Check water level</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">waterLevel</span> <span className="text-pink-400">=</span> <span className="text-green-400">80</span><span className="text-gray-300">;</span></div>
+                                <div className="mt-2"><span className="text-orange-400">int</span> <span className="text-sky-300">pumpStatus</span> <span className="text-pink-400">=</span> <span className="text-gray-300">(</span><span className="text-sky-300">waterLevel</span> <span className="text-pink-400">&lt;</span> <span className="text-green-400">20</span><span className="text-gray-300">)</span> <span className="text-pink-400">?</span> <span className="text-green-400">1</span> <span className="text-pink-400">:</span> <span className="text-green-400">0</span><span className="text-gray-300">;</span></div>
+                                <div className="mt-1 text-gray-400">// Agar water level 20 se kam hai to pump ON (1) hoga, warna OFF (0) hoga.</div>
+                                <div className="text-gray-400">// Yahan waterLevel 80 hai, isliye pumpStatus 0 ho jayega.</div>
+                            </div>
+                        </div>
+
+                        {/* Operator Precedence */}
+                        <div className="p-5 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
+                            <h5 className="font-bold text-gray-800 text-lg mb-2">🔴 Operator Precedence</h5>
+                            <p className="text-sm text-gray-600 mb-3">Jab ek expression me bahut saare operators use hote hain to execution kis order me hoga, usko operator precedence kehte hain.</p>
+                            
+                            <div className="bg-white p-3 rounded-lg border border-gray-200 mb-3 text-sm text-gray-700 font-semibold shadow-sm text-center">
+                                BODMAS rule jaisa: Multiply / Divide pehle, Addition / Subtraction baad me.
+                            </div>
+
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                <div className="text-gray-400 mb-2">// Example: Sensor Calibration formula</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">result</span> <span className="text-pink-400">=</span> <span className="text-green-400">10</span> <span className="text-pink-400">+</span> <span className="text-green-400">5</span> <span className="text-pink-400">*</span> <span className="text-green-400">2</span><span className="text-gray-300">;</span></div>
+                                <div className="mt-2 text-gray-400">// Execute kaise hoga?</div>
+                                <div className="text-gray-400">// Step 1: 5 * 2 = 10 (Multiplication ki priority zyada hoti hai)</div>
+                                <div className="text-gray-400">// Step 2: 10 + 10 = 20</div>
+                                <div className="mt-2"><span className="text-gray-400">// Result: </span><span className="text-green-400">20</span></div>
+                            </div>
+                        </div>
                     </Sec>
                 </main>
             </div>
