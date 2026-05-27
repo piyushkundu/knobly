@@ -1,7 +1,7 @@
 'use client';
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -44,6 +44,8 @@ const tocItems = [
     { icon: <Shield size={13} />, label: 'Rules for Variables', id: 'variable-rules', color: '#ec4899' },
     { icon: <Layers size={13} />, label: 'Data Types', id: 'data-types', color: '#8b5cf6' },
     { icon: <Activity size={13} />, label: 'Operators in C', id: 'operators', color: '#f43f5e' },
+    { icon: <CheckCircle2 size={13} />, label: 'Conditional Statements', id: 'conditional-statements', color: '#10b981' },
+    { icon: <Repeat size={13} />, label: 'Loop Statements', id: 'loop-statements', color: '#0ea5e9' },
 ];
 
 export default function IoTApplications() {
@@ -1772,6 +1774,371 @@ export default function IoTApplications() {
                                 <div className="text-gray-400">// Step 2: 10 + 10 = 20</div>
                                 <div className="mt-2"><span className="text-gray-400">// Result: </span><span className="text-green-400">20</span></div>
                             </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Conditional Statements ═══ */}
+                    <Sec id="conditional-statements" title="🔴 Conditional Statements" icon={<CheckCircle2 size={16} className="text-emerald-500" />}>
+                        <Def>⚖️ <strong>Conditional statements</strong> ka use decision making ke liye kiya jata hai.</Def>
+                        <p>In statements ki help se program kisi condition ko check karta hai aur uske according different instructions execute karta hai.</p>
+                        
+                        <div className="rounded-2xl p-4 my-4" style={{ background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)', border: '1px solid #a7f3d0' }}>
+                            <p className="text-sm font-bold text-emerald-800">👉 Simple words me: &quot;Condition TRUE ya FALSE hone par alag-alag code execute karna&quot;</p>
+                        </div>
+                        
+                        <p className="mb-4 text-sm text-gray-700">Embedded C aur Arduino programming me conditional statements bahut important hote hain kyunki inki help se sensors aur devices ke according automatic decisions liye ja sakte hain.</p>
+
+                        <h4 className="font-bold mt-5 mb-3 text-gray-800">🔹 Types of Conditional Statements</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                            <div className="p-4 rounded-xl text-center bg-blue-50 border border-blue-200">
+                                <h5 className="font-bold text-blue-800 text-lg">1. if</h5>
+                                <p className="text-xs text-blue-600 mt-1">Statement</p>
+                            </div>
+                            <div className="p-4 rounded-xl text-center bg-purple-50 border border-purple-200">
+                                <h5 className="font-bold text-purple-800 text-lg">2. if-else</h5>
+                                <p className="text-xs text-purple-600 mt-1">Statement</p>
+                            </div>
+                            <div className="p-4 rounded-xl text-center bg-rose-50 border border-rose-200">
+                                <h5 className="font-bold text-rose-800 text-lg">3. else-if</h5>
+                                <p className="text-xs text-rose-600 mt-1">Ladder</p>
+                            </div>
+                        </div>
+
+                        {/* 1. if Statement */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-blue-100 shadow-sm">
+                            <h5 className="font-bold text-blue-800 text-lg mb-2">🔴 1. if Statement</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>if statement</strong> ka use tab kiya jata hai jab kisi condition ke TRUE hone par hi code execute karna ho. Agar condition FALSE ho jaye to program if block ko skip kar deta hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax of if Statement</div>
+                                    <div><span className="text-pink-400">if</span><span className="text-gray-300">(condition)</span></div>
+                                    <div><span className="text-gray-300">{'{'}</span></div>
+                                    <div className="ml-4 text-gray-400">// code</div>
+                                    <div><span className="text-gray-300">{'}'}</span></div>
+                                </div>
+                                <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                                    <p className="text-xs font-bold text-blue-900 mb-1">⚡ Working:</p>
+                                    <ul className="text-xs text-blue-800 space-y-1 ml-4 list-decimal marker:text-blue-500">
+                                        <li>Program condition check karta hai</li>
+                                        <li>Agar condition <strong>TRUE</strong> ho: if block execute hota hai</li>
+                                        <li>Agar condition <strong>FALSE</strong> ho: if block execute nahi hota</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mt-4">
+                                <div className="text-gray-400 mb-1">// Example</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">a</span> <span className="text-pink-400">=</span> <span className="text-green-400">10</span><span className="text-gray-300">;</span></div>
+                                <br />
+                                <div><span className="text-pink-400">if</span><span className="text-gray-300">(a &gt; </span><span className="text-green-400">5</span><span className="text-gray-300">)</span></div>
+                                <div><span className="text-gray-300">{'{'}</span></div>
+                                <div className="ml-4"><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(</span><span className="text-green-300">"Value is greater"</span><span className="text-gray-300">);</span></div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                            </div>
+                            <div className="bg-white p-3 rounded-lg border border-gray-200 mt-2 text-sm text-gray-700 font-semibold shadow-sm text-center">
+                                👉 Yahan Condition: <code className="bg-gray-100 px-1 py-0.5 rounded text-blue-600">a &gt; 5</code> TRUE hai isliye message print hoga.
+                            </div>
+                        </div>
+
+                        {/* 2. if-else Statement */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-purple-100 shadow-sm">
+                            <h5 className="font-bold text-purple-800 text-lg mb-2">🔴 2. if-else Statement</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>if-else statement</strong> ka use tab kiya jata hai jab: Ek condition TRUE hone par ek block execute ho aur FALSE hone par doosra block execute ho.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax of if-else Statement</div>
+                                    <div><span className="text-pink-400">if</span><span className="text-gray-300">(condition)</span></div>
+                                    <div><span className="text-gray-300">{'{'}</span></div>
+                                    <div className="ml-4 text-gray-400">// TRUE block</div>
+                                    <div><span className="text-gray-300">{'}'}</span></div>
+                                    <div><span className="text-pink-400">else</span></div>
+                                    <div><span className="text-gray-300">{'{'}</span></div>
+                                    <div className="ml-4 text-gray-400">// FALSE block</div>
+                                    <div><span className="text-gray-300">{'}'}</span></div>
+                                </div>
+                                <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                                    <p className="text-xs font-bold text-purple-900 mb-1">⚡ Working:</p>
+                                    <ul className="text-xs text-purple-800 space-y-1 ml-4 list-decimal marker:text-purple-500">
+                                        <li>Condition check hoti hai</li>
+                                        <li>Agar <strong>TRUE</strong>: if block execute hota hai</li>
+                                        <li>Agar <strong>FALSE</strong>: else block execute hota hai</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mt-4">
+                                <div className="text-gray-400 mb-1">// Example</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">age</span> <span className="text-pink-400">=</span> <span className="text-green-400">15</span><span className="text-gray-300">;</span></div>
+                                <br />
+                                <div><span className="text-pink-400">if</span><span className="text-gray-300">(age &gt;= </span><span className="text-green-400">18</span><span className="text-gray-300">)</span></div>
+                                <div><span className="text-gray-300">{'{'}</span></div>
+                                <div className="ml-4"><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(</span><span className="text-green-300">"Eligible"</span><span className="text-gray-300">);</span></div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                                <div><span className="text-pink-400">else</span></div>
+                                <div><span className="text-gray-300">{'{'}</span></div>
+                                <div className="ml-4"><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(</span><span className="text-green-300">"Not Eligible"</span><span className="text-gray-300">);</span></div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                            </div>
+                            <div className="bg-white p-3 rounded-lg border border-gray-200 mt-2 text-sm text-gray-700 font-semibold shadow-sm text-center">
+                                👉 Yahan Condition FALSE hai isliye <code className="bg-gray-100 px-1 py-0.5 rounded text-purple-600">else</code> block execute hoga.
+                            </div>
+                        </div>
+
+                        {/* 3. else-if Ladder */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-rose-100 shadow-sm">
+                            <h5 className="font-bold text-rose-800 text-lg mb-2">🔴 3. else-if Ladder</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>else-if ladder</strong> ka use multiple conditions check karne ke liye kiya jata hai. Jab program me ek se jyada conditions ho aur har condition ke according alag action perform karna ho tab else-if ladder use hota hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax of else-if Ladder</div>
+                                    <div><span className="text-pink-400">if</span><span className="text-gray-300">(condition1)</span></div>
+                                    <div><span className="text-gray-300">{'{'}</span></div>
+                                    <div className="ml-4 text-gray-400">// code</div>
+                                    <div><span className="text-gray-300">{'}'}</span></div>
+                                    <div><span className="text-pink-400">else if</span><span className="text-gray-300">(condition2)</span></div>
+                                    <div><span className="text-gray-300">{'{'}</span></div>
+                                    <div className="ml-4 text-gray-400">// code</div>
+                                    <div><span className="text-gray-300">{'}'}</span></div>
+                                    <div><span className="text-pink-400">else if</span><span className="text-gray-300">(condition3)</span></div>
+                                    <div><span className="text-gray-300">{'{'}</span></div>
+                                    <div className="ml-4 text-gray-400">// code</div>
+                                    <div><span className="text-gray-300">{'}'}</span></div>
+                                    <div><span className="text-pink-400">else</span></div>
+                                    <div><span className="text-gray-300">{'{'}</span></div>
+                                    <div className="ml-4 text-gray-400">// default code</div>
+                                    <div><span className="text-gray-300">{'}'}</span></div>
+                                </div>
+                                <div className="bg-rose-50 p-4 rounded-xl border border-rose-200">
+                                    <p className="text-xs font-bold text-rose-900 mb-1">⚡ Working:</p>
+                                    <ul className="text-xs text-rose-800 space-y-1 ml-4 list-decimal marker:text-rose-500">
+                                        <li>Pehli condition check hoti hai</li>
+                                        <li>Agar TRUE: Us block ka code execute hota hai</li>
+                                        <li>Agar FALSE: Next condition check hoti hai</li>
+                                        <li>Ye process tab tak chalta hai jab tak koi condition TRUE na ho jaye</li>
+                                        <li>Agar koi bhi condition TRUE na ho: else block execute hota hai</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mt-4">
+                                <div className="text-gray-400 mb-1">// Example</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">marks</span> <span className="text-pink-400">=</span> <span className="text-green-400">75</span><span className="text-gray-300">;</span></div>
+                                <br />
+                                <div><span className="text-pink-400">if</span><span className="text-gray-300">(marks &gt;= </span><span className="text-green-400">90</span><span className="text-gray-300">)</span></div>
+                                <div><span className="text-gray-300">{'{'}</span></div>
+                                <div className="ml-4"><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(</span><span className="text-green-300">"Grade A"</span><span className="text-gray-300">);</span></div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                                <div><span className="text-pink-400">else if</span><span className="text-gray-300">(marks &gt;= </span><span className="text-green-400">70</span><span className="text-gray-300">)</span></div>
+                                <div><span className="text-gray-300">{'{'}</span></div>
+                                <div className="ml-4"><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(</span><span className="text-green-300">"Grade B"</span><span className="text-gray-300">);</span></div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                                <div><span className="text-pink-400">else</span></div>
+                                <div><span className="text-gray-300">{'{'}</span></div>
+                                <div className="ml-4"><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(</span><span className="text-green-300">"Grade C"</span><span className="text-gray-300">);</span></div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                            </div>
+                            <div className="bg-white p-3 rounded-lg border border-gray-200 mt-2 text-sm text-gray-700 font-semibold shadow-sm text-center">
+                                👉 Yahan <code className="bg-gray-100 px-1 py-0.5 rounded text-rose-600">marks &gt;= 70</code> TRUE hai isliye <strong>Grade B</strong> print hoga.
+                            </div>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Loop Statements ═══ */}
+                    <Sec id="loop-statements" title="🔴 Loop Statements" icon={<Repeat size={16} className="text-sky-500" />}>
+                        <Def>🔄 <strong>Loop statements</strong> ka use kisi code ko baar-baar execute karne ke liye kiya jata hai.</Def>
+                        <p>Jab program me same instructions ko repeatedly chalana ho tab loops use kiye jate hain.</p>
+                        
+                        <div className="rounded-2xl p-4 my-4" style={{ background: 'linear-gradient(135deg, #e0f2fe, #bae6fd)', border: '1px solid #7dd3fc' }}>
+                            <p className="text-sm font-bold text-sky-800">👉 Simple words me: &quot;Loop = same code ko repeat karna&quot;</p>
+                        </div>
+                        
+                        <p className="mb-4 text-sm text-gray-700">Loops programming ko easy aur short banate hain kyunki baar-baar same code likhne ki zarurat nahi padti.</p>
+
+                        <h4 className="font-bold mt-5 mb-3 text-gray-800">🔹 Types of Loops</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                            <div className="p-4 rounded-xl text-center bg-indigo-50 border border-indigo-200">
+                                <h5 className="font-bold text-indigo-800 text-lg">1. while</h5>
+                                <p className="text-xs text-indigo-600 mt-1">Loop</p>
+                            </div>
+                            <div className="p-4 rounded-xl text-center bg-teal-50 border border-teal-200">
+                                <h5 className="font-bold text-teal-800 text-lg">2. do-while</h5>
+                                <p className="text-xs text-teal-600 mt-1">Loop</p>
+                            </div>
+                            <div className="p-4 rounded-xl text-center bg-orange-50 border border-orange-200">
+                                <h5 className="font-bold text-orange-800 text-lg">3. for</h5>
+                                <p className="text-xs text-orange-600 mt-1">Loop</p>
+                            </div>
+                        </div>
+
+                        {/* 1. while Loop */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-indigo-100 shadow-sm">
+                            <h5 className="font-bold text-indigo-800 text-lg mb-2">🔴 1. while Loop</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>while loop</strong> ek entry-controlled loop hota hai. Isme condition pehle check hoti hai aur agar condition TRUE hoti hai tabhi loop execute hota hai. Agar condition starting me hi FALSE ho to loop ek baar bhi execute nahi hota.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax of while Loop</div>
+                                    <div><span className="text-pink-400">while</span><span className="text-gray-300">(condition)</span></div>
+                                    <div><span className="text-gray-300">{'{'}</span></div>
+                                    <div className="ml-4 text-gray-400">// code</div>
+                                    <div><span className="text-gray-300">{'}'}</span></div>
+                                </div>
+                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-200">
+                                    <p className="text-xs font-bold text-indigo-900 mb-1">⚡ Working:</p>
+                                    <ul className="text-xs text-indigo-800 space-y-1 ml-4 list-decimal marker:text-indigo-500">
+                                        <li>Condition check hoti hai</li>
+                                        <li>Agar TRUE: Loop body execute hoti hai</li>
+                                        <li>Fir condition dobara check hoti hai</li>
+                                        <li>Jab tak condition TRUE rahegi loop chalta rahega</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mt-4">
+                                <div className="text-gray-400 mb-1">// Example of while Loop</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">i</span> <span className="text-pink-400">=</span> <span className="text-green-400">1</span><span className="text-gray-300">;</span></div>
+                                <br />
+                                <div><span className="text-pink-400">while</span><span className="text-gray-300">(i &lt;= </span><span className="text-green-400">5</span><span className="text-gray-300">)</span></div>
+                                <div><span className="text-gray-300">{'{'}</span></div>
+                                <div className="ml-4"><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(i);</span></div>
+                                <div className="ml-4"><span className="text-sky-300">i</span><span className="text-pink-400">++</span><span className="text-gray-300">;</span></div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                            </div>
+                            <div className="bg-gray-100 p-3 rounded-lg border border-gray-300 mt-2 text-sm text-gray-800 shadow-sm">
+                                <div className="font-bold text-gray-600 text-xs mb-1 uppercase tracking-wider">Output</div>
+                                <pre className="font-mono text-sm leading-relaxed text-emerald-600">1<br/>2<br/>3<br/>4<br/>5</pre>
+                            </div>
+                        </div>
+
+                        {/* 2. do-while Loop */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-teal-100 shadow-sm">
+                            <h5 className="font-bold text-teal-800 text-lg mb-2">🔴 2. do-while Loop</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>do-while loop</strong> ek exit-controlled loop hota hai. Isme condition baad me check hoti hai, isliye ye loop kam se kam ek baar zarur execute hota hai chahe condition FALSE hi kyon na ho.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax of do-while Loop</div>
+                                    <div><span className="text-pink-400">do</span></div>
+                                    <div><span className="text-gray-300">{'{'}</span></div>
+                                    <div className="ml-4 text-gray-400">// code</div>
+                                    <div><span className="text-gray-300">{'}'}</span></div>
+                                    <div><span className="text-pink-400">while</span><span className="text-gray-300">(condition);</span></div>
+                                </div>
+                                <div className="bg-teal-50 p-4 rounded-xl border border-teal-200">
+                                    <p className="text-xs font-bold text-teal-900 mb-1">⚡ Working:</p>
+                                    <ul className="text-xs text-teal-800 space-y-1 ml-4 list-decimal marker:text-teal-500">
+                                        <li>Pehle loop body execute hoti hai</li>
+                                        <li>Fir condition check hoti hai</li>
+                                        <li>Agar condition TRUE ho: Loop repeat hota hai</li>
+                                        <li>Agar FALSE ho: Loop stop ho jata hai</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mt-4">
+                                <div className="text-gray-400 mb-1">// Example of do-while Loop</div>
+                                <div><span className="text-orange-400">int</span> <span className="text-sky-300">i</span> <span className="text-pink-400">=</span> <span className="text-green-400">1</span><span className="text-gray-300">;</span></div>
+                                <br />
+                                <div><span className="text-pink-400">do</span></div>
+                                <div><span className="text-gray-300">{'{'}</span></div>
+                                <div className="ml-4"><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(i);</span></div>
+                                <div className="ml-4"><span className="text-sky-300">i</span><span className="text-pink-400">++</span><span className="text-gray-300">;</span></div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                                <div><span className="text-pink-400">while</span><span className="text-gray-300">(i &lt;= </span><span className="text-green-400">5</span><span className="text-gray-300">);</span></div>
+                            </div>
+                            <div className="bg-gray-100 p-3 rounded-lg border border-gray-300 mt-2 text-sm text-gray-800 shadow-sm">
+                                <div className="font-bold text-gray-600 text-xs mb-1 uppercase tracking-wider">Output</div>
+                                <pre className="font-mono text-sm leading-relaxed text-emerald-600">1<br/>2<br/>3<br/>4<br/>5</pre>
+                            </div>
+                            
+                            <div className="bg-amber-50 p-3 rounded-lg border border-amber-200 mt-3 text-sm text-amber-800 font-semibold shadow-sm flex gap-2">
+                                <span>⚠️</span>
+                                <div><strong>Important Point:</strong> Agar condition FALSE bhi ho tab bhi do-while loop ek baar execute zarur hota hai.</div>
+                            </div>
+                        </div>
+
+                        {/* 3. for Loop */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-orange-100 shadow-sm">
+                            <h5 className="font-bold text-orange-800 text-lg mb-2">🔴 3. for Loop</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>for loop</strong> ka use tab kiya jata hai jab repetitions ki exact quantity pehle se known ho. Ye sabse commonly used loop hai. Isme initialization, condition, aur increment/decrement ek hi line me likhe jate hain.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax of for Loop</div>
+                                    <div><span className="text-pink-400">for</span><span className="text-gray-300">(initialization; condition; inc/dec)</span></div>
+                                    <div><span className="text-gray-300">{'{'}</span></div>
+                                    <div className="ml-4 text-gray-400">// code</div>
+                                    <div><span className="text-gray-300">{'}'}</span></div>
+                                </div>
+                                <div className="bg-orange-50 p-4 rounded-xl border border-orange-200">
+                                    <p className="text-xs font-bold text-orange-900 mb-1">⚡ Working:</p>
+                                    <ul className="text-xs text-orange-800 space-y-1 ml-4 list-decimal marker:text-orange-500">
+                                        <li>Initialization execute hota hai</li>
+                                        <li>Condition check hoti hai</li>
+                                        <li>Agar TRUE: Loop body execute hoti hai</li>
+                                        <li>Increment/Decrement hota hai</li>
+                                        <li>Fir condition dobara check hoti hai</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mt-4">
+                                <div className="text-gray-400 mb-1">// Example of for Loop</div>
+                                <div><span className="text-pink-400">for</span><span className="text-gray-300">(</span><span className="text-orange-400">int</span> <span className="text-sky-300">i</span> <span className="text-pink-400">=</span> <span className="text-green-400">1</span><span className="text-gray-300">; i &lt;= </span><span className="text-green-400">5</span><span className="text-gray-300">; i</span><span className="text-pink-400">++</span><span className="text-gray-300">)</span></div>
+                                <div><span className="text-gray-300">{'{'}</span></div>
+                                <div className="ml-4"><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(i);</span></div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                            </div>
+                            <div className="bg-gray-100 p-3 rounded-lg border border-gray-300 mt-2 text-sm text-gray-800 shadow-sm">
+                                <div className="font-bold text-gray-600 text-xs mb-1 uppercase tracking-wider">Output</div>
+                                <pre className="font-mono text-sm leading-relaxed text-emerald-600">1<br/>2<br/>3<br/>4<br/>5</pre>
+                            </div>
+                        </div>
+
+                        {/* Infinite Loop */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-red-100 shadow-sm">
+                            <h5 className="font-bold text-red-800 text-lg mb-2">🔴 Infinite Loop</h5>
+                            <p className="text-sm text-gray-600 mb-3">Agar loop ki condition kabhi FALSE na ho to loop continuously chalta rehta hai. Isse infinite loop kehte hain.</p>
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                <div className="text-gray-400 mb-1">// Example</div>
+                                <div><span className="text-pink-400">while</span><span className="text-gray-300">(</span><span className="text-green-400">1</span><span className="text-gray-300">)</span></div>
+                                <div><span className="text-gray-300">{'{'}</span></div>
+                                <div className="ml-4 text-gray-400">// infinite loop</div>
+                                <div><span className="text-gray-300">{'}'}</span></div>
+                            </div>
+                        </div>
+
+                        {/* Difference Table */}
+                        <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+                            <table className="w-full text-left border-collapse bg-white">
+                                <thead>
+                                    <tr className="bg-gray-50 border-b border-gray-200 text-sm">
+                                        <th className="p-4 font-bold text-gray-800">Loop</th>
+                                        <th className="p-4 font-bold text-gray-800">Condition Check</th>
+                                        <th className="p-4 font-bold text-gray-800">Execution</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm text-gray-700 divide-y divide-gray-100">
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-indigo-700 bg-indigo-50/30">while</td>
+                                        <td className="p-4">Starting me</td>
+                                        <td className="p-4">0 ya more times</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-teal-700 bg-teal-50/30">do-while</td>
+                                        <td className="p-4">End me</td>
+                                        <td className="p-4">At least 1 time</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-orange-700 bg-orange-50/30">for</td>
+                                        <td className="p-4">Starting me</td>
+                                        <td className="p-4">Fixed repetitions</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </Sec>
                 </main>
