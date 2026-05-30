@@ -46,6 +46,9 @@ const tocItems = [
     { icon: <Activity size={13} />, label: 'Operators in C', id: 'operators', color: '#f43f5e' },
     { icon: <CheckCircle2 size={13} />, label: 'Conditional Statements', id: 'conditional-statements', color: '#10b981' },
     { icon: <Repeat size={13} />, label: 'Loop Statements', id: 'loop-statements', color: '#0ea5e9' },
+    { icon: <Activity size={13} />, label: 'Inbuilt Functions', id: 'inbuilt-functions', color: '#8b5cf6' },
+    { icon: <Activity size={13} />, label: 'Analog Inbuilt Functions', id: 'analog-functions', color: '#f59e0b' },
+    { icon: <Clock size={13} />, label: 'Time Functions', id: 'time-functions', color: '#ec4899' },
 ];
 
 export default function IoTApplications() {
@@ -2136,6 +2139,533 @@ export default function IoTApplications() {
                                         <td className="p-4 font-medium text-orange-700 bg-orange-50/30">for</td>
                                         <td className="p-4">Starting me</td>
                                         <td className="p-4">Fixed repetitions</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Inbuilt Functions ═══ */}
+                    <Sec id="inbuilt-functions" title="🔴 Inbuilt Functions for Digital Input/Output" icon={<Activity size={16} className="text-indigo-500" />}>
+                        <p className="mb-4 text-sm text-gray-700">Arduino me kai inbuilt functions available hote hain jo digital input aur output devices ko control karne ke liye use kiye jate hain. In functions ki madad se programmer bina complex coding ke hardware ko control kar sakta hai.</p>
+
+                        {/* 1. pinMode() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-indigo-100 shadow-sm">
+                            <h5 className="font-bold text-indigo-800 text-lg mb-2">🔴 1. pinMode()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>pinMode()</strong> function kisi pin ko INPUT ya OUTPUT mode me configure karne ke liye use hota hai. Jab bhi kisi pin ko use karna ho to sabse pehle uska mode define karna zaruri hota hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">pinMode</span><span className="text-gray-300">(pin, mode);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-green-400">13</span><span className="text-gray-300">, </span><span className="text-blue-400">OUTPUT</span><span className="text-gray-300">);</span> <span className="text-gray-400">// Output mode</span></div>
+                                    <div><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-green-400">2</span><span className="text-gray-300">, </span><span className="text-blue-400">INPUT</span><span className="text-gray-300">);</span> <span className="text-gray-400">// Input mode</span></div>
+                                </div>
+                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-200">
+                                    <p className="text-xs font-bold text-indigo-900 mb-1">⚡ Parameters & Uses:</p>
+                                    <ul className="text-xs text-indigo-800 space-y-1 ml-4 list-disc marker:text-indigo-500">
+                                        <li><strong>pin</strong> → Pin number</li>
+                                        <li><strong>mode</strong> → INPUT, OUTPUT ya INPUT_PULLUP</li>
+                                        <li>Uses: LED control, Push button input, Sensor interfacing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 2. digitalWrite() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-teal-100 shadow-sm">
+                            <h5 className="font-bold text-teal-800 text-lg mb-2">🔴 2. digitalWrite()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>digitalWrite()</strong> function digital pin par HIGH ya LOW value bhejne ke liye use hota hai. Ye output devices jaise LED, buzzer aur relay ko control karne ke liye use hota hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(pin, value);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-400">13</span><span className="text-gray-300">, </span><span className="text-blue-400">HIGH</span><span className="text-gray-300">);</span> <span className="text-gray-400">// LED ON</span></div>
+                                    <div><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-400">13</span><span className="text-gray-300">, </span><span className="text-blue-400">LOW</span><span className="text-gray-300">);</span> <span className="text-gray-400">// LED OFF</span></div>
+                                </div>
+                                <div className="bg-teal-50 p-4 rounded-xl border border-teal-200">
+                                    <p className="text-xs font-bold text-teal-900 mb-1">⚡ Working & Uses:</p>
+                                    <ul className="text-xs text-teal-800 space-y-1 ml-4 list-disc marker:text-teal-500">
+                                        <li><strong>HIGH</strong> = 5 Volt Output</li>
+                                        <li><strong>LOW</strong> = 0 Volt Output</li>
+                                        <li>Uses: LED ON/OFF, Relay control, Buzzer control</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 3. digitalRead() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-rose-100 shadow-sm">
+                            <h5 className="font-bold text-rose-800 text-lg mb-2">🔴 3. digitalRead()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>digitalRead()</strong> function digital input pin ki value read karne ke liye use hota hai. Ye function HIGH ya LOW value return karta hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">digitalRead</span><span className="text-gray-300">(pin);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-orange-400">int</span> <span className="text-sky-300">value</span><span className="text-gray-300">;</span></div>
+                                    <div><span className="text-sky-300">value</span> <span className="text-pink-400">=</span> <span className="text-sky-300">digitalRead</span><span className="text-gray-300">(</span><span className="text-green-400">2</span><span className="text-gray-300">);</span></div>
+                                </div>
+                                <div className="bg-rose-50 p-4 rounded-xl border border-rose-200">
+                                    <p className="text-xs font-bold text-rose-900 mb-1">⚡ Working & Uses:</p>
+                                    <ul className="text-xs text-rose-800 space-y-1 ml-4 list-disc marker:text-rose-500">
+                                        <li>Agar signal present ho: <strong>HIGH</strong></li>
+                                        <li>Agar signal present na ho: <strong>LOW</strong></li>
+                                        <li>Uses: Push button reading, Digital sensors, Switch monitoring</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 4. shiftIn() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-orange-100 shadow-sm">
+                            <h5 className="font-bold text-orange-800 text-lg mb-2">🔴 4. shiftIn()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>shiftIn()</strong> function serial data ko bit-by-bit read karne ke liye use hota hai. Ye external devices se serial data receive karta hai aur usse byte me convert karta hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">shiftIn</span><span className="text-gray-300">(dataPin, clockPin, bitOrder);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-orange-400">byte</span> <span className="text-sky-300">value</span><span className="text-gray-300">;</span></div>
+                                    <div><span className="text-sky-300">value</span> <span className="text-pink-400">=</span> <span className="text-sky-300">shiftIn</span><span className="text-gray-300">(dataPin, clockPin, </span><span className="text-blue-400">MSBFIRST</span><span className="text-gray-300">);</span></div>
+                                </div>
+                                <div className="bg-orange-50 p-4 rounded-xl border border-orange-200">
+                                    <p className="text-xs font-bold text-orange-900 mb-1">⚡ Parameters & Uses:</p>
+                                    <ul className="text-xs text-orange-800 space-y-1 ml-4 list-disc marker:text-orange-500">
+                                        <li><strong>bitOrder</strong> → MSBFIRST ya LSBFIRST</li>
+                                        <li>Uses: Shift registers, Serial communication, Sensor modules</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 5. shiftOut() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-sky-100 shadow-sm">
+                            <h5 className="font-bold text-sky-800 text-lg mb-2">🔴 5. shiftOut()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>shiftOut()</strong> function serial form me data ko bit-by-bit transmit karne ke liye use hota hai. Ye Arduino se external devices ko serial data bhejta hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">shiftOut</span><span className="text-gray-300">(dataPin, clockPin, bitOrder, value);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">shiftOut</span><span className="text-gray-300">(dataPin, clockPin, </span><span className="text-blue-400">MSBFIRST</span><span className="text-gray-300">, </span><span className="text-green-400">255</span><span className="text-gray-300">);</span></div>
+                                </div>
+                                <div className="bg-sky-50 p-4 rounded-xl border border-sky-200">
+                                    <p className="text-xs font-bold text-sky-900 mb-1">⚡ Parameters & Uses:</p>
+                                    <ul className="text-xs text-sky-800 space-y-1 ml-4 list-disc marker:text-sky-500">
+                                        <li><strong>value</strong> → Send ki jane wali value</li>
+                                        <li>Uses: LED matrix, Shift register control, Serial devices</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 6. tone() & noTone() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-purple-100 shadow-sm">
+                            <h5 className="font-bold text-purple-800 text-lg mb-2">🔴 6. tone() & noTone()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>tone()</strong> function buzzer ya speaker par specified frequency ki sound generate karta hai, aur <strong>noTone()</strong> us sound ko stop karne ke liye use hota hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax & Example</div>
+                                    <div><span className="text-sky-300">tone</span><span className="text-gray-300">(pin, frequency, duration);</span></div>
+                                    <br />
+                                    <div><span className="text-sky-300">tone</span><span className="text-gray-300">(</span><span className="text-green-400">8</span><span className="text-gray-300">, </span><span className="text-green-400">1000</span><span className="text-gray-300">);</span> <span className="text-gray-400">// Pin 8, 1000Hz</span></div>
+                                    <div><span className="text-sky-300">tone</span><span className="text-gray-300">(</span><span className="text-green-400">8</span><span className="text-gray-300">, </span><span className="text-green-400">1000</span><span className="text-gray-300">, </span><span className="text-green-400">500</span><span className="text-gray-300">);</span> <span className="text-gray-400">// For 500ms</span></div>
+                                    <br />
+                                    <div><span className="text-sky-300">noTone</span><span className="text-gray-300">(</span><span className="text-green-400">8</span><span className="text-gray-300">);</span> <span className="text-gray-400">// Stop sound on Pin 8</span></div>
+                                </div>
+                                <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                                    <p className="text-xs font-bold text-purple-900 mb-1">⚡ Parameters & Uses:</p>
+                                    <ul className="text-xs text-purple-800 space-y-1 ml-4 list-disc marker:text-purple-500">
+                                        <li><strong>frequency</strong> → Sound frequency (Hz)</li>
+                                        <li><strong>duration</strong> → Time in milliseconds (optional)</li>
+                                        <li>Uses: Alarm system, Buzzer notification, Sound generation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Quick Revision Table */}
+                        <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+                            <table className="w-full text-left border-collapse bg-white">
+                                <thead>
+                                    <tr className="bg-gray-50 border-b border-gray-200 text-sm">
+                                        <th className="p-4 font-bold text-gray-800">Function</th>
+                                        <th className="p-4 font-bold text-gray-800">Work</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm text-gray-700 divide-y divide-gray-100">
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-blue-700 bg-blue-50/30">pinMode()</td>
+                                        <td className="p-4">Pin mode set karta hai (INPUT/OUTPUT)</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-emerald-700 bg-emerald-50/30">digitalWrite()</td>
+                                        <td className="p-4">HIGH/LOW output bhejta hai</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-purple-700 bg-purple-50/30">digitalRead()</td>
+                                        <td className="p-4">Digital input read karta hai</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-orange-700 bg-orange-50/30">shiftIn()</td>
+                                        <td className="p-4">Serial data receive karta hai</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-pink-700 bg-pink-50/30">shiftOut()</td>
+                                        <td className="p-4">Serial data send karta hai</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-indigo-700 bg-indigo-50/30">tone()</td>
+                                        <td className="p-4">Sound generate karta hai</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-rose-700 bg-rose-50/30">noTone()</td>
+                                        <td className="p-4">Sound stop karta hai</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Analog Functions ═══ */}
+                    <Sec id="analog-functions" title="🔴 Inbuilt Functions for Analog Input and Output" icon={<Activity size={16} className="text-amber-500" />}>
+                        <p className="mb-4 text-sm text-gray-700">Arduino me analog signals ko read aur generate karne ke liye kuch special inbuilt functions use kiye jate hain. Analog signals continuously change hote hain, isliye unhe process karne ke liye Arduino ke ADC (Analog to Digital Converter) aur PWM techniques ka use kiya jata hai.</p>
+
+                        {/* 1. analogRead() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-amber-100 shadow-sm">
+                            <h5 className="font-bold text-amber-800 text-lg mb-2">🔴 1. analogRead()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>analogRead()</strong> function analog input pins se analog voltage ko read karne ke liye use hota hai. Arduino Uno me 6 analog input pins hoti hain: <code className="bg-gray-100 px-1 py-0.5 rounded text-amber-600 font-mono text-xs">A0, A1, A2, A3, A4, A5</code>. Ye function analog signal ko digital value me convert karke return karta hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">analogRead</span><span className="text-gray-300">(pin);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-orange-400">int</span> <span className="text-sky-300">sensorValue</span><span className="text-gray-300">;</span></div>
+                                    <div><span className="text-sky-300">sensorValue</span> <span className="text-pink-400">=</span> <span className="text-sky-300">analogRead</span><span className="text-gray-300">(</span><span className="text-green-400">A0</span><span className="text-gray-300">);</span></div>
+                                </div>
+                                <div className="bg-amber-50 p-4 rounded-xl border border-amber-200">
+                                    <p className="text-xs font-bold text-amber-900 mb-1">⚡ Return Value & Uses:</p>
+                                    <ul className="text-xs text-amber-800 space-y-1 ml-4 list-disc marker:text-amber-500">
+                                        <li>ADC 10-bit ka hota hai (Range: <strong>0 to 1023</strong>)</li>
+                                        <li>0V → 0, 2.5V → 512, 5V → 1023</li>
+                                        <li>Uses: LDR sensor, Temperature sensor, Potentiometer, Gas sensor</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 2. analogWrite() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-rose-100 shadow-sm">
+                            <h5 className="font-bold text-rose-800 text-lg mb-2">🔴 2. analogWrite()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>analogWrite()</strong> function PWM (Pulse Width Modulation) signal generate karne ke liye use hota hai. Arduino Uno actual analog voltage generate nahi karta, balki PWM signal generate karta hai jo analog output jaisa behavior deta hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(pin, value);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-green-400">9</span><span className="text-gray-300">, </span><span className="text-green-400">128</span><span className="text-gray-300">);</span></div>
+                                </div>
+                                <div className="bg-rose-50 p-4 rounded-xl border border-rose-200">
+                                    <p className="text-xs font-bold text-rose-900 mb-1">⚡ Values & Uses:</p>
+                                    <ul className="text-xs text-rose-800 space-y-1 ml-4 list-disc marker:text-rose-500">
+                                        <li><strong>PWM Pins:</strong> 3, 5, 6, 9, 10, 11</li>
+                                        <li><strong>Value Range:</strong> 0 se 255 tak</li>
+                                        <li>0 = OFF, 127 = 50% Output, 255 = Fully ON</li>
+                                        <li>Uses: LED brightness, Motor speed, Servo control</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* analogReference() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-indigo-100 shadow-sm">
+                            <h5 className="font-bold text-indigo-800 text-lg mb-2">🔴 analogReference()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>analogReference()</strong> function ADC ke reference voltage ko select karne ke liye use hota hai. Reference voltage decide karti hai ki Arduino analog input ko kis voltage range ke according measure karega.</p>
+                            
+                            <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mb-4">
+                                <div className="text-gray-400 mb-1">// Syntax</div>
+                                <div><span className="text-sky-300">analogReference</span><span className="text-gray-300">(type);</span></div>
+                            </div>
+
+                            <div className="space-y-4">
+                                {/* DEFAULT */}
+                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                    <h6 className="font-bold text-indigo-900 text-sm mb-1">1. DEFAULT</h6>
+                                    <p className="text-xs text-indigo-800 mb-2">DEFAULT reference me Arduino apni supply voltage (Uno me 5V) ko reference ke roop me use karta hai.</p>
+                                    <div className="bg-white p-2 rounded border border-indigo-200 text-xs font-mono text-gray-700">
+                                        <span className="text-sky-500">analogReference</span>(DEFAULT);<br/>
+                                        <span className="text-gray-400">// ADC: 0V → 0 | 5V → 1023</span>
+                                    </div>
+                                </div>
+
+                                {/* INTERNAL */}
+                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                    <h6 className="font-bold text-indigo-900 text-sm mb-1">2. INTERNAL</h6>
+                                    <p className="text-xs text-indigo-800 mb-2">INTERNAL reference Arduino ke internal voltage source ko use karta hai (Uno me 1.1 Volt). Small voltage measurements me accuracy increase hoti hai.</p>
+                                    <div className="bg-white p-2 rounded border border-indigo-200 text-xs font-mono text-gray-700">
+                                        <span className="text-sky-500">analogReference</span>(INTERNAL);<br/>
+                                        <span className="text-gray-400">// ADC: 0V → 0 | 1.1V → 1023</span>
+                                    </div>
+                                </div>
+
+                                {/* INTERNAL1V1 */}
+                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                    <h6 className="font-bold text-indigo-900 text-sm mb-1">3. INTERNAL1V1</h6>
+                                    <p className="text-xs text-indigo-800 mb-2">Ye specifically 1.1V internal reference ko select karta hai. (Precision sensors, Low voltage measurement).</p>
+                                    <div className="bg-white p-2 rounded border border-indigo-200 text-xs font-mono text-gray-700">
+                                        <span className="text-sky-500">analogReference</span>(INTERNAL1V1);
+                                    </div>
+                                </div>
+
+                                {/* INTERNAL2V56 */}
+                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                    <h6 className="font-bold text-indigo-900 text-sm mb-1">4. INTERNAL2V56</h6>
+                                    <p className="text-xs text-indigo-800 mb-2">Kuch Arduino boards me 2.56V internal reference available hota hai. (Medium voltage applications).</p>
+                                    <div className="bg-white p-2 rounded border border-indigo-200 text-xs font-mono text-gray-700">
+                                        <span className="text-sky-500">analogReference</span>(INTERNAL2V56);
+                                    </div>
+                                </div>
+
+                                {/* EXTERNAL */}
+                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                    <h6 className="font-bold text-indigo-900 text-sm mb-1">5. EXTERNAL</h6>
+                                    <p className="text-xs text-indigo-800 mb-2">EXTERNAL mode me user khud AREF pin par external reference voltage provide karta hai. Custom voltage range aur precision measurements ke liye use hota hai.</p>
+                                    <div className="bg-white p-2 rounded border border-indigo-200 text-xs font-mono text-gray-700">
+                                        <span className="text-sky-500">analogReference</span>(EXTERNAL);<br/>
+                                        <span className="text-gray-400">// Example if AREF = 3.3V: 0V → 0 | 3.3V → 1023</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Quick Revision Table */}
+                        <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+                            <table className="w-full text-left border-collapse bg-white">
+                                <thead>
+                                    <tr className="bg-gray-50 border-b border-gray-200 text-sm">
+                                        <th className="p-4 font-bold text-gray-800">Function</th>
+                                        <th className="p-4 font-bold text-gray-800">Work</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm text-gray-700 divide-y divide-gray-100">
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-amber-700 bg-amber-50/30">analogRead()</td>
+                                        <td className="p-4">Analog input read karta hai</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-rose-700 bg-rose-50/30">analogWrite()</td>
+                                        <td className="p-4">PWM output generate karta hai</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-indigo-700 bg-indigo-50/30">DEFAULT</td>
+                                        <td className="p-4">5V reference</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-indigo-700 bg-indigo-50/30">INTERNAL</td>
+                                        <td className="p-4">Internal reference voltage (1.1V for Uno)</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-indigo-700 bg-indigo-50/30">INTERNAL1V1</td>
+                                        <td className="p-4">1.1V reference</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-indigo-700 bg-indigo-50/30">INTERNAL2V56</td>
+                                        <td className="p-4">2.56V reference</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-indigo-700 bg-indigo-50/30">EXTERNAL</td>
+                                        <td className="p-4">External reference voltage (via AREF pin)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Time Functions ═══ */}
+                    <Sec id="time-functions" title="🔴 Inbuilt Functions for Time" icon={<Clock size={16} className="text-pink-500" />}>
+                        <p className="mb-4 text-sm text-gray-700">Arduino me time-related operations perform karne ke liye kuch important inbuilt functions available hote hain. In functions ka use delay create karne, execution time measure karne aur timing control karne ke liye kiya jata hai. Ye functions LEDs blinking, sensor timing, motor control aur automation projects me bahut useful hote hain.</p>
+
+                        {/* 1. delay() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-pink-100 shadow-sm">
+                            <h5 className="font-bold text-pink-800 text-lg mb-2">🔴 1. delay()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>delay()</strong> function program execution ko specified milliseconds ke liye stop kar deta hai. Jab delay function execute hota hai to Arduino us duration tak next instruction execute nahi karta.</p>
+                            <div className="bg-pink-50 text-pink-800 text-sm font-semibold p-2 rounded-lg border border-pink-200 mb-3 w-fit">
+                                👉 &quot;delay() = Program ko kuch samay ke liye rokna&quot;
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">delay</span><span className="text-gray-300">(time);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-400">13</span><span className="text-gray-300">, </span><span className="text-blue-400">HIGH</span><span className="text-gray-300">);</span></div>
+                                    <div><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-green-400">1000</span><span className="text-gray-300">);</span> <span className="text-gray-400">// 1 second wait</span></div>
+                                    <div><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-400">13</span><span className="text-gray-300">, </span><span className="text-blue-400">LOW</span><span className="text-gray-300">);</span></div>
+                                </div>
+                                <div className="bg-pink-50 p-4 rounded-xl border border-pink-200">
+                                    <p className="text-xs font-bold text-pink-900 mb-1">⚡ Working & Uses:</p>
+                                    <ul className="text-xs text-pink-800 space-y-1 ml-4 list-disc marker:text-pink-500">
+                                        <li><strong>1000</strong> ms = 1 Second</li>
+                                        <li><strong>500</strong> ms = 0.5 Second</li>
+                                        <li>LED 1 second ON rahegi fir next instruction chalega.</li>
+                                        <li>Uses: LED blinking, Traffic light control, Alarm systems</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 2. delayMicroseconds() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-purple-100 shadow-sm">
+                            <h5 className="font-bold text-purple-800 text-lg mb-2">🔴 2. delayMicroseconds()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>delayMicroseconds()</strong> function microsecond level ka delay generate karta hai. Ye bahut small timing requirements ke liye use hota hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">delayMicroseconds</span><span className="text-gray-300">(time);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-400">13</span><span className="text-gray-300">, </span><span className="text-blue-400">HIGH</span><span className="text-gray-300">);</span></div>
+                                    <div><span className="text-sky-300">delayMicroseconds</span><span className="text-gray-300">(</span><span className="text-green-400">500</span><span className="text-gray-300">);</span></div>
+                                    <div><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-400">13</span><span className="text-gray-300">, </span><span className="text-blue-400">LOW</span><span className="text-gray-300">);</span></div>
+                                </div>
+                                <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                                    <p className="text-xs font-bold text-purple-900 mb-1">⚡ Relations & Uses:</p>
+                                    <ul className="text-xs text-purple-800 space-y-1 ml-4 list-disc marker:text-purple-500">
+                                        <li>1000 Microseconds = <strong>1 Millisecond</strong></li>
+                                        <li>1000000 Microseconds = <strong>1 Second</strong></li>
+                                        <li>Uses: Pulse generation, Ultrasonic sensor timing, High-speed switching</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 3. millis() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-blue-100 shadow-sm">
+                            <h5 className="font-bold text-blue-800 text-lg mb-2">🔴 3. millis()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>millis()</strong> function Arduino start hone ke baad se kitne milliseconds beet chuke hain wo return karta hai. Ye function timer ki tarah kaam karta hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">millis</span><span className="text-gray-300">();</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-orange-400">unsigned long</span> <span className="text-sky-300">time</span><span className="text-gray-300">;</span></div>
+                                    <div><span className="text-sky-300">time</span> <span className="text-pink-400">=</span> <span className="text-sky-300">millis</span><span className="text-gray-300">();</span></div>
+                                    <div><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(time);</span></div>
+                                </div>
+                                <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                                    <p className="text-xs font-bold text-blue-900 mb-1">⚡ Return Type & Uses:</p>
+                                    <ul className="text-xs text-blue-800 space-y-1 ml-4 list-disc marker:text-blue-500">
+                                        <li>Return Type: <strong>unsigned long</strong></li>
+                                        <li>Agar Arduino 5 second se chal raha hai, to <strong>5000</strong> return karega.</li>
+                                        <li>Uses: Time measurement, Non-blocking delay</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-blue-100 text-blue-900 text-xs p-3 rounded-xl border border-blue-300 mt-4 shadow-sm flex items-start gap-2">
+                                <span className="text-lg leading-none">💡</span>
+                                <div>
+                                    <strong>Advantage over delay():</strong> delay() program ko rok deta hai. Lekin millis() program ko roke bina time measure karta hai. Isliye professional projects me millis() zyada use hota hai.
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 4. micros() */}
+                        <div className="p-5 rounded-2xl mb-4 bg-white border border-teal-100 shadow-sm">
+                            <h5 className="font-bold text-teal-800 text-lg mb-2">🔴 4. micros()</h5>
+                            <p className="text-sm text-gray-600 mb-3"><strong>micros()</strong> function Arduino start hone ke baad se kitne microseconds beet chuke hain wo return karta hai. Ye millis() se bhi jyada accurate timing provide karta hai.</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">micros</span><span className="text-gray-300">();</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-orange-400">unsigned long</span> <span className="text-sky-300">time</span><span className="text-gray-300">;</span></div>
+                                    <div><span className="text-sky-300">time</span> <span className="text-pink-400">=</span> <span className="text-sky-300">micros</span><span className="text-gray-300">();</span></div>
+                                    <div><span className="text-sky-300">Serial.println</span><span className="text-gray-300">(time);</span></div>
+                                </div>
+                                <div className="bg-teal-50 p-4 rounded-xl border border-teal-200">
+                                    <p className="text-xs font-bold text-teal-900 mb-1">⚡ Return Type & Uses:</p>
+                                    <ul className="text-xs text-teal-800 space-y-1 ml-4 list-disc marker:text-teal-500">
+                                        <li>Return Type: <strong>unsigned long</strong></li>
+                                        <li>Agar 250 microseconds beet chuke hain, to <strong>250</strong> return karega.</li>
+                                        <li>Uses: High-speed timing, Pulse width measurement</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Differences Table */}
+                        <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 shadow-sm mb-6">
+                            <table className="w-full text-left border-collapse bg-white">
+                                <thead>
+                                    <tr className="bg-gray-50 border-b border-gray-200 text-sm">
+                                        <th className="p-4 font-bold text-gray-800">Feature</th>
+                                        <th className="p-4 font-bold text-blue-700">millis()</th>
+                                        <th className="p-4 font-bold text-teal-700">micros()</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm text-gray-700 divide-y divide-gray-100">
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-semibold text-gray-800">Unit</td>
+                                        <td className="p-4 text-blue-800 bg-blue-50/20">Milliseconds</td>
+                                        <td className="p-4 text-teal-800 bg-teal-50/20">Microseconds</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-semibold text-gray-800">Accuracy</td>
+                                        <td className="p-4 text-blue-800 bg-blue-50/20">Lower</td>
+                                        <td className="p-4 text-teal-800 bg-teal-50/20">Higher</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-semibold text-gray-800">Measurement</td>
+                                        <td className="p-4 text-blue-800 bg-blue-50/20">Normal timing</td>
+                                        <td className="p-4 text-teal-800 bg-teal-50/20">Very precise timing</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-semibold text-gray-800">Common Use</td>
+                                        <td className="p-4 text-blue-800 bg-blue-50/20">General projects</td>
+                                        <td className="p-4 text-teal-800 bg-teal-50/20">High-speed applications</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Quick Revision Table */}
+                        <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+                            <table className="w-full text-left border-collapse bg-white">
+                                <thead>
+                                    <tr className="bg-gray-50 border-b border-gray-200 text-sm">
+                                        <th className="p-4 font-bold text-gray-800">Function</th>
+                                        <th className="p-4 font-bold text-gray-800">Work</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm text-gray-700 divide-y divide-gray-100">
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-pink-700 bg-pink-50/30">delay()</td>
+                                        <td className="p-4">Milliseconds delay</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-purple-700 bg-purple-50/30">delayMicroseconds()</td>
+                                        <td className="p-4">Microseconds delay</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-blue-700 bg-blue-50/30">millis()</td>
+                                        <td className="p-4">Arduino start se milliseconds count</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-teal-700 bg-teal-50/30">micros()</td>
+                                        <td className="p-4">Arduino start se microseconds count</td>
                                     </tr>
                                 </tbody>
                             </table>
