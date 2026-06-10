@@ -49,6 +49,8 @@ const tocItems = [
     { icon: <Activity size={13} />, label: 'Inbuilt Functions', id: 'inbuilt-functions', color: '#8b5cf6' },
     { icon: <Activity size={13} />, label: 'Analog Inbuilt Functions', id: 'analog-functions', color: '#f59e0b' },
     { icon: <Clock size={13} />, label: 'Time Functions', id: 'time-functions', color: '#ec4899' },
+    { icon: <Activity size={13} />, label: 'Math Functions', id: 'math-functions', color: '#0ea5e9' },
+    { icon: <Braces size={13} />, label: 'Character Functions', id: 'char-functions', color: '#8b5cf6' },
 ];
 
 export default function IoTApplications() {
@@ -2669,6 +2671,164 @@ export default function IoTApplications() {
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Math Functions ═══ */}
+                    <Sec id="math-functions" title="🔴 Inbuilt Functions of Math" icon={<Activity size={16} className="text-sky-500" />}>
+                        <p className="mb-5 text-sm text-gray-700">Arduino aur Embedded C me mathematical calculations ko easy banane ke liye kai inbuilt math functions available hote hain. In functions ki madad se programmer bina complex formulas likhe calculations perform kar sakta hai. Ye functions scientific calculations, sensor data processing aur engineering applications me bahut useful hote hain.</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                            {/* 1. abs() */}
+                            <div className="p-4 rounded-xl bg-white border border-sky-100 shadow-sm">
+                                <h4 className="font-bold text-sky-900 text-base mb-2">🔴 1. abs()</h4>
+                                <p className="text-xs text-gray-600 mb-3">abs() function kisi number ki absolute value return karta hai (number ka positive value).</p>
+                                <div className="bg-gray-900 p-3 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mb-3">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">abs</span><span className="text-gray-300">(x);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">abs</span><span className="text-gray-300">(-</span><span className="text-green-400">25</span><span className="text-gray-300">);</span> <span className="text-gray-400">// Output: 25</span></div>
+                                </div>
+                                <div className="bg-sky-50 p-2 rounded-lg">
+                                    <p className="text-[11px] font-bold text-sky-800">🛠️ Uses:</p>
+                                    <p className="text-[11px] text-sky-700">Distance calculation, Error calculation, Sensor value comparison</p>
+                                </div>
+                            </div>
+
+                            {/* 2. max() */}
+                            <div className="p-4 rounded-xl bg-white border border-sky-100 shadow-sm">
+                                <h4 className="font-bold text-sky-900 text-base mb-2">🔴 2. max()</h4>
+                                <p className="text-xs text-gray-600 mb-3">max() function do values me se badi value return karta hai.</p>
+                                <div className="bg-gray-900 p-3 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mb-3">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">max</span><span className="text-gray-300">(x, y);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">max</span><span className="text-gray-300">(</span><span className="text-green-400">10</span><span className="text-gray-300">, </span><span className="text-green-400">20</span><span className="text-gray-300">);</span> <span className="text-gray-400">// Output: 20</span></div>
+                                </div>
+                                <div className="bg-sky-50 p-2 rounded-lg">
+                                    <p className="text-[11px] font-bold text-sky-800">🛠️ Uses:</p>
+                                    <p className="text-[11px] text-sky-700">Maximum sensor value finding, Comparison operations</p>
+                                </div>
+                            </div>
+
+                            {/* 3. min() */}
+                            <div className="p-4 rounded-xl bg-white border border-sky-100 shadow-sm">
+                                <h4 className="font-bold text-sky-900 text-base mb-2">🔴 3. min()</h4>
+                                <p className="text-xs text-gray-600 mb-3">min() function do values me se chhoti value return karta hai.</p>
+                                <div className="bg-gray-900 p-3 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mb-3">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">min</span><span className="text-gray-300">(x, y);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">min</span><span className="text-gray-300">(</span><span className="text-green-400">10</span><span className="text-gray-300">, </span><span className="text-green-400">20</span><span className="text-gray-300">);</span> <span className="text-gray-400">// Output: 10</span></div>
+                                </div>
+                                <div className="bg-sky-50 p-2 rounded-lg">
+                                    <p className="text-[11px] font-bold text-sky-800">🛠️ Uses:</p>
+                                    <p className="text-[11px] text-sky-700">Minimum value detection, Range checking</p>
+                                </div>
+                            </div>
+
+                            {/* 4. pow() */}
+                            <div className="p-4 rounded-xl bg-white border border-sky-100 shadow-sm">
+                                <h4 className="font-bold text-sky-900 text-base mb-2">🔴 4. pow()</h4>
+                                <p className="text-xs text-gray-600 mb-3">pow() function kisi number ki power calculate karta hai.</p>
+                                <div className="bg-gray-900 p-3 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mb-3">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">pow</span><span className="text-gray-300">(base, exponent);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">pow</span><span className="text-gray-300">(</span><span className="text-green-400">2</span><span className="text-gray-300">, </span><span className="text-green-400">3</span><span className="text-gray-300">);</span> <span className="text-gray-400">// 2³ = 8</span></div>
+                                </div>
+                                <div className="bg-sky-50 p-2 rounded-lg">
+                                    <p className="text-[11px] font-bold text-sky-800">🛠️ Uses:</p>
+                                    <p className="text-[11px] text-sky-700">Mathematical calculations, Scientific formulas</p>
+                                </div>
+                            </div>
+
+                            {/* 5. sqrt() */}
+                            <div className="p-4 rounded-xl bg-white border border-sky-100 shadow-sm">
+                                <h4 className="font-bold text-sky-900 text-base mb-2">🔴 5. sqrt()</h4>
+                                <p className="text-xs text-gray-600 mb-3">sqrt() function kisi number ka square root calculate karta hai.</p>
+                                <div className="bg-gray-900 p-3 rounded-xl font-mono text-xs shadow-inner overflow-x-auto mb-3">
+                                    <div className="text-gray-400 mb-1">// Syntax</div>
+                                    <div><span className="text-sky-300">sqrt</span><span className="text-gray-300">(number);</span></div>
+                                    <div className="text-gray-400 mt-2">// Example</div>
+                                    <div><span className="text-sky-300">sqrt</span><span className="text-gray-300">(</span><span className="text-green-400">64</span><span className="text-gray-300">);</span> <span className="text-gray-400">// Output: 8</span></div>
+                                </div>
+                                <div className="bg-sky-50 p-2 rounded-lg">
+                                    <p className="text-[11px] font-bold text-sky-800">🛠️ Uses:</p>
+                                    <p className="text-[11px] text-sky-700">Engineering calculations, Distance measurement, Mathematical operations</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Quick Revision Table (Math Functions) */}
+                        <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+                            <table className="w-full text-left border-collapse bg-white">
+                                <thead>
+                                    <tr className="bg-gray-50 border-b border-gray-200 text-sm">
+                                        <th className="p-4 font-bold text-gray-800">Function</th>
+                                        <th className="p-4 font-bold text-gray-800">Work</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm text-gray-700 divide-y divide-gray-100">
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-sky-700 bg-sky-50/30">abs()</td>
+                                        <td className="p-4">Absolute value</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-sky-700 bg-sky-50/30">max()</td>
+                                        <td className="p-4">Maximum value</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-sky-700 bg-sky-50/30">min()</td>
+                                        <td className="p-4">Minimum value</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-sky-700 bg-sky-50/30">pow()</td>
+                                        <td className="p-4">Power calculation</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50 transition-colors">
+                                        <td className="p-4 font-medium text-sky-700 bg-sky-50/30">sqrt()</td>
+                                        <td className="p-4">Square root</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </Sec>
+
+                    {/* ═══ SECTION: Character Functions ═══ */}
+                    <Sec id="char-functions" title="🔴 Inbuilt Functions for Characters" icon={<Braces size={16} className="text-purple-500" />}>
+                        <p className="mb-5 text-sm text-gray-700">Character handling functions characters ko identify aur verify karne ke liye use kiye jate hain. Ye functions text processing, password checking aur input validation me bahut useful hote hain.</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {[
+                                { name: 'isAlpha', desc: 'Check karta hai ki character alphabet hai ya nahi.', example: "isAlpha('A')", output: 'TRUE' },
+                                { name: 'isAlphaNumeric', desc: 'Check karta hai ki character alphabet ya number hai ya nahi.', example: "isAlphaNumeric('7')", output: 'TRUE' },
+                                { name: 'isAscii', desc: 'Check karta hai ki character ASCII character hai ya nahi.', example: "isAscii('A')", output: 'TRUE' },
+                                { name: 'isDigit', desc: 'Check karta hai ki character digit (0–9) hai ya nahi.', example: "isDigit('8')", output: 'TRUE' },
+                                { name: 'isSpace', desc: 'Check karta hai ki character space hai ya nahi.', example: "isSpace(' ')", output: 'TRUE' },
+                                { name: 'isGraph', desc: 'Check karta hai ki printable visible character hai ya nahi (Space include nahi).', example: "isGraph('A')", output: 'TRUE' },
+                                { name: 'isHexadecimalDigit', desc: 'Check karta hai ki character hexadecimal digit (0-9, A-F, a-f) hai ya nahi.', example: "isHexadecimalDigit('F')", output: 'TRUE' },
+                                { name: 'isLowerCase', desc: 'Check karta hai ki character lowercase alphabet hai ya nahi.', example: "isLowerCase('a')", output: 'TRUE' },
+                                { name: 'isUpperCase', desc: 'Check karta hai ki character uppercase alphabet hai ya nahi.', example: "isUpperCase('A')", output: 'TRUE' },
+                            ].map((f, i) => (
+                                <div key={i} className="p-4 rounded-xl bg-white border border-purple-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <h5 className="font-bold text-purple-900 text-base mb-2">🔴 {i + 1}. {f.name}()</h5>
+                                    <p className="text-xs text-gray-600 mb-3">{f.desc}</p>
+                                    <div className="bg-gray-900 p-2.5 rounded-xl font-mono text-[11px] shadow-inner overflow-x-auto">
+                                        <div className="text-gray-400 mb-1">// Example</div>
+                                        <div>
+                                            <span className="text-sky-300">{f.name}</span>
+                                            <span className="text-pink-400">(</span>
+                                            <span className="text-orange-400">'</span>
+                                            <span className="text-green-400">{f.example.substring(f.example.indexOf('(') + 2, f.example.indexOf(')') - 1)}</span>
+                                            <span className="text-orange-400">'</span>
+                                            <span className="text-pink-400">)</span>
+                                            <span className="text-gray-400">;</span>
+                                        </div>
+                                        <div className="text-purple-400 mt-1">// Output: {f.output}</div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </Sec>
                 </main>
