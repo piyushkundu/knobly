@@ -1,7 +1,7 @@
 'use client';
-import { useState, ReactNode } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat, Lightbulb, FlaskConical } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -51,6 +51,7 @@ const tocItems = [
     { icon: <Clock size={13} />, label: 'Time Functions', id: 'time-functions', color: '#ec4899' },
     { icon: <Activity size={13} />, label: 'Math Functions', id: 'math-functions', color: '#0ea5e9' },
     { icon: <Braces size={13} />, label: 'Character Functions', id: 'char-functions', color: '#8b5cf6' },
+    { icon: <FlaskConical size={13} />, label: 'Practical – LDR', id: 'ldr-practical', color: '#f97316' },
 ];
 
 export default function IoTApplications() {
@@ -2831,8 +2832,282 @@ export default function IoTApplications() {
                             ))}
                         </div>
                     </Sec>
+
+                    {/* ═══ SECTION: Practical – LDR ═══ */}
+                    <LDRPracticalSection />
                 </main>
             </div>
         </div>
+    );
+}
+
+function LDRPracticalSection() {
+    const [lightLevel, setLightLevel] = useState(20);
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    const isDark = lightLevel <= 30;
+    const sensorValue = Math.round((1 - lightLevel / 100) * 1023);
+    const ledOn = sensorValue >= 900;
+
+    useEffect(() => {
+        if (ledOn) {
+            const t = setInterval(() => setIsAnimating(p => !p), 700);
+            return () => clearInterval(t);
+        }
+        setIsAnimating(false);
+    }, [ledOn]);
+
+    const ldrResistance = isDark ? '1 MΩ (high)' : '300 Ω (low)';
+
+    return (
+        <section id="ldr-practical" className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20 transition-all duration-300 hover:shadow-lg bg-white" style={{ border: '1px solid #fed7aa', boxShadow: '0 1px 3px rgba(249,115,22,0.08)' }}>
+            <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #fff7ed' }}>
+                <FlaskConical size={16} className="text-orange-500" />
+                <h2 className="text-base md:text-lg font-extrabold text-gray-800">🔬 Practical – LDR (Light Dependent Resistor)</h2>
+            </div>
+
+            <div className="rounded-xl p-4 mb-6 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '1px solid #fed7aa', color: '#9a3412' }}>
+                🌟 Is practical mein hum <strong>LDR sensor</strong> se light ka level detect karenge aur uske aadhar par <strong>LED ko automatically ON/OFF</strong> karenge, Arduino ki madad se.
+            </div>
+
+            {/* Interactive Simulator */}
+            <div className="rounded-2xl border border-orange-100 bg-gradient-to-br from-orange-50 to-amber-50 p-5 mb-6">
+                <p className="text-xs font-bold text-orange-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Zap size={12} /> Interactive Simulator — Light level adjust karo aur dekhlo kya hota hai!
+                </p>
+
+                <div className="mb-4">
+                    <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                        <span>🌑 Andhera (Dark)</span>
+                        <span>☀️ Roshan (Bright)</span>
+                    </div>
+                    <input
+                        type="range" min={0} max={100} value={lightLevel}
+                        onChange={e => setLightLevel(Number(e.target.value))}
+                        className="w-full h-3 rounded-full outline-none cursor-pointer"
+                        style={{
+                            WebkitAppearance: 'none',
+                            background: `linear-gradient(90deg, #1e293b ${lightLevel}%, #fbbf24 ${lightLevel}%, #fef3c7 100%)`,
+                        } as React.CSSProperties}
+                    />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+                    <div className="flex justify-center">
+                        <svg viewBox="0 0 300 320" className="w-full max-w-xs" style={{ filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.10))' }}>
+                            <rect width="300" height="320" rx="16" fill="#1e293b" />
+                            <text x="140" y="22" fill="#f87171" fontSize="11" fontWeight="bold" fontFamily="monospace">+5V</text>
+                            <line x1="150" y1="24" x2="150" y2="55" stroke="#f87171" strokeWidth="2" />
+                            <rect x="125" y="55" width="50" height="30" rx="6" fill={isDark ? '#7c3aed' : '#f59e0b'} opacity="0.85" />
+                            <text x="150" y="75" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="monospace">LDR</text>
+                            {!isDark && [0,45,90,135,180,225,270,315].map((angle, i) => (
+                                <line key={i}
+                                    x1={150 + 30 * Math.cos(angle * Math.PI / 180)}
+                                    y1={70 + 30 * Math.sin(angle * Math.PI / 180)}
+                                    x2={150 + 40 * Math.cos(angle * Math.PI / 180)}
+                                    y2={70 + 40 * Math.sin(angle * Math.PI / 180)}
+                                    stroke="#fbbf24" strokeWidth="1.5" opacity="0.7"
+                                />
+                            ))}
+                            <line x1="150" y1="85" x2="150" y2="120" stroke="#94a3b8" strokeWidth="2" />
+                            <circle cx="150" cy="120" r="4" fill="#38bdf8" />
+                            <line x1="150" y1="120" x2="240" y2="120" stroke="#38bdf8" strokeWidth="2" strokeDasharray="5,3" />
+                            <rect x="242" y="110" width="40" height="20" rx="5" fill="#0ea5e9" opacity="0.9" />
+                            <text x="262" y="124" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="monospace">A0</text>
+                            <rect x="125" y="130" width="50" height="28" rx="6" fill="#374151" stroke="#6b7280" strokeWidth="1" />
+                            <text x="150" y="148" textAnchor="middle" fill="#d1d5db" fontSize="9" fontWeight="bold" fontFamily="monospace">10kΩ</text>
+                            <line x1="150" y1="158" x2="150" y2="185" stroke="#94a3b8" strokeWidth="2" />
+                            <line x1="130" y1="185" x2="170" y2="185" stroke="#64748b" strokeWidth="2.5" />
+                            <line x1="136" y1="191" x2="164" y2="191" stroke="#64748b" strokeWidth="2" />
+                            <line x1="142" y1="197" x2="158" y2="197" stroke="#64748b" strokeWidth="1.5" />
+                            <text x="150" y="210" textAnchor="middle" fill="#64748b" fontSize="9" fontFamily="monospace">GND</text>
+                            <line x1="20" y1="225" x2="280" y2="225" stroke="#334155" strokeWidth="1" strokeDasharray="4,4" />
+                            <text x="60" y="248" fill="#94a3b8" fontSize="9" fontFamily="monospace">Pin 13</text>
+                            <line x1="100" y1="245" x2="165" y2="245" stroke="#94a3b8" strokeWidth="2" />
+                            <rect x="165" y="234" width="35" height="20" rx="5" fill="#374151" stroke="#6b7280" strokeWidth="1" />
+                            <text x="182" y="248" textAnchor="middle" fill="#d1d5db" fontSize="8" fontWeight="bold" fontFamily="monospace">220Ω</text>
+                            <polygon points="200,235 220,245 200,255" fill={ledOn ? (isAnimating ? '#fbbf24' : '#f97316') : '#374151'} stroke={ledOn ? '#fb923c' : '#4b5563'} strokeWidth="1.5" />
+                            <line x1="220" y1="235" x2="220" y2="255" stroke={ledOn ? '#fb923c' : '#4b5563'} strokeWidth="2" />
+                            {ledOn && <circle cx="210" cy="245" r={isAnimating ? 18 : 14} fill="#fbbf24" opacity="0.15" />}
+                            <text x="232" y="242" fill={ledOn ? '#fbbf24' : '#4b5563'} fontSize="9" fontFamily="monospace">LED</text>
+                            <text x="232" y="253" fill={ledOn ? '#f97316' : '#4b5563'} fontSize="8" fontFamily="monospace">{ledOn ? 'ON' : 'OFF'}</text>
+                            <line x1="220" y1="255" x2="220" y2="275" stroke="#94a3b8" strokeWidth="2" />
+                            <line x1="205" y1="275" x2="235" y2="275" stroke="#64748b" strokeWidth="2.5" />
+                            <line x1="210" y1="281" x2="230" y2="281" stroke="#64748b" strokeWidth="2" />
+                            <line x1="215" y1="287" x2="225" y2="287" stroke="#64748b" strokeWidth="1.5" />
+                            <text x="220" y="300" textAnchor="middle" fill="#64748b" fontSize="9" fontFamily="monospace">GND</text>
+                        </svg>
+                    </div>
+
+                    <div className="space-y-3">
+                        <div className="p-3 rounded-xl" style={{ background: isDark ? '#0f172a' : '#fefce8', border: `1px solid ${isDark ? '#1e3a5f' : '#fde68a'}` }}>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-bold" style={{ color: isDark ? '#93c5fd' : '#b45309' }}>💡 Light Level</span>
+                                <span className="text-xs font-mono font-bold" style={{ color: isDark ? '#60a5fa' : '#d97706' }}>{lightLevel}%</span>
+                            </div>
+                            <div className="h-3 rounded-full overflow-hidden" style={{ background: isDark ? '#1e293b' : '#fef3c7' }}>
+                                <div className="h-full rounded-full transition-all duration-300" style={{ width: `${lightLevel}%`, background: isDark ? 'linear-gradient(90deg,#3b82f6,#8b5cf6)' : 'linear-gradient(90deg,#fbbf24,#f97316)' }} />
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
+                            <p className="text-xs font-bold text-slate-400 mb-1 font-mono">analogRead(A0)</p>
+                            <p className="text-2xl font-black font-mono" style={{ color: sensorValue >= 900 ? '#f97316' : '#38bdf8' }}>{sensorValue}</p>
+                            <p className="text-[10px] text-slate-500 font-mono mt-1">Range: 0 – 1023</p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-purple-50 border border-purple-100">
+                            <p className="text-xs font-bold text-purple-800 mb-1">⚡ LDR Resistance</p>
+                            <p className="text-sm font-bold text-purple-600">{ldrResistance}</p>
+                        </div>
+
+                        <div className="p-3 rounded-xl border transition-all duration-500" style={{ background: ledOn ? '#fff7ed' : '#f8fafc', border: `1px solid ${ledOn ? '#fed7aa' : '#e2e8f0'}` }}>
+                            <div className="flex items-center gap-2">
+                                <div className="w-5 h-5 rounded-full transition-all duration-500 flex items-center justify-center" style={{ background: ledOn ? '#f97316' : '#cbd5e1', boxShadow: ledOn && isAnimating ? '0 0 12px #f97316' : 'none' }}>
+                                    <Lightbulb size={11} className={ledOn ? 'text-white' : 'text-slate-400'} />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold" style={{ color: ledOn ? '#ea580c' : '#94a3b8' }}>LED {ledOn ? 'ON 🔆' : 'OFF 🌑'}</p>
+                                    <p className="text-[10px]" style={{ color: ledOn ? '#c2410c' : '#94a3b8' }}>{ledOn ? 'Andhera detect hua!' : 'Roshni hai, LED off'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
+                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[11px]" style={{ color: ledOn ? '#4ade80' : '#94a3b8' }}>
+                                {ledOn ? `${sensorValue}\nLed on` : 'Led off'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-[10px] text-orange-700 mt-3 text-center font-medium">⬆️ Slider ko left mein le jao (dark) — LED on ho jayegi! Right le jao (bright) — LED off!</p>
+            </div>
+
+            {/* Program Code */}
+            <div className="rounded-2xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: '#1e293b' }}>
+                    <FileCode2 size={14} className="text-orange-400" />
+                    <span className="text-xs font-bold text-orange-300 tracking-wide">Arduino Program — LDR.ino</span>
+                    <div className="ml-auto flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500" /><div className="w-3 h-3 rounded-full bg-yellow-500" /><div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                </div>
+                <div className="bg-gray-950 p-4 font-mono text-xs leading-7 overflow-x-auto">
+                    <div><span className="text-sky-400">int</span> <span className="text-green-300">sensorPin</span> <span className="text-gray-400">=</span> <span className="text-orange-400">A0</span><span className="text-gray-400">;</span> <span className="text-gray-600">// LDR analog pin</span></div>
+                    <div><span className="text-sky-400">int</span> <span className="text-green-300">led</span> <span className="text-gray-400">=</span> <span className="text-orange-400">13</span><span className="text-gray-400">;</span> <span className="text-gray-600">// LED pin</span></div>
+                    <div className="mt-2"><span className="text-purple-400">void</span> <span className="text-yellow-300">setup</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">begin</span><span className="text-gray-300">(</span><span className="text-orange-400">9600</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-green-300">led</span><span className="text-gray-300">,</span> <span className="text-orange-400">OUTPUT</span><span className="text-gray-300">);</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                    <div className="mt-2"><span className="text-purple-400">void</span> <span className="text-yellow-300">loop</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-sky-400">int</span> <span className="text-green-300">value</span> <span className="text-gray-400">=</span> <span className="text-sky-300">analogRead</span><span className="text-gray-300">(</span><span className="text-green-300">sensorPin</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-2"><span className="text-purple-400">if</span><span className="text-gray-300">(value &lt;=</span> <span className="text-orange-400">100</span><span className="text-gray-300">)</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-300">led</span><span className="text-gray-300">,</span> <span className="text-orange-400">HIGH</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">println</span><span className="text-gray-300">(</span><span className="text-green-300">value</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">println</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot;Led on&quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">1000</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div className="ml-4 mt-1"><span className="text-purple-400">else</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-300">led</span><span className="text-gray-300">,</span> <span className="text-orange-400">LOW</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">println</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot;Led off&quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                </div>
+            </div>
+
+            {/* Materials and Connections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                <div className="p-4 rounded-2xl border border-amber-100 bg-amber-50">
+                    <h3 className="text-sm font-extrabold text-amber-900 mb-3 flex items-center gap-2">
+                        <Wrench size={14} /> आवश्यक सामग्री (Materials Required)
+                    </h3>
+                    <ul className="space-y-2">
+                        {[
+                            { label: 'Arduino Board (Uno R3)', icon: '🟦' },
+                            { label: 'LDR (Light Dependent Resistor)', icon: '💡' },
+                            { label: '10 KΩ Resistor', icon: '🔴' },
+                            { label: 'LED', icon: '💛' },
+                            { label: 'Bread Board', icon: '🔲' },
+                            { label: 'Jumper Wires', icon: '🔗' },
+                        ].map((m, i) => (
+                            <li key={i} className="flex items-center gap-2.5 text-sm text-amber-900 bg-white rounded-lg px-3 py-2 border border-amber-100 shadow-sm">
+                                <span>{m.icon}</span><span className="font-semibold">{m.label}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-sky-100 bg-sky-50">
+                    <h3 className="text-sm font-extrabold text-sky-900 mb-3 flex items-center gap-2">
+                        <CircuitBoard size={14} /> Circuit Connection
+                    </h3>
+                    <ol className="space-y-2">
+                        {[
+                            { step: 'LDR का एक terminal 5V pin से connect करें।', color: 'text-red-600' },
+                            { step: 'LDR का दूसरा terminal 10KΩ resistor से connect करें।', color: 'text-orange-600' },
+                            { step: 'Resistor का दूसरा terminal Ground से connect करें।', color: 'text-gray-600' },
+                            { step: 'LDR और resistor के बीच का point Analog Pin A0 से connect करें।', color: 'text-sky-700' },
+                            { step: 'LED का cathode (–) सिरा Ground से connect करें।', color: 'text-gray-600' },
+                            { step: 'LED का anode (+) सिरा 220Ω resistor से, और resistor Pin 13 से connect करें।', color: 'text-emerald-700' },
+                        ].map((c, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-sky-900">
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-sky-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className={`font-medium ${c.color}`}>{c.step}</span>
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+            </div>
+
+            {/* Working Principle */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-100 mb-6">
+                <h3 className="text-sm font-extrabold text-violet-900 mb-4 flex items-center gap-2">
+                    <Activity size={14} /> 🔹 कार्य प्रणाली (Working Principle)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {[
+                        { icon: '🌞', heading: 'Bright Light', body: 'LDR का resistance कम होता है → Voltage divider से A0 पर high voltage → analogRead value अधिक (>100) → LED OFF', bg: 'bg-yellow-50', border: 'border-yellow-200', tc: 'text-yellow-900' },
+                        { icon: '🌑', heading: 'Dark / Low Light', body: 'LDR का resistance बढ़ता है → A0 पर low voltage → analogRead value कम (≤100) → LED ON होती है', bg: 'bg-slate-800', border: 'border-slate-600', tc: 'text-slate-100' },
+                        { icon: '📊', heading: 'Analog to Digital', body: 'Arduino की Analog pin 0–5V voltage को 0–1023 digital value में convert करती है। यही ADC (Analog to Digital Converter) है।', bg: 'bg-sky-50', border: 'border-sky-200', tc: 'text-sky-900' },
+                        { icon: '💻', heading: 'Serial Monitor', body: 'Serial.println() से value और status print होता है। Arduino IDE में Serial Monitor (9600 baud) खोलकर output देख सकते हैं।', bg: 'bg-emerald-50', border: 'border-emerald-200', tc: 'text-emerald-900' },
+                    ].map((w, i) => (
+                        <div key={i} className={`p-3 rounded-xl ${w.bg} border ${w.border}`}>
+                            <p className={`text-xs font-bold ${w.tc} mb-1`}>{w.icon} {w.heading}</p>
+                            <p className={`text-[11px] ${w.tc} leading-relaxed`}>{w.body}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Flowchart */}
+            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200">
+                <h3 className="text-sm font-extrabold text-gray-800 mb-4 flex items-center gap-2">
+                    <ChevronRight size={14} className="text-orange-500" /> Program Flow (Flowchart)
+                </h3>
+                <div className="flex flex-col items-center gap-0 text-center text-xs font-semibold">
+                    {([
+                        { label: 'START', style: { background: '#059669', color: 'white', borderRadius: '50px' } as React.CSSProperties },
+                        null,
+                        { label: 'Serial.begin(9600) | pinMode(led, OUTPUT)', style: { background: '#eff6ff', border: '1.5px solid #93c5fd', color: '#1e40af', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'value = analogRead(A0)', style: { background: '#fef3c7', border: '1.5px solid #fcd34d', color: '#92400e', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'value <= 100?', style: { background: '#fce7f3', border: '1.5px solid #f9a8d4', color: '#9d174d', borderRadius: '50px' } as React.CSSProperties },
+                        null,
+                        { label: 'YES: digitalWrite HIGH | Serial.println(value) | Serial.println("Led on") | delay(1000)', style: { background: '#ecfdf5', border: '1.5px solid #6ee7b7', color: '#065f46', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'NO: digitalWrite LOW | Serial.println("Led off")', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: '↩ loop() repeats', style: { background: '#f5f3ff', border: '1.5px solid #c4b5fd', color: '#5b21b6', borderRadius: '8px' } as React.CSSProperties },
+                    ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
+                        item === null
+                            ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
+                            : <div key={i} className="px-4 py-2 text-[11px] shadow-sm" style={item.style}>{item.label}</div>
+                    )}
+                </div>
+            </div>
+        </section>
     );
 }
