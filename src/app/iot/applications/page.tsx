@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat, Lightbulb, FlaskConical } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat, Lightbulb, FlaskConical, Waves, Radio } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -52,6 +52,7 @@ const tocItems = [
     { icon: <Activity size={13} />, label: 'Math Functions', id: 'math-functions', color: '#0ea5e9' },
     { icon: <Braces size={13} />, label: 'Character Functions', id: 'char-functions', color: '#8b5cf6' },
     { icon: <FlaskConical size={13} />, label: 'Practical – LDR', id: 'ldr-practical', color: '#f97316' },
+    { icon: <Waves size={13} />, label: 'Practical – Ultrasonic', id: 'ultrasonic-practical', color: '#0ea5e9' },
 ];
 
 export default function IoTApplications() {
@@ -2835,6 +2836,9 @@ export default function IoTApplications() {
 
                     {/* ═══ SECTION: Practical – LDR ═══ */}
                     <LDRPracticalSection />
+
+                    {/* ═══ SECTION: Practical – Ultrasonic Sensor HC-SR04 ═══ */}
+                    <UltrasonicPracticalSection />
                 </main>
             </div>
         </div>
@@ -3101,6 +3105,510 @@ function LDRPracticalSection() {
                         { label: 'NO: digitalWrite LOW | Serial.println("Led off")', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
                         null,
                         { label: '↩ loop() repeats', style: { background: '#f5f3ff', border: '1.5px solid #c4b5fd', color: '#5b21b6', borderRadius: '8px' } as React.CSSProperties },
+                    ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
+                        item === null
+                            ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
+                            : <div key={i} className="px-4 py-2 text-[11px] shadow-sm" style={item.style}>{item.label}</div>
+                    )}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function UltrasonicPracticalSection() {
+    const [objectDist, setObjectDist] = useState(50);
+    const [wavePhase, setWavePhase] = useState(0);
+    const [pulseActive, setPulseActive] = useState(false);
+
+    const distance = objectDist;
+    const duration = Math.round((distance * 2) / 0.0344);
+    const ledOn = distance <= 30;
+
+    useEffect(() => {
+        const t = setInterval(() => setWavePhase(p => (p + 1) % 60), 80);
+        return () => clearInterval(t);
+    }, []);
+
+    useEffect(() => {
+        if (ledOn) {
+            const t = setInterval(() => setPulseActive(p => !p), 600);
+            return () => clearInterval(t);
+        }
+        setPulseActive(false);
+    }, [ledOn]);
+
+    return (
+        <section id="ultrasonic-practical" className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20 transition-all duration-300 hover:shadow-lg bg-white" style={{ border: '1px solid #bae6fd', boxShadow: '0 1px 3px rgba(14,165,233,0.08)' }}>
+            <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #e0f2fe' }}>
+                <Waves size={16} className="text-sky-500" />
+                <h2 className="text-base md:text-lg font-extrabold text-gray-800">🔬 Practical – Ultrasonic Sensor HC-SR04</h2>
+            </div>
+
+            {/* Objective */}
+            <div className="rounded-xl p-4 mb-6 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #e0f2fe, #bae6fd)', border: '1px solid #7dd3fc', color: '#0c4a6e' }}>
+                🎯 <strong>Objective:</strong> HC-SR04 Ultrasonic Sensor ko Arduino Uno ke saath interface karke kisi object ki <strong>distance measure</strong> karna aur object paas aane par <strong>LED ko ON</strong> karna।
+            </div>
+
+            {/* Theory Section */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-sky-50 to-cyan-50 border border-sky-100 mb-6">
+                <h3 className="text-sm font-extrabold text-sky-900 mb-4 flex items-center gap-2">
+                    <Radio size={14} /> 🔹 Theory
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                    <p>Ultrasonic Sensor <strong>HC-SR04</strong> ek distance measuring sensor hai jo <strong>ultrasonic sound waves</strong> ka use karta hai।</p>
+                    <p>Ye sensor ultrasonic waves <strong>transmit</strong> karta hai aur object se takrakar wapas aane wali waves ko <strong>receive</strong> karta hai।</p>
+                    <p>Sensor signal ke jaane aur wapas aane me lagne wale <strong>samay ko measure</strong> karta hai aur uske basis par <strong>distance calculate</strong> karta hai।</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+                    <div className="p-4 rounded-xl bg-white border border-sky-200 text-center shadow-sm">
+                        <div className="text-3xl mb-2">📡</div>
+                        <p className="text-xs font-bold text-sky-800">Transmitter</p>
+                        <p className="text-[11px] text-gray-600 mt-1">Ultrasonic waves bhejta hai</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white border border-sky-200 text-center shadow-sm">
+                        <div className="text-3xl mb-2">📥</div>
+                        <p className="text-xs font-bold text-sky-800">Receiver</p>
+                        <p className="text-[11px] text-gray-600 mt-1">Reflected waves receive karta hai</p>
+                    </div>
+                </div>
+
+                {/* How it works flow */}
+                <div className="mt-5 p-4 bg-white rounded-xl border border-sky-200">
+                    <p className="text-xs font-bold text-sky-800 mb-3 uppercase tracking-wide">📊 Working Flow:</p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                        <span className="px-3 py-2 bg-sky-500 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">📡 Transmit Wave</span>
+                        <ChevronRight className="text-sky-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-amber-100 rounded-lg text-amber-800 shadow-sm font-bold text-[11px] flex items-center gap-1">🧱 Hit Object</span>
+                        <ChevronRight className="text-sky-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-emerald-100 rounded-lg text-emerald-800 shadow-sm font-bold text-[11px] flex items-center gap-1">📥 Receive Echo</span>
+                        <ChevronRight className="text-sky-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-violet-100 rounded-lg text-violet-800 shadow-sm font-bold text-[11px] flex items-center gap-1">📏 Calculate</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* ═══ Interactive Simulator ═══ */}
+            <div className="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 to-indigo-50 p-5 mb-6">
+                <p className="text-xs font-bold text-sky-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Zap size={12} /> Interactive Simulator — Object ki distance adjust karo!
+                </p>
+
+                {/* Distance Slider */}
+                <div className="mb-5">
+                    <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                        <span>📏 Paas (Near) — 2 cm</span>
+                        <span>📏 Door (Far) — 100 cm</span>
+                    </div>
+                    <input
+                        type="range" min={2} max={100} value={objectDist}
+                        onChange={e => setObjectDist(Number(e.target.value))}
+                        className="w-full h-3 rounded-full outline-none cursor-pointer"
+                        style={{
+                            WebkitAppearance: 'none',
+                            background: `linear-gradient(90deg, #0ea5e9 ${objectDist}%, #e0f2fe ${objectDist}%, #f0f9ff 100%)`,
+                        } as React.CSSProperties}
+                    />
+                    <div className="text-center mt-2">
+                        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold" style={{ background: ledOn ? '#fef2f2' : '#f0fdf4', border: `1px solid ${ledOn ? '#fca5a5' : '#86efac'}`, color: ledOn ? '#dc2626' : '#16a34a' }}>
+                            📏 Distance: {distance} cm {ledOn ? '⚠️ Object Paas Hai!' : '✅ Safe'}
+                        </span>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+                    {/* Animated SVG Circuit + Wave Diagram */}
+                    <div className="flex justify-center">
+                        <svg viewBox="0 0 400 340" className="w-full max-w-md" style={{ filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.10))' }}>
+                            <defs>
+                                <linearGradient id="usWaveGrad" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.9" />
+                                    <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0" />
+                                </linearGradient>
+                                <linearGradient id="usEchoGrad" x1="1" y1="0" x2="0" y2="0">
+                                    <stop offset="0%" stopColor="#22c55e" stopOpacity="0.9" />
+                                    <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="400" height="340" rx="16" fill="#0f172a" />
+
+                            {/* Title */}
+                            <text x="200" y="22" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold" fontFamily="monospace">HC-SR04 ULTRASONIC SIMULATOR</text>
+
+                            {/* Arduino Board */}
+                            <rect x="10" y="100" width="80" height="160" rx="8" fill="#1e40af" stroke="#3b82f6" strokeWidth="1.5" />
+                            <text x="50" y="125" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="monospace">ARDUINO</text>
+                            <text x="50" y="138" textAnchor="middle" fill="#93c5fd" fontSize="7" fontFamily="monospace">UNO R3</text>
+                            {/* Arduino pins */}
+                            <rect x="70" y="148" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="158" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">5V</text>
+                            <rect x="70" y="168" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="178" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">GND</text>
+                            <rect x="70" y="188" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="198" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">D9</text>
+                            <rect x="70" y="208" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="218" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">D8</text>
+                            <rect x="70" y="228" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="238" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">D13</text>
+
+                            {/* Wires from Arduino to Sensor */}
+                            <line x1="92" y1="155" x2="140" y2="90" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <line x1="92" y1="175" x2="140" y2="120" stroke="#64748b" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <line x1="92" y1="195" x2="140" y2="100" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <line x1="92" y1="215" x2="140" y2="110" stroke="#22c55e" strokeWidth="1.5" strokeDasharray="4,2" />
+
+                            {/* HC-SR04 Sensor */}
+                            <rect x="140" y="55" width="100" height="80" rx="8" fill="#0f766e" stroke="#14b8a6" strokeWidth="1.5" />
+                            <text x="190" y="72" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="monospace">HC-SR04</text>
+                            {/* Transmitter circle */}
+                            <circle cx="165" cy="100" r="14" fill="#115e59" stroke="#2dd4bf" strokeWidth="1.5" />
+                            <text x="165" y="103" textAnchor="middle" fill="#5eead4" fontSize="6" fontWeight="bold" fontFamily="monospace">TX</text>
+                            {/* Receiver circle */}
+                            <circle cx="215" cy="100" r="14" fill="#115e59" stroke="#2dd4bf" strokeWidth="1.5" />
+                            <text x="215" y="103" textAnchor="middle" fill="#5eead4" fontSize="6" fontWeight="bold" fontFamily="monospace">RX</text>
+                            {/* Sensor pins labels */}
+                            <text x="145" y="90" fill="#f87171" fontSize="6" fontFamily="monospace">VCC</text>
+                            <text x="145" y="100" fill="#f59e0b" fontSize="6" fontFamily="monospace">TRIG</text>
+                            <text x="145" y="110" fill="#4ade80" fontSize="6" fontFamily="monospace">ECHO</text>
+                            <text x="145" y="120" fill="#94a3b8" fontSize="6" fontFamily="monospace">GND</text>
+
+                            {/* Animated ultrasonic waves from TX */}
+                            {[0, 1, 2, 3].map(i => {
+                                const progress = ((wavePhase + i * 15) % 60) / 60;
+                                const x = 180 + progress * (objectDist * 1.5);
+                                const opacity = 1 - progress;
+                                return x < 340 ? (
+                                    <g key={`wave-${i}`}>
+                                        <line x1={x} y1={85} x2={x} y2={75 - i * 2} stroke="#0ea5e9" strokeWidth="1.2" opacity={opacity * 0.6} />
+                                        <line x1={x} y1={115} x2={x} y2={125 + i * 2} stroke="#0ea5e9" strokeWidth="1.2" opacity={opacity * 0.6} />
+                                        <circle cx={x} cy={100} r={2 + i} fill="none" stroke="#0ea5e9" strokeWidth="0.8" opacity={opacity * 0.4} />
+                                    </g>
+                                ) : null;
+                            })}
+
+                            {/* Echo waves returning */}
+                            {[0, 1, 2].map(i => {
+                                const progress = ((wavePhase + 30 + i * 15) % 60) / 60;
+                                const baseX = Math.min(180 + objectDist * 1.5, 340);
+                                const x = baseX - progress * (objectDist * 1.5);
+                                const opacity = 1 - progress;
+                                return x > 170 ? (
+                                    <g key={`echo-${i}`}>
+                                        <line x1={x} y1={85} x2={x} y2={78} stroke="#22c55e" strokeWidth="1" opacity={opacity * 0.5} />
+                                        <line x1={x} y1={115} x2={x} y2={122} stroke="#22c55e" strokeWidth="1" opacity={opacity * 0.5} />
+                                    </g>
+                                ) : null;
+                            })}
+
+                            {/* Object (wall) */}
+                            {(() => {
+                                const objX = Math.min(180 + objectDist * 1.5, 370);
+                                return (
+                                    <g>
+                                        <rect x={objX} y={60} width={12} height={80} rx={3} fill="#475569" stroke="#94a3b8" strokeWidth="1" />
+                                        <text x={objX + 6} y={55} textAnchor="middle" fill="#f59e0b" fontSize="7" fontWeight="bold" fontFamily="monospace">🧱 Object</text>
+                                    </g>
+                                );
+                            })()}
+
+                            {/* Distance label */}
+                            <line x1="180" y1="145" x2={Math.min(180 + objectDist * 1.5, 370)} y2="145" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3,2" />
+                            <text x={(180 + Math.min(180 + objectDist * 1.5, 370)) / 2} y="158" textAnchor="middle" fill="#fbbf24" fontSize="10" fontWeight="bold" fontFamily="monospace">{distance} cm</text>
+
+                            {/* LED Section */}
+                            <line x1="92" y1="235" x2="140" y2="280" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <text x="50" y="265" textAnchor="middle" fill="#94a3b8" fontSize="7" fontFamily="monospace">Pin 13</text>
+
+                            {/* LED */}
+                            <polygon points="145,270 165,280 145,290" fill={ledOn ? (pulseActive ? '#fbbf24' : '#f97316') : '#374151'} stroke={ledOn ? '#fb923c' : '#4b5563'} strokeWidth="1.5" />
+                            <line x1="165" y1="270" x2="165" y2="290" stroke={ledOn ? '#fb923c' : '#4b5563'} strokeWidth="2" />
+                            {ledOn && <circle cx="155" cy="280" r={pulseActive ? 18 : 12} fill="#fbbf24" opacity="0.15" />}
+                            <text x="175" y="278" fill={ledOn ? '#fbbf24' : '#4b5563'} fontSize="9" fontFamily="monospace">LED</text>
+                            <text x="175" y="290" fill={ledOn ? '#f97316' : '#4b5563'} fontSize="8" fontFamily="monospace">{ledOn ? 'ON 🔆' : 'OFF'}</text>
+
+                            {/* Resistor */}
+                            <rect x="195" y="272" width="30" height="16" rx="4" fill="#374151" stroke="#6b7280" strokeWidth="1" />
+                            <text x="210" y="283" textAnchor="middle" fill="#d1d5db" fontSize="7" fontWeight="bold" fontFamily="monospace">220Ω</text>
+                            <line x1="165" y1="280" x2="195" y2="280" stroke="#94a3b8" strokeWidth="1.5" />
+                            <line x1="225" y1="280" x2="255" y2="280" stroke="#94a3b8" strokeWidth="1.5" />
+                            {/* GND */}
+                            <line x1="255" y1="275" x2="255" y2="285" stroke="#64748b" strokeWidth="2" />
+                            <line x1="250" y1="290" x2="260" y2="290" stroke="#64748b" strokeWidth="2" />
+                            <line x1="252" y1="294" x2="258" y2="294" stroke="#64748b" strokeWidth="1.5" />
+                            <text x="255" y="306" textAnchor="middle" fill="#64748b" fontSize="7" fontFamily="monospace">GND</text>
+
+                            {/* Status bar */}
+                            <rect x="10" y="310" width="380" height="24" rx="6" fill={ledOn ? '#7f1d1d' : '#14532d'} opacity="0.7" />
+                            <text x="200" y="326" textAnchor="middle" fill={ledOn ? '#fca5a5' : '#86efac'} fontSize="9" fontWeight="bold" fontFamily="monospace">
+                                {ledOn ? `⚠️ ALERT: Object at ${distance}cm — LED ON` : `✅ Clear: Object at ${distance}cm — LED OFF`}
+                            </text>
+                        </svg>
+                    </div>
+
+                    {/* Data Panel */}
+                    <div className="space-y-3">
+                        <div className="p-3 rounded-xl" style={{ background: '#f0f9ff', border: '1px solid #bae6fd' }}>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-bold text-sky-800">📏 Distance</span>
+                                <span className="text-xs font-mono font-bold text-sky-600">{distance} cm</span>
+                            </div>
+                            <div className="h-3 rounded-full overflow-hidden bg-sky-100">
+                                <div className="h-full rounded-full transition-all duration-300" style={{ width: `${distance}%`, background: distance <= 30 ? 'linear-gradient(90deg,#ef4444,#f97316)' : 'linear-gradient(90deg,#0ea5e9,#38bdf8)' }} />
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
+                            <p className="text-xs font-bold text-slate-400 mb-1 font-mono">pulseIn(echo, HIGH)</p>
+                            <p className="text-2xl font-black font-mono" style={{ color: '#38bdf8' }}>{duration} µs</p>
+                            <p className="text-[10px] text-slate-500 font-mono mt-1">Round-trip time</p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-100">
+                            <p className="text-xs font-bold text-indigo-800 mb-1">📐 Formula</p>
+                            <p className="text-sm font-bold text-indigo-600 font-mono">d = {duration} × 0.0344 / 2</p>
+                            <p className="text-sm font-bold text-indigo-900 font-mono">d = {distance} cm</p>
+                        </div>
+
+                        <div className="p-3 rounded-xl border transition-all duration-500" style={{ background: ledOn ? '#fef2f2' : '#f0fdf4', border: `1px solid ${ledOn ? '#fca5a5' : '#86efac'}` }}>
+                            <div className="flex items-center gap-2">
+                                <div className="w-5 h-5 rounded-full transition-all duration-500 flex items-center justify-center" style={{ background: ledOn ? '#ef4444' : '#22c55e', boxShadow: ledOn && pulseActive ? '0 0 12px #ef4444' : 'none' }}>
+                                    <Lightbulb size={11} className="text-white" />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold" style={{ color: ledOn ? '#dc2626' : '#16a34a' }}>LED {ledOn ? 'ON 🔆' : 'OFF 🌑'}</p>
+                                    <p className="text-[10px]" style={{ color: ledOn ? '#b91c1c' : '#15803d' }}>{ledOn ? `Object ${distance}cm par detect hua! (≤30cm)` : `Object safe distance par hai (>${30}cm)`}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
+                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[11px]" style={{ color: '#4ade80' }}>
+                                distance {distance} cm
+                            </p>
+                            <p className="text-[11px]" style={{ color: ledOn ? '#fbbf24' : '#94a3b8' }}>
+                                {ledOn ? 'LED ON' : 'LED OFF'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-[10px] text-sky-700 mt-3 text-center font-medium">⬆️ Slider ko left mein le jao (paas) — LED on ho jayegi! Right le jao (door) — LED off!</p>
+            </div>
+
+            {/* Program Code */}
+            <div className="rounded-2xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: '#1e293b' }}>
+                    <FileCode2 size={14} className="text-sky-400" />
+                    <span className="text-xs font-bold text-sky-300 tracking-wide">Arduino Program — Ultrasonic_HC-SR04.ino</span>
+                    <div className="ml-auto flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500" /><div className="w-3 h-3 rounded-full bg-yellow-500" /><div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                </div>
+                <div className="bg-gray-950 p-4 font-mono text-xs leading-7 overflow-x-auto">
+                    <div><span className="text-sky-400">const</span> <span className="text-sky-400">int</span> <span className="text-green-300">trig</span> <span className="text-gray-400">=</span> <span className="text-orange-400">9</span><span className="text-gray-400">;</span></div>
+                    <div><span className="text-sky-400">const</span> <span className="text-sky-400">int</span> <span className="text-green-300">echo</span> <span className="text-gray-400">=</span> <span className="text-orange-400">8</span><span className="text-gray-400">;</span></div>
+                    <div className="mt-1"><span className="text-sky-400">long</span> <span className="text-green-300">duration</span><span className="text-gray-400">;</span></div>
+                    <div><span className="text-sky-400">int</span> <span className="text-green-300">distance</span><span className="text-gray-400">;</span></div>
+                    <div className="mt-3"><span className="text-purple-400">void</span> <span className="text-yellow-300">setup</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">begin</span><span className="text-gray-300">(</span><span className="text-orange-400">9600</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-green-300">trig</span><span className="text-gray-300">,</span> <span className="text-orange-400">OUTPUT</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-green-300">echo</span><span className="text-gray-300">,</span> <span className="text-orange-400">INPUT</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">OUTPUT</span><span className="text-gray-300">);</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                    <div className="mt-3"><span className="text-purple-400">void</span> <span className="text-yellow-300">loop</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-300">trig</span><span className="text-gray-300">,</span> <span className="text-orange-400">LOW</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-sky-300">delayMicroseconds</span><span className="text-gray-300">(</span><span className="text-orange-400">2</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-300">trig</span><span className="text-gray-300">,</span> <span className="text-orange-400">HIGH</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-sky-300">delayMicroseconds</span><span className="text-gray-300">(</span><span className="text-orange-400">10</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-green-300">trig</span><span className="text-gray-300">,</span> <span className="text-orange-400">LOW</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-green-300">duration</span> <span className="text-gray-400">=</span> <span className="text-sky-300">pulseIn</span><span className="text-gray-300">(</span><span className="text-green-300">echo</span><span className="text-gray-300">,</span> <span className="text-orange-400">HIGH</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-green-300">distance</span> <span className="text-gray-400">=</span> <span className="text-green-300">duration</span> <span className="text-gray-400">*</span> <span className="text-orange-400">0.0344</span> <span className="text-gray-400">/</span> <span className="text-orange-400">2</span><span className="text-gray-300">;</span></div>
+                    <div className="ml-4 mt-1"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">print</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot;distance &quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">print</span><span className="text-gray-300">(</span><span className="text-green-300">distance</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">println</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot; cm&quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-purple-400">if</span><span className="text-gray-300">(distance &lt;=</span> <span className="text-orange-400">30</span><span className="text-gray-300">)</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">HIGH</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div className="ml-4"><span className="text-purple-400">else</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">LOW</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                </div>
+            </div>
+
+            {/* Materials and Connections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                <div className="p-4 rounded-2xl border border-sky-100 bg-sky-50">
+                    <h3 className="text-sm font-extrabold text-sky-900 mb-3 flex items-center gap-2">
+                        <Wrench size={14} /> आवश्यक सामग्री (Materials Required)
+                    </h3>
+                    <ul className="space-y-2">
+                        {[
+                            { label: 'Arduino Board (Uno R3)', icon: '🟦' },
+                            { label: 'Ultrasonic Sensor HC-SR04', icon: '📡' },
+                            { label: 'LED', icon: '💡' },
+                            { label: '220Ω Resistor', icon: '🔴' },
+                            { label: 'Bread Board', icon: '🔲' },
+                            { label: 'Jumper Wires', icon: '🔗' },
+                        ].map((m, i) => (
+                            <li key={i} className="flex items-center gap-2.5 text-sm text-sky-900 bg-white rounded-lg px-3 py-2 border border-sky-100 shadow-sm">
+                                <span>{m.icon}</span><span className="font-semibold">{m.label}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-indigo-100 bg-indigo-50">
+                    <h3 className="text-sm font-extrabold text-indigo-900 mb-3 flex items-center gap-2">
+                        <CircuitBoard size={14} /> Circuit Connection
+                    </h3>
+                    <ol className="space-y-2">
+                        {[
+                            { step: 'VCC Pin → Sensor की VCC pin ko Arduino की 5V pin se connect करें।', color: 'text-red-600' },
+                            { step: 'GND Pin → Sensor की GND pin ko Arduino की GND pin se connect करें।', color: 'text-gray-600' },
+                            { step: 'Trig Pin → Sensor की Trig pin ko Arduino की Digital Pin 9 se connect करें।', color: 'text-amber-600' },
+                            { step: 'Echo Pin → Sensor की Echo pin ko Arduino की Digital Pin 8 se connect करें।', color: 'text-emerald-600' },
+                            { step: 'LED → LED ko 220Ω resistor ke saath Arduino की Digital Pin 13 se connect करें।', color: 'text-sky-700' },
+                            { step: 'LED ka cathode (–) Ground se connect करें।', color: 'text-gray-600' },
+                        ].map((c, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-indigo-900">
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className={`font-medium ${c.color}`}>{c.step}</span>
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+            </div>
+
+            {/* Working Principle */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-100 mb-6">
+                <h3 className="text-sm font-extrabold text-violet-900 mb-4 flex items-center gap-2">
+                    <Activity size={14} /> 🔹 कार्य प्रणाली (Working Principle)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {[
+                        { icon: '📡', heading: 'Trig Pin', body: 'Trig Pin ek Trigger Signal Send karta hai। Trig Pin ko 10 microsecond ki HIGH pulse di jaati hai। Isse sensor ko signal milta hai ki "ab wave bhejo".', bg: 'bg-amber-50', border: 'border-amber-200', tc: 'text-amber-900' },
+                        { icon: '📥', heading: 'Echo Pin', body: 'Echo Pin us samay ki ganana karta hai jab Signal kisi Object se takrakar wapas aata hai। Echo Pin reflected signal ko receive karti hai.', bg: 'bg-emerald-50', border: 'border-emerald-200', tc: 'text-emerald-900' },
+                        { icon: '⏱️', heading: 'Duration', body: 'pulseIn() Function ke madhyam se Echo Pin par HIGH Signal ke Time Period ko mapa jata hai। Ye samay batata hai ki Ultrasonic Wave ko jaane aur wapas aane mein kitna samay laga.', bg: 'bg-sky-50', border: 'border-sky-200', tc: 'text-sky-900' },
+                        { icon: '📏', heading: 'Distance Calculation', body: 'distance = duration × 0.0344 / 2. Yahan 0.0344 cm/µs Sound Wave ki Speed hoti hai। /2 karna zaruri hai kyunki Signal Object tak jakar wapas bhi aata hai.', bg: 'bg-violet-50', border: 'border-violet-200', tc: 'text-violet-900' },
+                    ].map((w, i) => (
+                        <div key={i} className={`p-3 rounded-xl ${w.bg} border ${w.border}`}>
+                            <p className={`text-xs font-bold ${w.tc} mb-1`}>{w.icon} {w.heading}</p>
+                            <p className={`text-[11px] ${w.tc} leading-relaxed`}>{w.body}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Distance Calculation Formula */}
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-indigo-50 to-sky-50 border border-indigo-200 mb-6">
+                <h3 className="text-sm font-extrabold text-indigo-900 mb-4 flex items-center gap-2">
+                    <Cpu size={14} /> 📐 Distance Calculation Formula
+                </h3>
+                <div className="bg-white rounded-xl p-4 border border-indigo-100 shadow-sm text-center">
+                    <p className="text-lg font-black font-mono text-indigo-900 mb-3">distance = duration × 0.0344 / 2</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                        <div className="p-3 rounded-lg bg-sky-50 border border-sky-200">
+                            <p className="text-[10px] font-bold text-sky-800 uppercase tracking-wide">Speed of Sound</p>
+                            <p className="text-sm font-bold font-mono text-sky-600">0.0344 cm/µs</p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+                            <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wide">÷ 2 kyon?</p>
+                            <p className="text-xs font-medium text-amber-700">Signal aata-jaata dono ka time hota hai</p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+                            <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide">Range</p>
+                            <p className="text-sm font-bold font-mono text-emerald-600">2 cm – 400 cm</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Program Working Steps */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-100 mb-6">
+                <h3 className="text-sm font-extrabold text-teal-900 mb-4 flex items-center gap-2">
+                    <Cog size={14} /> 🔹 Program Working
+                </h3>
+                <div className="space-y-2">
+                    {[
+                        'Arduino Trig Pin par 10 Microsecond ki Pulse bhejta hai।',
+                        'Ultrasonic Sensor Sound Wave Transmit karta hai।',
+                        'Wave Object se takrakar wapas aati hai।',
+                        'Echo Pin Return Time Measure karti hai।',
+                        'Arduino Distance Calculate karta hai।',
+                        'Distance Serial Monitor par Display hoti hai।',
+                        'Agar Distance 30 cm ya isse kam hoti hai to LED ON ho jaati hai।',
+                        'Agar Distance 30 cm se adhik hoti hai to LED OFF ho jaati hai।',
+                    ].map((step, i) => (
+                        <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow">
+                            <span className="w-7 h-7 rounded-full bg-teal-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
+                            <span className="text-xs font-medium text-teal-800">{step}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Output */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                    <p className="text-xs font-bold text-emerald-800 mb-2">✅ Output 1 (Object paas hai):</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs">
+                        <p className="text-green-400">distance 25 cm</p>
+                        <p className="text-yellow-400">LED ON 🔆</p>
+                    </div>
+                </div>
+                <div className="p-4 rounded-xl bg-sky-50 border border-sky-200">
+                    <p className="text-xs font-bold text-sky-800 mb-2">✅ Output 2 (Object door hai):</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs">
+                        <p className="text-green-400">distance 60 cm</p>
+                        <p className="text-gray-400">LED OFF 🌑</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Conclusion */}
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-200 mb-6">
+                <h3 className="text-sm font-extrabold text-sky-900 mb-3 flex items-center gap-2">
+                    <CheckCircle2 size={14} /> 🔹 Conclusion
+                </h3>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                    HC-SR04 Ultrasonic Sensor ki sahayata se kisi Object ki Distance ko safaltapoorvak Measure kiya gaya। Sensor dwara prapt Distance ke aadhar par Arduino ne LED ko Control kiya। Yah prayog <strong>Distance Measurement</strong>, <strong>Obstacle Detection</strong>, <strong>Smart Parking System</strong>, <strong>Robotics</strong> tatha <strong>IoT Applications</strong> mein upyog kiya jaata hai।
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {['Distance Measurement', 'Obstacle Detection', 'Smart Parking', 'Robotics', 'IoT Projects'].map((tag, i) => (
+                        <span key={i} className="px-3 py-1 bg-white border border-sky-200 rounded-full text-[10px] font-bold text-sky-700 shadow-sm">{tag}</span>
+                    ))}
+                </div>
+            </div>
+
+            {/* Flowchart */}
+            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200">
+                <h3 className="text-sm font-extrabold text-gray-800 mb-4 flex items-center gap-2">
+                    <ChevronRight size={14} className="text-sky-500" /> Program Flow (Flowchart)
+                </h3>
+                <div className="flex flex-col items-center gap-0 text-center text-xs font-semibold">
+                    {([
+                        { label: 'START', style: { background: '#0284c7', color: 'white', borderRadius: '50px' } as React.CSSProperties },
+                        null,
+                        { label: 'Serial.begin(9600) | pinMode(trig, OUTPUT) | pinMode(echo, INPUT) | pinMode(13, OUTPUT)', style: { background: '#eff6ff', border: '1.5px solid #93c5fd', color: '#1e40af', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'Trig Pin → LOW → 2µs → HIGH → 10µs → LOW', style: { background: '#fef3c7', border: '1.5px solid #fcd34d', color: '#92400e', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'duration = pulseIn(echo, HIGH)', style: { background: '#f0fdf4', border: '1.5px solid #86efac', color: '#166534', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'distance = duration × 0.0344 / 2', style: { background: '#eef2ff', border: '1.5px solid #a5b4fc', color: '#3730a3', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'Serial.print("distance") | Serial.print(distance) | Serial.println(" cm")', style: { background: '#faf5ff', border: '1.5px solid #c4b5fd', color: '#5b21b6', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'distance <= 30 ?', style: { background: '#fce7f3', border: '1.5px solid #f9a8d4', color: '#9d174d', borderRadius: '50px' } as React.CSSProperties },
+                        null,
+                        { label: 'YES → digitalWrite(13, HIGH) → LED ON 🔆', style: { background: '#ecfdf5', border: '1.5px solid #6ee7b7', color: '#065f46', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'NO → digitalWrite(13, LOW) → LED OFF 🌑', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: '↩ loop() repeats', style: { background: '#f0f9ff', border: '1.5px solid #7dd3fc', color: '#0369a1', borderRadius: '8px' } as React.CSSProperties },
                     ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
                         item === null
                             ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
