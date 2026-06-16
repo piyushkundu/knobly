@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat, Lightbulb, FlaskConical, Waves, Radio } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat, Lightbulb, FlaskConical, Waves, Radio, Scan } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -53,6 +53,7 @@ const tocItems = [
     { icon: <Braces size={13} />, label: 'Character Functions', id: 'char-functions', color: '#8b5cf6' },
     { icon: <FlaskConical size={13} />, label: 'Practical – LDR', id: 'ldr-practical', color: '#f97316' },
     { icon: <Waves size={13} />, label: 'Practical – Ultrasonic', id: 'ultrasonic-practical', color: '#0ea5e9' },
+    { icon: <Scan size={13} />, label: 'Practical – PIR Sensor', id: 'pir-practical', color: '#ec4899' },
 ];
 
 export default function IoTApplications() {
@@ -2839,6 +2840,9 @@ export default function IoTApplications() {
 
                     {/* ═══ SECTION: Practical – Ultrasonic Sensor HC-SR04 ═══ */}
                     <UltrasonicPracticalSection />
+
+                    {/* ═══ SECTION: Practical – PIR Sensor ═══ */}
+                    <PIRPracticalSection />
                 </main>
             </div>
         </div>
@@ -3609,6 +3613,472 @@ function UltrasonicPracticalSection() {
                         { label: 'NO → digitalWrite(13, LOW) → LED OFF 🌑', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
                         null,
                         { label: '↩ loop() repeats', style: { background: '#f0f9ff', border: '1.5px solid #7dd3fc', color: '#0369a1', borderRadius: '8px' } as React.CSSProperties },
+                    ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
+                        item === null
+                            ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
+                            : <div key={i} className="px-4 py-2 text-[11px] shadow-sm" style={item.style}>{item.label}</div>
+                    )}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function PIRPracticalSection() {
+    const [motionDetected, setMotionDetected] = useState(false);
+    const [pulseActive, setPulseActive] = useState(false);
+    const [irWavePhase, setIrWavePhase] = useState(0);
+    const [personX, setPersonX] = useState(320);
+    const [showPerson, setShowPerson] = useState(false);
+
+    const sensorValue = motionDetected ? 'HIGH' : 'LOW';
+    const ledOn = motionDetected;
+
+    useEffect(() => {
+        const t = setInterval(() => setIrWavePhase(p => (p + 1) % 60), 100);
+        return () => clearInterval(t);
+    }, []);
+
+    useEffect(() => {
+        if (ledOn) {
+            const t = setInterval(() => setPulseActive(p => !p), 500);
+            return () => clearInterval(t);
+        }
+        setPulseActive(false);
+    }, [ledOn]);
+
+    // Animate person walking when motion triggered
+    useEffect(() => {
+        if (motionDetected && showPerson) {
+            const t = setInterval(() => {
+                setPersonX(p => {
+                    if (p <= 200) return 200;
+                    return p - 2;
+                });
+            }, 50);
+            return () => clearInterval(t);
+        } else {
+            setPersonX(320);
+        }
+    }, [motionDetected, showPerson]);
+
+    const handleMotionToggle = () => {
+        const next = !motionDetected;
+        setMotionDetected(next);
+        setShowPerson(next);
+        if (!next) setPersonX(320);
+    };
+
+    return (
+        <section id="pir-practical" className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20 transition-all duration-300 hover:shadow-lg bg-white" style={{ border: '1px solid #fbcfe8', boxShadow: '0 1px 3px rgba(236,72,153,0.08)' }}>
+            <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #fce7f3' }}>
+                <Scan size={16} className="text-pink-500" />
+                <h2 className="text-base md:text-lg font-extrabold text-gray-800">🔬 Practical – PIR Sensor (Passive Infrared Sensor)</h2>
+            </div>
+
+            {/* Objective */}
+            <div className="rounded-xl p-4 mb-6 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #fce7f3, #fbcfe8)', border: '1px solid #f9a8d4', color: '#831843' }}>
+                🎯 <strong>Objective:</strong> PIR (Passive Infrared) Sensor ko Arduino Uno ke saath interface karke <strong>motion detect</strong> karna aur motion detect hone par <strong>LED ko ON</strong> karna।
+            </div>
+
+            {/* Theory Section */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-100 mb-6">
+                <h3 className="text-sm font-extrabold text-pink-900 mb-4 flex items-center gap-2">
+                    <Eye size={14} /> 🔹 Theory
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                    <p>PIR Sensor ka full form <strong>Passive Infrared Sensor</strong> hota hai।</p>
+                    <p>Ye sensor kisi vyakti ya vastu se nikalne wali <strong>Infrared Radiation</strong> ko detect karta hai।</p>
+                    <p>Jab sensor ke saamne koi <strong>movement ya motion</strong> hota hai to sensor output <strong>HIGH</strong> ho jata hai aur jab koi movement nahi hoti to output <strong>LOW</strong> rehta hai।</p>
+                    <p>Sensor khud koi signal <strong>transmit nahi karta</strong>, balki object dwara emit ki gayi infrared energy ko detect karta hai, isliye ise <strong>Passive</strong> Infrared Sensor kaha jata hai।</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+                    <div className="p-4 rounded-xl bg-white border border-pink-200 text-center shadow-sm">
+                        <div className="text-3xl mb-2">🚶</div>
+                        <p className="text-xs font-bold text-pink-800">Motion Detected</p>
+                        <p className="text-[11px] text-gray-600 mt-1">Output = HIGH → LED ON</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white border border-pink-200 text-center shadow-sm">
+                        <div className="text-3xl mb-2">🚫</div>
+                        <p className="text-xs font-bold text-pink-800">No Motion</p>
+                        <p className="text-[11px] text-gray-600 mt-1">Output = LOW → LED OFF</p>
+                    </div>
+                </div>
+
+                {/* How it works flow */}
+                <div className="mt-5 p-4 bg-white rounded-xl border border-pink-200">
+                    <p className="text-xs font-bold text-pink-800 mb-3 uppercase tracking-wide">📊 Working Flow:</p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                        <span className="px-3 py-2 bg-pink-500 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">🚶 Person Moves</span>
+                        <ChevronRight className="text-pink-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-red-100 rounded-lg text-red-800 shadow-sm font-bold text-[11px] flex items-center gap-1">🔴 IR Radiation Emit</span>
+                        <ChevronRight className="text-pink-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-amber-100 rounded-lg text-amber-800 shadow-sm font-bold text-[11px] flex items-center gap-1">📡 PIR Detects</span>
+                        <ChevronRight className="text-pink-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-emerald-100 rounded-lg text-emerald-800 shadow-sm font-bold text-[11px] flex items-center gap-1">💡 LED ON</span>
+                    </div>
+                </div>
+
+                {/* PIR Sensor Applications */}
+                <div className="mt-5">
+                    <p className="text-xs font-bold text-pink-800 mb-2 uppercase tracking-wide">🛠️ Applications:</p>
+                    <div className="flex flex-wrap gap-2">
+                        {['Security Systems', 'Automatic Lighting', 'Home Automation', 'Smart Doors', 'Burglar Alarms', 'Motion Detection'].map((app, i) => (
+                            <span key={i} className="px-3 py-1 bg-white border border-pink-200 rounded-full text-[10px] font-bold text-pink-700 shadow-sm">{app}</span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* ═══ Interactive Simulator ═══ */}
+            <div className="rounded-2xl border border-pink-100 bg-gradient-to-br from-pink-50 to-fuchsia-50 p-5 mb-6">
+                <p className="text-xs font-bold text-pink-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Zap size={12} /> Interactive Simulator — Motion Toggle karo aur dekhlo!
+                </p>
+
+                {/* Motion Toggle Button */}
+                <div className="flex flex-col items-center gap-3 mb-5">
+                    <button
+                        onClick={handleMotionToggle}
+                        className="px-8 py-3 rounded-2xl text-sm font-extrabold transition-all duration-300 shadow-lg hover:scale-105 active:scale-95"
+                        style={{
+                            background: motionDetected ? 'linear-gradient(135deg, #ec4899, #f43f5e)' : 'linear-gradient(135deg, #6b7280, #9ca3af)',
+                            color: 'white',
+                            border: motionDetected ? '2px solid #f472b6' : '2px solid #d1d5db',
+                            boxShadow: motionDetected ? '0 0 20px rgba(236,72,153,0.4)' : '0 4px 12px rgba(0,0,0,0.1)',
+                        }}
+                    >
+                        {motionDetected ? '🚶 Motion Detected! (Click to Stop)' : '🚫 No Motion (Click to Simulate Motion)'}
+                    </button>
+                    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold" style={{ background: ledOn ? '#fef2f2' : '#f0fdf4', border: `1px solid ${ledOn ? '#fca5a5' : '#86efac'}`, color: ledOn ? '#dc2626' : '#16a34a' }}>
+                        {ledOn ? '⚠️ Motion Detected! LED ON' : '✅ No Motion — All Clear'}
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+                    {/* Animated SVG Circuit Diagram */}
+                    <div className="flex justify-center">
+                        <svg viewBox="0 0 400 320" className="w-full max-w-md" style={{ filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.10))' }}>
+                            <rect width="400" height="320" rx="16" fill="#0f172a" />
+
+                            {/* Title */}
+                            <text x="200" y="22" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold" fontFamily="monospace">PIR SENSOR MOTION SIMULATOR</text>
+
+                            {/* Arduino Board */}
+                            <rect x="10" y="90" width="80" height="140" rx="8" fill="#1e40af" stroke="#3b82f6" strokeWidth="1.5" />
+                            <text x="50" y="115" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="monospace">ARDUINO</text>
+                            <text x="50" y="128" textAnchor="middle" fill="#93c5fd" fontSize="7" fontFamily="monospace">UNO R3</text>
+                            {/* Arduino pins */}
+                            <rect x="70" y="140" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="150" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">5V</text>
+                            <rect x="70" y="160" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="170" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">GND</text>
+                            <rect x="70" y="180" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="190" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">D8</text>
+                            <rect x="70" y="200" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="210" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">D13</text>
+
+                            {/* Wires from Arduino to PIR */}
+                            <line x1="92" y1="147" x2="155" y2="75" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <line x1="92" y1="167" x2="155" y2="105" stroke="#64748b" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <line x1="92" y1="187" x2="155" y2="90" stroke="#22c55e" strokeWidth="1.5" strokeDasharray="4,2" />
+
+                            {/* PIR Sensor body */}
+                            <rect x="155" y="50" width="90" height="70" rx="8" fill="#7f1d1d" stroke="#f87171" strokeWidth="1.5" />
+                            <text x="200" y="68" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="monospace">PIR SENSOR</text>
+                            {/* PIR dome (Fresnel lens) */}
+                            <circle cx="200" cy="95" r="16" fill="#991b1b" stroke="#fca5a5" strokeWidth="1.5" />
+                            <circle cx="200" cy="95" r="10" fill="#7f1d1d" stroke="#f87171" strokeWidth="1" />
+                            <circle cx="200" cy="95" r="5" fill={motionDetected ? '#f87171' : '#4b5563'} opacity={motionDetected ? 1 : 0.5}>
+                                {motionDetected && <animate attributeName="r" values="5;8;5" dur="1s" repeatCount="indefinite" />}
+                            </circle>
+                            {/* Sensor pin labels */}
+                            <text x="160" y="75" fill="#f87171" fontSize="6" fontFamily="monospace">VCC</text>
+                            <text x="160" y="90" fill="#4ade80" fontSize="6" fontFamily="monospace">OUT</text>
+                            <text x="160" y="105" fill="#94a3b8" fontSize="6" fontFamily="monospace">GND</text>
+
+                            {/* IR Detection zone (cone) */}
+                            {motionDetected && (
+                                <g>
+                                    {[0, 1, 2, 3, 4].map(i => {
+                                        const phase = ((irWavePhase + i * 12) % 60) / 60;
+                                        const radius = 20 + phase * 100;
+                                        const opacity = (1 - phase) * 0.3;
+                                        return (
+                                            <ellipse key={`ir-${i}`} cx="200" cy="95" rx={radius} ry={radius * 0.4}
+                                                fill="none" stroke="#f87171" strokeWidth="1"
+                                                opacity={opacity} strokeDasharray="3,3" />
+                                        );
+                                    })}
+                                </g>
+                            )}
+
+                            {/* Walking Person */}
+                            {showPerson && (
+                                <g>
+                                    {/* Person body */}
+                                    <circle cx={personX} cy="55" r="7" fill="#fbbf24" stroke="#f59e0b" strokeWidth="1" />
+                                    <line x1={personX} y1="62" x2={personX} y2="82" stroke="#fbbf24" strokeWidth="2" />
+                                    <line x1={personX} y1="70" x2={personX - 8} y2="78" stroke="#fbbf24" strokeWidth="1.5" />
+                                    <line x1={personX} y1="70" x2={personX + 8} y2="78" stroke="#fbbf24" strokeWidth="1.5" />
+                                    <line x1={personX} y1="82" x2={personX - 6} y2="95" stroke="#fbbf24" strokeWidth="1.5" />
+                                    <line x1={personX} y1="82" x2={personX + 6} y2="95" stroke="#fbbf24" strokeWidth="1.5" />
+                                    <text x={personX} y="105" textAnchor="middle" fill="#fbbf24" fontSize="7" fontFamily="monospace">🚶 Person</text>
+                                    {/* IR waves from person to sensor */}
+                                    {[0, 1, 2].map(i => {
+                                        const progress = ((irWavePhase + i * 20) % 60) / 60;
+                                        const waveX = personX - progress * (personX - 200);
+                                        const opacity = 1 - progress;
+                                        return waveX > 200 ? (
+                                            <circle key={`pw-${i}`} cx={waveX} cy="80" r={3 + i * 2} fill="none" stroke="#fb7185" strokeWidth="0.8" opacity={opacity * 0.5} />
+                                        ) : null;
+                                    })}
+                                </g>
+                            )}
+
+                            {/* No person indicator */}
+                            {!showPerson && (
+                                <text x="300" y="80" textAnchor="middle" fill="#475569" fontSize="8" fontFamily="monospace">No Person</text>
+                            )}
+
+                            {/* LED Section */}
+                            <line x1="92" y1="207" x2="130" y2="250" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <text x="50" y="240" textAnchor="middle" fill="#94a3b8" fontSize="7" fontFamily="monospace">Pin 13</text>
+
+                            {/* LED */}
+                            <polygon points="135,240 155,250 135,260" fill={ledOn ? (pulseActive ? '#fbbf24' : '#f97316') : '#374151'} stroke={ledOn ? '#fb923c' : '#4b5563'} strokeWidth="1.5" />
+                            <line x1="155" y1="240" x2="155" y2="260" stroke={ledOn ? '#fb923c' : '#4b5563'} strokeWidth="2" />
+                            {ledOn && <circle cx="145" cy="250" r={pulseActive ? 18 : 12} fill="#fbbf24" opacity="0.15" />}
+                            <text x="165" y="248" fill={ledOn ? '#fbbf24' : '#4b5563'} fontSize="9" fontFamily="monospace">LED</text>
+                            <text x="165" y="260" fill={ledOn ? '#f97316' : '#4b5563'} fontSize="8" fontFamily="monospace">{ledOn ? 'ON 🔆' : 'OFF'}</text>
+
+                            {/* GND for LED */}
+                            <line x1="155" y1="260" x2="195" y2="260" stroke="#94a3b8" strokeWidth="1.5" />
+                            <line x1="195" y1="255" x2="195" y2="265" stroke="#64748b" strokeWidth="2" />
+                            <line x1="190" y1="270" x2="200" y2="270" stroke="#64748b" strokeWidth="2" />
+                            <line x1="192" y1="274" x2="198" y2="274" stroke="#64748b" strokeWidth="1.5" />
+                            <text x="195" y="286" textAnchor="middle" fill="#64748b" fontSize="7" fontFamily="monospace">GND</text>
+
+                            {/* Status bar */}
+                            <rect x="10" y="292" width="380" height="24" rx="6" fill={ledOn ? '#7f1d1d' : '#14532d'} opacity="0.7" />
+                            <text x="200" y="308" textAnchor="middle" fill={ledOn ? '#fca5a5' : '#86efac'} fontSize="9" fontWeight="bold" fontFamily="monospace">
+                                {ledOn ? '⚠️ MOTION DETECTED — LED ON — "Hello, I found you"' : '✅ NO MOTION — LED OFF — "I cannot find you"'}
+                            </text>
+                        </svg>
+                    </div>
+
+                    {/* Data Panel */}
+                    <div className="space-y-3">
+                        <div className="p-3 rounded-xl" style={{ background: motionDetected ? '#fef2f2' : '#f0fdf4', border: `1px solid ${motionDetected ? '#fca5a5' : '#86efac'}` }}>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-bold" style={{ color: motionDetected ? '#dc2626' : '#16a34a' }}>🚶 Motion Status</span>
+                                <span className="text-xs font-mono font-bold" style={{ color: motionDetected ? '#dc2626' : '#16a34a' }}>{motionDetected ? 'DETECTED' : 'NONE'}</span>
+                            </div>
+                            <div className="h-3 rounded-full overflow-hidden" style={{ background: motionDetected ? '#fee2e2' : '#dcfce7' }}>
+                                <div className="h-full rounded-full transition-all duration-500" style={{ width: motionDetected ? '100%' : '0%', background: motionDetected ? 'linear-gradient(90deg,#ef4444,#ec4899)' : 'linear-gradient(90deg,#22c55e,#10b981)' }} />
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
+                            <p className="text-xs font-bold text-slate-400 mb-1 font-mono">digitalRead(8)</p>
+                            <p className="text-2xl font-black font-mono" style={{ color: motionDetected ? '#f87171' : '#4ade80' }}>{sensorValue}</p>
+                            <p className="text-[10px] text-slate-500 font-mono mt-1">PIR Sensor Output</p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-pink-50 border border-pink-100">
+                            <p className="text-xs font-bold text-pink-800 mb-1">🔴 Sensor Type</p>
+                            <p className="text-sm font-bold text-pink-600">Passive — Detects IR, doesn't emit</p>
+                        </div>
+
+                        <div className="p-3 rounded-xl border transition-all duration-500" style={{ background: ledOn ? '#fef2f2' : '#f0fdf4', border: `1px solid ${ledOn ? '#fca5a5' : '#86efac'}` }}>
+                            <div className="flex items-center gap-2">
+                                <div className="w-5 h-5 rounded-full transition-all duration-500 flex items-center justify-center" style={{ background: ledOn ? '#ef4444' : '#22c55e', boxShadow: ledOn && pulseActive ? '0 0 12px #ef4444' : 'none' }}>
+                                    <Lightbulb size={11} className="text-white" />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold" style={{ color: ledOn ? '#dc2626' : '#16a34a' }}>LED {ledOn ? 'ON 🔆' : 'OFF 🌑'}</p>
+                                    <p className="text-[10px]" style={{ color: ledOn ? '#b91c1c' : '#15803d' }}>{ledOn ? 'Motion detect hui! LED jal gayi' : 'Koi motion nahi, LED band hai'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
+                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[11px]" style={{ color: motionDetected ? '#fbbf24' : '#94a3b8' }}>
+                                {motionDetected ? 'Hello, I found you' : 'I cannot find you'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-[10px] text-pink-700 mt-3 text-center font-medium">⬆️ Button click karo motion simulate karne ke liye — Person chalega aur PIR sensor detect karega!</p>
+            </div>
+
+            {/* Program Code */}
+            <div className="rounded-2xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: '#1e293b' }}>
+                    <FileCode2 size={14} className="text-pink-400" />
+                    <span className="text-xs font-bold text-pink-300 tracking-wide">Arduino Program — PIR_Sensor.ino</span>
+                    <div className="ml-auto flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500" /><div className="w-3 h-3 rounded-full bg-yellow-500" /><div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                </div>
+                <div className="bg-gray-950 p-4 font-mono text-xs leading-7 overflow-x-auto">
+                    <div><span className="text-purple-400">void</span> <span className="text-yellow-300">setup</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">begin</span><span className="text-gray-300">(</span><span className="text-orange-400">9600</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">OUTPUT</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-orange-400">8</span><span className="text-gray-300">,</span> <span className="text-orange-400">INPUT</span><span className="text-gray-300">);</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                    <div className="mt-3"><span className="text-purple-400">void</span> <span className="text-yellow-300">loop</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-sky-400">int</span> <span className="text-green-300">value</span> <span className="text-gray-400">=</span> <span className="text-sky-300">digitalRead</span><span className="text-gray-300">(</span><span className="text-orange-400">8</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-2"><span className="text-purple-400">if</span><span className="text-gray-300">(</span><span className="text-green-300">value</span> <span className="text-gray-400">==</span> <span className="text-orange-400">HIGH</span><span className="text-gray-300">)</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">HIGH</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">println</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot;Hello, I found you&quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div className="ml-4"><span className="text-purple-400">else</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">LOW</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">println</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot;I cannot find you&quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                </div>
+            </div>
+
+            {/* Materials and Connections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                <div className="p-4 rounded-2xl border border-pink-100 bg-pink-50">
+                    <h3 className="text-sm font-extrabold text-pink-900 mb-3 flex items-center gap-2">
+                        <Wrench size={14} /> आवश्यक सामग्री (Components)
+                    </h3>
+                    <ul className="space-y-2">
+                        {[
+                            { label: 'Arduino Board (Uno R3)', icon: '🟦' },
+                            { label: 'PIR Sensor', icon: '🔴' },
+                            { label: 'LED', icon: '💡' },
+                            { label: 'Bread Board', icon: '🔲' },
+                            { label: 'Jumper Wires', icon: '🔗' },
+                        ].map((m, i) => (
+                            <li key={i} className="flex items-center gap-2.5 text-sm text-pink-900 bg-white rounded-lg px-3 py-2 border border-pink-100 shadow-sm">
+                                <span>{m.icon}</span><span className="font-semibold">{m.label}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-fuchsia-100 bg-fuchsia-50">
+                    <h3 className="text-sm font-extrabold text-fuchsia-900 mb-3 flex items-center gap-2">
+                        <CircuitBoard size={14} /> Circuit Connection
+                    </h3>
+                    <ol className="space-y-2">
+                        {[
+                            { step: 'VCC Pin → PIR Sensor की VCC pin ko Arduino की 5V se connect करें।', color: 'text-red-600' },
+                            { step: 'GND Pin → Sensor की Ground pin ko Arduino की Ground se connect करें।', color: 'text-gray-600' },
+                            { step: 'OUT Pin → Sensor की OUT pin ko Arduino की Digital Pin 8 se connect करें।', color: 'text-emerald-600' },
+                            { step: 'LED → LED ko Arduino की Pin 13 aur Ground se connect करें।', color: 'text-amber-600' },
+                        ].map((c, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-fuchsia-900">
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-fuchsia-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className={`font-medium ${c.color}`}>{c.step}</span>
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+            </div>
+
+            {/* Working Principle */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-100 mb-6">
+                <h3 className="text-sm font-extrabold text-violet-900 mb-4 flex items-center gap-2">
+                    <Activity size={14} /> 🔹 Working
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {[
+                        { icon: '🚶', heading: 'Motion Detected (HIGH)', body: 'Jab PIR Sensor Motion Detect karta hai to Sensor ka Output HIGH ho jata hai। Arduino Digital Pin 8 se value read karta hai। value == HIGH hone par LED ON hoti hai aur Serial Monitor par "Hello, I found you" print hota hai।', bg: 'bg-red-50', border: 'border-red-200', tc: 'text-red-900' },
+                        { icon: '🚫', heading: 'No Motion (LOW)', body: 'Jab PIR Sensor Motion Detect nahi karta to Sensor ka Output LOW rehta hai। value == LOW hone par LED OFF hoti hai aur Serial Monitor par "I cannot find you" print hota hai।', bg: 'bg-emerald-50', border: 'border-emerald-200', tc: 'text-emerald-900' },
+                        { icon: '🔴', heading: 'Passive Detection', body: 'PIR Sensor khud koi signal transmit nahi karta। Ye sirf object se nikalne wali Infrared Radiation ko detect karta hai। Isliye ise Passive Infrared Sensor kaha jata hai।', bg: 'bg-pink-50', border: 'border-pink-200', tc: 'text-pink-900' },
+                        { icon: '💻', heading: 'Serial Monitor', body: 'Serial.println() se message print hota hai। Arduino IDE mein Serial Monitor (9600 baud) kholkar output dekh sakte hain।', bg: 'bg-sky-50', border: 'border-sky-200', tc: 'text-sky-900' },
+                    ].map((w, i) => (
+                        <div key={i} className={`p-3 rounded-xl ${w.bg} border ${w.border}`}>
+                            <p className={`text-xs font-bold ${w.tc} mb-1`}>{w.icon} {w.heading}</p>
+                            <p className={`text-[11px] ${w.tc} leading-relaxed`}>{w.body}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Program Working Steps */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-100 mb-6">
+                <h3 className="text-sm font-extrabold text-teal-900 mb-4 flex items-center gap-2">
+                    <Cog size={14} /> 🔹 Program Working
+                </h3>
+                <div className="space-y-2">
+                    {[
+                        'Arduino Sensor ki Output Value ko Digital Pin 8 se Read karta hai।',
+                        'Agar Motion Detect hoti hai (value == HIGH) to LED ON ho jaati hai।',
+                        'Serial Monitor par "Hello, I found you" message display hota hai।',
+                        'Agar Motion Detect nahi hoti (value == LOW) to LED OFF ho jaati hai।',
+                        'Serial Monitor par "I cannot find you" message display hota hai।',
+                    ].map((step, i) => (
+                        <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow">
+                            <span className="w-7 h-7 rounded-full bg-teal-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
+                            <span className="text-xs font-medium text-teal-800">{step}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Output */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="p-4 rounded-xl bg-red-50 border border-red-200">
+                    <p className="text-xs font-bold text-red-800 mb-2">🚶 Output 1 (Motion Detected):</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs">
+                        <p className="text-green-400">Hello, I found you</p>
+                        <p className="text-yellow-400">LED ON 🔆</p>
+                    </div>
+                </div>
+                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                    <p className="text-xs font-bold text-emerald-800 mb-2">🚫 Output 2 (No Motion):</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs">
+                        <p className="text-green-400">I cannot find you</p>
+                        <p className="text-gray-400">LED OFF 🌑</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Conclusion */}
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-pink-50 to-fuchsia-50 border border-pink-200 mb-6">
+                <h3 className="text-sm font-extrabold text-pink-900 mb-3 flex items-center gap-2">
+                    <CheckCircle2 size={14} /> 🔹 Conclusion
+                </h3>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                    PIR Sensor ko Arduino Uno ke saath successfully interface kiya gaya। Sensor ne motion detect ki aur motion detect hone par LED ON hui tatha Serial Monitor par <strong>"Hello, I found you"</strong> display hua। Motion na hone par LED OFF hui aur <strong>"I cannot find you"</strong> display hua। PIR Sensor ka upyog <strong>Security Systems</strong>, <strong>Smart Lighting</strong>, <strong>Home Automation</strong> aur <strong>Motion Detection Applications</strong> mein kiya jaata hai।
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {['Security Systems', 'Smart Lighting', 'Home Automation', 'Motion Detection', 'Burglar Alarm'].map((tag, i) => (
+                        <span key={i} className="px-3 py-1 bg-white border border-pink-200 rounded-full text-[10px] font-bold text-pink-700 shadow-sm">{tag}</span>
+                    ))}
+                </div>
+            </div>
+
+            {/* Flowchart */}
+            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200">
+                <h3 className="text-sm font-extrabold text-gray-800 mb-4 flex items-center gap-2">
+                    <ChevronRight size={14} className="text-pink-500" /> Program Flow (Flowchart)
+                </h3>
+                <div className="flex flex-col items-center gap-0 text-center text-xs font-semibold">
+                    {([
+                        { label: 'START', style: { background: '#ec4899', color: 'white', borderRadius: '50px' } as React.CSSProperties },
+                        null,
+                        { label: 'Serial.begin(9600) | pinMode(13, OUTPUT) | pinMode(8, INPUT)', style: { background: '#eff6ff', border: '1.5px solid #93c5fd', color: '#1e40af', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'value = digitalRead(8)', style: { background: '#fef3c7', border: '1.5px solid #fcd34d', color: '#92400e', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'value == HIGH ?', style: { background: '#fce7f3', border: '1.5px solid #f9a8d4', color: '#9d174d', borderRadius: '50px' } as React.CSSProperties },
+                        null,
+                        { label: 'YES → digitalWrite(13, HIGH) → LED ON 🔆 | Serial: "Hello, I found you"', style: { background: '#ecfdf5', border: '1.5px solid #6ee7b7', color: '#065f46', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'NO → digitalWrite(13, LOW) → LED OFF 🌑 | Serial: "I cannot find you"', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: '↩ loop() repeats', style: { background: '#fdf2f8', border: '1.5px solid #f9a8d4', color: '#be185d', borderRadius: '8px' } as React.CSSProperties },
                     ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
                         item === null
                             ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
