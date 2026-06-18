@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat, Lightbulb, FlaskConical, Waves, Radio, Scan } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat, Lightbulb, FlaskConical, Waves, Radio, Scan, Radar } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -54,6 +54,7 @@ const tocItems = [
     { icon: <FlaskConical size={13} />, label: 'Practical – LDR', id: 'ldr-practical', color: '#f97316' },
     { icon: <Waves size={13} />, label: 'Practical – Ultrasonic', id: 'ultrasonic-practical', color: '#0ea5e9' },
     { icon: <Scan size={13} />, label: 'Practical – PIR Sensor', id: 'pir-practical', color: '#ec4899' },
+    { icon: <Radar size={13} />, label: 'Practical – IR Sensor', id: 'ir-practical', color: '#ef4444' },
 ];
 
 export default function IoTApplications() {
@@ -2843,6 +2844,9 @@ export default function IoTApplications() {
 
                     {/* ═══ SECTION: Practical – PIR Sensor ═══ */}
                     <PIRPracticalSection />
+
+                    {/* ═══ SECTION: Practical – IR Sensor ═══ */}
+                    <IRPracticalSection />
                 </main>
             </div>
         </div>
@@ -4079,6 +4083,475 @@ function PIRPracticalSection() {
                         { label: 'NO → digitalWrite(13, LOW) → LED OFF 🌑 | Serial: "I cannot find you"', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
                         null,
                         { label: '↩ loop() repeats', style: { background: '#fdf2f8', border: '1.5px solid #f9a8d4', color: '#be185d', borderRadius: '8px' } as React.CSSProperties },
+                    ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
+                        item === null
+                            ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
+                            : <div key={i} className="px-4 py-2 text-[11px] shadow-sm" style={item.style}>{item.label}</div>
+                    )}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function IRPracticalSection() {
+    const [objectPresent, setObjectPresent] = useState(false);
+    const [pulseActive, setPulseActive] = useState(false);
+    const [irBeamPhase, setIrBeamPhase] = useState(0);
+    const [objectX, setObjectX] = useState(340);
+
+    const sensorValue = objectPresent ? 'HIGH' : 'LOW';
+    const ledOn = objectPresent;
+
+    useEffect(() => {
+        const t = setInterval(() => setIrBeamPhase(p => (p + 1) % 60), 80);
+        return () => clearInterval(t);
+    }, []);
+
+    useEffect(() => {
+        if (ledOn) {
+            const t = setInterval(() => setPulseActive(p => !p), 500);
+            return () => clearInterval(t);
+        }
+        setPulseActive(false);
+    }, [ledOn]);
+
+    // Animate object sliding in/out
+    useEffect(() => {
+        if (objectPresent) {
+            const t = setInterval(() => {
+                setObjectX(p => (p <= 240 ? 240 : p - 3));
+            }, 40);
+            return () => clearInterval(t);
+        } else {
+            const t = setInterval(() => {
+                setObjectX(p => (p >= 340 ? 340 : p + 4));
+            }, 40);
+            return () => clearInterval(t);
+        }
+    }, [objectPresent]);
+
+    return (
+        <section id="ir-practical" className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20 transition-all duration-300 hover:shadow-lg bg-white" style={{ border: '1px solid #fecaca', boxShadow: '0 1px 3px rgba(239,68,68,0.08)' }}>
+            <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #fee2e2' }}>
+                <Radar size={16} className="text-red-500" />
+                <h2 className="text-base md:text-lg font-extrabold text-gray-800">🔬 Practical – IR (Infrared) Sensor</h2>
+            </div>
+
+            {/* Objective */}
+            <div className="rounded-xl p-4 mb-6 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #fee2e2, #fecaca)', border: '1px solid #fca5a5', color: '#7f1d1d' }}>
+                🎯 <strong>Objective:</strong> IR (Infrared) Sensor ko Arduino Uno ke saath interface karke <strong>object detection</strong> karna aur object detect hone par <strong>LED ko ON</strong> karna।
+            </div>
+
+            {/* Theory Section */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-red-50 to-orange-50 border border-red-100 mb-6">
+                <h3 className="text-sm font-extrabold text-red-900 mb-4 flex items-center gap-2">
+                    <Eye size={14} /> 🔹 Theory
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                    <p>IR Sensor ek electronic sensor hai jo <strong>Infrared Light</strong> ka use karke object ko detect karta hai।</p>
+                    <p>IR Sensor me do main parts hote hain: <strong>IR Transmitter</strong> aur <strong>IR Receiver</strong>।</p>
+                    <p>IR Transmitter <strong>Infrared Rays emit</strong> karta hai aur jab koi object sensor ke saamne aata hai to ye rays object se takrakar wapas <strong>receiver</strong> par aati hain।</p>
+                    <p>IR Receiver reflected rays ko detect karta hai aur sensor ka <strong>output change</strong> ho jata hai।</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+                    <div className="p-4 rounded-xl bg-white border border-red-200 text-center shadow-sm">
+                        <div className="text-3xl mb-2">🟥</div>
+                        <p className="text-xs font-bold text-red-800">IR Transmitter</p>
+                        <p className="text-[11px] text-gray-600 mt-1">Infrared Rays emit karta hai</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white border border-red-200 text-center shadow-sm">
+                        <div className="text-3xl mb-2">📥</div>
+                        <p className="text-xs font-bold text-red-800">IR Receiver</p>
+                        <p className="text-[11px] text-gray-600 mt-1">Reflected rays ko detect karta hai</p>
+                    </div>
+                </div>
+
+                {/* How it works flow */}
+                <div className="mt-5 p-4 bg-white rounded-xl border border-red-200">
+                    <p className="text-xs font-bold text-red-800 mb-3 uppercase tracking-wide">📊 Working Flow:</p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                        <span className="px-3 py-2 bg-red-500 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">🟥 IR Transmit</span>
+                        <ChevronRight className="text-red-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-amber-100 rounded-lg text-amber-800 shadow-sm font-bold text-[11px] flex items-center gap-1">🧱 Hit Object</span>
+                        <ChevronRight className="text-red-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-emerald-100 rounded-lg text-emerald-800 shadow-sm font-bold text-[11px] flex items-center gap-1">📥 IR Receive</span>
+                        <ChevronRight className="text-red-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-violet-100 rounded-lg text-violet-800 shadow-sm font-bold text-[11px] flex items-center gap-1">💡 LED ON</span>
+                    </div>
+                </div>
+
+                {/* Applications */}
+                <div className="mt-5">
+                    <p className="text-xs font-bold text-red-800 mb-2 uppercase tracking-wide">🛠️ Applications:</p>
+                    <div className="flex flex-wrap gap-2">
+                        {['Obstacle Detection', 'Line Following Robot', 'Object Counter', 'Industrial Automation', 'Smart Security'].map((app, i) => (
+                            <span key={i} className="px-3 py-1 bg-white border border-red-200 rounded-full text-[10px] font-bold text-red-700 shadow-sm">{app}</span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* ═══ Interactive Simulator ═══ */}
+            <div className="rounded-2xl border border-red-100 bg-gradient-to-br from-red-50 to-amber-50 p-5 mb-6">
+                <p className="text-xs font-bold text-red-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Zap size={12} /> Interactive Simulator — Object ko lao ya hatao!
+                </p>
+
+                {/* Toggle Button */}
+                <div className="flex flex-col items-center gap-3 mb-5">
+                    <button
+                        onClick={() => setObjectPresent(p => !p)}
+                        className="px-8 py-3 rounded-2xl text-sm font-extrabold transition-all duration-300 shadow-lg hover:scale-105 active:scale-95"
+                        style={{
+                            background: objectPresent ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #6b7280, #9ca3af)',
+                            color: 'white',
+                            border: objectPresent ? '2px solid #f87171' : '2px solid #d1d5db',
+                            boxShadow: objectPresent ? '0 0 20px rgba(239,68,68,0.4)' : '0 4px 12px rgba(0,0,0,0.1)',
+                        }}
+                    >
+                        {objectPresent ? '🧱 Object Present! (Click to Remove)' : '❌ No Object (Click to Place Object)'}
+                    </button>
+                    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold" style={{ background: ledOn ? '#fef2f2' : '#f0fdf4', border: `1px solid ${ledOn ? '#fca5a5' : '#86efac'}`, color: ledOn ? '#dc2626' : '#16a34a' }}>
+                        {ledOn ? '⚠️ Object Detected! LED ON' : '✅ No Object — LED OFF'}
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+                    {/* Animated SVG Circuit Diagram */}
+                    <div className="flex justify-center">
+                        <svg viewBox="0 0 400 320" className="w-full max-w-md" style={{ filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.10))' }}>
+                            <rect width="400" height="320" rx="16" fill="#0f172a" />
+
+                            {/* Title */}
+                            <text x="200" y="22" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold" fontFamily="monospace">IR SENSOR OBJECT DETECTION SIMULATOR</text>
+
+                            {/* Arduino Board */}
+                            <rect x="10" y="90" width="80" height="130" rx="8" fill="#1e40af" stroke="#3b82f6" strokeWidth="1.5" />
+                            <text x="50" y="115" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="monospace">ARDUINO</text>
+                            <text x="50" y="128" textAnchor="middle" fill="#93c5fd" fontSize="7" fontFamily="monospace">UNO R3</text>
+                            {/* Arduino pins */}
+                            <rect x="70" y="138" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="148" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">5V</text>
+                            <rect x="70" y="158" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="168" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">GND</text>
+                            <rect x="70" y="178" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="188" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">D8</text>
+                            <rect x="70" y="198" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="208" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">D13</text>
+
+                            {/* Wires from Arduino to IR Sensor */}
+                            <line x1="92" y1="145" x2="150" y2="70" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <line x1="92" y1="165" x2="150" y2="100" stroke="#64748b" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <line x1="92" y1="185" x2="150" y2="85" stroke="#22c55e" strokeWidth="1.5" strokeDasharray="4,2" />
+
+                            {/* IR Sensor body */}
+                            <rect x="150" y="45" width="80" height="70" rx="8" fill="#1a1a2e" stroke="#ef4444" strokeWidth="1.5" />
+                            <text x="190" y="62" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="monospace">IR SENSOR</text>
+
+                            {/* IR Transmitter LED */}
+                            <circle cx="170" cy="90" r="10" fill="#450a0a" stroke="#ef4444" strokeWidth="1.5" />
+                            <circle cx="170" cy="90" r="5" fill={objectPresent ? '#ef4444' : '#7f1d1d'} opacity={objectPresent ? 1 : 0.6}>
+                                {objectPresent && <animate attributeName="opacity" values="1;0.5;1" dur="0.6s" repeatCount="indefinite" />}
+                            </circle>
+                            <text x="170" y="107" textAnchor="middle" fill="#f87171" fontSize="6" fontWeight="bold" fontFamily="monospace">TX</text>
+
+                            {/* IR Receiver */}
+                            <circle cx="210" cy="90" r="10" fill="#1a1a2e" stroke="#94a3b8" strokeWidth="1.5" />
+                            <circle cx="210" cy="90" r="5" fill={objectPresent ? '#22c55e' : '#374151'} opacity={objectPresent ? 1 : 0.5}>
+                                {objectPresent && <animate attributeName="opacity" values="1;0.4;1" dur="0.8s" repeatCount="indefinite" />}
+                            </circle>
+                            <text x="210" y="107" textAnchor="middle" fill="#94a3b8" fontSize="6" fontWeight="bold" fontFamily="monospace">RX</text>
+
+                            {/* Sensor pin labels */}
+                            <text x="155" y="70" fill="#f87171" fontSize="6" fontFamily="monospace">VCC</text>
+                            <text x="155" y="85" fill="#4ade80" fontSize="6" fontFamily="monospace">OUT</text>
+                            <text x="155" y="100" fill="#94a3b8" fontSize="6" fontFamily="monospace">GND</text>
+
+                            {/* IR Beam - Transmitted (going out) */}
+                            {[0, 1, 2, 3].map(i => {
+                                const progress = ((irBeamPhase + i * 15) % 60) / 60;
+                                const beamX = 185 + progress * (objectX - 185);
+                                const opacity = 1 - progress;
+                                return beamX < objectX ? (
+                                    <g key={`ir-tx-${i}`}>
+                                        <circle cx={beamX} cy={85} r={1.5 + i * 0.5} fill="#ef4444" opacity={opacity * 0.7} />
+                                        <line x1={beamX - 3} y1={85} x2={beamX + 3} y2={85} stroke="#ef4444" strokeWidth="1" opacity={opacity * 0.5} />
+                                    </g>
+                                ) : null;
+                            })}
+
+                            {/* IR Beam - Reflected (coming back, only when object present) */}
+                            {objectPresent && [0, 1, 2].map(i => {
+                                const progress = ((irBeamPhase + 30 + i * 15) % 60) / 60;
+                                const beamX = objectX - progress * (objectX - 215);
+                                const opacity = 1 - progress;
+                                return beamX > 215 ? (
+                                    <g key={`ir-rx-${i}`}>
+                                        <circle cx={beamX} cy={95} r={1.5 + i * 0.5} fill="#22c55e" opacity={opacity * 0.6} />
+                                        <line x1={beamX - 3} y1={95} x2={beamX + 3} y2={95} stroke="#22c55e" strokeWidth="1" opacity={opacity * 0.4} />
+                                    </g>
+                                ) : null;
+                            })}
+
+                            {/* IR Beam lines (continuous) */}
+                            <line x1="185" y1="85" x2={Math.min(objectX, 340)} y2="85" stroke="#ef4444" strokeWidth="0.8" opacity="0.25" strokeDasharray="2,3" />
+                            {objectPresent && <line x1={objectX} y1="95" x2="215" y2="95" stroke="#22c55e" strokeWidth="0.8" opacity="0.25" strokeDasharray="2,3" />}
+
+                            {/* Object (block) */}
+                            <g>
+                                <rect x={objectX - 8} y={55} width={16} height={60} rx={4} fill={objectPresent ? '#f59e0b' : '#374151'} stroke={objectPresent ? '#fbbf24' : '#4b5563'} strokeWidth="1.5" opacity={objectX <= 335 ? 1 : 0.3} />
+                                {objectX <= 335 && (
+                                    <text x={objectX} y={48} textAnchor="middle" fill={objectPresent ? '#fbbf24' : '#64748b'} fontSize="7" fontWeight="bold" fontFamily="monospace">
+                                        {objectPresent ? '🧱 Object' : '👻 Ghost'}
+                                    </text>
+                                )}
+                                {/* Reflection glow on object */}
+                                {objectPresent && objectX <= 250 && (
+                                    <circle cx={objectX - 8} cy={85} r={6} fill="#ef4444" opacity={pulseActive ? 0.2 : 0.1} />
+                                )}
+                            </g>
+
+                            {/* LED Section */}
+                            <line x1="92" y1="205" x2="130" y2="245" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <text x="50" y="235" textAnchor="middle" fill="#94a3b8" fontSize="7" fontFamily="monospace">Pin 13</text>
+
+                            {/* LED */}
+                            <polygon points="135,235 155,245 135,255" fill={ledOn ? (pulseActive ? '#fbbf24' : '#f97316') : '#374151'} stroke={ledOn ? '#fb923c' : '#4b5563'} strokeWidth="1.5" />
+                            <line x1="155" y1="235" x2="155" y2="255" stroke={ledOn ? '#fb923c' : '#4b5563'} strokeWidth="2" />
+                            {ledOn && <circle cx="145" cy="245" r={pulseActive ? 18 : 12} fill="#fbbf24" opacity="0.15" />}
+                            <text x="165" y="243" fill={ledOn ? '#fbbf24' : '#4b5563'} fontSize="9" fontFamily="monospace">LED</text>
+                            <text x="165" y="255" fill={ledOn ? '#f97316' : '#4b5563'} fontSize="8" fontFamily="monospace">{ledOn ? 'ON 🔆' : 'OFF'}</text>
+
+                            {/* GND for LED */}
+                            <line x1="155" y1="255" x2="195" y2="255" stroke="#94a3b8" strokeWidth="1.5" />
+                            <line x1="195" y1="250" x2="195" y2="260" stroke="#64748b" strokeWidth="2" />
+                            <line x1="190" y1="265" x2="200" y2="265" stroke="#64748b" strokeWidth="2" />
+                            <line x1="192" y1="269" x2="198" y2="269" stroke="#64748b" strokeWidth="1.5" />
+                            <text x="195" y="281" textAnchor="middle" fill="#64748b" fontSize="7" fontFamily="monospace">GND</text>
+
+                            {/* Status bar */}
+                            <rect x="10" y="292" width="380" height="24" rx="6" fill={ledOn ? '#7f1d1d' : '#14532d'} opacity="0.7" />
+                            <text x="200" y="308" textAnchor="middle" fill={ledOn ? '#fca5a5' : '#86efac'} fontSize="9" fontWeight="bold" fontFamily="monospace">
+                                {ledOn ? '⚠️ OBJECT DETECTED — LED ON — digitalRead(8) = HIGH' : '✅ NO OBJECT — LED OFF — digitalRead(8) = LOW'}
+                            </text>
+                        </svg>
+                    </div>
+
+                    {/* Data Panel */}
+                    <div className="space-y-3">
+                        <div className="p-3 rounded-xl" style={{ background: objectPresent ? '#fef2f2' : '#f0fdf4', border: `1px solid ${objectPresent ? '#fca5a5' : '#86efac'}` }}>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-bold" style={{ color: objectPresent ? '#dc2626' : '#16a34a' }}>🧱 Object Status</span>
+                                <span className="text-xs font-mono font-bold" style={{ color: objectPresent ? '#dc2626' : '#16a34a' }}>{objectPresent ? 'DETECTED' : 'NONE'}</span>
+                            </div>
+                            <div className="h-3 rounded-full overflow-hidden" style={{ background: objectPresent ? '#fee2e2' : '#dcfce7' }}>
+                                <div className="h-full rounded-full transition-all duration-500" style={{ width: objectPresent ? '100%' : '0%', background: objectPresent ? 'linear-gradient(90deg,#ef4444,#f97316)' : 'linear-gradient(90deg,#22c55e,#10b981)' }} />
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
+                            <p className="text-xs font-bold text-slate-400 mb-1 font-mono">digitalRead(8)</p>
+                            <p className="text-2xl font-black font-mono" style={{ color: objectPresent ? '#f87171' : '#4ade80' }}>{sensorValue}</p>
+                            <p className="text-[10px] text-slate-500 font-mono mt-1">IR Sensor Output</p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="p-3 rounded-xl bg-red-950 border border-red-800 text-center">
+                                <div className="w-5 h-5 rounded-full mx-auto mb-1" style={{ background: objectPresent ? '#ef4444' : '#374151', boxShadow: objectPresent ? '0 0 10px #ef4444' : 'none' }} />
+                                <p className="text-[10px] font-bold text-red-300">IR TX</p>
+                                <p className="text-[9px] text-red-400">{objectPresent ? 'Emitting' : 'Idle'}</p>
+                            </div>
+                            <div className="p-3 rounded-xl bg-slate-900 border border-slate-700 text-center">
+                                <div className="w-5 h-5 rounded-full mx-auto mb-1" style={{ background: objectPresent ? '#22c55e' : '#374151', boxShadow: objectPresent ? '0 0 10px #22c55e' : 'none' }} />
+                                <p className="text-[10px] font-bold text-slate-300">IR RX</p>
+                                <p className="text-[9px] text-slate-400">{objectPresent ? 'Receiving' : 'No Signal'}</p>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl border transition-all duration-500" style={{ background: ledOn ? '#fef2f2' : '#f0fdf4', border: `1px solid ${ledOn ? '#fca5a5' : '#86efac'}` }}>
+                            <div className="flex items-center gap-2">
+                                <div className="w-5 h-5 rounded-full transition-all duration-500 flex items-center justify-center" style={{ background: ledOn ? '#ef4444' : '#22c55e', boxShadow: ledOn && pulseActive ? '0 0 12px #ef4444' : 'none' }}>
+                                    <Lightbulb size={11} className="text-white" />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold" style={{ color: ledOn ? '#dc2626' : '#16a34a' }}>LED {ledOn ? 'ON 🔆' : 'OFF 🌑'}</p>
+                                    <p className="text-[10px]" style={{ color: ledOn ? '#b91c1c' : '#15803d' }}>{ledOn ? 'Object detect hua! LED jal gayi' : 'Koi object nahi, LED band hai'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
+                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[11px]" style={{ color: objectPresent ? '#fbbf24' : '#94a3b8' }}>
+                                {objectPresent ? 'Object Detected — LED ON' : 'No Object — LED OFF'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-[10px] text-red-700 mt-3 text-center font-medium">⬆️ Button click karo object place karne ke liye — IR beam reflect hoga aur LED ON ho jayegi!</p>
+            </div>
+
+            {/* Program Code */}
+            <div className="rounded-2xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: '#1e293b' }}>
+                    <FileCode2 size={14} className="text-red-400" />
+                    <span className="text-xs font-bold text-red-300 tracking-wide">Arduino Program — IR_Sensor.ino</span>
+                    <div className="ml-auto flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500" /><div className="w-3 h-3 rounded-full bg-yellow-500" /><div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                </div>
+                <div className="bg-gray-950 p-4 font-mono text-xs leading-7 overflow-x-auto">
+                    <div><span className="text-purple-400">void</span> <span className="text-yellow-300">setup</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">OUTPUT</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-orange-400">8</span><span className="text-gray-300">,</span> <span className="text-orange-400">INPUT</span><span className="text-gray-300">);</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                    <div className="mt-3"><span className="text-purple-400">void</span> <span className="text-yellow-300">loop</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-sky-400">int</span> <span className="text-green-300">value</span> <span className="text-gray-400">=</span> <span className="text-sky-300">digitalRead</span><span className="text-gray-300">(</span><span className="text-orange-400">8</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-2"><span className="text-purple-400">if</span><span className="text-gray-300">(</span><span className="text-green-300">value</span> <span className="text-gray-400">==</span> <span className="text-orange-400">HIGH</span><span className="text-gray-300">)</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">HIGH</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div className="ml-4"><span className="text-purple-400">else</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">LOW</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                </div>
+            </div>
+
+            {/* Materials and Connections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                <div className="p-4 rounded-2xl border border-red-100 bg-red-50">
+                    <h3 className="text-sm font-extrabold text-red-900 mb-3 flex items-center gap-2">
+                        <Wrench size={14} /> आवश्यक सामग्री (Components)
+                    </h3>
+                    <ul className="space-y-2">
+                        {[
+                            { label: 'Arduino Board (Uno R3)', icon: '🟦' },
+                            { label: 'IR Sensor', icon: '🟥' },
+                            { label: 'LED', icon: '💡' },
+                            { label: 'Jumper Wires', icon: '🔗' },
+                        ].map((m, i) => (
+                            <li key={i} className="flex items-center gap-2.5 text-sm text-red-900 bg-white rounded-lg px-3 py-2 border border-red-100 shadow-sm">
+                                <span>{m.icon}</span><span className="font-semibold">{m.label}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-orange-100 bg-orange-50">
+                    <h3 className="text-sm font-extrabold text-orange-900 mb-3 flex items-center gap-2">
+                        <CircuitBoard size={14} /> Circuit Connection
+                    </h3>
+                    <ol className="space-y-2">
+                        {[
+                            { step: 'VCC → IR Sensor की VCC ko Arduino की 5V Pin se connect करें।', color: 'text-red-600' },
+                            { step: 'GND → Sensor की GND ko Arduino की GND Pin se connect करें।', color: 'text-gray-600' },
+                            { step: 'OUT → Sensor की OUT Pin ko Arduino की Digital Pin 8 se connect करें।', color: 'text-emerald-600' },
+                            { step: 'LED → LED ko Arduino की Pin 13 aur Ground se connect करें।', color: 'text-amber-600' },
+                        ].map((c, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-orange-900">
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className={`font-medium ${c.color}`}>{c.step}</span>
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+            </div>
+
+            {/* Working Principle */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-100 mb-6">
+                <h3 className="text-sm font-extrabold text-violet-900 mb-4 flex items-center gap-2">
+                    <Activity size={14} /> 🔹 कार्य प्रणाली (Working Process)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {[
+                        { icon: '🧱', heading: 'Object आने पर (HIGH)', body: 'जब IR Sensor के सामने कोई Object आता है तो Sensor की Output Pin HIGH हो जाती है। Arduino Digital Pin 8 se value read karta hai aur LED ON kar deta hai।', bg: 'bg-red-50', border: 'border-red-200', tc: 'text-red-900' },
+                        { icon: '❌', heading: 'Object नहीं (LOW)', body: 'जब कोई Object Sensor के सामने नहीं होता तब Output Pin LOW होती है। Arduino LED ko OFF kar deta hai।', bg: 'bg-emerald-50', border: 'border-emerald-200', tc: 'text-emerald-900' },
+                        { icon: '🟥', heading: 'IR Transmitter', body: 'IR Transmitter lagaatar Infrared Rays emit karta hai। Ye rays invisible hoti hain aur inhe human eye se nahi dekh sakte।', bg: 'bg-orange-50', border: 'border-orange-200', tc: 'text-orange-900' },
+                        { icon: '📥', heading: 'IR Receiver', body: 'Jab IR rays kisi object se reflect hokar wapas aati hain to IR Receiver inhe detect karta hai aur sensor ka output change ho jata hai।', bg: 'bg-sky-50', border: 'border-sky-200', tc: 'text-sky-900' },
+                    ].map((w, i) => (
+                        <div key={i} className={`p-3 rounded-xl ${w.bg} border ${w.border}`}>
+                            <p className={`text-xs font-bold ${w.tc} mb-1`}>{w.icon} {w.heading}</p>
+                            <p className={`text-[11px] ${w.tc} leading-relaxed`}>{w.body}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Program Working Steps */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-100 mb-6">
+                <h3 className="text-sm font-extrabold text-teal-900 mb-4 flex items-center gap-2">
+                    <Cog size={14} /> 🔹 Program Working
+                </h3>
+                <div className="space-y-2">
+                    {[
+                        'IR Sensor Object ko Detect karta hai।',
+                        'Arduino Sensor ki Output Value ko Digital Pin 8 se Read karta hai।',
+                        'Agar Object Detect hota hai (value == HIGH) to condition true hoti hai।',
+                        'Arduino digitalWrite(13, HIGH) execute karta hai aur LED ON ho jaati hai।',
+                        'Agar Object Detect nahi hota (value == LOW) to LED OFF ho jaati hai।',
+                    ].map((step, i) => (
+                        <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow">
+                            <span className="w-7 h-7 rounded-full bg-teal-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
+                            <span className="text-xs font-medium text-teal-800">{step}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Output */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="p-4 rounded-xl bg-red-50 border border-red-200">
+                    <p className="text-xs font-bold text-red-800 mb-2">🧱 Output 1 (Object Detected):</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs">
+                        <p className="text-yellow-400">LED ON 🔆</p>
+                    </div>
+                </div>
+                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                    <p className="text-xs font-bold text-emerald-800 mb-2">❌ Output 2 (No Object):</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs">
+                        <p className="text-gray-400">LED OFF 🌑</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Conclusion */}
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 mb-6">
+                <h3 className="text-sm font-extrabold text-red-900 mb-3 flex items-center gap-2">
+                    <CheckCircle2 size={14} /> 🔹 Conclusion
+                </h3>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                    IR Sensor ko Arduino Uno ke saath successfully interface kiya gaya। Sensor ne object ko detect kiya aur object detect hone par <strong>LED ON</strong> hui, jabki object na hone par <strong>LED OFF</strong> rahi। IR Sensor ka upyog <strong>Obstacle Detection</strong>, <strong>Line Following Robots</strong>, <strong>Security Systems</strong> aur <strong>Automation Projects</strong> mein kiya jaata hai।
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {['Obstacle Detection', 'Line Following Robot', 'Object Counter', 'Industrial Automation', 'Security Systems'].map((tag, i) => (
+                        <span key={i} className="px-3 py-1 bg-white border border-red-200 rounded-full text-[10px] font-bold text-red-700 shadow-sm">{tag}</span>
+                    ))}
+                </div>
+            </div>
+
+            {/* Flowchart */}
+            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200">
+                <h3 className="text-sm font-extrabold text-gray-800 mb-4 flex items-center gap-2">
+                    <ChevronRight size={14} className="text-red-500" /> Program Flow (Flowchart)
+                </h3>
+                <div className="flex flex-col items-center gap-0 text-center text-xs font-semibold">
+                    {([
+                        { label: 'START', style: { background: '#ef4444', color: 'white', borderRadius: '50px' } as React.CSSProperties },
+                        null,
+                        { label: 'pinMode(13, OUTPUT) | pinMode(8, INPUT)', style: { background: '#eff6ff', border: '1.5px solid #93c5fd', color: '#1e40af', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'value = digitalRead(8)', style: { background: '#fef3c7', border: '1.5px solid #fcd34d', color: '#92400e', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'value == HIGH ?', style: { background: '#fee2e2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '50px' } as React.CSSProperties },
+                        null,
+                        { label: 'YES → digitalWrite(13, HIGH) → LED ON 🔆', style: { background: '#ecfdf5', border: '1.5px solid #6ee7b7', color: '#065f46', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'NO → digitalWrite(13, LOW) → LED OFF 🌑', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: '↩ loop() repeats', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#dc2626', borderRadius: '8px' } as React.CSSProperties },
                     ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
                         item === null
                             ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
