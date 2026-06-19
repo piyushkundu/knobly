@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat, Lightbulb, FlaskConical, Waves, Radio, Scan, Radar } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Cpu, Activity, Zap, Eye, Sun, Settings, Cog, Microchip, Clock, Monitor, Box, Wrench, Shield, Smartphone, Globe, Battery, Layers, Smile, Tag, Home, CircuitBoard, BookOpen, ToggleLeft, MousePointerClick, FileCode2, Braces, CheckCircle2, Repeat, Lightbulb, FlaskConical, Waves, Radio, Scan, Radar, Thermometer } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -55,6 +55,7 @@ const tocItems = [
     { icon: <Waves size={13} />, label: 'Practical – Ultrasonic', id: 'ultrasonic-practical', color: '#0ea5e9' },
     { icon: <Scan size={13} />, label: 'Practical – PIR Sensor', id: 'pir-practical', color: '#ec4899' },
     { icon: <Radar size={13} />, label: 'Practical – IR Sensor', id: 'ir-practical', color: '#ef4444' },
+    { icon: <Thermometer size={13} />, label: 'Practical – DHT11', id: 'dht-practical', color: '#10b981' },
 ];
 
 export default function IoTApplications() {
@@ -2847,6 +2848,9 @@ export default function IoTApplications() {
 
                     {/* ═══ SECTION: Practical – IR Sensor ═══ */}
                     <IRPracticalSection />
+
+                    {/* ═══ SECTION: Practical – DHT11 Sensor ═══ */}
+                    <DHTSensorPracticalSection />
                 </main>
             </div>
         </div>
@@ -4552,6 +4556,462 @@ function IRPracticalSection() {
                         { label: 'NO → digitalWrite(13, LOW) → LED OFF 🌑', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
                         null,
                         { label: '↩ loop() repeats', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#dc2626', borderRadius: '8px' } as React.CSSProperties },
+                    ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
+                        item === null
+                            ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
+                            : <div key={i} className="px-4 py-2 text-[11px] shadow-sm" style={item.style}>{item.label}</div>
+                    )}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function DHTSensorPracticalSection() {
+    const [temp, setTemp] = useState(28);
+    const [humidity, setHumidity] = useState(65);
+    const [wavePhase, setWavePhase] = useState(0);
+
+    const tempF = ((temp * 9) / 5 + 32).toFixed(1);
+
+    useEffect(() => {
+        const t = setInterval(() => setWavePhase(p => (p + 1) % 60), 100);
+        return () => clearInterval(t);
+    }, []);
+
+    const tempColor = temp <= 15 ? '#3b82f6' : temp <= 25 ? '#22c55e' : temp <= 35 ? '#f59e0b' : '#ef4444';
+    const humidityColor = humidity <= 30 ? '#f59e0b' : humidity <= 60 ? '#22c55e' : '#3b82f6';
+
+    return (
+        <section id="dht-practical" className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20 transition-all duration-300 hover:shadow-lg bg-white" style={{ border: '1px solid #a7f3d0', boxShadow: '0 1px 3px rgba(16,185,129,0.08)' }}>
+            <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #d1fae5' }}>
+                <Thermometer size={16} className="text-emerald-500" />
+                <h2 className="text-base md:text-lg font-extrabold text-gray-800">🔬 Practical – DHT11 Sensor (Temperature & Humidity)</h2>
+            </div>
+
+            {/* Objective */}
+            <div className="rounded-xl p-4 mb-6 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)', border: '1px solid #6ee7b7', color: '#064e3b' }}>
+                🎯 <strong>Objective:</strong> DHT11 Sensor ko Arduino Uno ke saath interface karke <strong>Temperature aur Humidity</strong> ko measure karna aur <strong>Serial Monitor</strong> par display karna।
+            </div>
+
+            {/* Theory Section */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 mb-6">
+                <h3 className="text-sm font-extrabold text-emerald-900 mb-4 flex items-center gap-2">
+                    <Thermometer size={14} /> 🔹 Theory
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                    <p>DHT11 ek <strong>digital sensor</strong> hai jo Temperature aur Humidity dono ko measure karta hai।</p>
+                    <p>Ye sensor environment ki humidity aur temperature ko detect karke <strong>digital signal</strong> ke roop me Arduino ko bhejta hai।</p>
+                    <p>DHT11 me ek <strong>humidity sensing element</strong> aur ek <strong>temperature sensing element</strong> hota hai jo atmosphere ki condition ko continuously monitor karta hai।</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+                    <div className="p-4 rounded-xl bg-white border border-emerald-200 text-center shadow-sm">
+                        <div className="text-3xl mb-2">🌡️</div>
+                        <p className="text-xs font-bold text-emerald-800">Temperature Sensing</p>
+                        <p className="text-[11px] text-gray-600 mt-1">0°C to 50°C range</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-white border border-emerald-200 text-center shadow-sm">
+                        <div className="text-3xl mb-2">💧</div>
+                        <p className="text-xs font-bold text-emerald-800">Humidity Sensing</p>
+                        <p className="text-[11px] text-gray-600 mt-1">20% to 90% RH range</p>
+                    </div>
+                </div>
+
+                {/* Working flow */}
+                <div className="mt-5 p-4 bg-white rounded-xl border border-emerald-200">
+                    <p className="text-xs font-bold text-emerald-800 mb-3 uppercase tracking-wide">📊 Working Flow:</p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                        <span className="px-3 py-2 bg-emerald-500 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">🌡️ Sense Temp</span>
+                        <ChevronRight className="text-emerald-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-sky-100 rounded-lg text-sky-800 shadow-sm font-bold text-[11px] flex items-center gap-1">💧 Sense Humidity</span>
+                        <ChevronRight className="text-emerald-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-amber-100 rounded-lg text-amber-800 shadow-sm font-bold text-[11px] flex items-center gap-1">📡 Digital Signal</span>
+                        <ChevronRight className="text-emerald-400 rotate-90 sm:rotate-0" size={14} />
+                        <span className="px-3 py-2 bg-violet-100 rounded-lg text-violet-800 shadow-sm font-bold text-[11px] flex items-center gap-1">💻 Serial Display</span>
+                    </div>
+                </div>
+
+                {/* Applications */}
+                <div className="mt-5">
+                    <p className="text-xs font-bold text-emerald-800 mb-2 uppercase tracking-wide">🛠️ Applications:</p>
+                    <div className="flex flex-wrap gap-2">
+                        {['Weather Monitoring', 'Smart Home', 'Temperature Monitor', 'IoT Environmental', 'Green House'].map((app, i) => (
+                            <span key={i} className="px-3 py-1 bg-white border border-emerald-200 rounded-full text-[10px] font-bold text-emerald-700 shadow-sm">{app}</span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* ═══ Interactive Simulator ═══ */}
+            <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-cyan-50 p-5 mb-6">
+                <p className="text-xs font-bold text-emerald-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Zap size={12} /> Interactive Simulator — Temperature & Humidity adjust karo!
+                </p>
+
+                {/* Sliders */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                    <div>
+                        <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                            <span>❄️ Cold — 0°C</span>
+                            <span>🔥 Hot — 50°C</span>
+                        </div>
+                        <input type="range" min={0} max={50} value={temp} onChange={e => setTemp(Number(e.target.value))}
+                            className="w-full h-3 rounded-full outline-none cursor-pointer"
+                            style={{ WebkitAppearance: 'none', background: `linear-gradient(90deg, ${tempColor} ${temp * 2}%, #e5e7eb ${temp * 2}%)` } as React.CSSProperties} />
+                        <div className="text-center mt-2">
+                            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold" style={{ background: '#f0fdf4', border: `1px solid ${tempColor}`, color: tempColor }}>
+                                🌡️ {temp}°C / {tempF}°F
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                            <span>🏜️ Dry — 20%</span>
+                            <span>💧 Wet — 90%</span>
+                        </div>
+                        <input type="range" min={20} max={90} value={humidity} onChange={e => setHumidity(Number(e.target.value))}
+                            className="w-full h-3 rounded-full outline-none cursor-pointer"
+                            style={{ WebkitAppearance: 'none', background: `linear-gradient(90deg, ${humidityColor} ${((humidity - 20) / 70) * 100}%, #e5e7eb ${((humidity - 20) / 70) * 100}%)` } as React.CSSProperties} />
+                        <div className="text-center mt-2">
+                            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold" style={{ background: '#f0f9ff', border: `1px solid ${humidityColor}`, color: humidityColor }}>
+                                💧 {humidity}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+                    {/* Animated SVG Circuit Diagram */}
+                    <div className="flex justify-center">
+                        <svg viewBox="0 0 400 310" className="w-full max-w-md" style={{ filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.10))' }}>
+                            <rect width="400" height="310" rx="16" fill="#0f172a" />
+                            <text x="200" y="22" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold" fontFamily="monospace">DHT11 TEMPERATURE & HUMIDITY SIMULATOR</text>
+
+                            {/* Arduino Board */}
+                            <rect x="10" y="85" width="80" height="120" rx="8" fill="#1e40af" stroke="#3b82f6" strokeWidth="1.5" />
+                            <text x="50" y="108" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="monospace">ARDUINO</text>
+                            <text x="50" y="121" textAnchor="middle" fill="#93c5fd" fontSize="7" fontFamily="monospace">UNO R3</text>
+                            <rect x="70" y="133" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="143" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">5V</text>
+                            <rect x="70" y="153" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="163" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">GND</text>
+                            <rect x="70" y="173" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="183" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">D8</text>
+
+                            {/* Wires */}
+                            <line x1="92" y1="140" x2="155" y2="65" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <line x1="92" y1="160" x2="155" y2="95" stroke="#64748b" strokeWidth="1.5" strokeDasharray="4,2" />
+                            <line x1="92" y1="180" x2="155" y2="80" stroke="#22c55e" strokeWidth="1.5" strokeDasharray="4,2" />
+
+                            {/* DHT11 Sensor body */}
+                            <rect x="155" y="40" width="85" height="70" rx="8" fill="#065f46" stroke="#10b981" strokeWidth="1.5" />
+                            <text x="197" y="58" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="monospace">DHT11</text>
+
+                            {/* Grid holes on sensor */}
+                            {[0, 1, 2, 3].map(r => [0, 1, 2, 3].map(c => (
+                                <circle key={`h-${r}-${c}`} cx={172 + c * 15} cy={68 + r * 10} r="2" fill="#047857" stroke="#34d399" strokeWidth="0.5" />
+                            )))}
+
+                            {/* Sensor pin labels */}
+                            <text x="160" y="65" fill="#f87171" fontSize="6" fontFamily="monospace">VCC</text>
+                            <text x="160" y="80" fill="#4ade80" fontSize="6" fontFamily="monospace">DATA</text>
+                            <text x="160" y="95" fill="#94a3b8" fontSize="6" fontFamily="monospace">GND</text>
+
+                            {/* Heat waves from sensor */}
+                            {[0, 1, 2].map(i => {
+                                const phase = ((wavePhase + i * 20) % 60) / 60;
+                                const y = 45 - phase * 25;
+                                const opacity = (1 - phase) * 0.4;
+                                return (
+                                    <g key={`heat-${i}`}>
+                                        <path d={`M${175 + i * 15},${y + 5} Q${180 + i * 15},${y} ${185 + i * 15},${y + 5}`}
+                                            fill="none" stroke={tempColor} strokeWidth="1.2" opacity={opacity} />
+                                    </g>
+                                );
+                            })}
+
+                            {/* Humidity droplets */}
+                            {[0, 1, 2].map(i => {
+                                const phase = ((wavePhase + 10 + i * 18) % 60) / 60;
+                                const x = 250 + i * 20;
+                                const y = 50 + phase * 50;
+                                const opacity = (1 - phase) * 0.5;
+                                return (
+                                    <g key={`drop-${i}`}>
+                                        <circle cx={x} cy={y} r={2} fill={humidityColor} opacity={opacity} />
+                                        <line x1={x} y1={y - 3} x2={x} y2={y + 1} stroke={humidityColor} strokeWidth="1" opacity={opacity} />
+                                    </g>
+                                );
+                            })}
+
+                            {/* Temperature gauge */}
+                            <rect x="260" y="40" width="40" height="70" rx="6" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                            <text x="280" y="53" textAnchor="middle" fill="#94a3b8" fontSize="7" fontWeight="bold" fontFamily="monospace">TEMP</text>
+                            <rect x="268" y="58" width="24" height="45" rx="3" fill="#0f172a" stroke="#334155" strokeWidth="0.8" />
+                            <rect x="270" y={103 - (temp / 50) * 43} width="20" height={(temp / 50) * 43} rx="2" fill={tempColor} opacity="0.8" />
+                            <text x="280" y="108" textAnchor="middle" fill={tempColor} fontSize="8" fontWeight="bold" fontFamily="monospace">{temp}°C</text>
+
+                            {/* Humidity gauge */}
+                            <rect x="310" y="40" width="40" height="70" rx="6" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                            <text x="330" y="53" textAnchor="middle" fill="#94a3b8" fontSize="7" fontWeight="bold" fontFamily="monospace">HUM</text>
+                            <rect x="318" y="58" width="24" height="45" rx="3" fill="#0f172a" stroke="#334155" strokeWidth="0.8" />
+                            <rect x="320" y={103 - ((humidity - 20) / 70) * 43} width="20" height={((humidity - 20) / 70) * 43} rx="2" fill={humidityColor} opacity="0.8" />
+                            <text x="330" y="108" textAnchor="middle" fill={humidityColor} fontSize="8" fontWeight="bold" fontFamily="monospace">{humidity}%</text>
+
+                            {/* Data signal from sensor to Arduino */}
+                            {[0, 1, 2].map(i => {
+                                const progress = ((wavePhase + i * 20) % 60) / 60;
+                                const sx = 155 - progress * 60;
+                                const opacity = 1 - progress;
+                                return sx > 92 ? (
+                                    <rect key={`sig-${i}`} x={sx} y={78} width={4} height={4} rx={1} fill="#10b981" opacity={opacity * 0.6} />
+                                ) : null;
+                            })}
+
+                            {/* Serial Monitor output */}
+                            <rect x="10" y="215" width="380" height="85" rx="8" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                            <text x="25" y="232" fill="#64748b" fontSize="8" fontWeight="bold" fontFamily="monospace">💻 Serial Monitor (9600 baud)</text>
+                            <line x1="15" y1="237" x2="385" y2="237" stroke="#334155" strokeWidth="0.5" />
+                            <text x="25" y="253" fill="#4ade80" fontSize="9" fontFamily="monospace">
+                                {`Temperature = ${temp} C ${tempF} F`}
+                            </text>
+                            <text x="25" y="270" fill="#38bdf8" fontSize="9" fontFamily="monospace">
+                                {`Humidity = ${humidity} %`}
+                            </text>
+                            <text x="25" y="290" fill="#475569" fontSize="7" fontFamily="monospace">Refreshing every 1 second...</text>
+                        </svg>
+                    </div>
+
+                    {/* Data Panel */}
+                    <div className="space-y-3">
+                        <div className="p-3 rounded-xl" style={{ background: '#f0fdf4', border: `1.5px solid ${tempColor}` }}>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-bold" style={{ color: tempColor }}>🌡️ Temperature</span>
+                                <span className="text-xs font-mono font-bold" style={{ color: tempColor }}>{temp}°C / {tempF}°F</span>
+                            </div>
+                            <div className="h-3 rounded-full overflow-hidden bg-gray-100">
+                                <div className="h-full rounded-full transition-all duration-300" style={{ width: `${temp * 2}%`, background: tempColor }} />
+                            </div>
+                            <p className="text-[10px] mt-1 font-medium" style={{ color: tempColor }}>
+                                {temp <= 15 ? '❄️ Cold' : temp <= 25 ? '🌤️ Normal' : temp <= 35 ? '☀️ Warm' : '🔥 Hot!'}
+                            </p>
+                        </div>
+
+                        <div className="p-3 rounded-xl" style={{ background: '#f0f9ff', border: `1.5px solid ${humidityColor}` }}>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-bold" style={{ color: humidityColor }}>💧 Humidity</span>
+                                <span className="text-xs font-mono font-bold" style={{ color: humidityColor }}>{humidity}%</span>
+                            </div>
+                            <div className="h-3 rounded-full overflow-hidden bg-gray-100">
+                                <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((humidity - 20) / 70) * 100}%`, background: humidityColor }} />
+                            </div>
+                            <p className="text-[10px] mt-1 font-medium" style={{ color: humidityColor }}>
+                                {humidity <= 30 ? '🏜️ Dry' : humidity <= 60 ? '😌 Comfortable' : '💦 Humid'}
+                            </p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
+                            <p className="text-xs font-bold text-slate-400 mb-1 font-mono">DHT.read11(data)</p>
+                            <div className="grid grid-cols-2 gap-2 mt-2">
+                                <div>
+                                    <p className="text-lg font-black font-mono" style={{ color: tempColor }}>{temp}°C</p>
+                                    <p className="text-[10px] text-slate-500">DHT.temperature</p>
+                                </div>
+                                <div>
+                                    <p className="text-lg font-black font-mono" style={{ color: humidityColor }}>{humidity}%</p>
+                                    <p className="text-[10px] text-slate-500">DHT.humidity</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-100">
+                            <p className="text-xs font-bold text-indigo-800 mb-1">📐 Conversion Formula</p>
+                            <p className="text-sm font-bold text-indigo-600 font-mono">°F = ({temp} × 9/5) + 32</p>
+                            <p className="text-sm font-bold text-indigo-900 font-mono">°F = {tempF}</p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
+                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[11px] text-green-400">Temperature = {temp} C {tempF} F</p>
+                            <p className="text-[11px] text-sky-400">Humidity = {humidity} %</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-[10px] text-emerald-700 mt-3 text-center font-medium">⬆️ Sliders se Temperature aur Humidity adjust karo — live reading change hogi!</p>
+            </div>
+
+            {/* Program Code */}
+            <div className="rounded-2xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: '#1e293b' }}>
+                    <FileCode2 size={14} className="text-emerald-400" />
+                    <span className="text-xs font-bold text-emerald-300 tracking-wide">Arduino Program — DHT11_Sensor.ino</span>
+                    <div className="ml-auto flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500" /><div className="w-3 h-3 rounded-full bg-yellow-500" /><div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                </div>
+                <div className="bg-gray-950 p-4 font-mono text-xs leading-7 overflow-x-auto">
+                    <div><span className="text-purple-400">#include</span> <span className="text-amber-400">&lt;dht.h&gt;</span></div>
+                    <div className="mt-1"><span className="text-sky-400">int</span> <span className="text-green-300">data</span> <span className="text-gray-400">=</span> <span className="text-orange-400">8</span><span className="text-gray-400">;</span></div>
+                    <div><span className="text-sky-400">dht</span> <span className="text-green-300">DHT</span><span className="text-gray-400">;</span></div>
+                    <div className="mt-3"><span className="text-purple-400">void</span> <span className="text-yellow-300">setup</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">begin</span><span className="text-gray-300">(</span><span className="text-orange-400">9600</span><span className="text-gray-300">);</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                    <div className="mt-3"><span className="text-purple-400">void</span> <span className="text-yellow-300">loop</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-sky-400">int</span> <span className="text-green-300">value</span> <span className="text-gray-400">=</span> <span className="text-green-300">DHT</span><span className="text-gray-300">.</span><span className="text-sky-300">read11</span><span className="text-gray-300">(</span><span className="text-green-300">data</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-sky-400">float</span> <span className="text-green-300">t</span> <span className="text-gray-400">=</span> <span className="text-green-300">DHT</span><span className="text-gray-300">.</span><span className="text-sky-300">temperature</span><span className="text-gray-300">;</span></div>
+                    <div className="ml-4"><span className="text-sky-400">float</span> <span className="text-green-300">h</span> <span className="text-gray-400">=</span> <span className="text-green-300">DHT</span><span className="text-gray-300">.</span><span className="text-sky-300">humidity</span><span className="text-gray-300">;</span></div>
+                    <div className="ml-4 mt-2"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">print</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot;Temperature = &quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">print</span><span className="text-gray-300">(</span><span className="text-green-300">t</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">print</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot; C &quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">print</span><span className="text-gray-300">((</span><span className="text-green-300">t</span> <span className="text-gray-400">*</span> <span className="text-orange-400">9</span> <span className="text-gray-400">/</span> <span className="text-orange-400">5</span><span className="text-gray-300">) +</span> <span className="text-orange-400">32</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">print</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot; F &quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">print</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot; Humidity = &quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">print</span><span className="text-gray-300">(</span><span className="text-green-300">h</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">println</span><span className="text-gray-300">(</span><span className="text-amber-400">&quot; %&quot;</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">1000</span><span className="text-gray-300">);</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                </div>
+            </div>
+
+            {/* Materials and Connections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                <div className="p-4 rounded-2xl border border-emerald-100 bg-emerald-50">
+                    <h3 className="text-sm font-extrabold text-emerald-900 mb-3 flex items-center gap-2">
+                        <Wrench size={14} /> आवश्यक सामग्री (Components)
+                    </h3>
+                    <ul className="space-y-2">
+                        {[
+                            { label: 'DHT11 Sensor', icon: '🌡️' },
+                            { label: 'Arduino Board (Uno R3)', icon: '🟦' },
+                            { label: 'Jumper Wires', icon: '🔗' },
+                        ].map((m, i) => (
+                            <li key={i} className="flex items-center gap-2.5 text-sm text-emerald-900 bg-white rounded-lg px-3 py-2 border border-emerald-100 shadow-sm">
+                                <span>{m.icon}</span><span className="font-semibold">{m.label}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-teal-100 bg-teal-50">
+                    <h3 className="text-sm font-extrabold text-teal-900 mb-3 flex items-center gap-2">
+                        <CircuitBoard size={14} /> Circuit Connection
+                    </h3>
+                    <ol className="space-y-2">
+                        {[
+                            { step: 'VCC → Sensor की VCC Pin ko Arduino की 5V se connect करें।', color: 'text-red-600' },
+                            { step: 'GND → Sensor की Ground Pin ko Arduino की Ground se connect करें।', color: 'text-gray-600' },
+                            { step: 'DATA → Sensor की Data Pin ko Arduino की Pin No. 8 se connect करें।', color: 'text-emerald-600' },
+                        ].map((c, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-teal-900">
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-teal-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className={`font-medium ${c.color}`}>{c.step}</span>
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+            </div>
+
+            {/* Working Principle */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-100 mb-6">
+                <h3 className="text-sm font-extrabold text-violet-900 mb-4 flex items-center gap-2">
+                    <Activity size={14} /> 🔹 कार्य प्रणाली (Working Process)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {[
+                        { icon: '🌡️', heading: 'Temperature Sensing', body: 'DHT11 Sensor Environment se Temperature Read karta hai। Temperature Value DHT.temperature se prapt hoti hai aur Celsius me display ki jaati hai।', bg: 'bg-orange-50', border: 'border-orange-200', tc: 'text-orange-900' },
+                        { icon: '💧', heading: 'Humidity Sensing', body: 'Sensor simultaneously Humidity bhi measure karta hai। DHT.humidity se humidity percentage prapt hoti hai।', bg: 'bg-sky-50', border: 'border-sky-200', tc: 'text-sky-900' },
+                        { icon: '📡', heading: 'Digital Signal', body: 'Sensor apna Data digital signal ke roop me Arduino ko bhejta hai। DHT.read11(data) function se sensor ki reading read hoti hai।', bg: 'bg-emerald-50', border: 'border-emerald-200', tc: 'text-emerald-900' },
+                        { icon: '💻', heading: 'Serial Display', body: 'Temperature ko Celsius aur Fahrenheit dono format me convert karke Serial Monitor par display kiya jaata hai। Humidity % me show hoti hai।', bg: 'bg-violet-50', border: 'border-violet-200', tc: 'text-violet-900' },
+                    ].map((w, i) => (
+                        <div key={i} className={`p-3 rounded-xl ${w.bg} border ${w.border}`}>
+                            <p className={`text-xs font-bold ${w.tc} mb-1`}>{w.icon} {w.heading}</p>
+                            <p className={`text-[11px] ${w.tc} leading-relaxed`}>{w.body}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Program Working Steps */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-100 mb-6">
+                <h3 className="text-sm font-extrabold text-teal-900 mb-4 flex items-center gap-2">
+                    <Cog size={14} /> 🔹 Program Working
+                </h3>
+                <div className="space-y-2">
+                    {[
+                        'DHT11 Sensor Temperature aur Humidity ko Sense karta hai।',
+                        'Arduino Sensor se Data Read karta hai (DHT.read11)।',
+                        'Temperature ko Celsius me Display karta hai।',
+                        'Temperature ko Fahrenheit me Convert karta hai: (t * 9/5) + 32।',
+                        'Humidity Value ko Percentage (%) me Display karta hai।',
+                        'Har 1 Second ke baad New Reading Display hoti hai (delay 1000)।',
+                    ].map((step, i) => (
+                        <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow">
+                            <span className="w-7 h-7 rounded-full bg-teal-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
+                            <span className="text-xs font-medium text-teal-800">{step}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Output */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                    <p className="text-xs font-bold text-emerald-800 mb-2">🌡️ Output 1:</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs">
+                        <p className="text-green-400">Temperature = 28 C 82.4 F</p>
+                        <p className="text-sky-400">Humidity = 65 %</p>
+                    </div>
+                </div>
+                <div className="p-4 rounded-xl bg-teal-50 border border-teal-200">
+                    <p className="text-xs font-bold text-teal-800 mb-2">🌡️ Output 2:</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs">
+                        <p className="text-green-400">Temperature = 30 C 86 F</p>
+                        <p className="text-sky-400">Humidity = 60 %</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Conclusion */}
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 mb-6">
+                <h3 className="text-sm font-extrabold text-emerald-900 mb-3 flex items-center gap-2">
+                    <CheckCircle2 size={14} /> 🔹 Conclusion
+                </h3>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                    DHT11 Sensor ko Arduino Uno ke saath successfully interface kiya gaya। Sensor ne Environment ka <strong>Temperature aur Humidity</strong> Measure kiya aur Arduino ne us Data ko <strong>Serial Monitor</strong> par Display kiya। DHT11 Sensor ka upyog <strong>Weather Monitoring</strong>, <strong>Smart Agriculture</strong>, <strong>Home Automation</strong> aur <strong>IoT Applications</strong> mein kiya jaata hai।
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {['Weather Monitoring', 'Smart Agriculture', 'Home Automation', 'IoT Projects', 'Green House'].map((tag, i) => (
+                        <span key={i} className="px-3 py-1 bg-white border border-emerald-200 rounded-full text-[10px] font-bold text-emerald-700 shadow-sm">{tag}</span>
+                    ))}
+                </div>
+            </div>
+
+            {/* Flowchart */}
+            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200">
+                <h3 className="text-sm font-extrabold text-gray-800 mb-4 flex items-center gap-2">
+                    <ChevronRight size={14} className="text-emerald-500" /> Program Flow (Flowchart)
+                </h3>
+                <div className="flex flex-col items-center gap-0 text-center text-xs font-semibold">
+                    {([
+                        { label: 'START', style: { background: '#10b981', color: 'white', borderRadius: '50px' } as React.CSSProperties },
+                        null,
+                        { label: '#include <dht.h> | int data = 8 | Serial.begin(9600)', style: { background: '#eff6ff', border: '1.5px solid #93c5fd', color: '#1e40af', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'DHT.read11(data) — Read Sensor', style: { background: '#f0fdf4', border: '1.5px solid #86efac', color: '#166534', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 't = DHT.temperature | h = DHT.humidity', style: { background: '#fef3c7', border: '1.5px solid #fcd34d', color: '#92400e', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'Serial.print(“Temperature = ”) | print(t) | print(“ C ”)', style: { background: '#ecfdf5', border: '1.5px solid #6ee7b7', color: '#065f46', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'print((t*9/5)+32) | print(“ F ”) — Fahrenheit Conversion', style: { background: '#faf5ff', border: '1.5px solid #c4b5fd', color: '#5b21b6', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'Serial.print(“Humidity = ”) | print(h) | println(“ %”)', style: { background: '#f0f9ff', border: '1.5px solid #7dd3fc', color: '#0369a1', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'delay(1000) — Wait 1 Second', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: '↩ loop() repeats', style: { background: '#ecfdf5', border: '1.5px solid #6ee7b7', color: '#059669', borderRadius: '8px' } as React.CSSProperties },
                     ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
                         item === null
                             ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
