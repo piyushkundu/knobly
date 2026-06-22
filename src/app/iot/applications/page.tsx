@@ -57,6 +57,7 @@ const tocItems = [
     { icon: <Radar size={13} />, label: 'Practical – IR Sensor', id: 'ir-practical', color: '#ef4444' },
     { icon: <Thermometer size={13} />, label: 'Practical – DHT11', id: 'dht-practical', color: '#10b981' },
     { icon: <Lightbulb size={13} />, label: 'Practical – Fading LED', id: 'fading-led-practical', color: '#f59e0b' },
+    { icon: <Smartphone size={13} />, label: 'Practical – Bluetooth', id: 'bluetooth-practical', color: '#3b82f6' },
 ];
 
 export default function IoTApplications() {
@@ -2855,6 +2856,9 @@ export default function IoTApplications() {
 
                     {/* ═══ SECTION: Practical – Fading LED ═══ */}
                     <FadingLEDPracticalSection />
+
+                    {/* ═══ SECTION: Practical – Bluetooth LED ═══ */}
+                    <BluetoothLEDPracticalSection />
                 </main>
             </div>
         </div>
@@ -5484,6 +5488,405 @@ function FadingLEDPracticalSection() {
                             ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
                             : <div key={i} className="px-4 py-2 text-[11px] shadow-sm" style={item.style}>{item.label}</div>
                     )}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function BluetoothLEDPracticalSection() {
+    const [btConnected, setBtConnected] = useState(false);
+    const [ledOn, setLedOn] = useState(false);
+    const [sendingData, setSendingData] = useState<string | null>(null);
+    const [serialLog, setSerialLog] = useState<{ time: string, data: string }[]>([]);
+
+    const handleSend = (data: string) => {
+        if (!btConnected || sendingData) return;
+        setSendingData(data);
+
+        // Simulate transmission delay
+        setTimeout(() => {
+            const timeStr = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            setSerialLog(prev => [...prev.slice(-3), { time: timeStr, data: data }]);
+            if (data === '1') setLedOn(true);
+            else if (data === '0') setLedOn(false);
+            setSendingData(null);
+        }, 800);
+    };
+
+    return (
+        <section id="bluetooth-practical" className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20 transition-all duration-300 hover:shadow-lg bg-white" style={{ border: '1px solid #bfdbfe', boxShadow: '0 1px 3px rgba(59,130,246,0.08)' }}>
+            <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #dbeafe' }}>
+                <Smartphone size={16} className="text-blue-500" />
+                <h2 className="text-base md:text-lg font-extrabold text-gray-800">📱 Practical – Bluetooth Control LED</h2>
+            </div>
+
+            {/* Objective */}
+            <div className="rounded-xl p-4 mb-6 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #eff6ff, #dbeafe)', border: '1px solid #93c5fd', color: '#1e3a8a' }}>
+                🎯 <strong>Objective:</strong> Bluetooth Module (HC-05) aur Arduino Board ki madad se ek LED ko apne <strong>Android Mobile se Control</strong> karna (Mobile App se ON/OFF command bhejna)।
+            </div>
+
+            {/* Theory Section */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 mb-6">
+                <h3 className="text-sm font-extrabold text-blue-900 mb-4 flex items-center gap-2">
+                    <Radio size={14} /> 🔹 Theory & Working
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                    <p>Yeh ek basic IoT project hai, lekin isi concept ka upyog karke <strong>Smart Home Devices</strong> bhi banaye jaate hain।</p>
+                    <p>Is practical me hum <strong>Bluetooth Communication</strong> ko samjhenge. Mobile Phone Bluetooth ke madhyam se Arduino ko Data bhejta hai aur Arduino us data ke anusar LED ko control karta hai।</p>
+                </div>
+
+                <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-white rounded-xl border border-blue-200">
+                        <p className="text-xs font-bold text-blue-800 mb-2">📥 Data Flow</p>
+                        <div className="flex items-center justify-between text-[11px] font-bold text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-200">
+                            <span className="flex flex-col items-center gap-1"><Smartphone size={16} className="text-blue-500"/> Mobile App</span>
+                            <span className="text-blue-400">〰️ (Bluetooth) 〰️</span>
+                            <span className="flex flex-col items-center gap-1"><Radio size={16} className="text-indigo-500"/> HC-05</span>
+                            <span className="text-gray-400">➡️ (RX/TX) ➡️</span>
+                            <span className="flex flex-col items-center gap-1"><CircuitBoard size={16} className="text-emerald-600"/> Arduino</span>
+                        </div>
+                    </div>
+                    <div className="p-4 bg-white rounded-xl border border-blue-200">
+                        <p className="text-xs font-bold text-blue-800 mb-2">⚙️ Commands</p>
+                        <ul className="space-y-2 text-xs">
+                            <li className="flex items-center justify-between bg-green-50 px-3 py-1.5 rounded text-green-800 border border-green-200">
+                                <span>Send Character <strong className="font-mono text-base">'1'</strong></span>
+                                <span>➡️ LED <strong>ON</strong></span>
+                            </li>
+                            <li className="flex items-center justify-between bg-red-50 px-3 py-1.5 rounded text-red-800 border border-red-200">
+                                <span>Send Character <strong className="font-mono text-base">'0'</strong></span>
+                                <span>➡️ LED <strong>OFF</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {/* ═══ Interactive Simulator ═══ */}
+            <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-slate-900 to-blue-950 p-5 mb-6 overflow-hidden relative">
+                <p className="text-xs font-bold text-blue-300 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Smartphone size={12} /> Interactive Simulator — Mobile App & Bluetooth
+                </p>
+
+                <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
+                    
+                    {/* Mobile App UI */}
+                    <div className="w-48 bg-white rounded-[24px] border-4 border-gray-800 p-2 shadow-2xl relative z-10 flex-shrink-0">
+                        {/* Speaker & Camera notch */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-4 bg-gray-800 rounded-b-xl"></div>
+                        
+                        <div className="bg-slate-100 h-80 rounded-[16px] overflow-hidden flex flex-col">
+                            {/* App Header */}
+                            <div className="bg-blue-600 text-white p-3 text-center pt-5 shadow-md">
+                                <h4 className="text-[10px] font-bold tracking-widest uppercase mb-1 flex items-center justify-center gap-1">
+                                    <Radio size={10} /> BT Controller
+                                </h4>
+                                <div className="text-[9px] text-blue-200">Status: {btConnected ? <span className="text-green-300 font-bold">Connected (HC-05)</span> : <span className="text-red-300 font-bold">Disconnected</span>}</div>
+                            </div>
+                            
+                            {/* App Body */}
+                            <div className="flex-1 p-3 flex flex-col gap-3 justify-center items-center">
+                                <button 
+                                    onClick={() => setBtConnected(!btConnected)}
+                                    className={`w-full py-2 rounded-full text-xs font-bold transition-all shadow-sm border ${btConnected ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100' : 'bg-blue-500 text-white border-blue-600 hover:bg-blue-600 shadow-blue-500/30'}`}
+                                >
+                                    {btConnected ? 'Disconnect' : 'Connect to HC-05'}
+                                </button>
+                                
+                                <div className="w-full h-px bg-gray-200 my-1"></div>
+
+                                <button 
+                                    onClick={() => handleSend('1')}
+                                    disabled={!btConnected || sendingData !== null}
+                                    className={`w-full py-4 rounded-xl text-sm font-black transition-all ${!btConnected ? 'opacity-50 cursor-not-allowed bg-gray-200 text-gray-400' : sendingData === '1' ? 'bg-green-400 text-white scale-95' : 'bg-green-500 text-white hover:bg-green-400 shadow-lg shadow-green-500/30 active:scale-95'}`}
+                                >
+                                    {sendingData === '1' ? 'Sending...' : 'LED ON'}
+                                </button>
+                                
+                                <button 
+                                    onClick={() => handleSend('0')}
+                                    disabled={!btConnected || sendingData !== null}
+                                    className={`w-full py-4 rounded-xl text-sm font-black transition-all ${!btConnected ? 'opacity-50 cursor-not-allowed bg-gray-200 text-gray-400' : sendingData === '0' ? 'bg-red-400 text-white scale-95' : 'bg-red-500 text-white hover:bg-red-400 shadow-lg shadow-red-500/30 active:scale-95'}`}
+                                >
+                                    {sendingData === '0' ? 'Sending...' : 'LED OFF'}
+                                </button>
+
+                                <div className="mt-auto w-full text-center">
+                                    <p className="text-[8px] text-gray-400">Last Sent Data</p>
+                                    <div className="bg-white border border-gray-200 rounded p-1.5 mt-1 font-mono text-xs font-bold text-gray-700 min-h-[28px] flex items-center justify-center">
+                                        {sendingData ? `Sending '${sendingData}'...` : serialLog.length > 0 ? `'${serialLog[serialLog.length-1].data}'` : '-'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Animated SVG Hardware Setup */}
+                    <div className="flex-1 flex justify-center w-full max-w-sm relative z-0">
+                        <svg viewBox="0 0 300 220" className="w-full h-auto max-w-sm">
+                            {/* Connection waves animation */}
+                            {btConnected && !sendingData && (
+                                <g opacity="0.4">
+                                    <circle cx="20" cy="110" r="30" fill="none" stroke="#3b82f6" strokeWidth="1">
+                                        <animate attributeName="r" values="30;120" dur="2s" repeatCount="indefinite" />
+                                        <animate attributeName="opacity" values="1;0" dur="2s" repeatCount="indefinite" />
+                                    </circle>
+                                </g>
+                            )}
+                            
+                            {/* Sending data animation */}
+                            {sendingData && (
+                                <g>
+                                    <circle cx="50" cy="110" r="5" fill="#3b82f6">
+                                        <animate attributeName="cx" values="20;120" dur="0.8s" begin="0s" fill="freeze" />
+                                    </circle>
+                                    <text x="70" y="100" fill="#60a5fa" fontSize="12" fontWeight="bold" fontFamily="monospace">
+                                        <animate attributeName="x" values="30;130" dur="0.8s" begin="0s" fill="freeze" />
+                                        '{sendingData}'
+                                    </text>
+                                </g>
+                            )}
+
+                            {/* HC-05 Bluetooth Module */}
+                            <g transform="translate(110, 80)">
+                                <rect x="0" y="0" width="35" height="60" rx="2" fill="#1e3a8a" stroke="#1e40af" strokeWidth="1" />
+                                <rect x="5" y="5" width="25" height="15" fill="#0f172a" /> {/* Antenna area */}
+                                <path d="M 10 15 L 15 10 L 20 15 L 15 20 Z M 15 10 L 15 20 M 15 15 L 25 15" stroke="#3b82f6" strokeWidth="1" fill="none" /> {/* BT Logo */}
+                                <rect x="10" y="25" width="15" height="15" fill="#0f172a" /> {/* IC */}
+                                
+                                {/* Status LED on HC-05 */}
+                                <circle cx="17.5" cy="50" r="2" fill={btConnected ? (sendingData ? "#3b82f6" : "#22c55e") : "#ef4444"} 
+                                    opacity={!btConnected ? "0.5" : "1"} />
+                                {btConnected && !sendingData && (
+                                    <circle cx="17.5" cy="50" r="2" fill="#22c55e">
+                                        <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite" />
+                                    </circle>
+                                )}
+                                
+                                {/* Pins */}
+                                <rect x="5" y="60" width="2" height="5" fill="#94a3b8" />
+                                <rect x="11" y="60" width="2" height="5" fill="#94a3b8" />
+                                <rect x="17" y="60" width="2" height="5" fill="#94a3b8" />
+                                <rect x="23" y="60" width="2" height="5" fill="#94a3b8" />
+                                <rect x="29" y="60" width="2" height="5" fill="#94a3b8" />
+                                <text x="6" y="72" fontSize="4" fill="#93c5fd" fontFamily="monospace">RX TX GN VC EN</text>
+                                <text x="17.5" y="4" textAnchor="middle" fontSize="5" fill="#60a5fa" fontWeight="bold">HC-05</text>
+                            </g>
+
+                            {/* Arduino Board */}
+                            <g transform="translate(180, 70)">
+                                <rect x="0" y="0" width="60" height="80" rx="4" fill="#0369a1" stroke="#0284c7" strokeWidth="1" />
+                                <text x="30" y="40" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold" fontFamily="monospace">ARDUINO</text>
+                                
+                                {/* Digital Pins Header (Top) */}
+                                <rect x="5" y="2" width="50" height="6" fill="#0f172a" />
+                                <text x="45" y="13" fontSize="4" fill="white" fontFamily="monospace">13</text>
+                                <text x="10" y="13" fontSize="4" fill="white" fontFamily="monospace">RX TX</text>
+                                <text x="10" y="18" fontSize="4" fill="white" fontFamily="monospace"> 0  1</text>
+                                
+                                {/* Power Pins Header (Bottom) */}
+                                <rect x="10" y="72" width="30" height="6" fill="#0f172a" />
+                                <text x="25" y="68" fontSize="4" fill="white" fontFamily="monospace">5V GND</text>
+                            </g>
+
+                            {/* Wires between HC-05 and Arduino */}
+                            <path d="M 116 145 L 116 155 L 205 155 L 205 142" stroke="#ef4444" strokeWidth="1" fill="none" /> {/* VCC -> 5V */}
+                            <path d="M 122 145 L 122 160 L 210 160 L 210 142" stroke="#000000" strokeWidth="1" fill="none" /> {/* GND -> GND */}
+                            
+                            <path d="M 128 145 L 128 150 L 190 150 L 190 78" stroke="#eab308" strokeWidth="1.5" fill="none" /> {/* TX(HC05) -> RX(0) */}
+                            <path d="M 134 145 L 134 148 L 195 148 L 195 78" stroke="#10b981" strokeWidth="1.5" fill="none" /> {/* RX(HC05) -> TX(1) */}
+                            
+                            {/* Data animation on wires */}
+                            {sendingData && (
+                                <g>
+                                    <circle r="2" fill="#fbbf24">
+                                        <animateMotion path="M 128 145 L 128 150 L 190 150 L 190 78" dur="0.3s" begin="0.4s" fill="freeze" />
+                                    </circle>
+                                </g>
+                            )}
+
+                            {/* LED Component */}
+                            <g transform="translate(260, 50)">
+                                {/* LED glow */}
+                                {ledOn && (
+                                    <circle cx="10" cy="10" r="25" fill="#ef4444" opacity="0.3">
+                                        <animate attributeName="opacity" values="0.2;0.4;0.2" dur="1s" repeatCount="indefinite" />
+                                    </circle>
+                                )}
+                                {/* LED body */}
+                                <polygon points="3,10 17,10 14,25 6,25" fill={ledOn ? "rgba(239, 68, 68, 0.9)" : "rgba(153, 27, 27, 0.5)"} stroke="#dc2626" strokeWidth="1" />
+                                <ellipse cx="10" cy="10" rx="7" ry="4" fill={ledOn ? "#f87171" : "rgba(153, 27, 27, 0.6)"} stroke="#dc2626" strokeWidth="0.5" />
+                                {/* Legs */}
+                                <line x1="8" y1="25" x2="8" y2="45" stroke="#94a3b8" strokeWidth="1" /> {/* Long (Anode) */}
+                                <line x1="12" y1="25" x2="12" y2="40" stroke="#94a3b8" strokeWidth="1" /> {/* Short (Cathode) */}
+                                
+                                {/* Wiring */}
+                                <path d="M 8 45 L 8 50 L -35 50 L -35 22" stroke="#ef4444" strokeWidth="1" fill="none" /> {/* Pin 13 */}
+                                <path d="M 12 40 L 12 45 L -20 45 L -20 22" stroke="#000000" strokeWidth="1" fill="none" /> {/* GND (near pin 13) */}
+                            </g>
+                            
+                            {/* Explanation Tooltips */}
+                            <rect x="180" y="170" width="110" height="40" rx="4" fill="#1e293b" stroke="#334155" />
+                            <text x="185" y="182" fill="#a3e635" fontSize="7" fontFamily="monospace" fontWeight="bold">Serial.read() = '{serialLog.length > 0 ? serialLog[serialLog.length-1].data : '0'}'</text>
+                            <text x="185" y="195" fill={ledOn ? "#4ade80" : "#f87171"} fontSize="7" fontFamily="monospace">
+                                {ledOn ? "digitalWrite(13, HIGH)" : "digitalWrite(13, LOW)"}
+                            </text>
+                            <text x="185" y="205" fill="#94a3b8" fontSize="6" fontFamily="monospace">LED is {ledOn ? "ON" : "OFF"}</text>
+
+                            {/* RX/TX crossover note */}
+                            <rect x="80" y="170" width="80" height="25" rx="2" fill="#1e1b4b" stroke="#312e81" />
+                            <text x="85" y="180" fill="#818cf8" fontSize="6" fontFamily="monospace">HC05 TX → Arduino RX</text>
+                            <text x="85" y="188" fill="#818cf8" fontSize="6" fontFamily="monospace">HC05 RX → Arduino TX</text>
+                        </svg>
+                    </div>
+                </div>
+
+                {/* Serial Monitor Display */}
+                <div className="mt-4 bg-gray-950 rounded-xl p-3 border border-gray-800 font-mono text-xs flex flex-col h-28 relative">
+                    <p className="text-[10px] text-gray-500 mb-1 border-b border-gray-800 pb-1 flex justify-between">
+                        <span>📟 COM3 - Serial Monitor (9600 baud)</span>
+                        {btConnected && <span className="text-green-400">● BT Connected</span>}
+                    </p>
+                    <div className="flex-1 overflow-hidden flex flex-col justify-end space-y-1">
+                        {serialLog.length === 0 ? (
+                            <p className="text-gray-600 italic text-[10px]">Waiting for Bluetooth data...</p>
+                        ) : (
+                            serialLog.map((log, i) => (
+                                <p key={i} className="text-green-400">
+                                    <span className="text-gray-500">[{log.time}]</span> Received: {log.data}
+                                    <span className="text-gray-400 ml-2">→ LED {log.data === '1' ? 'ON' : log.data === '0' ? 'OFF' : 'Unknown'}</span>
+                                </p>
+                            ))
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Materials and Connections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                <div className="p-4 rounded-2xl border border-blue-100 bg-blue-50">
+                    <h3 className="text-sm font-extrabold text-blue-900 mb-3 flex items-center gap-2">
+                        <Wrench size={14} /> Required Components
+                    </h3>
+                    <ul className="space-y-2">
+                        {[
+                            { label: 'Arduino Uno Board', icon: '🟦' },
+                            { label: 'HC-05 Bluetooth Module', icon: '📶' },
+                            { label: 'LED & Resistor', icon: '💡' },
+                            { label: 'Jumper Wires & Breadboard', icon: '🔌' },
+                            { label: 'Android Mobile Phone', icon: '📱' },
+                        ].map((m, i) => (
+                            <li key={i} className="flex items-center gap-2.5 text-sm text-blue-900 bg-white rounded-lg px-3 py-2 border border-blue-100 shadow-sm">
+                                <span>{m.icon}</span><span className="font-semibold">{m.label}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-indigo-100 bg-indigo-50">
+                    <h3 className="text-sm font-extrabold text-indigo-900 mb-3 flex items-center gap-2">
+                        <CircuitBoard size={14} /> Circuit Connections
+                    </h3>
+                    <ol className="space-y-2">
+                        {[
+                            { step: 'HC-05 VCC ➡️ Arduino 5V', icon: '🔴' },
+                            { step: 'HC-05 GND ➡️ Arduino GND', icon: '⚫' },
+                            { step: 'HC-05 RX ➡️ Arduino TX (Pin 1)', icon: '🟢', highlight: true },
+                            { step: 'HC-05 TX ➡️ Arduino RX (Pin 0)', icon: '🟡', highlight: true },
+                            { step: 'LED Positive ➡️ Arduino Pin 13', icon: '🔌' },
+                        ].map((c, i) => (
+                            <li key={i} className={`flex items-center gap-2 text-xs p-2 rounded-lg ${c.highlight ? 'bg-indigo-100 border border-indigo-200 font-bold text-indigo-900' : 'text-indigo-800 bg-white border border-indigo-50'}`}>
+                                <span>{c.icon}</span> <span>{c.step}</span>
+                            </li>
+                        ))}
+                    </ol>
+                    <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded-lg text-[10px] text-yellow-800 font-semibold flex items-start gap-1">
+                        <span className="mt-0.5">⚠️</span>
+                        <p><strong>Note:</strong> Code upload karte samay HC-05 ki RX/TX pins Arduino se disconnect karni padti hain warna code upload nahi hoga.</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Arduino Program */}
+            <div className="rounded-2xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: '#1e293b' }}>
+                    <FileCode2 size={14} className="text-blue-400" />
+                    <span className="text-xs font-bold text-blue-300 tracking-wide">Arduino Code</span>
+                    <div className="ml-auto flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500" /><div className="w-3 h-3 rounded-full bg-yellow-500" /><div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                </div>
+                <div className="bg-gray-950 p-4 font-mono text-xs leading-7 overflow-x-auto">
+                    <div><span className="text-sky-400">char</span> <span className="text-green-300">data</span> <span className="text-gray-400">=</span> <span className="text-orange-400">0</span><span className="text-gray-300">;</span></div>
+                    <div className="mt-2"><span className="text-purple-400">void</span> <span className="text-yellow-300">setup</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-sky-300">Serial</span><span className="text-gray-300">.</span><span className="text-yellow-200">begin</span><span className="text-gray-300">(</span><span className="text-orange-400">9600</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">OUTPUT</span><span className="text-gray-300">);</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                    <div className="mt-2"><span className="text-purple-400">void</span> <span className="text-yellow-300">loop</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-purple-400">if</span> <span className="text-gray-300">(</span><span className="text-sky-300">Serial</span><span className="text-gray-300">.</span><span className="text-yellow-200">available</span><span className="text-gray-300">() &gt;</span> <span className="text-orange-400">0</span><span className="text-gray-300">)</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-green-300">data</span> <span className="text-gray-400">=</span> <span className="text-sky-300">Serial</span><span className="text-gray-300">.</span><span className="text-yellow-200">read</span><span className="text-gray-300">();</span></div>
+                    <div className="ml-8 mt-1"><span className="text-sky-300">Serial</span><span className="text-gray-300">.</span><span className="text-yellow-200">print</span><span className="text-gray-300">(</span><span className="text-green-300">data</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8 mt-2"><span className="text-purple-400">if</span> <span className="text-gray-300">(</span><span className="text-green-300">data</span> <span className="text-gray-400">==</span> <span className="text-emerald-300">'1'</span><span className="text-gray-300">)</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-12"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">HIGH</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8"><span className="text-gray-300">{'}'}</span></div>
+                    <div className="ml-8 mt-1"><span className="text-purple-400">else if</span> <span className="text-gray-300">(</span><span className="text-green-300">data</span> <span className="text-gray-400">==</span> <span className="text-emerald-300">'0'</span><span className="text-gray-300">)</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-12"><span className="text-sky-300">digitalWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">13</span><span className="text-gray-300">,</span> <span className="text-orange-400">LOW</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8"><span className="text-gray-300">{'}'}</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                </div>
+            </div>
+
+            {/* Code Explanation */}
+            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 mb-6">
+                <h3 className="text-sm font-extrabold text-gray-800 mb-4 flex items-center gap-2">
+                    <BookOpen size={14} className="text-blue-500" /> 🔹 Code Explanation
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
+                            <code className="text-[11px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">char data = 0;</code>
+                            <p className="text-xs text-gray-600 mt-1">Mobile se aane wale data ko store karne ke liye variable.</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
+                            <code className="text-[11px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">Serial.begin(9600);</code>
+                            <p className="text-xs text-gray-600 mt-1">Arduino aur Bluetooth HC-05 ke beech 9600 baud rate par communication shuru karta hai.</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
+                            <code className="text-[11px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">Serial.available() &gt; 0</code>
+                            <p className="text-xs text-gray-600 mt-1">Check karta hai ki Bluetooth se koi naya data aya hai ya nahi.</p>
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
+                            <code className="text-[11px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">data = Serial.read();</code>
+                            <p className="text-xs text-gray-600 mt-1">Bluetooth se aaye hue data (character) ko read karke `data` variable me store karta hai.</p>
+                        </div>
+                        <div className="p-3 bg-green-50 rounded-xl border border-green-100 shadow-sm">
+                            <code className="text-[11px] font-bold text-green-700 bg-green-100 px-1.5 py-0.5 rounded">if (data == '1')</code>
+                            <p className="text-xs text-green-800 mt-1">Agar mobile se '1' received hota hai, to `digitalWrite(13, HIGH)` se LED ON ho jati hai.</p>
+                        </div>
+                        <div className="p-3 bg-red-50 rounded-xl border border-red-100 shadow-sm">
+                            <code className="text-[11px] font-bold text-red-700 bg-red-100 px-1.5 py-0.5 rounded">else if (data == '0')</code>
+                            <p className="text-xs text-red-800 mt-1">Agar mobile se '0' received hota hai, to `digitalWrite(13, LOW)` se LED OFF ho jati hai.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Conclusion */}
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+                <h3 className="text-sm font-extrabold text-blue-900 mb-3 flex items-center gap-2">
+                    <CheckCircle2 size={14} /> 🔹 Result & Conclusion
+                </h3>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                    Is practical me humne Arduino aur HC-05 Bluetooth Module ka upyog karke Mobile Phone se LED ko Successfully Control kiya। Isse hume <strong>Bluetooth Communication aur Basic IoT Automation</strong> ki working samajh aati hai। Yehi concept aage chal kar <strong>Smart Home Systems aur Smart Switches</strong> me use hota hai।
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {['HC-05', 'Bluetooth UART', 'Serial.read', 'IoT Basics', 'Home Automation'].map((tag, i) => (
+                        <span key={i} className="px-3 py-1 bg-white border border-blue-200 rounded-full text-[10px] font-bold text-blue-700 shadow-sm">{tag}</span>
+                    ))}
                 </div>
             </div>
         </section>
