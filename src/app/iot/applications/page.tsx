@@ -56,6 +56,7 @@ const tocItems = [
     { icon: <Scan size={13} />, label: 'Practical – PIR Sensor', id: 'pir-practical', color: '#ec4899' },
     { icon: <Radar size={13} />, label: 'Practical – IR Sensor', id: 'ir-practical', color: '#ef4444' },
     { icon: <Thermometer size={13} />, label: 'Practical – DHT11', id: 'dht-practical', color: '#10b981' },
+    { icon: <Lightbulb size={13} />, label: 'Practical – Fading LED', id: 'fading-led-practical', color: '#f59e0b' },
 ];
 
 export default function IoTApplications() {
@@ -2851,6 +2852,9 @@ export default function IoTApplications() {
 
                     {/* ═══ SECTION: Practical – DHT11 Sensor ═══ */}
                     <DHTSensorPracticalSection />
+
+                    {/* ═══ SECTION: Practical – Fading LED ═══ */}
+                    <FadingLEDPracticalSection />
                 </main>
             </div>
         </div>
@@ -5012,6 +5016,469 @@ function DHTSensorPracticalSection() {
                         { label: 'delay(1000) — Wait 1 Second', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
                         null,
                         { label: '↩ loop() repeats', style: { background: '#ecfdf5', border: '1.5px solid #6ee7b7', color: '#059669', borderRadius: '8px' } as React.CSSProperties },
+                    ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
+                        item === null
+                            ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
+                            : <div key={i} className="px-4 py-2 text-[11px] shadow-sm" style={item.style}>{item.label}</div>
+                    )}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function FadingLEDPracticalSection() {
+    const [pwmValue, setPwmValue] = useState(127);
+    const [autoFade, setAutoFade] = useState(false);
+    const [fadeDir, setFadeDir] = useState(1);
+
+    const brightness = pwmValue / 255;
+    const dutyCycle = Math.round((pwmValue / 255) * 100);
+
+    useEffect(() => {
+        if (!autoFade) return;
+        const t = setInterval(() => {
+            setPwmValue(prev => {
+                let next = prev + fadeDir * 5;
+                if (next >= 255) { next = 255; setFadeDir(-1); }
+                if (next <= 0) { next = 0; setFadeDir(1); }
+                return next;
+            });
+        }, 30);
+        return () => clearInterval(t);
+    }, [autoFade, fadeDir]);
+
+    const glowColor = `rgba(251, 191, 36, ${brightness})`;
+    const glowShadow = `0 0 ${brightness * 40}px ${brightness * 15}px rgba(251, 191, 36, ${brightness * 0.6})`;
+
+    return (
+        <section id="fading-led-practical" className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20 transition-all duration-300 hover:shadow-lg bg-white" style={{ border: '1px solid #fde68a', boxShadow: '0 1px 3px rgba(245,158,11,0.08)' }}>
+            <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #fef3c7' }}>
+                <Lightbulb size={16} className="text-amber-500" />
+                <h2 className="text-base md:text-lg font-extrabold text-gray-800">💡 Practical – Fading LED using Arduino</h2>
+            </div>
+
+            {/* Objective */}
+            <div className="rounded-xl p-4 mb-6 text-sm font-medium" style={{ background: 'linear-gradient(135deg, #fef3c7, #fde68a)', border: '1px solid #fbbf24', color: '#78350f' }}>
+                🎯 <strong>Objective:</strong> Arduino ki <strong>PWM (Pulse Width Modulation)</strong> Pins ka use karke LED ki Brightness ko gradually <strong>Increase aur Decrease</strong> karna (LED Fading Effect create karna)।
+            </div>
+
+            {/* Theory Section */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-50 to-yellow-50 border border-amber-100 mb-6">
+                <h3 className="text-sm font-extrabold text-amber-900 mb-4 flex items-center gap-2">
+                    <Zap size={14} /> 🔹 Theory
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                    <p>Fading LED ek aisa practical hai jisme LED ki brightness <strong>dheere-dheere kam aur zyada</strong> hoti hai।</p>
+                    <p>Arduino me <strong>PWM Pins</strong> ka use karke LED ko different Analog Values di jaati hain।</p>
+                    <p>Arduino ki PWM Pin par <code className="px-1.5 py-0.5 bg-gray-100 rounded text-xs font-mono text-amber-700">analogWrite(pin, value)</code> function use kiya jaata hai।</p>
+                </div>
+
+                {/* PWM Pins info */}
+                <div className="mt-5 p-4 bg-white rounded-xl border border-amber-200">
+                    <p className="text-xs font-bold text-amber-800 mb-2 uppercase tracking-wide">⚡ Arduino Uno PWM Pins:</p>
+                    <div className="flex flex-wrap gap-2">
+                        {[3, 5, 6, 9, 10, 11].map(pin => (
+                            <span key={pin} className="px-3 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-bold shadow-sm">Pin {pin} ~</span>
+                        ))}
+                    </div>
+                </div>
+
+                {/* analogWrite explanation */}
+                <div className="mt-4 p-4 bg-white rounded-xl border border-amber-200">
+                    <p className="text-xs font-bold text-amber-800 mb-2 uppercase tracking-wide">📝 analogWrite() Function:</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs mb-3">
+                        <span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">pin</span><span className="text-gray-300">,</span> <span className="text-orange-400">value</span><span className="text-gray-300">);</span>
+                        <span className="text-gray-600 ml-2">// value: 0-255</span>
+                    </div>
+                </div>
+
+                {/* PWM Value Table */}
+                <div className="mt-4 overflow-hidden rounded-xl border border-amber-200">
+                    <table className="w-full text-xs">
+                        <thead>
+                            <tr className="bg-amber-500 text-white">
+                                <th className="py-2 px-3 text-left font-bold">Value</th>
+                                <th className="py-2 px-3 text-left font-bold">Duty Cycle</th>
+                                <th className="py-2 px-3 text-left font-bold">Brightness</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {[
+                                { val: '0', duty: '0%', bright: 'OFF', bg: 'bg-gray-50' },
+                                { val: '64', duty: '25%', bright: '◔ Low', bg: 'bg-amber-50' },
+                                { val: '127', duty: '50%', bright: '◑ Medium', bg: 'bg-amber-100' },
+                                { val: '255', duty: '100%', bright: '● Full', bg: 'bg-amber-200' },
+                            ].map((r, i) => (
+                                <tr key={i} className={r.bg}>
+                                    <td className="py-2 px-3 font-mono font-bold text-amber-800">{r.val}</td>
+                                    <td className="py-2 px-3 font-semibold text-gray-700">{r.duty}</td>
+                                    <td className="py-2 px-3 font-semibold text-gray-700">{r.bright}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* ═══ Interactive Simulator ═══ */}
+            <div className="rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 to-orange-50 p-5 mb-6">
+                <p className="text-xs font-bold text-amber-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Zap size={12} /> Interactive Simulator — PWM Value adjust karo!
+                </p>
+
+                {/* Controls */}
+                <div className="flex flex-col items-center gap-3 mb-5">
+                    <div className="w-full max-w-md">
+                        <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                            <span>🌑 OFF (0)</span>
+                            <span>🔆 FULL (255)</span>
+                        </div>
+                        <input type="range" min={0} max={255} value={pwmValue} onChange={e => { setPwmValue(Number(e.target.value)); setAutoFade(false); }}
+                            className="w-full h-3 rounded-full outline-none cursor-pointer"
+                            style={{ WebkitAppearance: 'none', background: `linear-gradient(90deg, #fbbf24 ${dutyCycle}%, #e5e7eb ${dutyCycle}%)` } as React.CSSProperties} />
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold" style={{ background: '#fffbeb', border: '1px solid #fbbf24', color: '#b45309' }}>
+                            💡 analogWrite(11, {pwmValue}) — {dutyCycle}%
+                        </span>
+                        <button
+                            onClick={() => { setAutoFade(p => !p); setFadeDir(1); }}
+                            className="px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 hover:scale-105 active:scale-95"
+                            style={{
+                                background: autoFade ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #22c55e, #16a34a)',
+                                color: 'white', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                            }}
+                        >
+                            {autoFade ? '⏸ Stop Auto Fade' : '▶ Auto Fade'}
+                        </button>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+                    {/* Animated SVG */}
+                    <div className="flex justify-center">
+                        <svg viewBox="0 0 400 300" className="w-full max-w-md" style={{ filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.10))' }}>
+                            <rect width="400" height="300" rx="16" fill="#0f172a" />
+                            <text x="200" y="22" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold" fontFamily="monospace">FADING LED — PWM SIMULATOR</text>
+
+                            {/* Arduino Board */}
+                            <rect x="10" y="80" width="80" height="110" rx="8" fill="#1e40af" stroke="#3b82f6" strokeWidth="1.5" />
+                            <text x="50" y="103" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="monospace">ARDUINO</text>
+                            <text x="50" y="116" textAnchor="middle" fill="#93c5fd" fontSize="7" fontFamily="monospace">UNO R3</text>
+                            <rect x="70" y="128" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="138" textAnchor="middle" fill="#fbbf24" fontSize="7" fontWeight="bold" fontFamily="monospace">~11</text>
+                            <rect x="70" y="148" width="22" height="14" rx="3" fill="#1e3a5f" stroke="#3b82f6" strokeWidth="0.8" />
+                            <text x="81" y="158" textAnchor="middle" fill="#93c5fd" fontSize="7" fontWeight="bold" fontFamily="monospace">GND</text>
+
+                            {/* Wire from Pin 11 to LED */}
+                            <line x1="92" y1="135" x2="170" y2="100" stroke="#fbbf24" strokeWidth="1.5" strokeDasharray="4,2" />
+
+                            {/* LED */}
+                            <g>
+                                {/* LED glow */}
+                                <circle cx="200" cy="100" r={15 + brightness * 30} fill="#fbbf24" opacity={brightness * 0.15} />
+                                <circle cx="200" cy="100" r={10 + brightness * 15} fill="#fbbf24" opacity={brightness * 0.25} />
+                                {/* LED body */}
+                                <polygon points="185,90 215,90 210,115 190,115" fill={`rgba(251, 191, 36, ${0.15 + brightness * 0.85})`} stroke="#f59e0b" strokeWidth="1.5" />
+                                {/* LED dome */}
+                                <ellipse cx="200" cy="90" rx="15" ry="8" fill={`rgba(251, 191, 36, ${0.2 + brightness * 0.8})`} stroke="#f59e0b" strokeWidth="1" />
+                                {/* LED legs */}
+                                <line x1="195" y1="115" x2="195" y2="135" stroke="#94a3b8" strokeWidth="1.5" />
+                                <line x1="205" y1="115" x2="205" y2="135" stroke="#94a3b8" strokeWidth="1.5" />
+                                {/* + and - */}
+                                <text x="192" y="130" fill="#fbbf24" fontSize="8" fontWeight="bold" fontFamily="monospace">+</text>
+                                <text x="207" y="130" fill="#94a3b8" fontSize="8" fontWeight="bold" fontFamily="monospace">–</text>
+                            </g>
+
+                            {/* Brightness text */}
+                            <text x="200" y="68" textAnchor="middle" fill="#fbbf24" fontSize="14" fontWeight="bold" fontFamily="monospace" opacity={0.3 + brightness * 0.7}>{dutyCycle}%</text>
+
+                            {/* Resistor */}
+                            <line x1="205" y1="135" x2="205" y2="150" stroke="#94a3b8" strokeWidth="1.5" />
+                            <rect x="198" y="150" width="14" height="25" rx="3" fill="#78350f" stroke="#92400e" strokeWidth="1" />
+                            {/* Resistor bands */}
+                            <line x1="200" y1="156" x2="210" y2="156" stroke="#ef4444" strokeWidth="2" />
+                            <line x1="200" y1="161" x2="210" y2="161" stroke="#ef4444" strokeWidth="2" />
+                            <line x1="200" y1="166" x2="210" y2="166" stroke="#92400e" strokeWidth="2" />
+                            <text x="205" y="185" textAnchor="middle" fill="#a16207" fontSize="7" fontWeight="bold" fontFamily="monospace">220Ω</text>
+
+                            {/* GND */}
+                            <line x1="205" y1="175" x2="205" y2="195" stroke="#94a3b8" strokeWidth="1.5" />
+                            <line x1="92" y1="155" x2="205" y2="195" stroke="#64748b" strokeWidth="1" strokeDasharray="4,2" />
+                            <line x1="195" y1="198" x2="215" y2="198" stroke="#64748b" strokeWidth="2" />
+                            <line x1="198" y1="203" x2="212" y2="203" stroke="#64748b" strokeWidth="2" />
+                            <line x1="201" y1="207" x2="209" y2="207" stroke="#64748b" strokeWidth="1.5" />
+                            <text x="205" y="218" textAnchor="middle" fill="#64748b" fontSize="7" fontFamily="monospace">GND</text>
+
+                            {/* PWM Signal visualization */}
+                            <rect x="10" y="230" width="380" height="60" rx="8" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+                            <text x="25" y="245" fill="#fbbf24" fontSize="8" fontWeight="bold" fontFamily="monospace">PWM Signal (Duty Cycle: {dutyCycle}%)</text>
+                            {/* PWM waveform */}
+                            {Array.from({ length: 12 }, (_, i) => {
+                                const x = 25 + i * 30;
+                                const highW = (dutyCycle / 100) * 28;
+                                const lowW = 28 - highW;
+                                return (
+                                    <g key={`pwm-${i}`}>
+                                        {highW > 0 && <rect x={x} y={253} width={highW} height={12} fill="#fbbf24" opacity="0.7" rx="1" />}
+                                        {lowW > 0 && <rect x={x + highW} y={253} width={lowW} height={12} fill="#334155" rx="1" />}
+                                        <line x1={x} y1={253} x2={x} y2={265} stroke="#475569" strokeWidth="0.5" />
+                                        {highW > 0 && <line x1={x} y1={253} x2={x + highW} y2={253} stroke="#fbbf24" strokeWidth="1" />}
+                                        {highW > 0 && <line x1={x + highW} y1={253} x2={x + highW} y2={265} stroke="#fbbf24" strokeWidth="0.5" />}
+                                    </g>
+                                );
+                            })}
+                            <text x="200" y="282" textAnchor="middle" fill="#64748b" fontSize="7" fontFamily="monospace">HIGH = {dutyCycle}% | LOW = {100 - dutyCycle}% | analogWrite(11, {pwmValue})</text>
+                        </svg>
+                    </div>
+
+                    {/* Data Panel */}
+                    <div className="space-y-3">
+                        <div className="p-4 rounded-xl text-center" style={{ background: '#fffbeb', border: '1.5px solid #fbbf24' }}>
+                            <div className="w-20 h-20 rounded-full mx-auto mb-3 flex items-center justify-center transition-all duration-100"
+                                style={{ background: glowColor, boxShadow: glowShadow }}>
+                                <Lightbulb size={28} className="text-white" style={{ opacity: 0.3 + brightness * 0.7 }} />
+                            </div>
+                            <p className="text-2xl font-black text-amber-700 font-mono">{pwmValue}</p>
+                            <p className="text-xs text-amber-600 font-semibold">analogWrite Value</p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
+                            <p className="text-xs font-bold text-slate-400 mb-2 font-mono">PWM Output</p>
+                            <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                    <p className="text-lg font-black font-mono text-amber-400">{dutyCycle}%</p>
+                                    <p className="text-[10px] text-slate-500">Duty Cycle</p>
+                                </div>
+                                <div>
+                                    <p className="text-lg font-black font-mono text-amber-400">{pwmValue}/255</p>
+                                    <p className="text-[10px] text-slate-500">PWM Value</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                            <p className="text-xs font-bold text-amber-800 mb-1">📊 Duty Cycle Bar</p>
+                            <div className="h-4 rounded-full overflow-hidden bg-gray-200">
+                                <div className="h-full rounded-full transition-all duration-100" style={{ width: `${dutyCycle}%`, background: 'linear-gradient(90deg, #f59e0b, #fbbf24)' }} />
+                            </div>
+                            <div className="flex justify-between text-[10px] font-mono text-amber-700 mt-1">
+                                <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+                            </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
+                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[11px] text-amber-400">analogWrite(11, {pwmValue})</p>
+                            <p className="text-[11px] text-gray-400">Brightness: {dutyCycle}% | LED {pwmValue === 0 ? 'OFF' : pwmValue === 255 ? 'FULL ON' : 'GLOWING'}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-[10px] text-amber-700 mt-3 text-center font-medium">⬆️ Slider se PWM value adjust karo ya Auto Fade button dabao — LED brightness change hogi!</p>
+            </div>
+
+            {/* Code 1 */}
+            <div className="rounded-2xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: '#1e293b' }}>
+                    <FileCode2 size={14} className="text-amber-400" />
+                    <span className="text-xs font-bold text-amber-300 tracking-wide">Code 1 — Step Brightness</span>
+                    <div className="ml-auto flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500" /><div className="w-3 h-3 rounded-full bg-yellow-500" /><div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                </div>
+                <div className="bg-gray-950 p-4 font-mono text-xs leading-7 overflow-x-auto">
+                    <div><span className="text-purple-400">void</span> <span className="text-yellow-300">setup</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                    <div className="mt-3"><span className="text-purple-400">void</span> <span className="text-yellow-300">loop</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">0</span><span className="text-gray-300">);</span> <span className="text-gray-600">// OFF</span></div>
+                    <div className="ml-4"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">1000</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">64</span><span className="text-gray-300">);</span> <span className="text-gray-600">// 25%</span></div>
+                    <div className="ml-4"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">1000</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">127</span><span className="text-gray-300">);</span> <span className="text-gray-600">// 50%</span></div>
+                    <div className="ml-4"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">1000</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4 mt-1"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">255</span><span className="text-gray-300">);</span> <span className="text-gray-600">// 100%</span></div>
+                    <div className="ml-4"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">1000</span><span className="text-gray-300">);</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                </div>
+            </div>
+
+            {/* Code 1 Working */}
+            <div className="p-4 rounded-2xl bg-yellow-50 border border-yellow-200 mb-6">
+                <h3 className="text-sm font-extrabold text-yellow-900 mb-3 flex items-center gap-2">
+                    <Cog size={14} /> 🔹 Working of Code 1
+                </h3>
+                <p className="text-sm text-gray-700 mb-3">Is Program me LED ki Brightness alag-alag PWM Values dwara badli jaati hai।</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {[
+                        { val: 0, label: 'OFF', emoji: '🌑', bg: 'bg-gray-100' },
+                        { val: 64, label: '25%', emoji: '🌒', bg: 'bg-amber-50' },
+                        { val: 127, label: '50%', emoji: '🌓', bg: 'bg-amber-100' },
+                        { val: 255, label: '100%', emoji: '🌕', bg: 'bg-amber-200' },
+                    ].map((s, i) => (
+                        <div key={i} className={`p-3 rounded-xl ${s.bg} border border-amber-200 text-center`}>
+                            <p className="text-xl mb-1">{s.emoji}</p>
+                            <p className="text-xs font-bold text-amber-800">Value = {s.val}</p>
+                            <p className="text-[10px] text-gray-600">{s.label} Brightness</p>
+                        </div>
+                    ))}
+                </div>
+                <p className="text-xs text-gray-600 mt-3">Har Value ke baad <strong>1 Second ka Delay</strong> diya gaya hai।</p>
+            </div>
+
+            {/* Code 2 */}
+            <div className="rounded-2xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: '#1e293b' }}>
+                    <FileCode2 size={14} className="text-amber-400" />
+                    <span className="text-xs font-bold text-amber-300 tracking-wide">Code 2 — Smooth Fade (For Loop)</span>
+                    <div className="ml-auto flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500" /><div className="w-3 h-3 rounded-full bg-yellow-500" /><div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                </div>
+                <div className="bg-gray-950 p-4 font-mono text-xs leading-7 overflow-x-auto">
+                    <div><span className="text-purple-400">void</span> <span className="text-yellow-300">loop</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-4"><span className="text-sky-400">int</span> <span className="text-green-300">i</span><span className="text-gray-300">;</span></div>
+                    <div className="ml-4 mt-2"><span className="text-purple-400">for</span><span className="text-gray-300">(</span><span className="text-green-300">i</span><span className="text-gray-400">=</span><span className="text-orange-400">0</span><span className="text-gray-300">;</span> <span className="text-green-300">i</span><span className="text-gray-400">&lt;=</span><span className="text-orange-400">255</span><span className="text-gray-300">;</span> <span className="text-green-300">i</span><span className="text-gray-400">=</span><span className="text-green-300">i</span><span className="text-gray-400">+</span><span className="text-orange-400">5</span><span className="text-gray-300">)</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-green-300">i</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">10</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div className="ml-4 mt-2"><span className="text-purple-400">for</span><span className="text-gray-300">(</span><span className="text-green-300">i</span><span className="text-gray-400">=</span><span className="text-orange-400">255</span><span className="text-gray-300">;</span> <span className="text-green-300">i</span><span className="text-gray-400">&gt;=</span><span className="text-orange-400">0</span><span className="text-gray-300">;</span> <span className="text-green-300">i</span><span className="text-gray-400">=</span><span className="text-green-300">i</span><span className="text-gray-400">-</span><span className="text-orange-400">5</span><span className="text-gray-300">)</span> <span className="text-gray-300">{'{'}</span></div>
+                    <div className="ml-8"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-green-300">i</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-8"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">10</span><span className="text-gray-300">);</span></div>
+                    <div className="ml-4"><span className="text-gray-300">{'}'}</span></div>
+                    <div><span className="text-gray-300">{'}'}</span></div>
+                </div>
+            </div>
+
+            {/* Code 2 Working */}
+            <div className="p-4 rounded-2xl bg-orange-50 border border-orange-200 mb-6">
+                <h3 className="text-sm font-extrabold text-orange-900 mb-3 flex items-center gap-2">
+                    <Cog size={14} /> 🔹 Working of Code 2
+                </h3>
+                <p className="text-sm text-gray-700 mb-3">Is Program me LED ki Brightness <strong>dheere-dheere badhti aur ghatti</strong> hai।</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                        <p className="text-xs font-bold text-emerald-800 mb-1">⬆️ Fade IN (Pahla For Loop)</p>
+                        <p className="text-[11px] text-emerald-700">i = 0 se i = 255 tak value badhti hai। LED dheere-dheere bright hoti jaati hai।</p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-red-50 border border-red-200">
+                        <p className="text-xs font-bold text-red-800 mb-1">⬇️ Fade OUT (Doosra For Loop)</p>
+                        <p className="text-[11px] text-red-700">i = 255 se i = 0 tak value ghatti hai। LED dheere-dheere dim hoti jaati hai।</p>
+                    </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-3">Is prakar LED lagaatar <strong>Fade In aur Fade Out</strong> effect deti rehti hai।</p>
+            </div>
+
+            {/* Materials and Connections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                <div className="p-4 rounded-2xl border border-amber-100 bg-amber-50">
+                    <h3 className="text-sm font-extrabold text-amber-900 mb-3 flex items-center gap-2">
+                        <Wrench size={14} /> आवश्यक सामग्री (Components)
+                    </h3>
+                    <ul className="space-y-2">
+                        {[
+                            { label: 'Arduino Board (Uno R3)', icon: '🟦' },
+                            { label: 'LED', icon: '💡' },
+                            { label: '220Ω Resistor', icon: '🟤' },
+                            { label: 'Jumper Wires', icon: '🔗' },
+                            { label: 'Breadboard', icon: '🧱' },
+                        ].map((m, i) => (
+                            <li key={i} className="flex items-center gap-2.5 text-sm text-amber-900 bg-white rounded-lg px-3 py-2 border border-amber-100 shadow-sm">
+                                <span>{m.icon}</span><span className="font-semibold">{m.label}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-yellow-100 bg-yellow-50">
+                    <h3 className="text-sm font-extrabold text-yellow-900 mb-3 flex items-center gap-2">
+                        <CircuitBoard size={14} /> Circuit Connection
+                    </h3>
+                    <ol className="space-y-2">
+                        {[
+                            { step: 'LED की Positive Pin ko Arduino की PWM Pin No. 11 se connect करें।', color: 'text-amber-600' },
+                            { step: 'LED की Negative Pin ko 220Ω Resistor ke through Ground se connect करें।', color: 'text-gray-600' },
+                        ].map((c, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-yellow-900">
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-yellow-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className={`font-medium ${c.color}`}>{c.step}</span>
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+            </div>
+
+            {/* Working Principle */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-100 mb-6">
+                <h3 className="text-sm font-extrabold text-violet-900 mb-4 flex items-center gap-2">
+                    <Activity size={14} /> 🔹 कार्य प्रणाली (Working)
+                </h3>
+                <div className="space-y-3 text-sm text-gray-700">
+                    <p>Arduino ke saath ek LED ko Fade karne ki Process ko <strong>Fading LED</strong> kaha jaata hai।</p>
+                    <p>Isme LED ki Brightness <strong>dheere-dheere badhai aur ghatai</strong> jaati hai।</p>
+                    <p>Ye kaam <strong>PWM (Pulse Width Modulation)</strong> ka use karke kiya jaata hai।</p>
+                    <p>PWM ke dwara Arduino LED ko different <strong>duty cycle values</strong> provide karta hai jisse LED ki brightness control hoti hai।</p>
+                </div>
+            </div>
+
+            {/* Output */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                    <p className="text-xs font-bold text-amber-800 mb-2">💡 Output — Code 1:</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs">
+                        <p className="text-gray-400">OFF → 25% → 50% → 100%</p>
+                        <p className="text-amber-400 mt-1">Step-by-step brightness change</p>
+                    </div>
+                </div>
+                <div className="p-4 rounded-xl bg-orange-50 border border-orange-200">
+                    <p className="text-xs font-bold text-orange-800 mb-2">💡 Output — Code 2:</p>
+                    <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs">
+                        <p className="text-amber-400">Fade In → Fade Out → Fade In → Fade Out</p>
+                        <p className="text-gray-400 mt-1">Smooth continuous fading</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Conclusion */}
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 mb-6">
+                <h3 className="text-sm font-extrabold text-amber-900 mb-3 flex items-center gap-2">
+                    <CheckCircle2 size={14} /> 🔹 Conclusion
+                </h3>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                    Arduino ki <strong>PWM Pin</strong> aur <code className="px-1 py-0.5 bg-amber-100 rounded text-xs font-mono text-amber-700">analogWrite()</code> Function ka use karke LED ki Brightness ko successfully control kiya gaya। Is practical me LED ko <strong>Fade In aur Fade Out</strong> Effect diya gaya jo PWM Technique ka ek practical example hai।
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {['PWM Control', 'analogWrite', 'Fade Effect', 'Duty Cycle', 'LED Brightness'].map((tag, i) => (
+                        <span key={i} className="px-3 py-1 bg-white border border-amber-200 rounded-full text-[10px] font-bold text-amber-700 shadow-sm">{tag}</span>
+                    ))}
+                </div>
+            </div>
+
+            {/* Flowchart */}
+            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200">
+                <h3 className="text-sm font-extrabold text-gray-800 mb-4 flex items-center gap-2">
+                    <ChevronRight size={14} className="text-amber-500" /> Program Flow — Code 2 (Flowchart)
+                </h3>
+                <div className="flex flex-col items-center gap-0 text-center text-xs font-semibold">
+                    {([
+                        { label: 'START', style: { background: '#f59e0b', color: 'white', borderRadius: '50px' } as React.CSSProperties },
+                        null,
+                        { label: 'int i', style: { background: '#eff6ff', border: '1.5px solid #93c5fd', color: '#1e40af', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'for(i=0; i<=255; i+=5) — Fade IN', style: { background: '#ecfdf5', border: '1.5px solid #6ee7b7', color: '#065f46', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'analogWrite(11, i) — LED Brightness ⬆️', style: { background: '#fef3c7', border: '1.5px solid #fcd34d', color: '#92400e', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'delay(10)', style: { background: '#f1f5f9', border: '1.5px solid #cbd5e1', color: '#475569', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'for(i=255; i>=0; i-=5) — Fade OUT', style: { background: '#fef2f2', border: '1.5px solid #fca5a5', color: '#991b1b', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'analogWrite(11, i) — LED Brightness ⬇️', style: { background: '#fef3c7', border: '1.5px solid #fcd34d', color: '#92400e', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: 'delay(10)', style: { background: '#f1f5f9', border: '1.5px solid #cbd5e1', color: '#475569', borderRadius: '8px' } as React.CSSProperties },
+                        null,
+                        { label: '↩ loop() repeats — Continuous Fading', style: { background: '#fffbeb', border: '1.5px solid #fbbf24', color: '#b45309', borderRadius: '8px' } as React.CSSProperties },
                     ] as Array<{ label: string; style: React.CSSProperties } | null>).map((item, i) =>
                         item === null
                             ? <div key={i} className="w-0.5 h-5 bg-gray-300" />
