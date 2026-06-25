@@ -61,8 +61,8 @@ const iotTopics = [
         duration: '3 Hours',
         lessons: 14,
         locked: false,
-        completed: false,
-        current: true,
+        completed: true,
+        current: false,
     },
     {
         title: 'Security & Future of IoT',
@@ -75,8 +75,9 @@ const iotTopics = [
         chapter: 5,
         duration: '2.5 Hours',
         lessons: 12,
-        locked: true,
+        locked: false,
         completed: false,
+        current: true,
     },
     {
         title: 'Soft Skills — Personality Dev',
