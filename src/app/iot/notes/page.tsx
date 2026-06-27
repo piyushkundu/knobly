@@ -34,6 +34,51 @@ const handwrittenNotes = [
         size: '7.4 MB',
         topics: ['Control Systems', 'Open Loop Systems', 'Closed Loop Systems', 'Real-Time Systems', 'IoT Connectivity'],
     },
+    {
+        title: 'Chapter 3 — Sensors & Actuators',
+        subtitle: 'Types of Sensors, Actuators & Their Working Principles',
+        fileName: 'chapter 3 iot.pdf',
+        downloadName: 'IoT-Chapter-3-Handwritten-Notes.pdf',
+        chapter: 3,
+        color: '#10b981',
+        gradientFrom: '#10b981',
+        gradientTo: '#059669',
+        bgColor: '#ecfdf5',
+        borderColor: '#34d399',
+        pages: '~18',
+        size: '12.2 MB',
+        topics: ['Sensor Types', 'Temperature Sensors', 'Proximity Sensors', 'Actuator Types', 'IoT Sensor Networks'],
+    },
+    {
+        title: 'Chapter 4 — Microcontrollers & Arduino',
+        subtitle: 'Arduino Board, Programming, IDE & Microcontroller Architecture',
+        fileName: 'chapter 4 iot..pdf',
+        downloadName: 'IoT-Chapter-4-Handwritten-Notes.pdf',
+        chapter: 4,
+        color: '#f59e0b',
+        gradientFrom: '#f59e0b',
+        gradientTo: '#d97706',
+        bgColor: '#fffbeb',
+        borderColor: '#fbbf24',
+        pages: '~25',
+        size: '21.8 MB',
+        topics: ['Microcontroller Architecture', 'Arduino Boards', 'Arduino IDE', 'Sketches & Programming', 'Arduino Shields'],
+    },
+    {
+        title: 'Chapter 5 — IoT Security & Cloud',
+        subtitle: 'Cyber Security, Cloud Computing & IoT Network Security',
+        fileName: 'chapter 5 iot. (1).pdf',
+        downloadName: 'IoT-Chapter-5-Handwritten-Notes.pdf',
+        chapter: 5,
+        color: '#ef4444',
+        gradientFrom: '#ef4444',
+        gradientTo: '#dc2626',
+        bgColor: '#fef2f2',
+        borderColor: '#f87171',
+        pages: '~10',
+        size: '3.2 MB',
+        topics: ['Cyber Security', 'Types of Attacks', 'Cloud Computing', 'IaaS/PaaS/SaaS', 'IoT Network Security'],
+    },
 ];
 
 export default function HandwrittenNotesPage() {
@@ -166,7 +211,7 @@ export default function HandwrittenNotesPage() {
                             <span className="text-3xl md:text-4xl font-bold text-gray-600">IoT Exam Notes 📝</span>
                         </h2>
                         <p className="text-lg text-gray-600 max-w-2xl mb-8 leading-relaxed">
-                            Chapter 1 aur Chapter 2 ke detailed handwritten notes — exam revision ke liye perfect! Download karo aur offline padho.
+                            Chapter 1 se Chapter 5 tak ke complete handwritten notes — exam revision ke liye perfect! Download karo aur offline padho.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <a href="#notes" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold shadow-lg shadow-amber-200 hover:shadow-xl hover:scale-105 hover:-translate-y-0.5 transition-all duration-300">
@@ -182,8 +227,8 @@ export default function HandwrittenNotesPage() {
                 {/* Stats Bar */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
                     {[
-                        { icon: <FileText size={22} />, label: 'PDF Notes', value: '2', color: 'from-amber-400 to-orange-500', bg: 'bg-amber-50' },
-                        { icon: <BookOpen size={22} />, label: 'Chapters Covered', value: 'Ch 1 & 2', color: 'from-cyan-400 to-blue-500', bg: 'bg-cyan-50' },
+                        { icon: <FileText size={22} />, label: 'PDF Notes', value: '5', color: 'from-amber-400 to-orange-500', bg: 'bg-amber-50' },
+                        { icon: <BookOpen size={22} />, label: 'Chapters Covered', value: 'Ch 1–5', color: 'from-cyan-400 to-blue-500', bg: 'bg-cyan-50' },
                         { icon: <PenTool size={22} />, label: 'Type', value: 'Handwritten', color: 'from-purple-400 to-violet-500', bg: 'bg-purple-50' },
                         { icon: <FileCheck size={22} />, label: 'Exam Ready', value: '100%', color: 'from-emerald-400 to-green-500', bg: 'bg-emerald-50' },
                     ].map((stat, i) => (
@@ -280,18 +325,18 @@ export default function HandwrittenNotesPage() {
                     </div>
                 </div>
 
-                {/* Coming Soon Teaser */}
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 p-8 md:p-12 text-center mb-12">
+                {/* All Chapters Available Banner */}
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-8 md:p-12 text-center mb-12">
                     <div className="absolute inset-0 opacity-20">
                         <svg width="100%" height="100%"><pattern id="notes-cta" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse"><circle cx="30" cy="30" r="2" fill="white" /></pattern><rect width="100%" height="100%" fill="url(#notes-cta)" /></svg>
                     </div>
                     <div className="relative z-10">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 text-white text-sm font-bold mb-4">
-                            <Sparkles size={14} />Coming Soon
+                            <Sparkles size={14} />All Chapters Available! 🎉
                         </div>
-                        <h3 className="text-2xl md:text-3xl font-black text-white mb-4">More Chapters Coming Soon! ✍️</h3>
-                        <p className="text-amber-100 mb-6 max-w-2xl mx-auto">Chapter 3, 4, 5 aur Soft Skills ke handwritten notes bhi jaldi add honge — stay tuned!</p>
-                        <Link href="/iot" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-amber-600 font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        <h3 className="text-2xl md:text-3xl font-black text-white mb-4">Complete IoT Notes — Chapter 1 to 5! ✍️</h3>
+                        <p className="text-emerald-100 mb-6 max-w-2xl mx-auto">Sabhi 5 chapters ke handwritten notes ab available hain! Download karo aur exam ki taiyari shuru karo. Soft Skills notes bhi jaldi aayenge — stay tuned!</p>
+                        <Link href="/iot" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-emerald-600 font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
                             <BookOpen size={18} />Explore Full Course
                         </Link>
                     </div>
