@@ -1,7 +1,7 @@
 'use client';
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Shield, Lock, AlertTriangle, Bug, Eye, Mail, Globe, Server, Wifi, Users, Key, FileWarning, ShieldCheck, ShieldAlert, Skull, Fingerprint, Network, Zap, CheckCircle2, Activity, Layers, Search, MonitorSmartphone, CloudOff, UserX, Smartphone, Database, Radio, Cloud, KeyRound, ShieldOff, MessageSquareWarning, Link2Off, AppWindow, Code, Package, MonitorPlay, Boxes } from 'lucide-react';
+import { ArrowLeft, Menu, X, ChevronRight, Hash, Sparkles, Shield, Lock, AlertTriangle, Bug, Eye, Mail, Globe, Server, Wifi, Users, Key, FileWarning, ShieldCheck, ShieldAlert, Skull, Fingerprint, Network, Zap, CheckCircle2, Activity, Layers, Search, MonitorSmartphone, CloudOff, UserX, Smartphone, Database, Radio, Cloud, KeyRound, ShieldOff, MessageSquareWarning, Link2Off, AppWindow, Code, Package, MonitorPlay, Boxes, Brain, Target, TrendingUp, BarChart3, Cog, BookOpen, Gamepad2, Car, ThumbsUp, ThumbsDown, Stethoscope, Scan, Mic, Sprout, Bot } from 'lucide-react';
 
 function Sec({ id, title, icon, children }: { id: string; title: string; icon: ReactNode; children: ReactNode }) {
     return (
@@ -38,6 +38,13 @@ const tocItems = [
     { icon: <Server size={13} />, label: 'IaaS', id: 'iaas', color: '#0284c7' },
     { icon: <Code size={13} />, label: 'PaaS', id: 'paas', color: '#059669' },
     { icon: <MonitorPlay size={13} />, label: 'SaaS', id: 'saas', color: '#7c3aed' },
+    { icon: <Brain size={13} />, label: 'Machine Learning', id: 'ml-definition', color: '#2563eb' },
+    { icon: <Cog size={13} />, label: 'ML Working', id: 'ml-working', color: '#0891b2' },
+    { icon: <Layers size={13} />, label: 'Types of ML', id: 'ml-types', color: '#7c3aed' },
+    { icon: <ThumbsUp size={13} />, label: 'ML Advantages', id: 'ml-advantages', color: '#059669' },
+    { icon: <ThumbsDown size={13} />, label: 'ML Disadvantages', id: 'ml-disadvantages', color: '#dc2626' },
+    { icon: <Target size={13} />, label: 'ML Applications', id: 'ml-applications', color: '#d97706' },
+    { icon: <TrendingUp size={13} />, label: 'Real Life Examples', id: 'ml-real-life', color: '#ec4899' },
 ];
 
 export default function IoTSecurity() {
@@ -1367,6 +1374,321 @@ export default function IoTSecurity() {
                         </div>
                     </section>
 
+                    {/* ═══════════════════════════════════════════════════════════════ */}
+                    {/* ═══ MACHINE LEARNING (ML) SECTION ═══ */}
+                    {/* ═══════════════════════════════════════════════════════════════ */}
+
+                    {/* ML Section Divider */}
+                    <div className="relative my-10">
+                        <div className="absolute inset-0 flex items-center"><div className="w-full border-t-2 border-dashed border-blue-200" /></div>
+                        <div className="relative flex justify-center">
+                            <span className="bg-white px-6 py-2 rounded-full text-sm font-extrabold text-blue-700 border-2 border-blue-200 shadow-lg flex items-center gap-2">
+                                <Brain size={18} /> Machine Learning (ML)
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* ═══ SECTION: ML Definition ═══ */}
+                    <Sec id="ml-definition" title="🧠 Machine Learning (ML) — Definition" icon={<Brain size={16} className="text-blue-600" />}>
+                        <div className="flex flex-col md:flex-row gap-5 items-center">
+                            <div className="flex-1 space-y-3">
+                                <Def>🤖 <strong>Machine Learning (ML)</strong> Artificial Intelligence (AI) की एक महत्वपूर्ण शाखा (Branch) है, जिसमें Computer Systems को इस प्रकार बनाया जाता है कि वे Data से स्वयं सीख (Learn) सकें, उसमें छिपे हुए Patterns को पहचान सकें और बिना बार-बार Program किए अपने निर्णय (Decision) लेने की क्षमता विकसित कर सकें।</Def>
+                                <p>सामान्य Programming में प्रत्येक कार्य के लिए अलग-अलग Instructions लिखनी पड़ती हैं, जबकि Machine Learning में Computer को बड़ी मात्रा में Data उपलब्ध कराया जाता है। Computer उस Data का विश्लेषण (Analysis) करता है, उसमें समानताएँ (Patterns) खोजता है और भविष्य में आने वाले नए Data के आधार पर सही निर्णय लेने का प्रयास करता है।</p>
+                                <p>इसी कारण Machine Learning को <strong>&quot;Learning from Data&quot;</strong> भी कहा जाता है।</p>
+                            </div>
+                            <div className="w-full md:w-72 flex-shrink-0">
+                                <img src="/iot/ml_overview.png" alt="Machine Learning Overview" className="w-full h-auto rounded-2xl shadow-md border border-blue-100" />
+                            </div>
+                        </div>
+
+                        {/* ML vs Traditional Programming */}
+                        <div className="mt-5 p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200">
+                            <h4 className="text-xs font-bold text-blue-800 mb-3 uppercase tracking-wide flex items-center gap-2"><Zap size={14} /> Traditional Programming vs Machine Learning</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="p-4 rounded-xl bg-white border-2 border-orange-200 hover:shadow-lg transition-all hover:-translate-y-1">
+                                    <div className="text-2xl mb-2">📝</div>
+                                    <p className="text-sm font-extrabold text-orange-700">Traditional Programming</p>
+                                    <p className="text-xs text-gray-600 mt-1 font-medium">Input + <strong>Rules</strong> → Output</p>
+                                    <p className="text-xs text-gray-500 mt-1">Programmer rules likhta hai</p>
+                                </div>
+                                <div className="p-4 rounded-xl bg-white border-2 border-blue-200 hover:shadow-lg transition-all hover:-translate-y-1">
+                                    <div className="text-2xl mb-2">🧠</div>
+                                    <p className="text-sm font-extrabold text-blue-700">Machine Learning</p>
+                                    <p className="text-xs text-gray-600 mt-1 font-medium">Input + Output → <strong>Rules (Model)</strong></p>
+                                    <p className="text-xs text-gray-500 mt-1">Machine khud rules seekhti hai</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <IB type="tip">Machine Learning ka sabse bada fayda yeh hai ki Computer ko har cheez ke liye alag se program nahi karna padta — woh Data se <strong>khud seekh leta hai</strong>।</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: Working of Machine Learning ═══ */}
+                    <Sec id="ml-working" title="🧠 Working of Machine Learning" icon={<Cog size={16} className="text-cyan-600" />}>
+                        <p className="mb-4">Machine Learning mukhya roop se nimn <strong>5 charnon</strong> mein kaarya karti hai—</p>
+
+                        <div className="w-full mb-5">
+                            <img src="/iot/ml_working_process.png" alt="Machine Learning Working Process" className="w-full h-auto rounded-2xl shadow-md border border-cyan-100" />
+                        </div>
+
+                        <div className="space-y-4">
+                            {[
+                                { step: 1, title: 'Data Collection', desc: 'Sabse pehle vibhinn Sources se Data ekatrit kiya jaata hai। Data jitna adhik aur Quality wala hoga, Model utna hi achha kaarya karega।', icon: <Database size={20} />, color: '#06b6d4', bg: '#ecfeff', border: '#22d3ee' },
+                                { step: 2, title: 'Data Preparation', desc: 'Collected Data ko saaf (Clean) kiya jaata hai। Isme Missing Values hataayi jaati hain, galat Data ko theek kiya jaata hai tatha Data ko Machine Learning ke liye tayyar kiya jaata hai।', icon: <Search size={20} />, color: '#3b82f6', bg: '#eff6ff', border: '#93c5fd' },
+                                { step: 3, title: 'Model Training', desc: 'Prepared Data ko Machine Learning Algorithm ko diya jaata hai। Algorithm Data ka adhyayan karta hai aur usmein maujood Patterns tatha Relationships ko seekhta hai।', icon: <Brain size={20} />, color: '#8b5cf6', bg: '#f5f3ff', border: '#a78bfa' },
+                                { step: 4, title: 'Prediction', desc: 'Jab Model poori tarah seekh jaata hai, tab use naya Data diya jaata hai aur woh uske aadhaar par Prediction ya Decision deta hai।', icon: <Target size={20} />, color: '#f59e0b', bg: '#fffbeb', border: '#fbbf24' },
+                                { step: 5, title: 'Improvement', desc: 'Jaise-jaise naya Data milta hai, Machine Learning Model apni Accuracy ko lagaataar behtar banaata rahta hai।', icon: <TrendingUp size={20} />, color: '#10b981', bg: '#ecfdf5', border: '#34d399' },
+                            ].map((s) => (
+                                <div key={s.step} className="flex items-start gap-4 p-4 rounded-xl border hover:shadow-md transition-shadow" style={{ background: s.bg, borderColor: s.border }}>
+                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm" style={{ background: `linear-gradient(135deg, ${s.color}, ${s.color}cc)`, color: '#fff' }}>
+                                        {s.icon}
+                                    </div>
+                                    <div>
+                                        <h4 className="font-extrabold text-sm mb-1" style={{ color: s.color }}>
+                                            Step {s.step}: {s.title}
+                                        </h4>
+                                        <p className="text-xs text-gray-600 leading-relaxed">{s.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Flow Diagram */}
+                        <div className="mt-5 p-4 rounded-xl bg-cyan-50 border border-cyan-200">
+                            <p className="text-sm text-cyan-900 font-semibold mb-3">🔄 ML Working Flow:</p>
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 flex-wrap">
+                                {['Data Collection', 'Data Preparation', 'Model Training', 'Prediction', 'Improvement'].map((step, i) => (
+                                    <span key={i} className="flex items-center gap-2">
+                                        <span className={`px-3 py-2 rounded-lg text-xs font-bold shadow-sm ${i === 2 ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 border border-blue-200'}`}>{step}</span>
+                                        {i < 4 && <ChevronRight className="text-blue-400 rotate-90 sm:rotate-0" size={14} />}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <IB type="note">ML Model ko jitna zyada aur achha Data milega, utna hi accurate uska <strong>Prediction</strong> hoga। Isliye Data Collection sabse important step hai।</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: Types of Machine Learning ═══ */}
+                    <Sec id="ml-types" title="🧠 Types of Machine Learning" icon={<Layers size={16} className="text-purple-600" />}>
+                        <p className="mb-4">Machine Learning mukhya roop se <strong>teen prakaar</strong> ki hoti hai—</p>
+
+                        <div className="w-full mb-5">
+                            <img src="/iot/ml_types.png" alt="Types of Machine Learning" className="w-full h-auto rounded-2xl shadow-md border border-purple-100" />
+                        </div>
+
+                        {/* 1. Supervised Learning */}
+                        <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 mb-4 hover:shadow-lg transition-all">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}>
+                                    <BookOpen size={20} className="text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-extrabold text-blue-800">1. Supervised Learning</h3>
+                                    <p className="text-[10px] text-blue-500 font-bold uppercase tracking-wide">Label Data se seekhna</p>
+                                </div>
+                            </div>
+                            <p className="text-xs text-gray-600 leading-relaxed mb-3">
+                                Is prakaar ki Learning mein Computer ko pehle se <strong>Label kiya hua Data</strong> diya jaata hai। Arthaat pratyek Data ke saath uska sahi uttar bhi uplabdh hota hai। Machine usi Data se seekhkar bhavishya mein naye Data ki sahi Prediction karti hai।
+                            </p>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                {['Student Result Prediction', 'House Price Prediction', 'Weather Forecasting', 'Spam E-mail Detection'].map((ex, i) => (
+                                    <div key={i} className="px-3 py-2 rounded-lg bg-white border border-blue-100 text-[11px] font-semibold text-blue-700 text-center shadow-sm">
+                                        {ex}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 2. Unsupervised Learning */}
+                        <div className="p-5 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 mb-4 hover:shadow-lg transition-all">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
+                                    <BarChart3 size={20} className="text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-extrabold text-green-800">2. Unsupervised Learning</h3>
+                                    <p className="text-[10px] text-green-500 font-bold uppercase tracking-wide">Bina Label Data se seekhna</p>
+                                </div>
+                            </div>
+                            <p className="text-xs text-gray-600 leading-relaxed mb-3">
+                                Is Learning mein Computer ko <strong>bina Label wala Data</strong> diya jaata hai। Machine swayam Data ka adhyayan karti hai aur usmein samaanata (Similarity), Pattern tatha Group khojti hai।
+                            </p>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                {['Customer Grouping', 'Market Analysis', 'Product Recommendation', 'Data Clustering'].map((ex, i) => (
+                                    <div key={i} className="px-3 py-2 rounded-lg bg-white border border-green-100 text-[11px] font-semibold text-green-700 text-center shadow-sm">
+                                        {ex}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 3. Reinforcement Learning */}
+                        <div className="p-5 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 mb-4 hover:shadow-lg transition-all">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
+                                    <Gamepad2 size={20} className="text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-extrabold text-orange-800">3. Reinforcement Learning</h3>
+                                    <p className="text-[10px] text-orange-500 font-bold uppercase tracking-wide">Trial and Error se seekhna</p>
+                                </div>
+                            </div>
+                            <p className="text-xs text-gray-600 leading-relaxed mb-3">
+                                Is prakaar ki Learning mein Machine <strong>Trial and Error Method</strong> se seekhti hai। Jab Machine sahi kaarya karti hai to use <strong>Reward</strong> milta hai aur galat kaarya karne par <strong>Penalty</strong> milti hai। Isi prakriya se woh samay ke saath behtar nirnay lena seekh jaati hai।
+                            </p>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                {['Self Driving Cars', 'Robotics', 'Game Playing AI', 'Industrial Automation'].map((ex, i) => (
+                                    <div key={i} className="px-3 py-2 rounded-lg bg-white border border-orange-100 text-[11px] font-semibold text-orange-700 text-center shadow-sm">
+                                        {ex}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Comparison Table */}
+                        <div className="overflow-x-auto mt-5">
+                            <table className="w-full text-xs border-collapse rounded-xl overflow-hidden shadow-sm">
+                                <thead>
+                                    <tr style={{ background: 'linear-gradient(135deg, #1e1b4b, #312e81)' }}>
+                                        <th className="p-3 text-left text-white font-bold">Aadhaar</th>
+                                        <th className="p-3 text-center text-blue-300 font-bold">📘 Supervised</th>
+                                        <th className="p-3 text-center text-emerald-300 font-bold">📗 Unsupervised</th>
+                                        <th className="p-3 text-center text-amber-300 font-bold">📙 Reinforcement</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {[
+                                        { feature: 'Data Type', s: 'Labeled Data', u: 'Unlabeled Data', r: 'No Data — Reward/Penalty' },
+                                        { feature: 'Seekhne ka Tareeka', s: 'Teacher se (Guided)', u: 'Khud se (Self)', r: 'Trial & Error' },
+                                        { feature: 'Output', s: 'Prediction', u: 'Grouping / Pattern', r: 'Best Strategy' },
+                                        { feature: 'Example', s: 'Spam Detection', u: 'Customer Grouping', r: 'Self Driving Cars' },
+                                    ].map((row, i) => (
+                                        <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                            <td className="p-3 font-bold text-gray-800 border-b border-gray-100">{row.feature}</td>
+                                            <td className="p-3 text-center text-blue-700 border-b border-gray-100">{row.s}</td>
+                                            <td className="p-3 text-center text-emerald-700 border-b border-gray-100">{row.u}</td>
+                                            <td className="p-3 text-center text-amber-700 border-b border-gray-100">{row.r}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <IB type="tip">O Level exam mein ML ke <strong>teeno types</strong> ki Definition, Examples aur Differences bahut important hain। Inhe achhe se yaad karein!</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: ML Advantages ═══ */}
+                    <Sec id="ml-advantages" title="🧠 Advantages of Machine Learning" icon={<ThumbsUp size={16} className="text-emerald-600" />}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {[
+                                { text: 'Computer स्वयं Data से सीख सकता है।', icon: <Brain size={18} />, color: '#3b82f6', bg: '#eff6ff' },
+                                { text: 'बड़ी मात्रा में Data का तेजी से विश्लेषण कर सकता है।', icon: <BarChart3 size={18} />, color: '#10b981', bg: '#ecfdf5' },
+                                { text: 'Prediction की Accuracy बढ़ जाती है।', icon: <Target size={18} />, color: '#8b5cf6', bg: '#f5f3ff' },
+                                { text: 'Human Effort कम हो जाता है।', icon: <Users size={18} />, color: '#f59e0b', bg: '#fffbeb' },
+                                { text: 'Decision Making तेज और अधिक सटीक होती है।', icon: <Zap size={18} />, color: '#ef4444', bg: '#fef2f2' },
+                                { text: 'Automation को बढ़ावा मिलता है।', icon: <Cog size={18} />, color: '#0891b2', bg: '#ecfeff' },
+                                { text: 'समय और लागत दोनों की बचत होती है।', icon: <TrendingUp size={18} />, color: '#059669', bg: '#ecfdf5' },
+                            ].map((item, i) => (
+                                <div key={i} className="flex items-center gap-3 p-3.5 rounded-xl border hover:shadow-md transition-shadow" style={{ background: item.bg, borderColor: `${item.color}30` }}>
+                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${item.color}20`, color: item.color }}>
+                                        {item.icon}
+                                    </div>
+                                    <p className="text-xs font-semibold text-gray-700">{item.text}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <IB type="note">ML ki wajah se aaj bahut saare kaam <strong>automatically</strong> ho jaate hain — jaise Email Spam Filter, YouTube Recommendations, Google Maps Traffic, etc.</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: ML Disadvantages ═══ */}
+                    <Sec id="ml-disadvantages" title="🧠 Disadvantages of Machine Learning" icon={<ThumbsDown size={16} className="text-red-600" />}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {[
+                                { text: 'अच्छे परिणाम के लिए बहुत अधिक Data की आवश्यकता होती है।', icon: <Database size={18} />, color: '#ef4444' },
+                                { text: 'Model Training में अधिक समय लग सकता है।', icon: <Activity size={18} />, color: '#f59e0b' },
+                                { text: 'Powerful Hardware की आवश्यकता होती है।', icon: <MonitorSmartphone size={18} />, color: '#8b5cf6' },
+                                { text: 'गलत Data मिलने पर गलत Prediction हो सकती है।', icon: <AlertTriangle size={18} />, color: '#dc2626' },
+                                { text: 'Model को समय-समय पर Update करना पड़ता है।', icon: <TrendingUp size={18} />, color: '#0891b2' },
+                                { text: 'Development और Maintenance की Cost अधिक हो सकती है।', icon: <Layers size={18} />, color: '#7c3aed' },
+                            ].map((item, i) => (
+                                <div key={i} className="flex items-center gap-3 p-3.5 rounded-xl bg-red-50 border border-red-100 hover:shadow-md transition-shadow">
+                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${item.color}15`, color: item.color }}>
+                                        {item.icon}
+                                    </div>
+                                    <p className="text-xs font-semibold text-gray-700">{item.text}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <IB type="warning">ML ka sabse bada nuksan yeh hai ki agar training data mein <strong>bias (pakshpaat)</strong> hoga to model bhi galat decisions lega। Isliye Data Quality bahut zaroori hai!</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: ML Applications ═══ */}
+                    <Sec id="ml-applications" title="🧠 Applications of Machine Learning" icon={<Target size={16} className="text-amber-600" />}>
+                        <p className="mb-4">Machine Learning ka upyog vartaman samay mein lagbhag <strong>har kshetra</strong> mein kiya ja raha hai—</p>
+
+                        <div className="w-full mb-5">
+                            <img src="/iot/ml_applications.png" alt="Machine Learning Applications" className="w-full h-auto rounded-2xl shadow-md border border-amber-100" />
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            {[
+                                { name: 'Face Recognition', icon: <Scan size={22} />, color: '#3b82f6', bg: '#eff6ff' },
+                                { name: 'Speech Recognition', icon: <Mic size={22} />, color: '#8b5cf6', bg: '#f5f3ff' },
+                                { name: 'Self Driving Cars', icon: <Car size={22} />, color: '#10b981', bg: '#ecfdf5' },
+                                { name: 'Recommendation System', icon: <ThumbsUp size={22} />, color: '#f59e0b', bg: '#fffbeb' },
+                                { name: 'Medical Diagnosis', icon: <Stethoscope size={22} />, color: '#ef4444', bg: '#fef2f2' },
+                                { name: 'Fraud Detection', icon: <Shield size={22} />, color: '#dc2626', bg: '#fef2f2' },
+                                { name: 'Spam Email Filtering', icon: <Mail size={22} />, color: '#ec4899', bg: '#fdf2f8' },
+                                { name: 'Weather Forecasting', icon: <Cloud size={22} />, color: '#0ea5e9', bg: '#ecfeff' },
+                                { name: 'Smart Agriculture', icon: <Sprout size={22} />, color: '#16a34a', bg: '#f0fdf4' },
+                                { name: 'Industrial Automation', icon: <Cog size={22} />, color: '#7c3aed', bg: '#f5f3ff' },
+                                { name: 'Robotics', icon: <Bot size={22} />, color: '#0891b2', bg: '#ecfeff' },
+                                { name: 'Virtual Assistants', icon: <Smartphone size={22} />, color: '#6366f1', bg: '#eef2ff' },
+                            ].map((app, i) => (
+                                <div key={i} className="flex flex-col items-center gap-2 p-4 rounded-xl border hover:shadow-lg transition-all hover:-translate-y-1" style={{ background: app.bg, borderColor: `${app.color}30` }}>
+                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm" style={{ background: `${app.color}15`, color: app.color }}>
+                                        {app.icon}
+                                    </div>
+                                    <span className="text-[11px] font-bold text-gray-700 text-center">{app.name}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <IB type="tip">YouTube, Netflix, Amazon, Google Maps — yeh sab <strong>Machine Learning</strong> ka use karte hain apne users ko better experience dene ke liye!</IB>
+                    </Sec>
+
+                    {/* ═══ SECTION: Real Life Examples ═══ */}
+                    <Sec id="ml-real-life" title="🧠 Real Life Examples of ML" icon={<TrendingUp size={16} className="text-pink-600" />}>
+                        <div className="space-y-3">
+                            {[
+                                { platform: 'YouTube', desc: 'Aapki pasand ke anusaar Videos Suggest karta hai।', emoji: '▶️', color: '#ef4444', bg: 'from-red-50 to-rose-50', border: '#fca5a5' },
+                                { platform: 'Amazon', desc: 'Aapke pichhle Shopping Data ke aadhaar par Products Recommend karta hai।', emoji: '🛒', color: '#f59e0b', bg: 'from-amber-50 to-yellow-50', border: '#fbbf24' },
+                                { platform: 'Google Maps', desc: 'Traffic ka vishleshan karke sabse tez Route bataata hai।', emoji: '🗺️', color: '#10b981', bg: 'from-green-50 to-emerald-50', border: '#34d399' },
+                                { platform: 'Gmail', desc: 'Spam E-mails ko Automatically pehchaankar Spam Folder mein bhej deta hai।', emoji: '📧', color: '#3b82f6', bg: 'from-blue-50 to-sky-50', border: '#93c5fd' },
+                                { platform: 'Netflix', desc: 'Aapki Watch History ke aadhaar par Movies aur Web Series Suggest karta hai।', emoji: '🎬', color: '#7c3aed', bg: 'from-purple-50 to-violet-50', border: '#a78bfa' },
+                            ].map((ex, i) => (
+                                <div key={i} className={`flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r ${ex.bg} border hover:shadow-md transition-shadow`} style={{ borderColor: ex.border }}>
+                                    <div className="text-3xl flex-shrink-0">{ex.emoji}</div>
+                                    <div>
+                                        <h4 className="text-sm font-extrabold mb-1" style={{ color: ex.color }}>{ex.platform}</h4>
+                                        <p className="text-xs text-gray-600 leading-relaxed">{ex.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* ML Summary Card */}
+                        <div className="mt-5 p-5 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl">
+                            <h4 className="text-sm font-extrabold mb-3 flex items-center gap-2"><Brain size={18} /> Machine Learning — Summary</h4>
+                            <p className="text-xs leading-relaxed opacity-90">
+                                Machine Learning ek aisi Technology hai jismein Computer Data se seekhta hai, Patterns ko pehchaanta hai aur bhavishya ke liye Prediction ya Decision leta hai। Yeh Artificial Intelligence ka ek mahatvapoorn bhaag hai aur vartaman samay mein <strong>Healthcare, Banking, Education, E-commerce, Robotics, Agriculture</strong> tatha <strong>Smart IoT Systems</strong> sahit lagbhag sabhi kshetron mein iska vyaapak upyog kiya ja raha hai।
+                            </p>
+                        </div>
+
+                        <IB type="note">ML aur AI ke concepts O Level M4-R5 exam mein <strong>bahut important</strong> hain — Definition, Types, Working, Applications aur Real Life Examples yaad karein!</IB>
+                    </Sec>
+
                     {/* Chapter Summary */}
                     <section className="rounded-2xl p-5 md:p-7 mb-5 scroll-mt-20 bg-gradient-to-br from-red-50 to-rose-50" style={{ border: '1px solid #fecaca', boxShadow: '0 4px 16px rgba(239,68,68,0.08)' }}>
                         <div className="flex items-center gap-2.5 mb-4 pb-3" style={{ borderBottom: '1px solid #fecaca' }}>
@@ -1375,7 +1697,7 @@ export default function IoTSecurity() {
                         </div>
                         <div className="space-y-4">
                             <p className="text-sm text-gray-700 leading-relaxed">
-                                Is chapter mein humne <strong>IoT Security</strong> ki zaroorat, <strong>Cyber Attacks</strong>, <strong>Hackers</strong>, <strong>Malware</strong>, <strong>Phishing</strong>, <strong>DDoS</strong>, <strong>Brute Force Attack</strong>, Cyber Attack se bachne ke tarike, <strong>Cloud Computing</strong> (Public, Private, Hybrid) aur <strong>Cloud Services</strong> — <strong>IaaS, PaaS, SaaS</strong> ke baare mein seekha।
+                                Is chapter mein humne <strong>IoT Security</strong> ki zaroorat, <strong>Cyber Attacks</strong>, <strong>Hackers</strong>, <strong>Malware</strong>, <strong>Phishing</strong>, <strong>DDoS</strong>, <strong>Brute Force Attack</strong>, Cyber Attack se bachne ke tarike, <strong>Cloud Computing</strong> (Public, Private, Hybrid), <strong>Cloud Services</strong> — <strong>IaaS, PaaS, SaaS</strong> aur <strong>Machine Learning (ML)</strong> — iske Types (Supervised, Unsupervised, Reinforcement), Working, Advantages, Disadvantages, Applications aur Real Life Examples ke baare mein seekha।
                             </p>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {[
@@ -1395,6 +1717,14 @@ export default function IoTSecurity() {
                                     { label: 'PaaS', color: '#059669' },
                                     { label: 'SaaS', color: '#7c3aed' },
                                     { label: 'Cloud Services', color: '#f43f5e' },
+                                    { label: 'Machine Learning', color: '#2563eb' },
+                                    { label: 'Supervised ML', color: '#3b82f6' },
+                                    { label: 'Unsupervised ML', color: '#10b981' },
+                                    { label: 'Reinforcement ML', color: '#f59e0b' },
+                                    { label: 'ML Applications', color: '#d97706' },
+                                    { label: 'ML Working', color: '#0891b2' },
+                                    { label: 'ML Advantages', color: '#059669' },
+                                    { label: 'Real Life ML', color: '#ec4899' },
                                 ].map((tag, i) => (
                                     <span key={i} className="px-3 py-1.5 bg-white border rounded-full text-[10px] font-bold shadow-sm text-center" style={{ borderColor: `${tag.color}40`, color: tag.color }}>{tag.label}</span>
                                 ))}

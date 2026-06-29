@@ -76,8 +76,8 @@ const iotTopics = [
         duration: '2.5 Hours',
         lessons: 12,
         locked: false,
-        completed: false,
-        current: true,
+        completed: true,
+        current: false,
     },
     {
         title: 'Soft Skills — Personality Dev',
@@ -90,8 +90,9 @@ const iotTopics = [
         chapter: 6,
         duration: '2 Hours',
         lessons: 10,
-        locked: true,
+        locked: false,
         completed: false,
+        current: true,
     },
 ];
 
