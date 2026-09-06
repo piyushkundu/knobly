@@ -25,8 +25,8 @@ async function fetchWithFallback(url: string, options: RequestInit): Promise<Res
     if (fallbackOptions.body && typeof fallbackOptions.body === 'string') {
       try {
         const bodyObj = JSON.parse(fallbackOptions.body);
-        if (bodyObj.model === 'llama-3.3-70b-versatile') {
-          bodyObj.model = 'llama-3.1-8b-instant';
+        if (bodyObj.model === 'openai/gpt-oss-120b') {
+          bodyObj.model = 'openai/gpt-oss-20b';
           fallbackOptions.body = JSON.stringify(bodyObj);
         }
       } catch (e) {
@@ -93,7 +93,7 @@ Provide exactly this JSON structure with your custom answers:
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: systemPrompt },
@@ -181,7 +181,7 @@ export async function generateCode(prompt: string, language: 'en' | 'hi'): Promi
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage },

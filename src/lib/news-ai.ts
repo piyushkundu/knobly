@@ -46,7 +46,7 @@ async function callGroqAI(prompt: string): Promise<string> {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) throw new Error("GROQ_API_KEY is not set");
 
-  console.log("📡 Calling Groq AI with model llama-3.3-70b-versatile...");
+  console.log("📡 Calling Groq AI with model openai/gpt-oss-120b...");
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -56,7 +56,7 @@ async function callGroqAI(prompt: string): Promise<string> {
     },
     body: JSON.stringify({
       messages: [{ role: "user", content: prompt }],
-      model: "llama-3.3-70b-versatile",
+      model: "openai/gpt-oss-120b",
       temperature: 0,
       max_tokens: 4000,
       response_format: { type: "json_object" }

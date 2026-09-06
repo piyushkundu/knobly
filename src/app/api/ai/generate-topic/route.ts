@@ -254,7 +254,7 @@ export async function POST(req: NextRequest) {
                             Authorization: `Bearer ${GROQ_API_KEY}`,
                         },
                         body: JSON.stringify({
-                            model: 'llama-3.3-70b-versatile',
+                            model: 'openai/gpt-oss-120b',
                             messages: [
                                 { role: 'system', content: HINDI_SYSTEM_PROMPT },
                                 { role: 'user', content: hindiUserMsg },
@@ -293,7 +293,7 @@ export async function POST(req: NextRequest) {
                 Authorization: `Bearer ${GROQ_API_KEY}`,
             },
             body: JSON.stringify({
-                model: 'llama-3.3-70b-versatile',
+                model: 'openai/gpt-oss-120b',
                 messages: [
                     { role: 'system', content: ENGLISH_SYSTEM_PROMPT },
                     { role: 'user', content: `Explain this topic in detail in simple English: "${topic}"` },

@@ -69,7 +69,7 @@ Do not include any other text outside the JSON object. Ensure the JSON is proper
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'llama-3.1-8b-instant',
+      model: 'openai/gpt-oss-120b',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage },
@@ -149,7 +149,7 @@ export async function generateCCode(prompt: string, language: 'en' | 'hi'): Prom
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'llama-3.1-8b-instant',
+      model: 'openai/gpt-oss-120b',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage },
