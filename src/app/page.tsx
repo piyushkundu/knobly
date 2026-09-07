@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import { AnimatePresence, motion } from 'framer-motion';
-import { collection, onSnapshot, query, orderBy, getDocs } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { KnoblyApp } from '@/types/app';
 
@@ -29,16 +29,10 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
   ],
   OLevel: [
     { id: 'syllabus', name: 'Syllabus', type: 'Info', link: '/syllabus', icon: 'ph-bold ph-list-bullets', color: 'text-gray-300', borderClass: 'border-slate', category: 'OLevel' },
-    { id: 'olevel-notes', name: 'IT Notes', type: 'Reading', link: '/notes', icon: 'ph-bold ph-book-open-text', color: 'text-blue-400', borderClass: 'border-blue', category: 'OLevel' },
-    { id: 'html', name: 'HTML', type: 'Structure', link: '/html', icon: 'ti ti-brand-html5', color: 'text-orange-500', borderClass: 'border-orange', category: 'OLevel' },
-    { id: 'css', name: 'CSS', type: 'Style', link: '/web-design/css', icon: 'ti ti-brand-css3', color: 'text-blue-500', borderClass: 'border-blue', category: 'OLevel' },
-    { id: 'w3css', name: 'W3.CSS', type: 'Framework', link: '/web-design/w3css', icon: 'ph-bold ph-layout', color: 'text-green-400', borderClass: 'border-green', category: 'OLevel' },
-    { id: 'js', name: 'JS', type: 'Scripting', link: '/web-design/javascript', icon: 'ti ti-brand-javascript', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'OLevel' },
-    { id: 'it-tools', name: 'IT Tools', type: 'Module 1', link: '/ccc/tests', icon: 'ph-bold ph-desktop', color: 'text-sky-400', borderClass: 'border-sky', category: 'OLevel' },
-    { id: 'iot', name: 'IoT', type: 'Module 4', link: '/iot', icon: 'ph-bold ph-wifi-high', color: 'text-orange-400', borderClass: 'border-orange', category: 'OLevel' },
+    { id: 'it-tools', name: 'IT Tools', type: 'Module 1', link: '__it_tools__', icon: 'ph-bold ph-desktop', color: 'text-sky-400', borderClass: 'border-sky', category: 'OLevel' },
+    { id: 'webdes', name: 'Web Design', type: 'Module 2', link: '__web_design__', icon: 'ph-bold ph-paint-brush', color: 'text-pink-400', borderClass: 'border-pink', category: 'OLevel' },
     { id: 'python', name: 'Python', type: 'Module 3', link: '/python', icon: 'ti ti-brand-python', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'OLevel' },
-    { id: 'mcq', name: 'MCQ Bank', type: 'Practice', link: '/mcq', icon: 'ph-bold ph-bank', color: 'text-emerald-400', borderClass: 'border-emerald', category: 'OLevel' },
-    { id: 'webdes', name: 'Web Des.', type: 'Course', link: '/web-design', icon: 'ph-bold ph-paint-brush', color: 'text-pink-400', borderClass: 'border-pink', category: 'OLevel' },
+    { id: 'iot', name: 'IoT', type: 'Module 4', link: '/iot', icon: 'ph-bold ph-wifi-high', color: 'text-orange-400', borderClass: 'border-orange', category: 'OLevel' },
   ],
   CCC: [
     { id: 'notes', name: 'CCC Notes', type: 'Notes', link: '/notes', icon: 'ti ti-notes', color: 'text-cyan-300', borderClass: 'border-cyan', category: 'Main' },
@@ -46,6 +40,28 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
     { id: 'shortcuts', name: 'Shortcuts', type: 'Utility', link: '/shortcuts', icon: 'ph-bold ph-keyboard', color: 'text-slate-300', borderClass: 'border-slate', category: 'CCC' },
   ],
 };
+
+// ── IT Tools Module 1 — Chapter sub-items (shown as icon grid inside dashboard) ──
+const IT_TOOLS_CHAPTERS: KnoblyApp[] = [
+  { id: 'it-ch1', name: 'Chapter 1', type: 'Computer Intro', link: '/olevel/chapter-1', icon: 'ph-bold ph-monitor', color: 'text-blue-400', borderClass: 'border-blue', category: 'OLevel' },
+  { id: 'it-ch2', name: 'Chapter 2', type: 'Coming Soon', link: '', icon: 'ph-bold ph-gear', color: 'text-purple-400', borderClass: 'border-purple', category: 'OLevel' },
+  { id: 'it-ch3', name: 'Chapter 3', type: 'Coming Soon', link: '', icon: 'ph-bold ph-file-text', color: 'text-emerald-400', borderClass: 'border-emerald', category: 'OLevel' },
+  { id: 'it-ch4', name: 'Chapter 4', type: 'Coming Soon', link: '', icon: 'ph-bold ph-table', color: 'text-orange-400', borderClass: 'border-orange', category: 'OLevel' },
+  { id: 'it-ch5', name: 'Chapter 5', type: 'Coming Soon', link: '', icon: 'ph-bold ph-presentation-chart', color: 'text-red-400', borderClass: 'border-red', category: 'OLevel' },
+  { id: 'it-ch6', name: 'Chapter 6', type: 'Coming Soon', link: '', icon: 'ph-bold ph-globe-simple', color: 'text-cyan-400', borderClass: 'border-cyan', category: 'OLevel' },
+  { id: 'it-ch7', name: 'Chapter 7', type: 'Coming Soon', link: '', icon: 'ph-bold ph-envelope-simple', color: 'text-pink-400', borderClass: 'border-pink', category: 'OLevel' },
+  { id: 'it-ch8', name: 'Chapter 8', type: 'Coming Soon', link: '', icon: 'ph-bold ph-wallet', color: 'text-indigo-400', borderClass: 'border-indigo', category: 'OLevel' },
+  { id: 'it-ch9', name: 'Chapter 9', type: 'Coming Soon', link: '', icon: 'ph-bold ph-shield-check', color: 'text-amber-400', borderClass: 'border-amber', category: 'OLevel' },
+  { id: 'it-handwritten', name: 'Handwritten', type: 'Reading', link: '/notes', icon: 'ph-bold ph-pen-nib', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'OLevel' },
+];
+
+// ── Web Design Module 2 — Sub-items ──
+const WEB_DESIGN_CHAPTERS: KnoblyApp[] = [
+  { id: 'html', name: 'HTML', type: 'Structure', link: '/html', icon: 'ti ti-brand-html5', color: 'text-orange-500', borderClass: 'border-orange', category: 'OLevel' },
+  { id: 'css', name: 'CSS', type: 'Style', link: '/web-design/css', icon: 'ti ti-brand-css3', color: 'text-blue-500', borderClass: 'border-blue', category: 'OLevel' },
+  { id: 'js', name: 'JS', type: 'Scripting', link: '/web-design/javascript', icon: 'ti ti-brand-javascript', color: 'text-yellow-400', borderClass: 'border-yellow', category: 'OLevel' },
+  { id: 'w3css', name: 'W3.CSS', type: 'Framework', link: '/web-design/w3css', icon: 'ph-bold ph-layout', color: 'text-green-400', borderClass: 'border-green', category: 'OLevel' },
+];
 
 const TABS = ['Main', 'OLevel', 'CCC', 'Favourites'] as const;
 
@@ -173,6 +189,13 @@ export default function HomePage() {
   const [notesText, setNotesText] = useState('');
   const [showNotesModal, setShowNotesModal] = useState(false);
 
+  // ── IT Tools & Web Design Chapter View ──
+  const [showITToolsChapters, setShowITToolsChapters] = useState(false);
+  const [showWebDesignChapters, setShowWebDesignChapters] = useState(false);
+
+  // ── State Persistence (For Browser Back) ──
+  const [isStateLoaded, setIsStateLoaded] = useState(false);
+
   // ── Context Menus ──
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
@@ -212,11 +235,33 @@ export default function HomePage() {
     if (savedName) setUserName(savedName);
     if (savedNotes) setNotesText(savedNotes);
     if (savedRecent) setRecentApps(JSON.parse(savedRecent));
+    
+    // Load session state for navigation
+    const savedTab = sessionStorage.getItem('knobly-active-tab');
+    const savedNav = sessionStorage.getItem('knobly-active-nav');
+    const savedITTools = sessionStorage.getItem('knobly-it-tools-view');
+    const savedWebDesign = sessionStorage.getItem('knobly-web-design-view');
+    if (savedTab) setActiveTab(savedTab);
+    if (savedNav) setActiveNav(savedNav as any);
+    if (savedITTools === 'true') setShowITToolsChapters(true);
+    if (savedWebDesign === 'true') setShowWebDesignChapters(true);
+    setIsStateLoaded(true);
+
     setIsMobile(window.innerWidth <= 640);
     const handleResize = () => setIsMobile(window.innerWidth <= 640);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // ── Save navigation state to sessionStorage ──
+  useEffect(() => {
+    if (isStateLoaded) {
+      sessionStorage.setItem('knobly-active-tab', activeTab);
+      sessionStorage.setItem('knobly-active-nav', activeNav);
+      sessionStorage.setItem('knobly-it-tools-view', showITToolsChapters.toString());
+      sessionStorage.setItem('knobly-web-design-view', showWebDesignChapters.toString());
+    }
+  }, [activeTab, activeNav, showITToolsChapters, showWebDesignChapters, isStateLoaded]);
 
   // ── Uptime tracker ──
   useEffect(() => {
@@ -284,25 +329,34 @@ export default function HomePage() {
     return () => clearInterval((window as any).__weatherInterval);
   }, []);
 
-  // ── Listen to global apps from Firestore ──
+  // ── Load global apps from Firestore (one-time fetch) ──
+  // Using getDocs instead of onSnapshot to avoid WebChannel state corruption
+  // that causes "INTERNAL ASSERTION FAILED: Unexpected state" during SPA navigation.
   useEffect(() => {
-    let unsub = () => { };
-    try {
-      const q = query(collection(db, 'global_apps'), orderBy('name'));
-      unsub = onSnapshot(q, (snap) => {
+    let mounted = true;
+    const fetchGlobalApps = async () => {
+      try {
+        const q = query(collection(db, 'global_apps'), orderBy('name'));
+        const snap = await getDocs(q);
+        if (!mounted) return;
         const apps = snap.docs.map((d) => ({ id: d.id, ...d.data() } as KnoblyApp));
         setGlobalApps(apps);
-      }, () => { /* silently ignore permission errors */ });
-    } catch { /* silently ignore Firestore init errors */ }
-    return () => unsub();
+      } catch {
+        // Silently ignore Firestore errors (permissions, init, etc.)
+      }
+    };
+    fetchGlobalApps();
+    return () => { mounted = false; };
   }, []);
 
   // ── Load videos from Firestore ──
   useEffect(() => {
+    let mounted = true;
     const fetchVideos = async () => {
       try {
         const q = query(collection(db, 'videos'), orderBy('created_at', 'desc'));
         const snapshot = await getDocs(q);
+        if (!mounted) return;
         if (!snapshot.empty) {
           const firestoreVids = snapshot.docs.map(doc => {
             const v = doc.data();
@@ -317,6 +371,7 @@ export default function HomePage() {
       } catch { /* silently ignore permission errors */ }
     };
     fetchVideos();
+    return () => { mounted = false; };
   }, []);
 
   // ── Derived: all apps merged ──
@@ -352,6 +407,22 @@ export default function HomePage() {
     if (app.link === '__topic_explainer__') {
       setShowTopicExplainer(true);
       return;
+    }
+    // Intercept IT Tools — show chapters grid
+    if (app.link === '__it_tools__') {
+      setShowITToolsChapters(true);
+      setShowWebDesignChapters(false);
+      return;
+    }
+    // Intercept Web Design — show chapters grid
+    if (app.link === '__web_design__') {
+      setShowWebDesignChapters(true);
+      setShowITToolsChapters(false);
+      return;
+    }
+    // IT Tools chapter items — Coming Soon ones have no link
+    if (app.id.startsWith('it-ch') || app.id === 'it-handwritten') {
+      if (!app.link) return; // Coming Soon — do nothing
     }
     // Track recent apps & persist
     setRecentApps(prev => {
@@ -570,7 +641,7 @@ export default function HomePage() {
           {NAV_ITEMS.map(({ id, icon }) => (
             <button
               key={id}
-              onClick={() => setActiveNav(id)}
+              onClick={() => { setActiveNav(id); setShowITToolsChapters(false); setShowWebDesignChapters(false); }}
               className={`nav-btn w-11 h-11 rounded-3xl flex items-center justify-center transition-all duration-200 relative border border-transparent active-press ${activeNav === id
                 ? 'bg-cyan-500/20 text-cyan-200 shadow-[0_8px_18px_rgba(15,23,42,0.8)] border-cyan-400/70 is-active'
                 : 'text-gray-500 hover:text-white hover:bg-white/5 hover:border-white/10'
@@ -1165,7 +1236,7 @@ export default function HomePage() {
             {activeNav === 'home' && !searchQuery && (
               <nav className="flex gap-3 md:gap-4 shrink-0 justify-center pt-2">
                 {TABS.map((tab) => (
-                  <button key={tab} onClick={() => setActiveTab(tab)}
+                  <button key={tab} onClick={() => { setActiveTab(tab); setShowITToolsChapters(false); setShowWebDesignChapters(false); }}
                     className={`tab-btn pb-1.5 text-[10px] md:text-[11px] font-bold tracking-wide uppercase transition-all relative px-3 md:px-5 active-press ${activeTab === tab ? 'tab-btn-active' : 'text-gray-500 hover:text-white'}`}>
                     {tab}
                   </button>
@@ -1196,16 +1267,31 @@ export default function HomePage() {
 
             {/* App Grid */}
             <div className="flex-1 pt-4 overflow-y-auto custom-scroll pr-1 relative overflow-x-hidden">
-              <AnimatePresence mode="wait">
+              {showITToolsChapters ? (
+                /* ── IT Tools Chapters Sub-Grid ── */
                 <motion.div
-                  key={`tab-${activeTab}-${activeNav}`}
-                  initial={performanceMode ? { opacity: 0 } : false}
-                  animate={{ opacity: 1 }}
-                  exit={performanceMode ? { opacity: 0 } : undefined}
-                  transition={{ duration: 0.15 }}
+                  key="it-tools-chapters"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
                 >
+                  {/* Back header */}
+                  <div className="flex items-center gap-3 mb-4 px-1">
+                    <button
+                      onClick={() => setShowITToolsChapters(false)}
+                      className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-cyan-300 hover:bg-white/10 transition-all active-press"
+                    >
+                      <i className="ph-bold ph-arrow-left text-sm" />
+                    </button>
+                    <div>
+                      <div className="text-xs font-bold text-white flex items-center gap-2">
+                        <i className="ph-bold ph-desktop text-sky-400" /> IT Tools
+                      </div>
+                      <div className="text-[9px] text-gray-500 uppercase tracking-[0.16em]">Module 1 · M1-R5 · 9 Chapters</div>
+                    </div>
+                  </div>
                   <AppGrid
-                    apps={filteredApps}
+                    apps={IT_TOOLS_CHAPTERS}
                     favourites={favourites}
                     activeNav={activeNav}
                     performanceMode={performanceMode}
@@ -1213,12 +1299,66 @@ export default function HomePage() {
                     onAppContextMenu={handleContextMenu}
                   />
                 </motion.div>
-              </AnimatePresence>
-              {activeTab === 'Favourites' && !searchQuery && favourites.length === 0 && activeNav !== 'apps' && (
-                <div className="col-span-3 sm:col-span-4 lg:col-span-5 flex flex-col items-center justify-center py-6 text-center text-gray-500 text-xs">
-                  <i className="ph-bold ph-push-pin text-2xl mb-2 text-cyan-400/70" />
-                  <p className="uppercase tracking-[0.18em] text-[9px]">Right-click any app &amp; choose &quot;Add to favourites&quot;</p>
-                </div>
+              ) : showWebDesignChapters ? (
+                /* ── Web Design Chapters Sub-Grid ── */
+                <motion.div
+                  key="web-design-chapters"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  {/* Back header */}
+                  <div className="flex items-center gap-3 mb-4 px-1">
+                    <button
+                      onClick={() => setShowWebDesignChapters(false)}
+                      className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-cyan-300 hover:bg-white/10 transition-all active-press"
+                    >
+                      <i className="ph-bold ph-arrow-left text-sm" />
+                    </button>
+                    <div>
+                      <div className="text-xs font-bold text-white flex items-center gap-2">
+                        <i className="ph-bold ph-paint-brush text-pink-400" /> Web Design
+                      </div>
+                      <div className="text-[9px] text-gray-500 uppercase tracking-[0.16em]">Module 2 · M2-R5 · Web Technologies</div>
+                    </div>
+                  </div>
+                  <AppGrid
+                    apps={WEB_DESIGN_CHAPTERS}
+                    favourites={favourites}
+                    activeNav={activeNav}
+                    performanceMode={performanceMode}
+                    onAppClick={handleAppClick}
+                    onAppContextMenu={handleContextMenu}
+                  />
+                </motion.div>
+              ) : (
+                /* ── Normal App Grid ── */
+                <>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`tab-${activeTab}-${activeNav}`}
+                      initial={performanceMode ? { opacity: 0 } : false}
+                      animate={{ opacity: 1 }}
+                      exit={performanceMode ? { opacity: 0 } : undefined}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <AppGrid
+                        apps={filteredApps}
+                        favourites={favourites}
+                        activeNav={activeNav}
+                        performanceMode={performanceMode}
+                        onAppClick={handleAppClick}
+                        onAppContextMenu={handleContextMenu}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                  {activeTab === 'Favourites' && !searchQuery && favourites.length === 0 && activeNav !== 'apps' && (
+                    <div className="col-span-3 sm:col-span-4 lg:col-span-5 flex flex-col items-center justify-center py-6 text-center text-gray-500 text-xs">
+                      <i className="ph-bold ph-push-pin text-2xl mb-2 text-cyan-400/70" />
+                      <p className="uppercase tracking-[0.18em] text-[9px]">Right-click any app &amp; choose &quot;Add to favourites&quot;</p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </motion.div>

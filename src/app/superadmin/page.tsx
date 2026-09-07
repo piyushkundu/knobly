@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { useState } from 'react';
 import { useSuperAdmin } from './useSuperAdmin';
 import {
@@ -63,6 +63,9 @@ export default function SuperAdminPage() {
     const [showIconPicker, setShowIconPicker] = useState(false);
     const [editingPointsId, setEditingPointsId] = useState<string | null>(null);
     const [editingPointsVal, setEditingPointsVal] = useState('');
+    const [resultsView, setResultsView] = useState<'attempts' | 'analytics'>('attempts');
+    const [analyticsData, setAnalyticsData] = useState<any[]>([]);
+    const [loadingAnalytics, setLoadingAnalytics] = useState(false);
 
     // Build dynamic catColors from Firestore categories
     const catColors: Record<string, string> = {};
@@ -462,32 +465,96 @@ export default function SuperAdminPage() {
                         {/* ═══ RESULTS ═══ */}
                         {tab === 'results' && (
                             <div className="space-y-4">
-                                <div className={`${card} p-4 flex flex-col md:flex-row gap-3 md:items-center`}>
-                                    <span className="text-xs font-bold text-indigo-500 uppercase">Filters:</span>
-                                    <select value={resTestId} onChange={e => setResTestId(e.target.value)} className={`${inp} md:w-56`}><option value="">All Tests</option>{d.tests.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}</select>
-                                    <select value={resUserId} onChange={e => setResUserId(e.target.value)} className={`${inp} md:w-56`}><option value="">All Users</option>{d.users.map(u => <option key={u.id} value={u.id}>{u.full_name}</option>)}</select>
-                                    <button onClick={() => d.loadResults(resTestId, resUserId)} className={`${btn} shadow-md`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}>Apply</button>
+                                <div className="flex gap-2">
+                                    <button onClick={() => setResultsView('attempts')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${resultsView === 'attempts' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>Student Attempts</button>
+                                    <button onClick={() => setResultsView('analytics')} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${resultsView === 'analytics' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>Question Analytics</button>
                                 </div>
-                                <div className={`${card} rounded-2xl overflow-hidden overflow-x-auto`}>
-                                    <table className="w-full text-left text-sm min-w-[850px]">
-                                        <thead className="bg-gray-50 text-gray-400 text-xs uppercase border-b border-gray-100"><tr><th className="p-3">Student</th><th className="p-3">Test</th><th className="p-3 text-center">Score</th><th className="p-3 text-center">Acc%</th><th className="p-3 text-center">Points</th><th className="p-3 text-center">Date & Time</th><th className="p-3 text-center">Status</th><th className="p-3 text-center">Detail</th></tr></thead>
-                                        <tbody className="divide-y divide-gray-50">
-                                            {d.results.length === 0 && <tr><td colSpan={8} className="p-8 text-center text-gray-400 text-xs">No results.</td></tr>}
-                                            {d.results.map((r: any) => (
-                                                <tr key={r.id} className="hover:bg-gray-50/50">
-                                                    <td className="p-3 font-bold text-gray-900">{d.users.find(u => u.id === r.user_id)?.full_name || r.user_id}</td>
-                                                    <td className="p-3 text-xs text-gray-500">{d.tests.find(t => t.id === r.test_id)?.title || r.test_id}</td>
-                                                    <td className="p-3 text-center font-bold text-emerald-600">{r.score}</td>
-                                                    <td className="p-3 text-center font-bold">{r.accuracy}%</td>
-                                                    <td className="p-3 text-center text-amber-500 font-bold">+{r.xp_earned}</td>
-                                                    <td className="p-3 text-center text-[10px] text-gray-500 whitespace-nowrap">{(() => { const ts = r.started_at || r.created_at; if (!ts) return '—'; const d2 = ts?.seconds ? new Date(ts.seconds * 1000) : new Date(ts); return isNaN(d2.getTime()) ? '—' : d2.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }); })()}</td>
-                                                    <td className="p-3 text-center"><span className={`text-[9px] uppercase px-2 py-0.5 rounded-full font-bold ${r.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>{r.status}</span></td>
-                                                    <td className="p-3 text-center"><button onClick={async () => { const det = await d.viewAttemptDetail(r); setAttemptDetail(det); }} className="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1 rounded-lg font-bold transition">View</button></td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+
+                                {resultsView === 'attempts' && (
+                                    <>
+                                        <div className={`${card} p-4 flex flex-col md:flex-row gap-3 md:items-center`}>
+                                            <span className="text-xs font-bold text-indigo-500 uppercase">Filters:</span>
+                                            <select value={resTestId} onChange={e => setResTestId(e.target.value)} className={`${inp} md:w-56`}><option value="">All Tests</option>{d.tests.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}</select>
+                                            <select value={resUserId} onChange={e => setResUserId(e.target.value)} className={`${inp} md:w-56`}><option value="">All Users</option>{d.users.map(u => <option key={u.id} value={u.id}>{u.full_name}</option>)}</select>
+                                            <button onClick={() => d.loadResults(resTestId, resUserId)} className={`${btn} shadow-md`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}>Apply</button>
+                                        </div>
+                                        <div className={`${card} rounded-2xl overflow-hidden overflow-x-auto`}>
+                                            <table className="w-full text-left text-sm min-w-[850px]">
+                                                <thead className="bg-gray-50 text-gray-400 text-xs uppercase border-b border-gray-100"><tr><th className="p-3">Student</th><th className="p-3">Test</th><th className="p-3 text-center">Score</th><th className="p-3 text-center">Acc%</th><th className="p-3 text-center">Points</th><th className="p-3 text-center">Date & Time</th><th className="p-3 text-center">Status</th><th className="p-3 text-center">Detail</th></tr></thead>
+                                                <tbody className="divide-y divide-gray-50">
+                                                    {d.results.length === 0 && <tr><td colSpan={8} className="p-8 text-center text-gray-400 text-xs">No results.</td></tr>}
+                                                    {d.results.map((r: any) => (
+                                                        <tr key={r.id} className="hover:bg-gray-50/50">
+                                                            <td className="p-3 font-bold text-gray-900">{d.users.find(u => u.id === r.user_id)?.full_name || r.user_id}</td>
+                                                            <td className="p-3 text-xs text-gray-500">{d.tests.find(t => t.id === r.test_id)?.title || r.test_id}</td>
+                                                            <td className="p-3 text-center font-bold text-emerald-600">{r.score}</td>
+                                                            <td className="p-3 text-center font-bold">{r.accuracy}%</td>
+                                                            <td className="p-3 text-center text-amber-500 font-bold">+{r.xp_earned}</td>
+                                                            <td className="p-3 text-center text-[10px] text-gray-500 whitespace-nowrap">{(() => { const ts = r.started_at || r.created_at; if (!ts) return '—'; const d2 = ts?.seconds ? new Date(ts.seconds * 1000) : new Date(ts); return isNaN(d2.getTime()) ? '—' : d2.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }); })()}</td>
+                                                            <td className="p-3 text-center"><span className={`text-[9px] uppercase px-2 py-0.5 rounded-full font-bold ${r.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>{r.status}</span></td>
+                                                            <td className="p-3 text-center"><button onClick={async () => { const det = await d.viewAttemptDetail(r); setAttemptDetail(det); }} className="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1 rounded-lg font-bold transition">View</button></td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </>
+                                )}
+
+                                {resultsView === 'analytics' && (
+                                    <>
+                                        <div className={`${card} p-4 flex flex-col md:flex-row gap-3 md:items-center`}>
+                                            <span className="text-xs font-bold text-indigo-500 uppercase">Select Test:</span>
+                                            <select value={resTestId} onChange={e => setResTestId(e.target.value)} className={`${inp} md:w-64`}><option value="">-- Choose a Test --</option>{d.tests.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}</select>
+                                            <button onClick={async () => { if (!resTestId) return; setLoadingAnalytics(true); const data = await d.getTestAnalytics(resTestId); setAnalyticsData(data); setLoadingAnalytics(false); }} disabled={!resTestId || loadingAnalytics} className={`${btn} shadow-md disabled:opacity-50 flex items-center gap-2`} style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}>{loadingAnalytics && <Loader2 size={12} className="animate-spin inline" />} Load Analytics</button>
+                                        </div>
+
+                                        {analyticsData.length > 0 ? (
+                                            <div className={`${card} rounded-2xl overflow-hidden overflow-x-auto`}>
+                                                <table className="w-full text-left text-sm min-w-[700px]">
+                                                    <thead className="bg-gray-50 text-gray-400 text-xs uppercase border-b border-gray-100">
+                                                        <tr>
+                                                            <th className="p-3 w-10 text-center">#</th>
+                                                            <th className="p-3">Question Text</th>
+                                                            <th className="p-3 text-center w-28">Total Attempts</th>
+                                                            <th className="p-3 text-center w-28">Incorrect</th>
+                                                            <th className="p-3 text-center w-24">Accuracy</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-gray-50">
+                                                        {analyticsData.map((q: any, i: number) => (
+                                                            <tr key={q.id} className={`hover:bg-gray-50/50 transition ${q.accuracy < 50 ? 'bg-red-50/30' : ''}`}>
+                                                                <td className="p-3 text-center text-gray-400 font-bold">{i + 1}</td>
+                                                                <td className="p-3 text-gray-700 text-sm leading-relaxed">
+                                                                    <div className="font-medium mb-2">{q.text.split('\n').map((line: string, li: number) => { const isCode = /^[a-zA-Z_$].*[=(\[{]|^print\(|^#/.test(line.trim()) && !/\?$/.test(line.trim()) && !line.includes('|'); return isCode ? <code key={li} className="block font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded mt-0.5 text-violet-700">{line}</code> : <span key={li} className="block">{line}</span>; })}</div>
+                                                                    {q.options && q.options.length > 0 && (
+                                                                        <div className="flex flex-col gap-1 mt-2">
+                                                                            {q.options.map((opt: any) => (
+                                                                                <div key={opt.id} className={`text-xs px-2 py-1.5 rounded-lg border ${opt.is_correct === true || String(opt.is_correct) === 'true' ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-medium shadow-sm' : 'bg-gray-50/50 border-gray-100 text-gray-500'}`}>
+                                                                                    {opt.is_correct === true || String(opt.is_correct) === 'true' ? <Check size={12} className="inline mr-1 text-emerald-600" /> : null}
+                                                                                    {opt.option_text}
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
+                                                                </td>
+                                                                <td className="p-3 text-center font-bold text-gray-600">{q.total}</td>
+                                                                <td className="p-3 text-center font-bold text-red-500">{q.incorrect}</td>
+                                                                <td className="p-3 text-center">
+                                                                    <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${q.accuracy < 50 ? 'bg-red-100 text-red-700' : q.accuracy < 80 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>{q.accuracy}%</span>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        ) : (
+                                            <div className={`${card} p-10 text-center text-gray-400 text-xs`}>
+                                                Select a test and click "Load Analytics" to see which questions students are struggling with.
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                             </div>
                         )}
 

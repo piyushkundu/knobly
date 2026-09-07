@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { db } from '@/lib/firebase';
 import {
     collection, getDocs, getDoc, doc, setDoc, updateDoc,
-    query, where, orderBy, limit, onSnapshot, addDoc
+    query, where, orderBy, limit, addDoc
 } from 'firebase/firestore';
 
 /* ── Interfaces ── */

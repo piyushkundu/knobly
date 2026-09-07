@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import KnoblyAI from "@/components/ai/KnoblyAI";
+import FirestoreErrorGuard from "@/components/FirestoreErrorGuard";
 import { GoogleAnalytics } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
@@ -109,6 +110,7 @@ export default function RootLayout({
       <body className="antialiased" suppressHydrationWarning>
         <ThemeProvider>
           <AuthProvider>
+            <FirestoreErrorGuard />
             {children}
             <KnoblyAI />
           </AuthProvider>

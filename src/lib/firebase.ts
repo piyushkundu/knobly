@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore, getFirestore, Firestore } from 'firebase/firestore';
+import { initializeFirestore, getFirestore, Firestore, memoryLocalCache } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -30,7 +30,16 @@ if (!firebaseConfig.apiKey && isServer) {
   if (getApps().length === 0) {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
-    db = initializeFirestore(app, { experimentalForceLongPolling: true, ignoreUndefinedProperties: true });
+    // Use memoryLocalCache instead of default IndexedDB persistence to prevent
+    // "INTERNAL ASSERTION FAILED: Unexpected state" errors during SPA navigation.
+    // Firebase SDK v12.x has a bug where the IndexedDB persistence layer's internal
+    // state machine corrupts when onSnapshot listeners are torn down and re-created
+    // during Next.js client-side navigation (mount → unmount → remount).
+    db = initializeFirestore(app, {
+      ignoreUndefinedProperties: true,
+      localCache: memoryLocalCache(),
+      experimentalForceLongPolling: true,
+    });
   } else {
     app = getApps()[0];
     auth = getAuth(app);

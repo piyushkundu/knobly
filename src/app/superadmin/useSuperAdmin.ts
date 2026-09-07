@@ -293,6 +293,51 @@ export function useSuperAdmin() {
         };
     };
 
+    const getTestAnalytics = async (testId: string) => {
+        try {
+            const qSnap = await getDocs(query(collection(db, 'exam_questions'), where('test_id', '==', testId)));
+            if (qSnap.empty) return [];
+            const questions = qSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+            const qIds = questions.map(q => q.id);
+
+            // Fetch all options to determine the correct option IDs
+            let allOptions: any[] = [];
+            for (let i = 0; i < qIds.length; i += 10) {
+                const chunk = qIds.slice(i, i + 10);
+                const optSnap = await getDocs(query(collection(db, 'exam_options'), where('question_id', 'in', chunk)));
+                allOptions = allOptions.concat(optSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+            }
+            const correctOptionIds = new Set(allOptions.filter(o => o.is_correct === true || String(o.is_correct) === 'true').map(o => o.id));
+
+            const aSnap = await getDocs(query(collection(db, 'exam_attempts'), where('test_id', '==', testId)));
+            if (aSnap.empty) return questions.map((q: any) => ({ id: q.id, text: q.question_text, total: 0, incorrect: 0, accuracy: 100 }));
+            const attemptIds = aSnap.docs.map(d => d.id);
+
+            let allResponses: any[] = [];
+            for (let i = 0; i < attemptIds.length; i += 10) {
+                const chunk = attemptIds.slice(i, i + 10);
+                const rSnap = await getDocs(query(collection(db, 'exam_responses'), where('attempt_id', 'in', chunk)));
+                allResponses = allResponses.concat(rSnap.docs.map(d => d.data()));
+            }
+
+            const analytics = questions.map((q: any) => {
+                const responsesForQ = allResponses.filter(r => r.question_id === q.id);
+                const total = responsesForQ.length;
+                // A response is correct if its option_id is in correctOptionIds, OR if r.is_correct is explicitly true.
+                const correct = responsesForQ.filter(r => r.is_correct === true || String(r.is_correct) === 'true' || correctOptionIds.has(r.option_id)).length;
+                const incorrect = total - correct;
+                const accuracy = total > 0 ? Math.round((correct / total) * 100) : 100;
+                const qOptions = allOptions.filter(o => o.question_id === q.id);
+                return { id: q.id, text: q.question_text, total, incorrect, accuracy, options: qOptions };
+            });
+
+            return analytics.sort((a, b) => a.accuracy !== b.accuracy ? a.accuracy - b.accuracy : b.incorrect - a.incorrect);
+        } catch (e) {
+            console.error('[SuperAdmin] getTestAnalytics failed', e);
+            return [];
+        }
+    };
+
     const deleteUser = async (uid: string) => {
         try {
             // Delete from profiles
@@ -393,7 +438,7 @@ export function useSuperAdmin() {
         login, logout, refreshAll,
         saveTest, deleteTest,
         loadQuestions, saveQuestion, deleteQuestion, setCorrectOption, getOptionsForQuestion, importQuestions, getTestPreviewData, deleteAllQuestions,
-        loadResults, viewAttemptDetail,
+        loadResults, viewAttemptDetail, getTestAnalytics,
         deleteUser, deleteLeaderboardUser, updateLeaderboardPoints, getUserProfile,
         saveLevel, deleteLevel, saveBadge, deleteBadge,
         sendNotification, deleteNotification,

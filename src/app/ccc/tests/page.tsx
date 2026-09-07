@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -14,11 +14,19 @@ export default function CccTests() {
     const [tests, setTests] = useState<CccTest[]>([]);
 
     useEffect(() => {
-        const q = query(collection(db, 'tests'), where('category', '==', 'CCC'));
-        const unsub = onSnapshot(q, (snap) => {
-            setTests(snap.docs.map(d => ({ id: d.id, ...d.data() } as CccTest)));
-        }, () => { });
-        return () => unsub();
+        let mounted = true;
+        const fetchTests = async () => {
+            try {
+                const q = query(collection(db, 'tests'), where('category', '==', 'CCC'));
+                const snap = await getDocs(q);
+                if (!mounted) return;
+                setTests(snap.docs.map(d => ({ id: d.id, ...d.data() } as CccTest)));
+            } catch {
+                // Silently ignore Firestore errors
+            }
+        };
+        fetchTests();
+        return () => { mounted = false; };
     }, []);
 
     return (

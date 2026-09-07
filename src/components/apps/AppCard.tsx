@@ -12,11 +12,13 @@ interface AppCardProps {
 }
 
 export default function AppCard({ app, isFavourite, isNew, activeNav, onClick, onContextMenu }: AppCardProps) {
+    const isComingSoon = (app.id.startsWith('it-ch') || app.id === 'it-handwritten') && !app.link;
+
     return (
         <div
             onClick={onClick}
             onContextMenu={onContextMenu}
-            className="glass-card app-card rounded-[22px] flex flex-col items-center justify-center gap-2 cursor-pointer group relative overflow-hidden active-press"
+            className={`glass-card app-card rounded-[22px] flex flex-col items-center justify-center gap-2 cursor-pointer group relative overflow-hidden active-press ${isComingSoon ? 'opacity-50 pointer-events-auto cursor-not-allowed' : ''}`}
             data-tilt
             data-tilt-scale="1.05"
         >
@@ -29,6 +31,12 @@ export default function AppCard({ app, isFavourite, isNew, activeNav, onClick, o
             {isNew && (
                 <div className="absolute top-2 left-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded z-20 shadow-md">
                     NEW
+                </div>
+            )}
+
+            {isComingSoon && (
+                <div className="absolute top-2 right-2 z-20">
+                    <i className="ph-bold ph-lock-simple text-gray-500 text-xs" />
                 </div>
             )}
 
@@ -48,7 +56,7 @@ export default function AppCard({ app, isFavourite, isNew, activeNav, onClick, o
                     </div>
                 )}
                 {activeNav !== 'apps' && (
-                    <p className="text-[9px] text-gray-400 mt-0.5 uppercase tracking-[0.14em]">
+                    <p className={`text-[9px] mt-0.5 uppercase tracking-[0.14em] ${isComingSoon ? 'text-gray-600' : 'text-gray-400'}`}>
                         {app.type}
                     </p>
                 )}
@@ -56,3 +64,4 @@ export default function AppCard({ app, isFavourite, isNew, activeNav, onClick, o
         </div>
     );
 }
+
