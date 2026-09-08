@@ -26,6 +26,7 @@ const BASE_APPS: Record<string, KnoblyApp[]> = {
     { id: 'topic-explainer', name: 'Topic Explainer', type: 'AI Explain', link: '__topic_explainer__', icon: 'ph-duotone ph-magic-wand', color: 'text-fuchsia-400', borderClass: 'border-fuchsia', category: 'Main' },
     { id: 'map-game', name: 'Map Game', type: 'Play', link: 'https://createme.in', icon: 'ph-bold ph-map-trifold', color: 'text-emerald-500', borderClass: 'border-emerald', category: 'Main' },
     { id: 'typing-master', name: 'Typing Master', type: 'Learn', link: '/typing', icon: 'ph-bold ph-keyboard', color: 'text-teal-400', borderClass: 'border-cyan', category: 'Main' },
+    { id: 'ubuntu-terminal', name: 'Ubuntu Terminal', type: 'System', link: '/terminal', icon: 'ph-bold ph-terminal', color: 'text-orange-500', borderClass: 'border-orange', category: 'Main' },
   ],
   OLevel: [
     { id: 'syllabus', name: 'Syllabus', type: 'Info', link: '/syllabus', icon: 'ph-bold ph-list-bullets', color: 'text-gray-300', borderClass: 'border-slate', category: 'OLevel' },
