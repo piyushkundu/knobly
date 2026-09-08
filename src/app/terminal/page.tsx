@@ -1,4 +1,4 @@
-import TerminalApp from '@/components/apps/terminal/TerminalApp';
+import TerminalWrapper from './TerminalWrapper';
 
 export const metadata = {
   title: 'Ubuntu Terminal - Knobly',
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function TerminalPage() {
-  return <TerminalApp />;
+  return <TerminalWrapper />;
 }
