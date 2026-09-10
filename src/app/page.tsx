@@ -1041,39 +1041,74 @@ export default function HomePage() {
 
                 {/* Apps Tab */}
                 {activeSettingsTab === 'apps' && (
-                  <div className="flex flex-col gap-2 h-full">
-                    <div className="text-[12px] font-bold uppercase tracking-[0.18em] text-gray-300 shrink-0">App Management</div>
-                    <div className="flex-1 overflow-y-auto custom-scroll">
+                  <div className="flex flex-col gap-4 h-full">
+                    {/* Premium Header */}
+                    <div className="shrink-0">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-base font-extrabold text-slate-800 tracking-tight">Manage Your Apps</h3>
+                        <div className="flex items-center gap-2 text-[11px]">
+                          <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 font-bold border border-emerald-200">{allAppsList.filter(a => !hiddenAppsSet.has(a.id || a.name)).length} visible</span>
+                          <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 font-bold border border-slate-200">{allAppsList.filter(a => hiddenAppsSet.has(a.id || a.name)).length} hidden</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1">Control which apps appear on your dashboard.</p>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto custom-scroll -mx-1 px-1">
                       {isAdmin && (
-                        <div className="mb-4 border border-cyan-500/30 bg-cyan-900/10 p-2 rounded-lg">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-cyan-400 font-bold uppercase tracking-wider text-[10px]">Global Admin Panel</span>
+                        <div className="mb-5 p-4 rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-600 text-white shadow-lg shadow-indigo-200">
+                          <div className="flex items-center gap-2 mb-3">
+                            <svg className="w-5 h-5 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                            <span className="font-bold text-sm tracking-wide">Admin Panel</span>
                           </div>
-                          <div className="flex flex-col gap-1">
+                          <div className="flex flex-col gap-1.5">
                             {globalApps.map((app) => (
-                              <div key={app.id} className="flex justify-between items-center bg-white/5 p-1 rounded">
-                                <span className="text-white">{app.name}</span>
+                              <div key={app.id} className="flex justify-between items-center bg-white/15 backdrop-blur-sm px-3 py-2 rounded-xl">
+                                <span className="font-semibold text-sm text-white/95">{app.name}</span>
                               </div>
                             ))}
                           </div>
                         </div>
                       )}
 
-                      <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 mt-2">Visibility</div>
-                      <div className="settings-app-list overflow-visible text-[11px] text-gray-200">
-                        {allAppsList.map((app) => (
-                          <div key={'manage-' + (app.id || app.name)} className="flex items-center justify-between gap-2 py-0.5 px-1 rounded-lg hover:bg-white/5">
-                            <span className="flex items-center gap-1.5 min-w-0">
-                              <i className={`${app.icon} text-xs ${app.color}`} />
-                              <span className="truncate">{app.name}</span>
-                            </span>
-                            <button onClick={() => toggleAppVisibility(app)}
-                              className={`px-2 py-0.5 rounded-full border text-[10px] active-press shrink-0 ${hiddenAppsSet.has(app.id || app.name) ? 'border-emerald-400 text-emerald-300 bg-emerald-500/10' : 'border-slate-500 text-slate-300 bg-slate-800/40'}`}>
-                              {hiddenAppsSet.has(app.id || app.name) ? 'Show' : 'Hide'}
-                            </button>
+                      {/* Grouped App Sections */}
+                      {Object.entries(allApps).map(([category, apps]) => (
+                        <div key={category} className="mb-6">
+                          {/* Category Label */}
+                          <div className="flex items-center gap-2 mb-3 px-1">
+                            <div className="w-1.5 h-5 rounded-full bg-gradient-to-b from-indigo-400 to-violet-500" />
+                            <span className="text-[11px] font-extrabold uppercase tracking-[0.15em] text-slate-500">{category === 'OLevel' ? 'O-Level Modules' : category === 'CCC' ? 'CCC Course' : 'Main Apps'}</span>
+                            <div className="flex-1 h-px bg-gradient-to-r from-slate-200 to-transparent" />
                           </div>
-                        ))}
-                      </div>
+                          
+                          {/* App Grid */}
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                            {(apps as typeof allAppsList).map((app) => {
+                              const isHidden = hiddenAppsSet.has(app.id || app.name);
+                              return (
+                                <div key={'manage-' + (app.id || app.name)}
+                                     className={`group relative flex flex-col items-center p-5 rounded-2xl border cursor-pointer transition-all duration-300 ${isHidden ? 'bg-slate-50/80 border-slate-200/50 opacity-55 hover:opacity-85' : 'bg-white border-slate-200 shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_28px_rgba(0,0,0,0.1)] hover:-translate-y-1 hover:border-slate-300'}`}
+                                     onClick={() => toggleAppVisibility(app)}>
+                                  
+                                  {/* Icon — same style as real dashboard AppCard */}
+                                  <div className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-black/40 shadow-inner border backdrop-blur-md transition-transform duration-300 group-hover:scale-[1.08] app-icon-accent-cyan ${app.borderClass} ${isHidden ? 'grayscale opacity-50' : ''}`}>
+                                    <i className={`${app.icon} devicon-fix ${app.color} text-2xl`} />
+                                  </div>
+                                  
+                                  {/* App Name & Type */}
+                                  <h4 className={`font-bold text-sm mt-3 truncate w-full text-center transition-colors ${isHidden ? 'text-slate-400' : 'text-slate-800'}`}>{app.name}</h4>
+                                  <span className={`text-[11px] font-medium mt-0.5 transition-colors ${isHidden ? 'text-slate-300' : 'text-slate-400'}`}>{app.type}</span>
+                                  
+                                  {/* Toggle */}
+                                  <div className={`mt-3 relative w-[44px] h-[26px] rounded-full shrink-0 transition-all duration-300 ${isHidden ? 'bg-slate-200' : 'bg-gradient-to-r from-emerald-400 to-teal-500 shadow-[0_2px_10px_rgba(16,185,129,0.4)]'}`}>
+                                    <div className={`absolute top-[3px] w-5 h-5 rounded-full bg-white shadow-[0_1px_4px_rgba(0,0,0,0.2)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isHidden ? 'left-[3px]' : 'left-[19px]'}`} />
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
