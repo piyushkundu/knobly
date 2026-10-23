@@ -157,23 +157,32 @@ Provide exactly this JSON structure with your custom answers:
   }
 }
 
-export async function generateCode(prompt: string, language: 'en' | 'hi'): Promise<string> {
+export async function generateCode(prompt: string, language: 'en' | 'hi', mode?: 'python' | 'c' | 'web'): Promise<string> {
   const isHindi = language === 'hi';
 
-  // Detect if user is asking for C language
-  const isCLang = /\b(c language|c programming|in c\b|c mein|c lang)/i.test(prompt) || /^(Write this in C|Ye C language)/i.test(prompt);
+  // Detect if user is asking for Web / HTML or C language
+  const isWebLang = mode === 'web' || /\b(html|css|web page|website|web app|javascript dom|responsive navbar|flexbox|web design|landing page)\b/i.test(prompt);
+  const isCLang = !isWebLang && (mode === 'c' || /\b(c language|c programming|in c\b|c mein|c lang)/i.test(prompt) || /^(Write this in C|Ye C language)/i.test(prompt));
 
-  const systemPrompt = isCLang
-    ? (isHindi
-        ? `Tum ek expert C programmer ho. User ek question poochega aur tumhe sirf aur sirf us point par compile/run hone wala C code likhna hai. Code ke bahar koi text ya markdown backticks (\`\`\`) mat dena. Sirf plain text C code return karo taaki use seedha editor mein compile kiya ja sake.`
-        : `You are an expert C programmer. The user will ask a programming question or request a program. You must return ONLY raw, compilable C code. Do not include any explanations, markdown formatting (like \`\`\`c), or wrapping text. The response should be ready to compile directly.`)
-    : (isHindi
-        ? `Tum ek expert Python programmer ho. User ek question poochega aur tumhe sirf aur sirf us point par execute hone wala Python code likhna hai. Is problem ko sabse simple tareeke se solve karo. Functions (\`def\` keyword) ka bilkul use mat karna jab tak user khud na bole, ya bhut zyada zaroori na ho. Code ke bahar koi text ya markdown backticks (\`\`\`) mat dena. Sirf plain text code return karo taaki use seedha editor mein run kiya ja sake.`
-        : `You are an expert Python programmer. The user will ask a programming question or request a script. You must return ONLY raw, executable Python code. Solve this in the simplest way possible. DO NOT use functions (\`def\` keyword) unless the user explicitly asks for one or it is strictly necessary. Do not include any explanations, markdown formatting (like \`\`\`python), or wrapping text. The response should be ready to run directly in an editor.`);
+  let systemPrompt: string;
+  let userMessage: string;
 
-  const userMessage = isCLang
-    ? `Write C code for this: ${prompt}`
-    : `Write python code for this: ${prompt}`;
+  if (isWebLang) {
+    systemPrompt = isHindi
+      ? `Tum ek expert Frontend Web Developer ho. User ek web component, HTML structure, ya complete webpage banane ko bolega. Tumhe modern, visually stunning aur responsive HTML code likhna hai jisme internal <style> aur zaroorat padne par interactive <script> bhi shaamil ho. Code ke bahar koi text, greeting ya markdown backticks (\`\`\`html) mat dena. Sirf raw HTML return karo jo seedha browser preview mein run ho sake.`
+      : `You are an expert Frontend Web Developer. The user will ask for a web component, webpage, or HTML layout. Return modern, clean, visually beautiful, and responsive HTML code with embedded <style> and interactive <script> where appropriate. Do not include markdown code block backticks (like \`\`\`html) or explanations. Return ONLY the raw HTML ready to render directly.`;
+    userMessage = `Write modern HTML/CSS/JS code for: ${prompt}`;
+  } else if (isCLang) {
+    systemPrompt = isHindi
+      ? `Tum ek expert C programmer ho. User ek question poochega aur tumhe sirf aur sirf us point par compile/run hone wala C code likhna hai. Code ke bahar koi text ya markdown backticks (\`\`\`) mat dena. Sirf plain text C code return karo taaki use seedha editor mein compile kiya ja sake.`
+      : `You are an expert C programmer. The user will ask a programming question or request a program. You must return ONLY raw, compilable C code. Do not include any explanations, markdown formatting (like \`\`\`c), or wrapping text. The response should be ready to compile directly.`;
+    userMessage = `Write C code for this: ${prompt}`;
+  } else {
+    systemPrompt = isHindi
+      ? `Tum ek expert Python programmer ho. User ek question poochega aur tumhe sirf aur sirf us point par execute hone wala Python code likhna hai. Is problem ko sabse simple tareeke se solve karo. Functions (\`def\` keyword) ka bilkul use mat karna jab tak user khud na bole, ya bhut zyada zaroori na ho. Code ke bahar koi text ya markdown backticks (\`\`\`) mat dena. Sirf plain text code return karo taaki use seedha editor mein run kiya ja sake.`
+      : `You are an expert Python programmer. The user will ask a programming question or request a script. You must return ONLY raw, executable Python code. Solve this in the simplest way possible. DO NOT use functions (\`def\` keyword) unless the user explicitly asks for one or it is strictly necessary. Do not include any explanations, markdown formatting (like \`\`\`python), or wrapping text. The response should be ready to run directly in an editor.`;
+    userMessage = `Write python code for this: ${prompt}`;
+  }
 
   const response = await fetchWithFallback('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -187,7 +196,7 @@ export async function generateCode(prompt: string, language: 'en' | 'hi'): Promi
         { role: 'user', content: userMessage },
       ],
       temperature: 0.2,
-      max_tokens: 1000,
+      max_tokens: 1500,
     }),
   });
 
@@ -205,7 +214,9 @@ export async function generateCode(prompt: string, language: 'en' | 'hi'): Promi
 
   // Clean the response if it incorrectly includes markdown block quotes
   let cleanedContent = content.trim();
-  if (cleanedContent.startsWith('```python')) {
+  if (cleanedContent.startsWith('```html')) {
+    cleanedContent = cleanedContent.replace(/^```html\s*/i, '');
+  } else if (cleanedContent.startsWith('```python')) {
     cleanedContent = cleanedContent.replace(/^```python\s*/i, '');
   } else if (cleanedContent.startsWith('```c')) {
     cleanedContent = cleanedContent.replace(/^```c\s*/i, '');
@@ -218,4 +229,53 @@ export async function generateCode(prompt: string, language: 'en' | 'hi'): Promi
   }
 
   return cleanedContent.trim();
+}
+
+export async function explainWebCode(code: string, language: 'en' | 'hi', question?: string): Promise<{ explanation: string; how_to_fix: string; corrected_code: string }> {
+  const isHindi = language === 'hi';
+  const systemPrompt = isHindi
+    ? `Tum ek friendly HTML/CSS/JavaScript web development teacher ho. Student ka HTML/CSS/JS code dekho aur use Hindi/Hinglish me explain karo. Code me agar koi galti hai ya improvement ka scope hai toh clearly samjhao. Output strictly JSON me do jisme "explanation", "how_to_fix", aur "corrected_code" (pura corrected HTML code) ho.`
+    : `You are an expert HTML, CSS, and JavaScript web development mentor. Analyze the student's code, explain how it works or what can be improved, and fix any errors. Return strictly a JSON object with keys "explanation", "how_to_fix", and "corrected_code" (containing the full improved/fixed code).`;
+
+  const userPrompt = `${question ? `Question: ${question}\n\n` : ''}Code:\n${code}`;
+
+  const response = await fetchWithFallback('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'openai/gpt-oss-120b',
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      temperature: 0.2,
+      max_tokens: 1500,
+    }),
+  });
+
+  if (!response.ok) {
+    return {
+      explanation: isHindi ? 'Code ko analyze karne me problem aayi.' : 'Could not analyze code at this moment.',
+      how_to_fix: 'Check tag closing & syntax',
+      corrected_code: code,
+    };
+  }
+
+  const data = await response.json();
+  const raw = data.choices[0]?.message?.content;
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      explanation: parsed.explanation || '',
+      how_to_fix: parsed.how_to_fix || '',
+      corrected_code: parsed.corrected_code || code,
+    };
+  } catch (e) {
+    return {
+      explanation: raw || '',
+      how_to_fix: '',
+      corrected_code: code,
+    };
+  }
 }

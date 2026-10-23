@@ -3,7 +3,7 @@ import { generateCode } from '@/lib/python-ai-service';
 
 export async function POST(req: Request) {
   try {
-    const { prompt, language } = await req.json();
+    const { prompt, language, mode } = await req.json();
 
     if (!prompt) {
       return NextResponse.json(
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const code = await generateCode(prompt, language || 'en');
+    const code = await generateCode(prompt, language || 'en', mode);
     return NextResponse.json({ code });
   } catch (error) {
     console.error('AI Generate Error:', error);

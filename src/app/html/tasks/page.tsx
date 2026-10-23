@@ -1,9 +1,21 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Home, FileCode, ExternalLink } from 'lucide-react';
+import { 
+    ArrowLeft, Home, FileCode, ExternalLink, Lock, Unlock, 
+    KeyRound, CheckCircle2, AlertCircle, X, Shield, Sparkles, RefreshCw
+} from 'lucide-react';
 
-const TASKS = [
+interface TaskItem {
+    id: string;
+    title: string;
+    desc: string;
+    topics: string;
+    color: string;
+}
+
+const TASKS: TaskItem[] = [
     { id: '1', title: 'My Profile Page', desc: 'Create a personal profile using basic HTML tags: p, pre, br, hr', topics: 'p, pre, br, hr, bgcolor', color: 'bg-blue-500' },
     { id: '2', title: 'Basic HTML Tags', desc: 'Demonstrate bold, italic, underline, pre, br, center and heading tags', topics: 'b, i, u, pre, br, center, h1, h2, hr', color: 'bg-green-500' },
     { id: '3', title: 'India - A Diverse Nation', desc: 'Article about India using headings, images, font colors, and hr', topics: 'h1-h5, img, font, br, hr, align', color: 'bg-orange-500' },
@@ -22,49 +34,415 @@ const TASKS = [
 ];
 
 export default function TasksPage() {
+    const [unlockedTasks, setUnlockedTasks] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Modal state for Admin Unlock
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedTaskId, setSelectedTaskId] = useState<string>('all');
+    const [adminPassword, setAdminPassword] = useState('');
+    const [modalAction, setModalAction] = useState<'unlock' | 'lock'>('unlock');
+    const [submitLoading, setSubmitLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+
+    // Fetch current unlocked tasks from backend API
+    const fetchTasksState = async () => {
+        try {
+            const res = await fetch('/api/html-tasks', { cache: 'no-store' });
+            if (res.ok) {
+                const data = await res.json();
+                setUnlockedTasks(data.unlockedTasks || []);
+            }
+        } catch (err) {
+            console.error('Failed to load tasks status:', err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchTasksState();
+    }, []);
+
+    const openUnlockModal = (taskId: string = 'all', action: 'unlock' | 'lock' = 'unlock') => {
+        setSelectedTaskId(taskId);
+        setModalAction(action);
+        setAdminPassword('');
+        setErrorMessage('');
+        setSuccessMessage('');
+        setModalOpen(true);
+    };
+
+    const handleAdminSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setErrorMessage('');
+        setSuccessMessage('');
+        setSubmitLoading(true);
+
+        try {
+            const res = await fetch('/api/html-tasks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    password: adminPassword,
+                    taskId: selectedTaskId,
+                    action: modalAction,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setErrorMessage(data.error || 'Password verification failed');
+            } else {
+                setUnlockedTasks(data.unlockedTasks || []);
+                setSuccessMessage(data.message || 'Task status updated successfully!');
+                setTimeout(() => {
+                    setModalOpen(false);
+                    setSuccessMessage('');
+                }, 900);
+            }
+        } catch {
+            setErrorMessage('Network error. Please try again.');
+        } finally {
+            setSubmitLoading(false);
+        }
+    };
+
+    const isTaskUnlocked = (id: string) => unlockedTasks.includes(id);
+
     return (
-        <div className="min-h-screen bg-gray-50" style={{ color: '#1f2937' }}>
-            {/* Header */}
-            <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
-                <div className="px-4 py-3 flex items-center justify-between">
+        <div className="min-h-screen bg-slate-50 text-slate-800">
+            {/* ── Header ── */}
+            <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+                <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href="/html/elements" className="text-gray-500 hover:text-gray-900"><ArrowLeft size={20} /></Link>
+                        <Link 
+                            href="/html" 
+                            className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors"
+                            title="Back to HTML Main"
+                        >
+                            <ArrowLeft size={18} />
+                        </Link>
                         <div className="flex items-center gap-2">
-                            <FileCode size={18} className="text-blue-600" />
-                            <h1 className="text-sm font-bold text-gray-900">HTML Practice Tasks</h1>
+                            <div className="w-7 h-7 rounded-lg bg-orange-500 flex items-center justify-center text-white shadow-sm">
+                                <FileCode size={16} />
+                            </div>
+                            <div>
+                                <h1 className="text-sm font-bold text-slate-900 leading-tight">HTML Practice Tasks</h1>
+                                <span className="text-[10px] text-slate-400 font-medium">15 Hands-on Projects</span>
+                            </div>
                         </div>
                     </div>
-                    <Link href="/" className="text-gray-500 hover:text-gray-900"><Home size={18} /></Link>
+
+                    <div className="flex items-center gap-2">
+                        <Link
+                            href="/html/compiler"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-sm hover:scale-105 active:scale-95 transition-all"
+                            title="Open Web Compiler"
+                        >
+                            <FileCode size={13} />
+                            <span className="hidden sm:inline">Web Compiler</span>
+                        </Link>
+
+                        {/* Small Lock Icon for Admin */}
+                        <button
+                            onClick={() => openUnlockModal('all', 'unlock')}
+                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-amber-100 text-slate-600 hover:text-amber-800 border border-slate-200 hover:border-amber-300 transition-all shadow-sm"
+                            title="Admin Unlock Controls"
+                        >
+                            <Lock size={13} className="text-amber-600" />
+                            <span className="hidden sm:inline">Admin Access</span>
+                        </button>
+
+                        <Link 
+                            href="/" 
+                            className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors"
+                            title="Home"
+                        >
+                            <Home size={16} />
+                        </Link>
+                    </div>
                 </div>
             </header>
 
-            <main className="max-w-5xl mx-auto px-3 sm:px-5 md:px-8 py-6">
+            {/* ── Main Content ── */}
+            <main className="max-w-6xl mx-auto px-4 py-6">
                 {/* Banner */}
-                <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl p-5 sm:p-6 mb-6">
-                    <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">HTML Practice Tasks</h1>
-                    <p className="text-amber-100 text-xs sm:text-sm">Complete these hands-on tasks to master HTML. Each task has a built-in compiler to test your code.</p>
+                <div className="relative overflow-hidden bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-2xl p-6 mb-6 text-white shadow-lg shadow-orange-500/20">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+                    <div className="relative z-10 max-w-2xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold bg-white/20 backdrop-blur-sm mb-3">
+                            <Sparkles size={12} />
+                            <span>Structured Practice Curriculum</span>
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl font-extrabold mb-2">Hands-on Practice Tasks</h2>
+                        <p className="text-amber-100 text-xs sm:text-sm leading-relaxed mb-4">
+                            Tasks start locked to ensure step-by-step learning. As you complete tag sections in the Elements guide, each task will be unlocked by the instructor!
+                        </p>
+                        <div className="flex flex-wrap items-center gap-3 text-xs">
+                            <span className="px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm font-semibold">
+                                Total: {TASKS.length} Tasks
+                            </span>
+                            <span className="px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm font-semibold text-emerald-200">
+                                Unlocked: {unlockedTasks.length} Tasks
+                            </span>
+                            <span className="px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm font-semibold text-amber-200">
+                                Locked: {TASKS.length - unlockedTasks.length} Tasks
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Tasks Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {TASKS.map((task) => (
-                        <Link key={task.id} href={`/html/tasks/${task.id}`}
-                            className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md hover:-translate-y-0.5 transition-all group">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className={`w-8 h-8 rounded-lg ${task.color} text-white font-bold text-xs flex items-center justify-center`}>
-                                    {task.id}
-                                </span>
-                                <h3 id="tasktitle" className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{task.title}</h3>
+                {/* ── Tasks Grid ── */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {TASKS.map((task) => {
+                        const unlocked = isTaskUnlocked(task.id);
+
+                        return (
+                            <div 
+                                key={task.id}
+                                className={`relative rounded-2xl border transition-all duration-300 flex flex-col justify-between overflow-hidden ${
+                                    unlocked 
+                                        ? 'bg-white border-emerald-200 shadow-sm hover:shadow-md hover:-translate-y-1' 
+                                        : 'bg-slate-50/90 border-slate-200 shadow-sm hover:border-slate-300'
+                                }`}
+                            >
+                                {/* Top Accent */}
+                                <div className={`h-1.5 w-full ${unlocked ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+
+                                <div className="p-5">
+                                    {/* Card Header */}
+                                    <div className="flex items-start justify-between gap-2 mb-3">
+                                        <div className="flex items-center gap-2.5">
+                                            <span className={`w-9 h-9 rounded-xl text-white font-extrabold text-xs flex items-center justify-center shadow-sm ${
+                                                unlocked ? task.color : 'bg-slate-400'
+                                            }`}>
+                                                {task.id}
+                                            </span>
+                                            <div>
+                                                <h3 className={`text-sm font-bold leading-tight ${unlocked ? 'text-slate-900' : 'text-slate-600'}`}>
+                                                    {task.title}
+                                                </h3>
+                                                <span className="text-[10px] text-slate-400 font-mono">Task #{task.id}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Status Badge & Small Lock Icon */}
+                                        <div className="flex items-center gap-1.5">
+                                            {unlocked ? (
+                                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    <Unlock size={10} />
+                                                    <span>Open</span>
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-600 border border-slate-300">
+                                                    <Lock size={10} />
+                                                    <span>Locked</span>
+                                                </span>
+                                            )}
+
+                                            {/* Small Lock Icon to Toggle/Unlock */}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openUnlockModal(task.id, unlocked ? 'lock' : 'unlock');
+                                                }}
+                                                className="w-6 h-6 rounded-md hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-amber-700 transition-colors"
+                                                title={unlocked ? 'Lock Task (Admin)' : 'Unlock Task (Admin)'}
+                                            >
+                                                {unlocked ? <Lock size={12} /> : <KeyRound size={12} />}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Description */}
+                                    <p className={`text-xs mb-3 leading-relaxed ${unlocked ? 'text-slate-600' : 'text-slate-500'}`}>
+                                        {task.desc}
+                                    </p>
+
+                                    {/* Topics Covered */}
+                                    <div className="bg-white/80 rounded-lg p-2 border border-slate-200/80 mb-4">
+                                        <span className="text-[10px] font-semibold text-slate-400 block mb-0.5 uppercase tracking-wider">Tags Tested</span>
+                                        <code className="text-[11px] text-slate-700 font-mono font-medium block truncate">
+                                            {task.topics}
+                                        </code>
+                                    </div>
+                                </div>
+
+                                {/* Card Footer Action */}
+                                <div className="px-5 pb-5 pt-0">
+                                    {unlocked ? (
+                                        <Link 
+                                            href={`/html/tasks/${task.id}`}
+                                            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-sm hover:shadow transition-all"
+                                        >
+                                            <span>Open & Solve Task</span>
+                                            <ExternalLink size={13} />
+                                        </Link>
+                                    ) : (
+                                        <button
+                                            onClick={() => openUnlockModal(task.id, 'unlock')}
+                                            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold text-slate-500 bg-slate-200/80 hover:bg-slate-200 border border-slate-300 transition-all cursor-pointer"
+                                        >
+                                            <Lock size={13} className="text-slate-400" />
+                                            <span>Locked by Instructor (Tap to Unlock)</span>
+                                        </button>
+                                    )}
+                                </div>
                             </div>
-                            <p className="text-xs text-gray-600 mb-3">{task.desc}</p>
-                            <div className="flex items-center justify-between">
-                                <p className="text-[10px] text-gray-400 font-mono">{task.topics}</p>
-                                <ExternalLink size={14} className="text-gray-300 group-hover:text-blue-500" />
-                            </div>
-                        </Link>
-                    ))}
+                        );
+                    })}
                 </div>
             </main>
+
+            {/* ── Admin Unlock Modal ── */}
+            {modalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div 
+                        className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Modal Header */}
+                        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white p-5 flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-slate-950 font-bold">
+                                    <Shield size={16} />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-bold">Admin Task Control</h3>
+                                    <p className="text-[11px] text-slate-300">
+                                        {modalAction === 'unlock' ? 'Unlock task for students' : 'Lock task'}
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setModalOpen(false)}
+                                className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white transition-colors"
+                            >
+                                <X size={15} />
+                            </button>
+                        </div>
+
+                        {/* Modal Form */}
+                        <form onSubmit={handleAdminSubmit} className="p-5 space-y-4">
+                            {errorMessage && (
+                                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700">
+                                    <AlertCircle size={15} className="shrink-0 text-red-500" />
+                                    <span>{errorMessage}</span>
+                                </div>
+                            )}
+
+                            {successMessage && (
+                                <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700">
+                                    <CheckCircle2 size={15} className="shrink-0 text-emerald-500" />
+                                    <span>{successMessage}</span>
+                                </div>
+                            )}
+
+                            {/* Target Selection */}
+                            <div>
+                                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                                    Select Target Task
+                                </label>
+                                <select
+                                    value={selectedTaskId}
+                                    onChange={(e) => setSelectedTaskId(e.target.value)}
+                                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                >
+                                    <option value="all">🌟 All Tasks ({TASKS.length} Tasks)</option>
+                                    {TASKS.map((t) => (
+                                        <option key={t.id} value={t.id}>
+                                            Task {t.id}: {t.title} {isTaskUnlocked(t.id) ? '✓ Unlocked' : '🔒 Locked'}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Action Choice */}
+                            <div>
+                                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                                    Action
+                                </label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setModalAction('unlock')}
+                                        className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                                            modalAction === 'unlock' 
+                                                ? 'bg-emerald-600 text-white shadow-sm' 
+                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                        }`}
+                                    >
+                                        <Unlock size={13} />
+                                        <span>Unlock Task</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setModalAction('lock')}
+                                        className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                                            modalAction === 'lock' 
+                                                ? 'bg-amber-600 text-white shadow-sm' 
+                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                        }`}
+                                    >
+                                        <Lock size={13} />
+                                        <span>Lock Task</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Password Field */}
+                            <div>
+                                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                                    Admin Password <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="password"
+                                        value={adminPassword}
+                                        onChange={(e) => setAdminPassword(e.target.value)}
+                                        placeholder="Enter 8-digit admin password..."
+                                        required
+                                        autoFocus
+                                        className="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 font-mono tracking-widest"
+                                    />
+                                    <KeyRound size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                                </div>
+                                <p className="text-[11px] text-slate-400 mt-1">
+                                    Password is verified securely on the server.
+                                </p>
+                            </div>
+
+                            {/* Submit Buttons */}
+                            <div className="pt-2 flex items-center justify-end gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setModalOpen(false)}
+                                    className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={submitLoading || !adminPassword}
+                                    className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 transition-all shadow-md disabled:opacity-50 flex items-center gap-1.5"
+                                >
+                                    {submitLoading ? (
+                                        <>
+                                            <RefreshCw size={13} className="animate-spin" />
+                                            <span>Verifying...</span>
+                                        </>
+                                    ) : (
+                                        <span>Confirm {modalAction === 'unlock' ? 'Unlock' : 'Lock'}</span>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

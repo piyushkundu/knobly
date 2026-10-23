@@ -1,5 +1,8 @@
 'use client';
+
 import { useState } from 'react';
+import Link from 'next/link';
+import { ArrowRight, ExternalLink, Sparkles, CheckCircle2, Rocket, Code2, Play, Terminal } from 'lucide-react';
 import SidebarLayout from '@/components/content/SidebarLayout';
 
 const SIDEBAR_ITEMS = [
@@ -8,7 +11,7 @@ const SIDEBAR_ITEMS = [
     { id: 'body-tag', label: 'Body Tag and Attributes' },
     { id: 'p-tag', label: '<p> Tag and Its Attributes' },
     { id: 'pre-tag', label: '<pre> Tag' },
-    { id: 'br-tag', label: '<br> Tag' },
+    { id: 'br-tag', label: '<br> Tag & First Project' },
     { id: 'formatting', label: 'HTML Formatting Elements' },
     { id: 'heading-tag', label: 'Heading Tags (h1-h6)' },
     { id: 'img-tag', label: '<img> Tag and Attributes' },
@@ -20,13 +23,12 @@ const SIDEBAR_ITEMS = [
     { id: 'semantic', label: 'HTML5 Semantic Elements' },
     { id: 'audio-video', label: 'Audio and Video Tags' },
     { id: 'iframe-tag', label: '<iframe> Tag' },
-    { id: 'entities', label: 'HTML Entities' },
+    { id: 'entities', label: 'HTML Entities & Capstone' },
 ];
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
     return (
         <section id={id} className="relative bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 p-4 sm:p-5 md:p-7 mb-5 scroll-mt-16 transition-shadow duration-300 overflow-hidden">
-            {/* Top gradient accent */}
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
             <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-gray-900 mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">
                 <span className="inline-block w-1.5 h-6 rounded-full bg-gradient-to-b from-blue-500 to-indigo-600" />
@@ -43,32 +45,32 @@ function Code({ code }: { code: string }) {
     return (
         <div className="rounded-xl overflow-hidden my-4 shadow-sm border border-gray-800/20" style={{ background: '#1e1e2e' }}>
             <div className="flex items-center justify-between px-3 py-2" style={{ background: '#181825' }}>
-                <div className="flex items-center gap-2">
-                    <div className="flex gap-1.5">
+                <div className="flex items-center gap-1.5">
+                    <div className="flex gap-1">
                         <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
                         <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
                     </div>
                     <span className="text-[10px] text-gray-500 font-mono ml-1">index.html</span>
                 </div>
-                <button onClick={handleCopy} className="text-[10px] px-2.5 py-1 rounded-md font-semibold transition-all" style={{ background: copied ? '#166534' : '#313244', color: copied ? '#86efac' : '#a6adc8' }}>
-                    {copied ? '✓ Copied' : 'Copy'}
-                </button>
+                <div className="flex items-center gap-1.5">
+                    <Link
+                        href="/html/compiler"
+                        onClick={() => {
+                            try { localStorage.setItem('knobly_web_draft_html', code); } catch(e){}
+                        }}
+                        className="text-[10px] px-2.5 py-1 rounded-md font-semibold transition-all flex items-center gap-1 bg-orange-500/20 text-orange-300 hover:bg-orange-500 hover:text-white"
+                        title="Open and run in Web Compiler"
+                    >
+                        <Play size={10} fill="currentColor" />
+                        <span>Run</span>
+                    </Link>
+                    <button onClick={handleCopy} className="text-[10px] px-2.5 py-1 rounded-md font-semibold transition-all" style={{ background: copied ? '#166534' : '#313244', color: copied ? '#86efac' : '#a6adc8' }}>
+                        {copied ? '✓ Copied' : 'Copy'}
+                    </button>
+                </div>
             </div>
             <pre className="p-3 sm:p-4 overflow-x-auto text-xs sm:text-[13px] leading-relaxed font-mono" style={{ color: '#cdd6f4' }}><code>{code}</code></pre>
-        </div>
-    );
-}
-
-function Task({ num, children }: { num: number; children: React.ReactNode }) {
-    return (
-        <div className="relative bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3 sm:p-4 mt-5 shadow-sm overflow-hidden">
-            <div className="absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 to-orange-500" />
-            <div className="flex items-center gap-2 mb-2 pl-2">
-                <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 text-white font-bold text-[10px] flex items-center justify-center shadow-sm shadow-amber-400/30">{num}</span>
-                <span className="text-xs font-bold text-amber-800 uppercase tracking-wider">Practice Task</span>
-            </div>
-            <p className="text-xs sm:text-[13px] text-amber-900 pl-2 leading-relaxed">{children}</p>
         </div>
     );
 }
@@ -84,21 +86,95 @@ function AttrTable({ rows }: { rows: [string, string][] }) {
     );
 }
 
+// In-section quick practice check (no misleading task link)
+function QuickPractice({ title, children }: { title: string; children: React.ReactNode }) {
+    return (
+        <div className="relative bg-slate-50 border border-slate-200/90 rounded-xl p-3 sm:p-4 mt-3">
+            <div className="flex items-center gap-2 mb-1.5">
+                <Code2 size={14} className="text-blue-600" />
+                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">{title}</span>
+            </div>
+            <div className="text-xs text-slate-600 pl-5 leading-relaxed">{children}</div>
+        </div>
+    );
+}
+
+// Full interactive Milestone Practice Card placed where tags are completed
+function PracticeTaskCard({ 
+    taskId, 
+    title, 
+    desc, 
+    tagsCovered,
+    highlightBadge = "Practice Project"
+}: { 
+    taskId: string; 
+    title: string; 
+    desc: string; 
+    tagsCovered: string[];
+    highlightBadge?: string;
+}) {
+    return (
+        <div className="relative overflow-hidden bg-gradient-to-r from-amber-50/95 via-orange-50/90 to-yellow-50/70 border-2 border-amber-300/90 rounded-2xl p-4 sm:p-5 mt-5 shadow-sm">
+            <div className="absolute top-0 left-0 bottom-0 w-2 bg-gradient-to-b from-amber-500 to-orange-600" />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2.5 pl-2">
+                <div className="flex items-center gap-3">
+                    <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white font-extrabold text-xs flex items-center justify-center shadow-md shadow-orange-500/25 shrink-0">
+                        {taskId}
+                    </span>
+                    <div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full">
+                                {highlightBadge}
+                            </span>
+                            <span className="text-[11px] text-amber-800 font-semibold flex items-center gap-1">
+                                <Sparkles size={11} className="text-amber-600" />
+                                <span>Tag Requirements Complete!</span>
+                            </span>
+                        </div>
+                        <h4 className="text-sm sm:text-base font-extrabold text-slate-900 mt-0.5">{title}</h4>
+                    </div>
+                </div>
+
+                <Link
+                    href={`/html/tasks/${taskId}`}
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl text-xs font-bold shadow-md shadow-orange-500/20 transition-all hover:scale-105 shrink-0 self-start sm:self-auto"
+                >
+                    <span>Start Task #{taskId}</span>
+                    <ArrowRight size={14} />
+                </Link>
+            </div>
+
+            <p className="text-xs text-slate-700 pl-2 leading-relaxed mb-3">
+                {desc}
+            </p>
+
+            <div className="pl-2 pt-2 border-t border-amber-200/80 flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-bold text-amber-950 uppercase tracking-wider mr-1">Tags Practiced:</span>
+                {tagsCovered.map((tag, idx) => (
+                    <code key={idx} className="bg-white/95 border border-amber-300 text-amber-900 font-mono text-[10px] sm:text-[11px] px-2 py-0.5 rounded-md font-bold">
+                        {tag}
+                    </code>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 export default function HtmlElements() {
     return (
         <SidebarLayout title="Elements, Tags, and Attributes" backHref="/html" sidebarTitle="HTML All Tags" items={SIDEBAR_ITEMS}>
             {/* Banner */}
             <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-5 sm:p-7 mb-6 shadow-lg shadow-blue-500/20">
-                <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4" />
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4" />
-                <div className="absolute top-3 right-6 text-white/8 text-5xl sm:text-7xl font-black select-none">&lt;/&gt;</div>
+                <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+                <div className="absolute top-3 right-6 text-white/8 text-5xl sm:text-7xl font-black select-none pointer-events-none">&lt;/&gt;</div>
                 <div className="relative z-10">
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-1.5">Elements, Tags, and Attributes</h1>
-                    <p className="text-blue-200 text-xs sm:text-sm mb-4">Complete reference for HTML elements with examples and practice tasks</p>
+                    <p className="text-blue-200 text-xs sm:text-sm mb-4">Complete reference for HTML elements — live practice tasks appear as each tag group is completed.</p>
                     <div className="flex flex-wrap gap-2">
-                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">18 Sections</span>
-                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">50+ Examples</span>
-                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">18 Tasks</span>
+                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">18 Chapters</span>
+                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">50+ Code Examples</span>
+                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">15 Hands-on Tasks</span>
                     </div>
                 </div>
             </div>
@@ -107,11 +183,10 @@ export default function HtmlElements() {
             <Section id="elements-tags" title="1. HTML Elements, Tags, and Attributes">
                 <p>An HTML element is a building block of a webpage that consists of a <strong>start tag</strong>, <strong>content</strong>, and an <strong>end tag</strong>. Elements form the structure of the content on the page.</p>
                 <p>Tags are the keywords that define the start and end of an element. Attributes provide additional information about the elements and are included within the opening tag.</p>
-                <Code code={`Example: <a href="https://olevelcccexam.link">
-Visit our site</a>
+                <Code code={`Example: <a href="https://knoblyweb.in">Visit Knobly</a>
 
 Here, <a> is the tag, href is an attribute,
-and "Visit our site" is the content.`} />
+and "Visit Knobly" is the content.`} />
                 <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
                     <h4 className="text-sm font-bold text-blue-700 mb-2">Tag Syntax:</h4>
                     <ul className="list-disc list-inside space-y-1.5 text-xs sm:text-sm text-gray-700">
@@ -123,7 +198,9 @@ and "Visit our site" is the content.`} />
                 </div>
                 <Code code={`<p align="center">This is a centered paragraph.</p>
 <!-- <p> is the tag, align is the attribute, "center" is the value -->`} />
-                <Task num={1}>Create a simple HTML page with a <code className="bg-amber-100 px-1 rounded">&lt;p&gt;</code> tag that has an <code className="bg-amber-100 px-1 rounded">align=&quot;center&quot;</code> attribute. Add a heading above it using the <code className="bg-amber-100 px-1 rounded">&lt;h1&gt;</code> tag.</Task>
+                <QuickPractice title="Quick Syntax Check">
+                    Try writing an HTML element with an opening tag, closing tag, and an attribute like <code className="bg-white px-1.5 py-0.5 rounded border border-slate-200">&lt;p align=&quot;center&quot;&gt;Hello World&lt;/p&gt;</code>.
+                </QuickPractice>
             </Section>
 
             {/* 2 */}
@@ -162,7 +239,9 @@ and "Visit our site" is the content.`} />
 <br>
 <hr>
 <img src="image.jpg" alt="My Image">`} />
-                <Task num={2}>Write an HTML page using at least 3 container tags and 3 empty tags. Label each with a comment identifying it as container or empty.</Task>
+                <QuickPractice title="Container vs Empty Check">
+                    Remember: Tags that enclose text like <code className="bg-white px-1 rounded">&lt;p&gt;</code> are container tags, while break tags like <code className="bg-white px-1 rounded">&lt;br&gt;</code> and <code className="bg-white px-1 rounded">&lt;hr&gt;</code> are empty tags.
+                </QuickPractice>
             </Section>
 
             {/* 3 */}
@@ -184,7 +263,9 @@ and "Visit our site" is the content.`} />
                     ['topmargin', 'Top margin of the page'],
                     ['leftmargin', 'Left margin of the page'],
                 ]} />
-                <Task num={3}>Create a page with <code className="bg-amber-100 px-1 rounded">bgcolor=&quot;lightyellow&quot;</code>, text color &quot;darkblue&quot;, and link color &quot;red&quot;. Add a heading, paragraph, and a link to google.com.</Task>
+                <QuickPractice title="Body Attributes Check">
+                    The <code className="bg-white px-1 rounded">bgcolor</code> attribute will be used directly in your first profile project in Section 6!
+                </QuickPractice>
             </Section>
 
             {/* 4 */}
@@ -197,7 +278,9 @@ and "Visit our site" is the content.`} />
 It stretches the text so each line has equal width.</p>`} />
                 <AttrTable rows={[['align', 'left (default), center, right, justify']]} />
                 <p><strong>Important:</strong> HTML ignores extra white spaces and line breaks in source code. Multiple spaces become one. Use <code className="bg-gray-100 px-1 rounded">&lt;br&gt;</code> for breaks and <code className="bg-gray-100 px-1 rounded">&amp;nbsp;</code> for extra spaces.</p>
-                <Task num={4}>Create a page with 4 paragraphs — one with each alignment value (left, center, right, justify). Each paragraph should have at least 2 lines of text.</Task>
+                <QuickPractice title="Paragraph Alignment Check">
+                    The <code className="bg-white px-1 rounded">align=&quot;center&quot;</code> attribute is widely used for headings and introductory text.
+                </QuickPractice>
             </Section>
 
             {/* 5 */}
@@ -216,11 +299,13 @@ It stretches the text so each line has equal width.</p>`} />
 
 <pre>This    has    extra    spaces.</pre>
 <!-- Browser shows: "This    has    extra    spaces." -->`} />
-                <Task num={5}>Create an HTML page that displays a multiplication table (1 to 5) using the <code className="bg-amber-100 px-1 rounded">&lt;pre&gt;</code> tag. Columns should be properly aligned using spaces.</Task>
+                <QuickPractice title="Preformatted Text Note">
+                    The <code className="bg-white px-1 rounded">&lt;pre&gt;</code> tag is essential whenever you want to display formatted poems, quotes, or code blocks without writing multiple line break tags.
+                </QuickPractice>
             </Section>
 
-            {/* 6 */}
-            <Section id="br-tag" title="6. <br> Tag">
+            {/* 6 - BR TAG: Milestone for Task 1 */}
+            <Section id="br-tag" title="6. <br> Tag & Practice Project">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;br&gt;</code> tag inserts a line break. It is an empty tag (no closing tag). Useful for addresses, poems, or anywhere you need a line break without a new paragraph.</p>
                 <Code code={`<p>
     Knobly Education<br>
@@ -246,7 +331,15 @@ It stretches the text so each line has equal width.</p>`} />
                         </tbody>
                     </table>
                 </div>
-                <Task num={6}>Write your school/college address using <code className="bg-amber-100 px-1 rounded">&lt;br&gt;</code>. Also write a short poem (4 lines) using <code className="bg-amber-100 px-1 rounded">&lt;br&gt;</code> for line breaks.</Task>
+
+                {/* TASK 1: Placed right after <br> tag completion! */}
+                <PracticeTaskCard
+                    taskId="1"
+                    title="Task 1: My Profile Page"
+                    desc="Ab aapne body bgcolor, p, pre, br, aur hr tags seekh liye hain! In tags ka use karke apna personal developer profile page banayein — bio, favorite quote in pre tag, aur contact address."
+                    tagsCovered={['<body bgcolor>', '<p align="center">', '<pre>', '<br>', '<hr>']}
+                    highlightBadge="First Milestone Project"
+                />
             </Section>
 
             {/* 7 */}
@@ -285,10 +378,12 @@ It stretches the text so each line has equal width.</p>`} />
                         <div><code className="bg-white px-1 rounded text-red-600">&lt;sup&gt;</code> — x<sup>2</sup></div>
                     </div>
                 </div>
-                <Task num={7}>Create a page demonstrating ALL formatting tags. Write H₂O using sub and a²+b²=c² using sup tags.</Task>
+                <QuickPractice title="Formatting Self Check">
+                    Practice writing chemical formulas like H<sub>2</sub>O using <code className="bg-white px-1 rounded">&lt;sub&gt;</code> and algebraic expressions like a<sup>2</sup> + b<sup>2</sup> using <code className="bg-white px-1 rounded">&lt;sup&gt;</code>.
+                </QuickPractice>
             </Section>
 
-            {/* 8 */}
+            {/* 8 - HEADINGS: Milestone for Task 2 */}
             <Section id="heading-tag" title="8. Heading Tags (h1-h6)">
                 <p>HTML provides six levels of headings. <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> is the largest and most important, <code className="bg-gray-100 px-1 rounded">&lt;h6&gt;</code> is the smallest.</p>
                 <Code code={`<h1>Heading 1 - Most Important</h1>
@@ -309,10 +404,18 @@ It stretches the text so each line has equal width.</p>`} />
                     <p className="text-xs font-bold text-gray-500">H6 Heading</p>
                 </div>
                 <p><strong>Rules:</strong> Use only one <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> per page. Do not skip heading levels. Headings help SEO.</p>
-                <Task num={8}>Create a page for your school: School Name (h1 centered), Department (h2), Course (h3), Subjects (h4), Topics (h5), Sub-topics (h6).</Task>
+
+                {/* TASK 2: Placed right after Headings & Formatting are complete! */}
+                <PracticeTaskCard
+                    taskId="2"
+                    title="Task 2: Basic HTML Tags & Formatting"
+                    desc="Formatting tags (b, i, u, center) aur Headings (h1-h6) complete hone ke baad ab Task 2 solve karein — bold, italic, underline, preformatted text, aur multi-level headings."
+                    tagsCovered={['<h1>, <h2>', '<center>', '<b>, <i>, <u>', '<pre>', '<br>', '<hr>']}
+                    highlightBadge="Headings & Formatting Project"
+                />
             </Section>
 
-            {/* 9 */}
+            {/* 9 - IMAGE TAG: Milestone for Task 3 & 4 */}
             <Section id="img-tag" title="9. <img> Tag and Attributes">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;img&gt;</code> tag embeds images. It is a self-closing (empty) tag.</p>
                 <Code code={`<img src="photo.jpg" alt="A photo" width="300" height="200">
@@ -338,10 +441,27 @@ It stretches the text so each line has equal width.</p>`} />
                     ['hspace', 'Horizontal space around image'],
                     ['vspace', 'Vertical space around image'],
                 ]} />
-                <Task num={9}>Create a page with 3 images: one left-aligned with text wrapping, one centered, and one as a clickable link. Set proper alt text for all.</Task>
+
+                {/* TASK 3 & 4: Placed right after <img> tag completion! */}
+                <div className="space-y-3">
+                    <PracticeTaskCard
+                        taskId="3"
+                        title="Task 3: India - A Diverse Nation"
+                        desc="Ab aapne <img> tag seekh liya hai! Task 3 me India ke bare me article banayein jisme headings, font colors, aur India ka map image embedded ho."
+                        tagsCovered={['<img> (src, alt, align)', '<h1> - <h5>', '<font color>', '<p>', '<hr>']}
+                        highlightBadge="Image Embedding Project"
+                    />
+                    <PracticeTaskCard
+                        taskId="4"
+                        title="Task 4: Indian History Timeline"
+                        desc="Image alignment (align='right'), marquee, font size/color, aur historical period sections ka use karke Indian History Timeline banayein."
+                        tagsCovered={['<img align="right">', '<marquee>', '<font face/size/color>', '<h1> - <h3>', '<hr color>']}
+                        highlightBadge="Multimedia Article Project"
+                    />
+                </div>
             </Section>
 
-            {/* 10 */}
+            {/* 10 - ANCHOR TAG: Milestone for Task 7 */}
             <Section id="anchor-tag" title="10. <a> Anchor Tag">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;a&gt;</code> tag creates hyperlinks.</p>
                 <Code code={`<!-- External link -->
@@ -370,10 +490,18 @@ It stretches the text so each line has equal width.</p>`} />
                     ['download', 'Downloads file instead of navigating'],
                     ['name', 'Name of anchor (for bookmarks)'],
                 ]} />
-                <Task num={10}>Create a page with 5 link types: external, internal, email, phone, and a bookmark link that jumps to a section on the same page.</Task>
+
+                {/* TASK 7: Placed right after <a> tag completion! */}
+                <PracticeTaskCard
+                    taskId="7"
+                    title="Task 7: Simple Webpage with Bookmarks & Navigation"
+                    desc="Hyperlinks aur internal bookmarks (<a href='#about'>, <a name='about'>, <a href='#top'>) seekhne ke baad bina CSS ke ek pure semantic clickable website banayein."
+                    tagsCovered={['<a href>', 'target="_blank"', 'Page Bookmarks (<a name>)', 'mailto:', '<h1> - <h4>', '<p>', '<hr>']}
+                    highlightBadge="Hyperlink Navigation Project"
+                />
             </Section>
 
-            {/* 11 */}
+            {/* 11 - LIST TAGS: Milestone for Task 5 & 5.3 */}
             <Section id="list-tags" title="11. List Tags (ul, ol, dl)">
                 <p>HTML supports three types of lists:</p>
                 <h4 className="text-sm font-bold text-blue-700 mt-2">A. Unordered List (&lt;ul&gt;)</h4>
@@ -415,10 +543,27 @@ It stretches the text so each line has equal width.</p>`} />
     <dt>CSS</dt>
     <dd>Cascading Style Sheets</dd>
 </dl>`} />
-                <Task num={11}>Create: (a) Nested unordered list of favorite foods by category, (b) Ordered list of steps to make tea using Roman numerals, (c) Description list of 5 computer terms.</Task>
+
+                {/* TASK 5 & 5.3: Placed right after List tags completion! */}
+                <div className="space-y-3">
+                    <PracticeTaskCard
+                        taskId="5"
+                        title="Task 5: Operating Systems (Lists & Style Guide)"
+                        desc="Ordered lists, unordered lists, aur description lists (<dl>, <dt>, <dd>) ka use karke Operating Systems information page banayein."
+                        tagsCovered={['<ul>', '<ol>', '<li>', '<dl>', '<dt>', '<dd>', '<img>', 'h1-h4']}
+                        highlightBadge="Lists Mastery Project"
+                    />
+                    <PracticeTaskCard
+                        taskId="5.3"
+                        title="Task 5.3: History of the Internet"
+                        desc="Description lists aur ordered timeline ka use karke History of Internet ka educational page banayein."
+                        tagsCovered={['<dl>', '<dt>', '<dd>', '<ol>', '<ul>', '<img>', 'font']}
+                        highlightBadge="Timeline Lists Project"
+                    />
+                </div>
             </Section>
 
-            {/* 12 */}
+            {/* 12 - TABLE TAG: Milestone for Task 5.1, 5.2 & 6 */}
             <Section id="table-tag" title="12. Table Tag and Attributes">
                 <p>Tables arrange data into rows and columns.</p>
                 <Code code={`<table border="1" cellpadding="8" cellspacing="0" width="100%">
@@ -456,10 +601,34 @@ It stretches the text so each line has equal width.</p>`} />
                     ['rowspan', 'Merge rows vertically'],
                     ['align', 'left, center, right'],
                 ]} />
-                <Task num={12}>Create a marksheet for 5 students: Roll No, Name, Hindi, English, Math, Science, Total, Percentage. Use colspan for title and bgcolor for alternate rows.</Task>
+
+                {/* TASK 5.1, 5.2, 6: Placed right after Table tags completion! */}
+                <div className="space-y-3">
+                    <PracticeTaskCard
+                        taskId="5.1"
+                        title="Task 5.1: Operating Systems (Table Layout)"
+                        desc="Table, border, cellpadding, aur alternating colors ka use karke OS market share table banayein."
+                        tagsCovered={['<table>', '<tr>', '<th>', '<td>', 'border', 'cellpadding']}
+                        highlightBadge="Basic Table Project"
+                    />
+                    <PracticeTaskCard
+                        taskId="5.2"
+                        title="Task 5.2: Global Internet Usage Statistics"
+                        desc="Rowspan aur Colspan ka advanced use karke regional internet usage data table banayein."
+                        tagsCovered={['colspan="2"', 'rowspan="2"', '<caption>', '<th>', '<td>', 'align']}
+                        highlightBadge="Colspan & Rowspan Project"
+                    />
+                    <PracticeTaskCard
+                        taskId="6"
+                        title="Task 6: Weekly Study Schedule"
+                        desc="Complex multi-row aur multi-column timetable banayein jisme days, timeslots, aur subject cells merged hon."
+                        tagsCovered={['colspan="5"', 'rowspan="2"', 'bgcolor', 'cellspacing="0"', 'caption']}
+                        highlightBadge="Complex Timetable Project"
+                    />
+                </div>
             </Section>
 
-            {/* 13 */}
+            {/* 13 - FORM TAG: Milestone for Task 8 */}
             <Section id="form-tag" title="13. Form Tag and Elements">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;form&gt;</code> tag collects user input.</p>
                 <Code code={`<form action="/submit" method="POST">
@@ -504,7 +673,15 @@ It stretches the text so each line has equal width.</p>`} />
                     ['method', 'GET (in URL) or POST (in body)'],
                     ['enctype', 'Encoding type (for file uploads)'],
                 ]} />
-                <Task num={13}>Create a Student Registration Form: Name, Email, Password, DOB (date), Gender (radio), Course (dropdown with 5 options), Hobbies (checkboxes), Photo (file), Address (textarea), Submit & Reset buttons.</Task>
+
+                {/* TASK 8: Placed right after Form tags completion! */}
+                <PracticeTaskCard
+                    taskId="8"
+                    title="Task 8: Student Registration Form"
+                    desc="Ab aapne sabhi form elements seekh liye hain! Task 8 me complete Student Registration Form banayein jisme Personal Info, Account Info, Radio, Checkbox, Dropdown, aur Textarea ho."
+                    tagsCovered={['<form>', '<fieldset>', '<legend>', '<input type>', '<select>', '<textarea>', 'submit']}
+                    highlightBadge="Interactive Form Project"
+                />
             </Section>
 
             {/* 14 */}
@@ -531,10 +708,12 @@ Computer Science</span>.</p>`} />
                         </tbody>
                     </table>
                 </div>
-                <Task num={14}>Create a page with 3 div sections (header, content, footer) with different background colors. Use span to highlight words inside the content div.</Task>
+                <QuickPractice title="Containers Self Check">
+                    Use <code className="bg-white px-1 rounded">&lt;div&gt;</code> to group entire layout blocks and <code className="bg-white px-1 rounded">&lt;span&gt;</code> to style specific words or phrases inline.
+                </QuickPractice>
             </Section>
 
-            {/* 15 */}
+            {/* 15 - SEMANTIC HTML5: Milestone for Task 11 */}
             <Section id="semantic" title="15. HTML5 Semantic Elements">
                 <p>Semantic elements describe their meaning clearly, helping browsers and search engines understand page structure.</p>
                 <Code code={`<header>
@@ -571,10 +750,18 @@ Computer Science</span>.</p>`} />
                         <div><code className="bg-white px-1 rounded text-red-600">&lt;figure&gt;</code> — Image + caption</div>
                     </div>
                 </div>
-                <Task num={15}>Create a complete webpage using ONLY semantic elements: header with nav, main with article and aside, and footer. No div tags allowed.</Task>
+
+                {/* TASK 11: Placed right after Semantic HTML5 completion! */}
+                <PracticeTaskCard
+                    taskId="11"
+                    title="Task 11: Premium Demo Website Layout"
+                    desc="HTML5 semantic elements (<header>, <nav>, <footer>) aur structured tables ka use karke ek modern business demo website banayein."
+                    tagsCovered={['<header>', '<nav>', '<footer>', '<table>', '<form>', '<h1> - <h3>', '&copy;']}
+                    highlightBadge="Modern Layout Project"
+                />
             </Section>
 
-            {/* 16 */}
+            {/* 16 - AUDIO & VIDEO: Milestone for Task 9 & 5.4 */}
             <Section id="audio-video" title="16. Audio and Video Tags">
                 <p>HTML5 supports audio and video directly.</p>
                 <Code code={`<!-- Audio -->
@@ -603,7 +790,24 @@ Computer Science</span>.</p>`} />
                         <div><code className="bg-white px-1 rounded text-red-600">poster</code> — Video thumbnail image</div>
                     </div>
                 </div>
-                <Task num={16}>Create a multimedia page with an audio player, a video player with controls and poster, and an embedded YouTube video.</Task>
+
+                {/* TASK 9 & 5.4: Placed right after Audio & Video completion! */}
+                <div className="space-y-3">
+                    <PracticeTaskCard
+                        taskId="9"
+                        title="Task 9: Solar System Basics (with Video Player)"
+                        desc="Solar System page jisme detailed facts table ke sath embedded HTML5 video player (<video controls>) ho."
+                        tagsCovered={['<video controls>', '<source>', '<table>', '<ol>', '<form>', '<img>']}
+                        highlightBadge="Video & Media Project"
+                    />
+                    <PracticeTaskCard
+                        taskId="5.4"
+                        title="Task 5.4: The Wonders of Space"
+                        desc="Space exploration multimedia page with facts table, celestial lists, aur astronomical links."
+                        tagsCovered={['video/media', '<table>', '<ul>', '<ol>', '<dl>', '<img>']}
+                        highlightBadge="Space Multimedia Project"
+                    />
+                </div>
             </Section>
 
             {/* 17 */}
@@ -623,11 +827,13 @@ Computer Science</span>.</p>`} />
 <iframe src="page.html" name="myframe" 
     width="100%" height="500"></iframe>
 <a href="page2.html" target="myframe">Load Page 2</a>`} />
-                <Task num={17}>Create a page with an iframe that loads a website. Add 3 links that load different pages into the same iframe using target and name attributes.</Task>
+                <QuickPractice title="iFrame Target Check">
+                    Use <code className="bg-white px-1 rounded">target=&quot;myframe&quot;</code> on an anchor tag to open links directly inside an embedded iframe!
+                </QuickPractice>
             </Section>
 
-            {/* 18 */}
-            <Section id="entities" title="18. HTML Entities (Special Characters)">
+            {/* 18 - ENTITIES & CAPSTONE: Milestone for Task 10 */}
+            <Section id="entities" title="18. HTML Entities & Capstone Project">
                 <p>Reserved characters in HTML must be displayed using entities.</p>
                 <div className="overflow-x-auto my-3">
                     <table className="w-full text-xs sm:text-sm border border-gray-200 rounded-lg overflow-hidden">
@@ -648,7 +854,15 @@ Computer Science</span>.</p>`} />
 <p>Price: &#8377;500</p>
 <p>&copy; 2025 Knobly Education</p>
 <p>I &hearts; HTML</p>`} />
-                <Task num={18}>Display all entities from the table above. Also write: 5 &lt; 10 &amp; 10 &gt; 5 using proper HTML entities.</Task>
+
+                {/* TASK 10: Capstone Project placed after all elements are complete! */}
+                <PracticeTaskCard
+                    taskId="10"
+                    title="Task 10: Full Multi-Section Website Layout (Capstone Project)"
+                    desc="Badhaai ho! Ab aapne HTML ke sabhi chapters complete kar liye hain! Task 10 me nav, marquee, tables, forms, videos, lists, aur iframes ko mila kar ek complete master website banayein."
+                    tagsCovered={['<iframe>', '<video>', '<nav>', '<table>', '<form>', '<dl>', '<ul>', '&copy;']}
+                    highlightBadge="Master Capstone Project"
+                />
             </Section>
         </SidebarLayout>
     );
