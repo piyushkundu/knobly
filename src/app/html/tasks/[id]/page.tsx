@@ -42,17 +42,33 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
     const [showPasswordBox, setShowPasswordBox] = useState(false);
 
     const checkLockStatus = async () => {
+        // Immediate check from localStorage
+        try {
+            const cached = localStorage.getItem('knobly_unlocked_html_tasks');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.includes(id)) {
+                    setUnlocked(true);
+                }
+            }
+        } catch (e) {}
+
         try {
             const res = await fetch('/api/html-tasks', { cache: 'no-store' });
             if (res.ok) {
                 const data = await res.json();
                 const isUnlocked = Array.isArray(data.unlockedTasks) && data.unlockedTasks.includes(id);
                 setUnlocked(isUnlocked);
+                if (Array.isArray(data.unlockedTasks)) {
+                    try {
+                        localStorage.setItem('knobly_unlocked_html_tasks', JSON.stringify(data.unlockedTasks));
+                    } catch (e) {}
+                }
             } else {
-                setUnlocked(false);
+                setUnlocked((prev) => (prev !== null ? prev : false));
             }
         } catch {
-            setUnlocked(false);
+            setUnlocked((prev) => (prev !== null ? prev : false));
         }
     };
 
@@ -82,6 +98,14 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
             if (!res.ok) {
                 setErrorMsg(data.error || 'Password verification failed');
             } else {
+                // Update localStorage with unlocked task
+                try {
+                    const cached = localStorage.getItem('knobly_unlocked_html_tasks');
+                    let list: string[] = cached ? JSON.parse(cached) : [];
+                    if (!list.includes(id)) list.push(id);
+                    localStorage.setItem('knobly_unlocked_html_tasks', JSON.stringify(list));
+                } catch (e) {}
+
                 setSuccessMsg('Task unlocked successfully!');
                 setTimeout(() => {
                     setUnlocked(true);

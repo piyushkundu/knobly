@@ -48,11 +48,27 @@ export default function TasksPage() {
 
     // Fetch current unlocked tasks from backend API
     const fetchTasksState = async () => {
+        // First check localStorage for immediate render
+        try {
+            const cached = localStorage.getItem('knobly_unlocked_html_tasks');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed)) {
+                    setUnlockedTasks(parsed);
+                }
+            }
+        } catch (e) {}
+
         try {
             const res = await fetch('/api/html-tasks', { cache: 'no-store' });
             if (res.ok) {
                 const data = await res.json();
-                setUnlockedTasks(data.unlockedTasks || []);
+                if (Array.isArray(data.unlockedTasks)) {
+                    setUnlockedTasks(data.unlockedTasks);
+                    try {
+                        localStorage.setItem('knobly_unlocked_html_tasks', JSON.stringify(data.unlockedTasks));
+                    } catch (e) {}
+                }
             }
         } catch (err) {
             console.error('Failed to load tasks status:', err);
@@ -96,7 +112,12 @@ export default function TasksPage() {
             if (!res.ok) {
                 setErrorMessage(data.error || 'Password verification failed');
             } else {
-                setUnlockedTasks(data.unlockedTasks || []);
+                const updatedList = Array.isArray(data.unlockedTasks) ? data.unlockedTasks : [];
+                setUnlockedTasks(updatedList);
+                try {
+                    localStorage.setItem('knobly_unlocked_html_tasks', JSON.stringify(updatedList));
+                } catch (e) {}
+
                 setSuccessMessage(data.message || 'Task status updated successfully!');
                 setTimeout(() => {
                     setModalOpen(false);
