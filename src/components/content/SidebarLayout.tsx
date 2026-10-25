@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, Home, Code2, Menu, X } from 'lucide-react';
 import { useState, ReactNode, useEffect } from 'react';
 
@@ -18,6 +19,7 @@ interface SidebarLayoutProps {
 }
 
 export default function SidebarLayout({ title, backHref, sidebarTitle, items, children }: SidebarLayoutProps) {
+    const router = useRouter();
     const [activeId, setActiveId] = useState(items[0]?.id || '');
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -56,9 +58,19 @@ export default function SidebarLayout({ title, backHref, sidebarTitle, items, ch
             <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200/60 shadow-sm">
                 <div className="px-4 py-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href={backHref} className="text-gray-400 hover:text-gray-900 transition-colors p-1 rounded-lg hover:bg-gray-100">
+                        <button
+                            onClick={() => {
+                                if (typeof window !== 'undefined' && window.history.length > 1) {
+                                    router.back();
+                                } else {
+                                    router.push(backHref);
+                                }
+                            }}
+                            className="text-gray-400 hover:text-gray-900 transition-colors p-1 rounded-lg hover:bg-gray-100"
+                            title="Go Back"
+                        >
                             <ArrowLeft size={18} />
-                        </Link>
+                        </button>
                         <div className="flex items-center gap-2">
                             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm shadow-blue-500/25">
                                 <Code2 size={13} className="text-white" />

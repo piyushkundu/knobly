@@ -1,5 +1,6 @@
 'use client';
 import { useState, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Home, BookOpen, Code2, Sparkles, ChevronRight, Languages, Play, CheckCircle2 } from 'lucide-react';
 
@@ -125,6 +126,7 @@ function Timeline({ items }: { items: { year: string; title: string; desc: strin
 /* ── Main Page Component ── */
 
 export default function HtmlIntro() {
+    const router = useRouter();
     const [isHindi, setIsHindi] = useState(false);
 
     return (
@@ -133,9 +135,19 @@ export default function HtmlIntro() {
             <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200/60 shadow-sm">
                 <div className="max-w-4xl mx-auto px-4 py-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href="/html" className="text-gray-400 hover:text-gray-900 transition-colors p-1 rounded-lg hover:bg-gray-100">
+                        <button
+                            onClick={() => {
+                                if (typeof window !== 'undefined' && window.history.length > 1) {
+                                    router.back();
+                                } else {
+                                    router.push('/html');
+                                }
+                            }}
+                            className="text-gray-400 hover:text-gray-900 transition-colors p-1 rounded-lg hover:bg-gray-100"
+                            title="Go Back"
+                        >
                             <ArrowLeft size={18} />
-                        </Link>
+                        </button>
                         <div className="flex items-center gap-2">
                             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-sm shadow-orange-500/25">
                                 <BookOpen size={13} className="text-white" />

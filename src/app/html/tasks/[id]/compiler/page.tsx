@@ -1,6 +1,7 @@
 'use client';
 
 import { use, useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
     ArrowLeft, Play, Send, Award, CheckCircle2, XCircle, AlertCircle,
@@ -84,6 +85,7 @@ function getScoreEmoji(score: number) {
 
 export default function TaskCompilerPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
+    const router = useRouter();
     const task = TASKS[id];
 
     const [code, setCode] = useState('');
@@ -284,15 +286,15 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                 }`}>
                 {/* Left: Back & Title */}
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                    <Link
-                        href={`/html/tasks/${id}`}
+                    <button
+                        onClick={() => router.back()}
                         className={`p-1.5 rounded-lg transition-colors ${
                             isWhite ? 'text-slate-500 hover:text-slate-900 hover:bg-slate-100' : 'text-slate-300 hover:text-white hover:bg-slate-800'
                         }`}
-                        title="Back to Task Preview"
+                        title="Go Back"
                     >
                         <ArrowLeft size={18} />
-                    </Link>
+                    </button>
 
                     <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center shadow-sm text-white shrink-0">
                         <FileCode size={16} />

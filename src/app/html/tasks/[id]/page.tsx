@@ -1,6 +1,7 @@
 'use client';
 
 import { use, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
     ArrowLeft, Home, FileCode, ChevronLeft, ChevronRight, 
@@ -29,6 +30,7 @@ const TASK_ORDER = ['1', '2', '3', '4', '5', '5.1', '5.2', '5.3', '5.4', '6', '7
 
 export default function TaskPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
+    const router = useRouter();
     const task = TASKS[id];
     const currentIndex = TASK_ORDER.indexOf(id);
     const prevId = currentIndex > 0 ? TASK_ORDER[currentIndex - 1] : null;
@@ -138,7 +140,7 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
             <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
                 <div className="px-3 sm:px-4 py-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                        <Link href="/html/tasks" className="text-gray-500 hover:text-gray-900 shrink-0"><ArrowLeft size={20} /></Link>
+                        <button onClick={() => router.back()} className="text-gray-500 hover:text-gray-900 shrink-0" title="Go Back"><ArrowLeft size={20} /></button>
                         <FileCode size={16} className="text-blue-600 shrink-0" />
                         <h1 className="text-xs sm:text-sm font-bold text-gray-900 truncate">Task {id}: {task.title}</h1>
                     </div>
@@ -205,9 +207,9 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
                                 </Link>
 
                                 <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                                    <Link href="/html/tasks" className="text-xs font-semibold text-slate-500 hover:text-slate-800">
+                                    <button onClick={() => router.back()} className="text-xs font-semibold text-slate-500 hover:text-slate-800">
                                         ← Back to Tasks
-                                    </Link>
+                                    </button>
 
                                     {/* Small Lock Icon for Admin */}
                                     <button

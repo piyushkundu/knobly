@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
     ArrowLeft, Home, FileText, Sparkles, Code2, Layers, 
     Clock, BookOpen, PenTool, ArrowRight, Download
@@ -14,18 +15,26 @@ const quickLinks = [
 ];
 
 export default function HtmlNotesPage() {
+    const router = useRouter();
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-orange-50/20 text-slate-800">
             {/* ── Top Bar ── */}
             <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200/60 shadow-xs">
                 <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link 
-                            href="/html" 
+                        <button 
+                            onClick={() => {
+                                if (typeof window !== 'undefined' && window.history.length > 1) {
+                                    router.back();
+                                } else {
+                                    router.push('/html');
+                                }
+                            }}
                             className="text-gray-400 hover:text-gray-900 transition-colors p-1.5 rounded-lg hover:bg-gray-100"
+                            title="Go Back"
                         >
                             <ArrowLeft size={18} />
-                        </Link>
+                        </button>
                         <div>
                             <div className="flex items-center gap-2">
                                 <h1 className="text-xs sm:text-sm font-bold text-gray-900">HTML Handwritten Notes</h1>

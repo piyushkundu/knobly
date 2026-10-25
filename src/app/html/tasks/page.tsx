@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
     ArrowLeft, Home, FileCode, ExternalLink, Lock, Unlock, 
@@ -34,6 +35,7 @@ const TASKS: TaskItem[] = [
 ];
 
 export default function TasksPage() {
+    const router = useRouter();
     const [unlockedTasks, setUnlockedTasks] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -139,13 +141,13 @@ export default function TasksPage() {
             <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
                 <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link 
-                            href="/html" 
+                        <button 
+                            onClick={() => router.back()} 
                             className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors"
-                            title="Back to HTML Main"
+                            title="Go Back"
                         >
                             <ArrowLeft size={18} />
-                        </Link>
+                        </button>
                         <div className="flex items-center gap-2">
                             <div className="w-7 h-7 rounded-lg bg-orange-500 flex items-center justify-center text-white shadow-sm">
                                 <FileCode size={16} />

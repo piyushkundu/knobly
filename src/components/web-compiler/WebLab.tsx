@@ -809,13 +809,13 @@ export function WebLab() {
       <header className="flex items-center justify-between px-3 md:px-6 h-[54px] md:h-[60px] bg-[var(--header-bg)] backdrop-blur-2xl border-b border-[var(--border-color)] shrink-0 z-30">
         {/* Left: Logo & Title */}
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
-          <Link
-            href="/html"
-            title="Back to HTML Course"
+          <button
+            onClick={() => router.back()}
+            title="Go Back"
             className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-[var(--border-color)] shadow-sm flex items-center justify-center bg-[var(--glass-bg)] hover:bg-[var(--bg-tertiary)] transition-all"
           >
             <ArrowLeft size={16} className="text-[var(--text-primary)]" />
-          </Link>
+          </button>
 
           <div className="relative">
             <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
