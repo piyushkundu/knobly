@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
     ArrowLeft, Home, FileCode, ExternalLink, Lock, Unlock, 
-    KeyRound, CheckCircle2, AlertCircle, X, Shield, Sparkles, RefreshCw
+    KeyRound, CheckCircle2, AlertCircle, X, Shield, Sparkles, RefreshCw, Code2, Eye
 } from 'lucide-react';
 
 interface TaskItem {
@@ -295,13 +295,24 @@ export default function TasksPage() {
                                 {/* Card Footer Action */}
                                 <div className="px-5 pb-5 pt-0">
                                     {unlocked ? (
-                                        <Link 
-                                            href={`/html/tasks/${task.id}`}
-                                            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-sm hover:shadow transition-all"
-                                        >
-                                            <span>Open & Solve Task</span>
-                                            <ExternalLink size={13} />
-                                        </Link>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <Link 
+                                                href={`/html/tasks/${task.id}`}
+                                                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all border border-slate-200"
+                                                title="View Task Demo Preview"
+                                            >
+                                                <Eye size={13} />
+                                                <span>Preview</span>
+                                            </Link>
+                                            <Link 
+                                                href={`/html/tasks/${task.id}/compiler`}
+                                                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-sm hover:shadow transition-all"
+                                                title="Code project in live compiler with AI evaluation"
+                                            >
+                                                <Code2 size={13} />
+                                                <span>Compiler</span>
+                                            </Link>
+                                        </div>
                                     ) : (
                                         <button
                                             onClick={() => openUnlockModal(task.id, 'unlock')}

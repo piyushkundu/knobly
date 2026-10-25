@@ -143,6 +143,16 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
                         <h1 className="text-xs sm:text-sm font-bold text-gray-900 truncate">Task {id}: {task.title}</h1>
                     </div>
                     <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+                        {unlocked && (
+                            <Link
+                                href={`/html/tasks/${id}/compiler`}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-sm transition-all mr-1"
+                            >
+                                <FileCode size={13} />
+                                <span className="hidden sm:inline">Start in Compiler</span>
+                                <span className="sm:hidden">Compiler</span>
+                            </Link>
+                        )}
                         {prevId && (
                             <Link href={`/html/tasks/${prevId}`} className="text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 p-1.5 rounded-lg transition-colors" title={`Task ${prevId}`}>
                                 <ChevronLeft size={16} />
@@ -273,12 +283,25 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
                 </div>
             ) : (
                 /* Iframe content when unlocked */
-                <div className="flex-1 bg-white">
+                <div className="flex-1 bg-white relative">
                     <iframe
                         src={`/html-tasks/${task.file}`}
                         className="w-full h-[calc(100vh-49px)] border-0"
                         title={task.title}
                     />
+                    {/* Floating Compiler Button */}
+                    <Link
+                        href={`/html/tasks/${id}/compiler`}
+                        className="fixed bottom-5 right-5 z-40 flex items-center gap-2 px-5 py-3 rounded-2xl text-white text-xs font-bold shadow-2xl hover:scale-105 transition-all duration-200"
+                        style={{
+                            background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                            boxShadow: '0 8px 30px rgba(249, 115, 22, 0.4)',
+                        }}
+                    >
+                        <FileCode size={16} />
+                        <span>Start Project in Compiler</span>
+                        <ChevronRight size={14} />
+                    </Link>
                 </div>
             )}
         </div>

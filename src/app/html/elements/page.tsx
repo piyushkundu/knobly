@@ -57,7 +57,7 @@ function Code({ code }: { code: string }) {
                     <Link
                         href="/html/compiler"
                         onClick={() => {
-                            try { localStorage.setItem('knobly_web_draft_html', code); } catch(e){}
+                            try { localStorage.setItem('knobly_web_draft_html', code); } catch (e) { }
                         }}
                         className="text-[10px] px-2.5 py-1 rounded-md font-semibold transition-all flex items-center gap-1 bg-orange-500/20 text-orange-300 hover:bg-orange-500 hover:text-white"
                         title="Open and run in Web Compiler"
@@ -100,16 +100,16 @@ function QuickPractice({ title, children }: { title: string; children: React.Rea
 }
 
 // Full interactive Milestone Practice Card placed where tags are completed
-function PracticeTaskCard({ 
-    taskId, 
-    title, 
-    desc, 
+function PracticeTaskCard({
+    taskId,
+    title,
+    desc,
     tagsCovered,
     highlightBadge = "Practice Project"
-}: { 
-    taskId: string; 
-    title: string; 
-    desc: string; 
+}: {
+    taskId: string;
+    title: string;
+    desc: string;
     tagsCovered: string[];
     highlightBadge?: string;
 }) {
@@ -257,9 +257,6 @@ and "Visit Knobly" is the content.`} />
                     ['bgcolor', 'Sets the background color of the page'],
                     ['text', 'Sets the default text color'],
                     ['background', 'Sets a background image'],
-                    ['link', 'Color of unvisited links'],
-                    ['vlink', 'Color of visited links'],
-                    ['alink', 'Color of active (clicked) links'],
                     ['topmargin', 'Top margin of the page'],
                     ['leftmargin', 'Left margin of the page'],
                 ]} />

@@ -18,7 +18,7 @@ import LoginModal from '@/components/auth/LoginModal';
 
 import './web-compiler.css';
 
-const DEFAULT_HTML = `<!DOCTYPE html>
+const DEMO_STARTER_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -43,7 +43,7 @@ const DEFAULT_HTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
-const DEFAULT_CSS = `* {
+const DEMO_STARTER_CSS = `* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -149,7 +149,7 @@ p {
   padding-top: 16px;
 }`;
 
-const DEFAULT_JS = `// Interactive JavaScript logic
+const DEMO_STARTER_JS = `// Interactive JavaScript logic
 console.log("Knobly Web Compiler initialized!");
 
 let count = 0;
@@ -176,12 +176,23 @@ if (colorBtn) {
   });
 }`;
 
+// Empty defaults so students start with a clean blank canvas without pre-filled boilerplate
+const DEFAULT_HTML = '';
+const DEFAULT_CSS = '';
+const DEFAULT_JS = '';
+
 const TEMPLATES = [
   {
-    name: 'Starter Interactive',
-    html: DEFAULT_HTML,
-    css: DEFAULT_CSS,
-    js: DEFAULT_JS,
+    name: 'Blank Canvas',
+    html: '',
+    css: '',
+    js: '',
+  },
+  {
+    name: 'Starter Interactive Demo',
+    html: DEMO_STARTER_HTML,
+    css: DEMO_STARTER_CSS,
+    js: DEMO_STARTER_JS,
   },
   {
     name: 'Glassmorphic Profile Card',
@@ -452,11 +463,11 @@ export function WebLab() {
   const router = useRouter();
   const { user } = useAuth();
 
-  // Tabs state
+  // Tabs state - blank by default as requested
   const [tabs, setTabs] = useState<WebEditorTab[]>([
-    { id: 'html', name: 'index.html', language: 'html', code: DEFAULT_HTML },
-    { id: 'css', name: 'style.css', language: 'css', code: DEFAULT_CSS },
-    { id: 'js', name: 'script.js', language: 'javascript', code: DEFAULT_JS },
+    { id: 'html', name: 'index.html', language: 'html', code: '' },
+    { id: 'css', name: 'style.css', language: 'css', code: '' },
+    { id: 'js', name: 'script.js', language: 'javascript', code: '' },
   ]);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
@@ -501,11 +512,33 @@ export function WebLab() {
       const savedCss = localStorage.getItem('knobly_web_draft_css');
       const savedJs = localStorage.getItem('knobly_web_draft_js');
 
-      if (savedHtml || savedCss || savedJs) {
+      // If user had the old starter boilerplate saved, clear it so they start completely blank
+      const isOldBoilerplate = savedHtml && (
+        savedHtml.includes('Knobly Web Compiler') ||
+        savedHtml.includes('Welcome to the AI-powered live web development lab') ||
+        savedHtml.includes('interactive-box')
+      );
+
+      if (isOldBoilerplate) {
+        localStorage.removeItem('knobly_web_draft_html');
+        localStorage.removeItem('knobly_web_draft_css');
+        localStorage.removeItem('knobly_web_draft_js');
         setTabs([
-          { id: 'html', name: 'index.html', language: 'html', code: savedHtml ?? DEFAULT_HTML },
-          { id: 'css', name: 'style.css', language: 'css', code: savedCss ?? DEFAULT_CSS },
-          { id: 'js', name: 'script.js', language: 'javascript', code: savedJs ?? DEFAULT_JS },
+          { id: 'html', name: 'index.html', language: 'html', code: '' },
+          { id: 'css', name: 'style.css', language: 'css', code: '' },
+          { id: 'js', name: 'script.js', language: 'javascript', code: '' },
+        ]);
+      } else if (savedHtml || savedCss || savedJs) {
+        setTabs([
+          { id: 'html', name: 'index.html', language: 'html', code: savedHtml ?? '' },
+          { id: 'css', name: 'style.css', language: 'css', code: savedCss ?? '' },
+          { id: 'js', name: 'script.js', language: 'javascript', code: savedJs ?? '' },
+        ]);
+      } else {
+        setTabs([
+          { id: 'html', name: 'index.html', language: 'html', code: '' },
+          { id: 'css', name: 'style.css', language: 'css', code: '' },
+          { id: 'js', name: 'script.js', language: 'javascript', code: '' },
         ]);
       }
     } catch (e) {
@@ -727,12 +760,17 @@ export function WebLab() {
   };
 
   const handleReset = () => {
-    if (window.confirm('Reset code to default template? Unsaved changes will be lost.')) {
+    if (window.confirm('Reset code to blank? Unsaved changes will be lost.')) {
       setTabs([
-        { id: 'html', name: 'index.html', language: 'html', code: DEFAULT_HTML },
-        { id: 'css', name: 'style.css', language: 'css', code: DEFAULT_CSS },
-        { id: 'js', name: 'script.js', language: 'javascript', code: DEFAULT_JS },
+        { id: 'html', name: 'index.html', language: 'html', code: '' },
+        { id: 'css', name: 'style.css', language: 'css', code: '' },
+        { id: 'js', name: 'script.js', language: 'javascript', code: '' },
       ]);
+      try {
+        localStorage.removeItem('knobly_web_draft_html');
+        localStorage.removeItem('knobly_web_draft_css');
+        localStorage.removeItem('knobly_web_draft_js');
+      } catch (e) {}
       setActiveTabIndex(0);
       setTimeout(() => handleCompile(), 100);
     }
