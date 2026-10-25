@@ -37,6 +37,7 @@ const TASKS: TaskItem[] = [
 export default function TasksPage() {
     const router = useRouter();
     const [unlockedTasks, setUnlockedTasks] = useState<string[]>([]);
+    const [openedTasks, setOpenedTasks] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     // Modal state for Admin Unlock
@@ -79,8 +80,31 @@ export default function TasksPage() {
         }
     };
 
+    const loadOpenedTasks = () => {
+        try {
+            const raw = localStorage.getItem('knobly_opened_html_tasks');
+            if (raw) {
+                const list = JSON.parse(raw);
+                if (Array.isArray(list)) setOpenedTasks(list);
+            }
+        } catch (e) {}
+    };
+
+    const recordTaskOpen = (taskId: string) => {
+        try {
+            const raw = localStorage.getItem('knobly_opened_html_tasks');
+            const list: string[] = raw ? JSON.parse(raw) : [];
+            if (!list.includes(taskId)) {
+                list.push(taskId);
+                localStorage.setItem('knobly_opened_html_tasks', JSON.stringify(list));
+                setOpenedTasks([...list]);
+            }
+        } catch (e) {}
+    };
+
     useEffect(() => {
         fetchTasksState();
+        loadOpenedTasks();
     }, []);
 
     const openUnlockModal = (taskId: string = 'all', action: 'unlock' | 'lock' = 'unlock') => {
@@ -211,6 +235,9 @@ export default function TasksPage() {
                             <span className="px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm font-semibold text-emerald-200">
                                 Unlocked: {unlockedTasks.length} Tasks
                             </span>
+                            <span className="px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm font-semibold text-sky-200">
+                                Opened: {openedTasks.length}/{TASKS.length} ({Math.round((openedTasks.length / TASKS.length) * 100)}%)
+                            </span>
                             <span className="px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm font-semibold text-amber-200">
                                 Locked: {TASKS.length - unlockedTasks.length} Tasks
                             </span>
@@ -222,6 +249,7 @@ export default function TasksPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {TASKS.map((task) => {
                         const unlocked = isTaskUnlocked(task.id);
+                        const isOpened = openedTasks.includes(task.id);
 
                         return (
                             <div 
@@ -253,7 +281,13 @@ export default function TasksPage() {
                                         </div>
 
                                         {/* Status Badge & Small Lock Icon */}
-                                        <div className="flex items-center gap-1.5">
+                                        <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                                            {isOpened && (
+                                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                                    <CheckCircle2 size={10} />
+                                                    <span>Opened</span>
+                                                </span>
+                                            )}
                                             {unlocked ? (
                                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                     <Unlock size={10} />
@@ -300,6 +334,7 @@ export default function TasksPage() {
                                         <div className="grid grid-cols-2 gap-2">
                                             <Link 
                                                 href={`/html/tasks/${task.id}`}
+                                                onClick={() => recordTaskOpen(task.id)}
                                                 className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all border border-slate-200"
                                                 title="View Task Demo Preview"
                                             >
@@ -308,6 +343,7 @@ export default function TasksPage() {
                                             </Link>
                                             <Link 
                                                 href={`/html/tasks/${task.id}/compiler`}
+                                                onClick={() => recordTaskOpen(task.id)}
                                                 className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-sm hover:shadow transition-all"
                                                 title="Code project in live compiler with AI evaluation"
                                             >

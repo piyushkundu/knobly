@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
     ArrowLeft, Home, BookOpen, Code2, FileCode, Play, Sparkles,
@@ -22,18 +23,18 @@ const quickLinks = [
 const htmlTopics = [
     {
         title: 'HTML Intro',
-        badge: 'Getting Started',
+        badge: 'Completed',
         href: '/html/intro',
         icon: <BookOpen size={24} />,
-        color: '#f97316',
-        bgColor: '#fff7ed',
-        borderColor: '#fb923c',
+        color: '#10b981',
+        bgColor: '#ecfdf5',
+        borderColor: '#34d399',
         desc: 'Introduction to HTML, structure, <!DOCTYPE>, basic syntax, head, body, headings & text formatting.',
         duration: '1.5 Hours',
         lessons: '11 Topics',
         locked: false,
-        completed: false,
-        current: true,
+        completed: true,
+        current: false,
     },
     {
         title: 'Element and Tag',
@@ -48,7 +49,7 @@ const htmlTopics = [
         lessons: '18 Chapters',
         locked: false,
         completed: false,
-        current: false,
+        current: true,
     },
     {
         title: 'Practice Task',
@@ -107,6 +108,33 @@ const features = [
 ];
 
 export default function HtmlPage() {
+    const [openedTasksCount, setOpenedTasksCount] = useState<number>(0);
+
+    useEffect(() => {
+        const updateTaskProgress = () => {
+            try {
+                const raw = localStorage.getItem('knobly_opened_html_tasks');
+                const openedList: string[] = raw ? JSON.parse(raw) : [];
+                const unlockedRaw = localStorage.getItem('knobly_unlocked_html_tasks');
+                const unlockedList: string[] = unlockedRaw ? JSON.parse(unlockedRaw) : [];
+                const combined = Array.from(new Set([...openedList, ...unlockedList]));
+                setOpenedTasksCount(combined.length);
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        updateTaskProgress();
+        window.addEventListener('focus', updateTaskProgress);
+        window.addEventListener('storage', updateTaskProgress);
+        return () => {
+            window.removeEventListener('focus', updateTaskProgress);
+            window.removeEventListener('storage', updateTaskProgress);
+        };
+    }, []);
+
+    const taskPercentage = Math.min(100, Math.round((openedTasksCount / 15) * 100));
+
     return (
         <div className="min-h-screen bg-white relative overflow-x-hidden">
             {/* Animated Web Background */}
@@ -345,11 +373,11 @@ export default function HtmlPage() {
 
                         {/* CTA Buttons */}
                         <div className="flex flex-wrap gap-4">
-                            <Link href="/html/intro" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold shadow-lg shadow-orange-200 hover:shadow-xl hover:scale-105 hover:-translate-y-0.5 transition-all duration-300">
+                            <Link href="/html/elements" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-lg shadow-blue-200 hover:shadow-xl hover:scale-105 hover:-translate-y-0.5 transition-all duration-300">
                                 <Play size={18} fill="currentColor" />
-                                Start Learning
+                                Start: Element & Tag
                             </Link>
-                            <Link href="#chapters" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-gray-700 font-bold border-2 border-gray-200 hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50/50 transition-all duration-300">
+                            <Link href="#chapters" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-gray-700 font-bold border-2 border-gray-200 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-300">
                                 <Compass size={18} />
                                 Explore Modules
                             </Link>
@@ -371,7 +399,11 @@ export default function HtmlPage() {
                         </div>
                         <div className="hidden md:flex items-center gap-4 text-sm">
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-orange-500 ring-2 ring-orange-200 animate-pulse" />
+                                <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                                <span className="text-gray-600 font-medium">Completed</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-blue-500 ring-2 ring-blue-200 animate-pulse" />
                                 <span className="text-gray-600 font-medium">Start Here</span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -383,62 +415,98 @@ export default function HtmlPage() {
 
                     {/* Horizontal Timeline for Desktop */}
                     <div className="hidden lg:block relative max-w-4xl mx-auto">
-                        <div className="absolute top-8 left-8 right-8 h-1 bg-gradient-to-r from-orange-400 via-blue-400 via-emerald-400 to-purple-400 rounded-full" />
+                        <div className="absolute top-8 left-8 right-8 h-1 bg-gradient-to-r from-emerald-400 via-blue-400 via-teal-400 to-purple-400 rounded-full" />
                         <div className="relative grid grid-cols-4 gap-6">
-                            {htmlTopics.map((topic) => (
-                                <Link
-                                    key={topic.href}
-                                    href={topic.locked ? '#' : topic.href}
-                                    className={`group flex flex-col items-center transition-transform hover:-translate-y-1 ${topic.locked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                                >
-                                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110 ${topic.completed
-                                        ? 'bg-orange-500 text-white shadow-lg shadow-orange-200'
-                                        : topic.current
-                                            ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-lg shadow-orange-200 ring-4 ring-orange-200 animate-pulse'
-                                            : 'bg-white text-slate-700 border-2 border-slate-200 group-hover:border-orange-400 shadow-sm'
-                                        }`} style={!topic.completed && !topic.current ? { color: topic.color } : {}}>
-                                        {topic.completed ? <CheckCircle2 size={26} /> : topic.locked ? <Lock size={22} /> : topic.icon}
-                                    </div>
-                                    <span className="text-sm font-bold text-center text-gray-800 group-hover:text-orange-600 transition-colors px-1">{topic.title}</span>
-                                    <span className="text-[11px] font-medium text-slate-500 mt-0.5">{topic.badge}</span>
-                                </Link>
-                            ))}
+                            {htmlTopics.map((topic) => {
+                                const isPracticeTask = topic.href === '/html/tasks';
+                                const isTaskStarted = isPracticeTask && openedTasksCount > 0;
+                                const isTaskDone = isPracticeTask && openedTasksCount >= 15;
+                                const isTopicCompleted = topic.completed || isTaskDone;
+
+                                return (
+                                    <Link
+                                        key={topic.href}
+                                        href={topic.locked ? '#' : topic.href}
+                                        className={`group flex flex-col items-center transition-transform hover:-translate-y-1 ${topic.locked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                    >
+                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110 ${
+                                            isTopicCompleted
+                                                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200'
+                                                : isTaskStarted
+                                                    ? 'bg-emerald-50 text-emerald-700 border-2 border-emerald-400 font-black text-xs shadow-md shadow-emerald-100 flex items-center justify-center'
+                                                    : topic.current
+                                                        ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-200 ring-4 ring-blue-200 animate-pulse'
+                                                        : 'bg-white text-slate-700 border-2 border-slate-200 group-hover:border-blue-400 shadow-sm'
+                                        }`} style={!isTopicCompleted && !topic.current && !isTaskStarted ? { color: topic.color } : {}}>
+                                            {isTopicCompleted ? (
+                                                <CheckCircle2 size={26} />
+                                            ) : isTaskStarted ? (
+                                                <span className="font-extrabold text-xs">{taskPercentage}%</span>
+                                            ) : topic.locked ? (
+                                                <Lock size={22} />
+                                            ) : (
+                                                topic.icon
+                                            )}
+                                        </div>
+                                        <span className="text-sm font-bold text-center text-gray-800 group-hover:text-blue-600 transition-colors px-1">{topic.title}</span>
+                                        <span className="text-[11px] font-medium text-slate-500 mt-0.5">
+                                            {isTaskStarted ? `${openedTasksCount}/15 Tasks (${taskPercentage}%)` : topic.badge}
+                                        </span>
+                                    </Link>
+                                );
+                            })}
                         </div>
                     </div>
 
                     {/* Vertical Timeline for Mobile */}
                     <div className="lg:hidden relative space-y-4">
-                        <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-300 via-blue-300 to-purple-300" />
-                        {htmlTopics.map((topic) => (
-                            <Link
-                                key={topic.href}
-                                href={topic.locked ? '#' : topic.href}
-                                className="relative flex items-center gap-4 pl-4 group"
-                            >
-                                <div className={`relative z-10 w-5 h-5 rounded-full border-4 border-white shadow-md ${topic.completed
-                                    ? 'bg-orange-500'
-                                    : topic.current
-                                        ? 'bg-orange-500 animate-pulse'
-                                        : 'bg-slate-300'
+                        <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-300 via-blue-300 to-purple-300" />
+                        {htmlTopics.map((topic) => {
+                            const isPracticeTask = topic.href === '/html/tasks';
+                            const isTaskStarted = isPracticeTask && openedTasksCount > 0;
+                            const isTaskDone = isPracticeTask && openedTasksCount >= 15;
+                            const isTopicCompleted = topic.completed || isTaskDone;
+
+                            return (
+                                <Link
+                                    key={topic.href}
+                                    href={topic.locked ? '#' : topic.href}
+                                    className="relative flex items-center gap-4 pl-4 group"
+                                >
+                                    <div className={`relative z-10 w-5 h-5 rounded-full border-4 border-white shadow-md ${
+                                        isTopicCompleted
+                                            ? 'bg-emerald-500'
+                                            : isTaskStarted
+                                                ? 'bg-emerald-500 ring-2 ring-emerald-200'
+                                                : topic.current
+                                                    ? 'bg-blue-500 animate-pulse ring-2 ring-blue-200'
+                                                    : 'bg-slate-300'
                                     }`} />
-                                <div className={`flex-1 p-4 rounded-xl border transition-all ${topic.completed
-                                    ? 'bg-orange-50 border-orange-200 group-hover:bg-orange-100/70'
-                                    : topic.current
-                                        ? 'bg-orange-50 border-orange-200 ring-2 ring-orange-200'
-                                        : 'bg-white border-slate-200 shadow-sm'
+                                    <div className={`flex-1 p-4 rounded-xl border transition-all ${
+                                        isTopicCompleted
+                                            ? 'bg-emerald-50/60 border-emerald-200 group-hover:bg-emerald-100/70'
+                                            : isTaskStarted
+                                                ? 'bg-emerald-50/50 border-emerald-200'
+                                                : topic.current
+                                                    ? 'bg-blue-50/50 border-blue-200 ring-2 ring-blue-200'
+                                                    : 'bg-white border-slate-200 shadow-sm'
                                     }`}>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider">{topic.badge}</span>
-                                            <h4 className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors text-sm">{topic.title}</h4>
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">
+                                                    {isTaskStarted ? `${openedTasksCount}/15 Tasks (${taskPercentage}%)` : topic.badge}
+                                                </span>
+                                                <h4 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors text-sm">{topic.title}</h4>
+                                            </div>
+                                            {isTopicCompleted && <CheckCircle2 size={20} className="text-emerald-500" />}
+                                            {isTaskStarted && !isTaskDone && <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">{taskPercentage}%</span>}
+                                            {topic.current && !isTaskStarted && <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-bold">Start Here</span>}
+                                            {topic.locked && <Lock size={20} className="text-gray-400" />}
                                         </div>
-                                        {topic.completed && <CheckCircle2 size={20} className="text-orange-500" />}
-                                        {topic.current && <span className="px-2 py-0.5 rounded-full bg-orange-200 text-orange-800 text-[10px] font-bold">Start Here</span>}
-                                        {topic.locked && <Lock size={20} className="text-gray-400" />}
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -457,103 +525,182 @@ export default function HtmlPage() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {htmlTopics.map((topic) => (
-                            <Link
-                                key={topic.href}
-                                href={topic.locked ? '#' : topic.href}
-                                className={`group relative rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1.5 flex flex-col justify-between ${topic.locked ? 'cursor-not-allowed' : 'cursor-pointer'
+                        {htmlTopics.map((topic) => {
+                            const isPracticeTask = topic.href === '/html/tasks';
+                            const isTaskStarted = isPracticeTask && openedTasksCount > 0;
+                            const isTaskDone = isPracticeTask && openedTasksCount >= 15;
+                            const isTopicCompleted = topic.completed || isTaskDone;
+
+                            // Determine status badge
+                            let statusBadge = null;
+                            if (isTopicCompleted) {
+                                statusBadge = (
+                                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold border border-emerald-200 flex items-center gap-1">
+                                        <CheckCircle2 size={11} className="text-emerald-600" />
+                                        Completed
+                                    </span>
+                                );
+                            } else if (isPracticeTask && isTaskStarted) {
+                                statusBadge = (
+                                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold border border-emerald-200 animate-pulse">
+                                        {openedTasksCount}/15 Tasks ({taskPercentage}%)
+                                    </span>
+                                );
+                            } else if (topic.current) {
+                                statusBadge = (
+                                    <span className="px-2.5 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-bold animate-pulse shadow-sm shadow-blue-200">
+                                        Start Here
+                                    </span>
+                                );
+                            } else if (topic.locked) {
+                                statusBadge = <Lock size={16} className="text-gray-400" />;
+                            }
+
+                            // Dynamic progress percent & labels
+                            const progressPercent = isTopicCompleted ? 100 : isPracticeTask ? taskPercentage : topic.current ? 20 : 0;
+                            const progressLabel = isTopicCompleted ? 'Completed' : isPracticeTask ? (isTaskStarted ? 'In Progress' : 'Start Tasks') : topic.current ? 'Start Learning' : 'Start Now';
+                            const progressRightText = isTopicCompleted ? '100%' : isPracticeTask ? `${taskPercentage}%` : topic.current ? 'Ready' : '0%';
+
+                            // Dynamic Card Border & Highlight
+                            const borderClass = isTopicCompleted
+                                ? 'border-emerald-200 group-hover:border-emerald-400'
+                                : topic.current
+                                    ? 'border-blue-400 ring-4 ring-blue-100 shadow-lg shadow-blue-50'
+                                    : isTaskStarted
+                                        ? 'border-emerald-300 ring-4 ring-emerald-50 shadow-md shadow-emerald-50'
+                                        : 'border-slate-100 group-hover:border-orange-200';
+
+                            const bgTintClass = isTopicCompleted
+                                ? 'bg-emerald-50/20'
+                                : topic.current
+                                    ? 'bg-blue-50/40'
+                                    : isTaskStarted
+                                        ? 'bg-emerald-50/30'
+                                        : '';
+
+                            const progressBarGradient = isTopicCompleted || isPracticeTask
+                                ? 'bg-gradient-to-r from-emerald-500 to-teal-500'
+                                : topic.current
+                                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600'
+                                    : 'bg-gray-200';
+
+                            const textColorClass = isTopicCompleted
+                                ? 'text-emerald-600'
+                                : topic.current
+                                    ? 'text-blue-600'
+                                    : isTaskStarted
+                                        ? 'text-emerald-600'
+                                        : 'text-gray-500';
+
+                            const hoverTitleClass = isTopicCompleted
+                                ? 'group-hover:text-emerald-600'
+                                : topic.current
+                                    ? 'group-hover:text-blue-600'
+                                    : isPracticeTask
+                                        ? 'group-hover:text-emerald-600'
+                                        : 'group-hover:text-purple-600';
+
+                            return (
+                                <Link
+                                    key={topic.href}
+                                    href={topic.locked ? '#' : topic.href}
+                                    className={`group relative rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1.5 flex flex-col justify-between ${
+                                        topic.locked ? 'cursor-not-allowed' : 'cursor-pointer'
                                     }`}
-                                style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
-                            >
-                                {/* Card Background */}
-                                <div className="absolute inset-0 bg-white" />
-                                <div className={`absolute inset-0 opacity-40 transition-opacity duration-300 ${topic.current ? 'bg-orange-50/60' : ''
-                                    }`} />
+                                    style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
+                                >
+                                    {/* Card Background */}
+                                    <div className="absolute inset-0 bg-white" />
+                                    <div className={`absolute inset-0 opacity-40 transition-opacity duration-300 ${bgTintClass}`} />
 
-                                {/* Border */}
-                                <div className={`absolute inset-0 rounded-2xl border-2 transition-all duration-300 ${topic.current
-                                    ? 'border-orange-400 ring-4 ring-orange-100 shadow-md shadow-orange-100'
-                                    : 'border-slate-100 group-hover:border-orange-200'
-                                    }`} />
+                                    {/* Border */}
+                                    <div className={`absolute inset-0 rounded-2xl border-2 transition-all duration-300 ${borderClass}`} />
 
-                                {/* Top Accent Bar */}
-                                <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: topic.color }} />
+                                    {/* Top Accent Bar */}
+                                    <div
+                                        className="absolute top-0 left-0 right-0 h-1.5"
+                                        style={{
+                                            background: isTopicCompleted ? '#10b981' : topic.color
+                                        }}
+                                    />
 
-                                <div className="relative p-6 flex flex-col justify-between h-full">
-                                    <div>
-                                        {/* Header */}
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div
-                                                className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-all duration-300"
-                                                style={{ background: `linear-gradient(135deg, ${topic.color}dd, ${topic.color})` }}
-                                            >
-                                                {topic.icon}
+                                    <div className="relative p-6 flex flex-col justify-between h-full">
+                                        <div>
+                                            {/* Header */}
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div
+                                                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-all duration-300"
+                                                    style={{
+                                                        background: isTopicCompleted
+                                                            ? 'linear-gradient(135deg, #10b981, #059669)'
+                                                            : `linear-gradient(135deg, ${topic.color}dd, ${topic.color})`
+                                                    }}
+                                                >
+                                                    {isTopicCompleted ? <CheckCircle2 size={26} /> : topic.icon}
+                                                </div>
+                                                <div className="flex flex-col items-end gap-1">
+                                                    <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">
+                                                        {topic.badge}
+                                                    </span>
+                                                    {statusBadge}
+                                                </div>
                                             </div>
-                                            <div className="flex flex-col items-end gap-1">
-                                                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">
-                                                    {topic.badge}
+
+                                            {/* Title & Description */}
+                                            <h4 className={`font-bold text-gray-900 mb-2 text-lg transition-colors ${hoverTitleClass}`}>
+                                                {topic.title}
+                                            </h4>
+                                            <p className="text-xs text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+                                                {topic.desc}
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            {/* Meta Info */}
+                                            <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                                                <span className="flex items-center gap-1 bg-gray-50 px-2.5 py-1 rounded-lg font-medium text-slate-700">
+                                                    <Play size={11} style={{ color: isTopicCompleted ? '#10b981' : topic.color }} />
+                                                    {isPracticeTask && isTaskStarted ? `${openedTasksCount}/15 Tasks` : topic.lessons}
                                                 </span>
-                                                {topic.completed && <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold">Done</span>}
-                                                {topic.current && <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold animate-pulse border border-orange-200">Start Here</span>}
-                                                {topic.locked && <Lock size={16} className="text-gray-400" />}
+                                                <span className="flex items-center gap-1 bg-gray-50 px-2.5 py-1 rounded-lg font-medium text-slate-700">
+                                                    <Clock size={11} className="text-amber-500" />
+                                                    {topic.duration}
+                                                </span>
+                                            </div>
+
+                                            {/* Progress Bar / Action */}
+                                            {!topic.locked && (
+                                                <div className="space-y-1.5">
+                                                    <div className="flex justify-between text-[11px]">
+                                                        <span className={`font-semibold ${textColorClass}`}>
+                                                            {progressLabel}
+                                                        </span>
+                                                        <span className={`font-bold ${isTopicCompleted || isTaskStarted ? textColorClass : 'text-gray-400'}`}>
+                                                            {progressRightText}
+                                                        </span>
+                                                    </div>
+                                                    <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                                                        <div
+                                                            className={`h-full rounded-full transition-all duration-700 ${progressBarGradient}`}
+                                                            style={{ width: `${progressPercent}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Hover Arrow */}
+                                            <div
+                                                className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold group-hover:translate-x-1 transition-all duration-300"
+                                                style={{ color: isTopicCompleted ? '#10b981' : topic.color }}
+                                            >
+                                                <span>{isTopicCompleted ? 'Review Module' : topic.current ? 'Start Module' : 'Open Module'}</span>
+                                                <ChevronRight size={16} />
                                             </div>
                                         </div>
-
-                                        {/* Title & Description */}
-                                        <h4 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-orange-600 transition-colors">{topic.title}</h4>
-                                        <p className="text-xs text-gray-600 mb-4 line-clamp-3 leading-relaxed">
-                                            {topic.desc}
-                                        </p>
                                     </div>
-
-                                    <div>
-                                        {/* Meta Info */}
-                                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
-                                            <span className="flex items-center gap-1 bg-gray-50 px-2.5 py-1 rounded-lg font-medium text-slate-700">
-                                                <Play size={11} className="text-orange-500" />
-                                                {topic.lessons}
-                                            </span>
-                                            <span className="flex items-center gap-1 bg-gray-50 px-2.5 py-1 rounded-lg font-medium text-slate-700">
-                                                <Clock size={11} className="text-amber-500" />
-                                                {topic.duration}
-                                            </span>
-                                        </div>
-
-                                        {/* Progress Bar / Action */}
-                                        {!topic.locked && (
-                                            <div className="space-y-1.5">
-                                                <div className="flex justify-between text-[11px]">
-                                                    <span className={`font-semibold ${topic.completed ? 'text-orange-600' : topic.current ? 'text-orange-600 font-bold' : 'text-gray-500'
-                                                        }`}>
-                                                        {topic.completed ? 'Completed' : topic.current ? 'Start Learning' : 'Start Now'}
-                                                    </span>
-                                                    <span className="text-gray-400 font-medium">
-                                                        {topic.completed ? '100%' : topic.current ? 'Ready' : '0%'}
-                                                    </span>
-                                                </div>
-                                                <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                                                    <div
-                                                        className={`h-full rounded-full transition-all duration-1000 ${topic.completed
-                                                            ? 'bg-gradient-to-r from-orange-400 to-red-500'
-                                                            : topic.current
-                                                                ? 'bg-gradient-to-r from-orange-500 to-red-500'
-                                                                : 'bg-gray-200'
-                                                            }`}
-                                                        style={{ width: topic.completed ? '100%' : topic.current ? '15%' : '0%' }}
-                                                    />
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Hover Arrow */}
-                                        <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-orange-600 group-hover:translate-x-1 transition-all duration-300">
-                                            <span>Open Module</span>
-                                            <ChevronRight size={16} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
 

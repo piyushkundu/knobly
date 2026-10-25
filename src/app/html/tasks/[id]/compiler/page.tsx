@@ -126,6 +126,20 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
         }
     }, [id, task]);
 
+    // Record task as opened
+    useEffect(() => {
+        if (id) {
+            try {
+                const raw = localStorage.getItem('knobly_opened_html_tasks');
+                const list: string[] = raw ? JSON.parse(raw) : [];
+                if (!list.includes(id)) {
+                    list.push(id);
+                    localStorage.setItem('knobly_opened_html_tasks', JSON.stringify(list));
+                }
+            } catch (e) {}
+        }
+    }, [id]);
+
     // Update line count
     useEffect(() => {
         setLineCount(code.split('\n').length);

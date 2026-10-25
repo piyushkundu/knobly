@@ -76,6 +76,16 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
 
     useEffect(() => {
         checkLockStatus();
+        if (id) {
+            try {
+                const raw = localStorage.getItem('knobly_opened_html_tasks');
+                const list: string[] = raw ? JSON.parse(raw) : [];
+                if (!list.includes(id)) {
+                    list.push(id);
+                    localStorage.setItem('knobly_opened_html_tasks', JSON.stringify(list));
+                }
+            } catch (e) {}
+        }
     }, [id]);
 
     const handleUnlockSubmit = async (e: React.FormEvent) => {
