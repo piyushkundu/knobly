@@ -172,7 +172,13 @@ export default function HtmlIntro() {
                             <span>{isHindi ? 'English' : 'हिंदी'}</span>
                         </button>
 
-                        <Link href="/html/compiler" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold shadow-sm shadow-orange-500/20 hover:scale-105 transition-all">
+                        <Link
+                            href="/html/compiler?from=/html/intro"
+                            onClick={() => {
+                                try { sessionStorage.setItem('knobly_compiler_return', '/html/intro'); } catch (e) {}
+                            }}
+                            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold shadow-sm shadow-orange-500/20 hover:scale-105 transition-all"
+                        >
                             <Play size={12} fill="currentColor" />
                             <span>{isHindi ? 'कम्पाइलर' : 'Compiler'}</span>
                         </Link>
@@ -399,7 +405,10 @@ export default function HtmlIntro() {
                     {/* Try Compiler Button */}
                     <div className="flex flex-wrap items-center gap-3 my-4 p-4 rounded-xl bg-orange-50/70 border border-orange-200">
                         <Link
-                            href="/html/compiler"
+                            href="/html/compiler?from=/html/intro"
+                            onClick={() => {
+                                try { sessionStorage.setItem('knobly_compiler_return', '/html/intro'); } catch (e) {}
+                            }}
                             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-orange-500/20 hover:shadow-lg hover:scale-105 transition-all"
                         >
                             <Play size={15} fill="currentColor" />

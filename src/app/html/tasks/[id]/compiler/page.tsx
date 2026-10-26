@@ -110,23 +110,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
     const lineNumberRef = useRef<HTMLDivElement>(null);
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
-    // Load saved code from localStorage (or start completely blank)
-    useEffect(() => {
-        if (task) {
-            const saved = localStorage.getItem(`knobly_task_code_${id}`);
-            // If saved code exists and is not the previous boilerplate template, keep student's work; otherwise start blank
-            if (saved && !saved.includes('<!-- Yahan apna HTML code likhein... -->') && !saved.includes('<!-- Required tags:')) {
-                setCode(saved);
-                setPreviewHtml(saved);
-            } else {
-                setCode('');
-                setPreviewHtml('');
-                localStorage.removeItem(`knobly_task_code_${id}`);
-            }
-        }
-    }, [id, task]);
-
-    // Record task as opened
+    // Record task as opened for progress tracking
     useEffect(() => {
         if (id) {
             try {
@@ -138,6 +122,88 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                 }
             } catch (e) {}
         }
+    }, [id]);
+
+    const INACTIVITY_LIMIT_MS = 15 * 60 * 1000; // 15 minutes of inactivity
+    const lastActiveRef = useRef<number>(Date.now());
+
+    // Listen to user interactions (typing, clicking, tapping) to refresh activity timer
+    useEffect(() => {
+        const handleActivity = () => {
+            lastActiveRef.current = Date.now();
+        };
+
+        window.addEventListener('keydown', handleActivity, { passive: true });
+        window.addEventListener('mousedown', handleActivity, { passive: true });
+        window.addEventListener('touchstart', handleActivity, { passive: true });
+
+        return () => {
+            window.removeEventListener('keydown', handleActivity);
+            window.removeEventListener('mousedown', handleActivity);
+            window.removeEventListener('touchstart', handleActivity);
+        };
+    }, []);
+
+    // Load saved code from localStorage (persists while student is working; expires after 15 minutes of inactivity)
+    useEffect(() => {
+        if (!task) return;
+        try {
+            const raw = localStorage.getItem(`knobly_task_code_${id}`);
+            if (raw) {
+                let savedCode = '';
+                let lastActiveTime = 0;
+
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object' && typeof parsed.code === 'string') {
+                        savedCode = parsed.code;
+                        lastActiveTime = typeof parsed.lastActive === 'number'
+                            ? parsed.lastActive
+                            : (typeof parsed.savedAt === 'number' ? parsed.savedAt : 0);
+                    }
+                } catch {
+                    // Legacy plain-text without timestamp -> clean up so new student starts fresh
+                    savedCode = '';
+                }
+
+                const isActiveWithinLimit = lastActiveTime > 0 && (Date.now() - lastActiveTime) < INACTIVITY_LIMIT_MS;
+
+                if (isActiveWithinLimit && savedCode.trim()) {
+                    setCode(savedCode);
+                    setPreviewHtml(savedCode);
+                    lastActiveRef.current = Date.now();
+                    return;
+                } else {
+                    // Expired after 15 minutes of inactivity -> clear storage so next student gets a fresh blank page
+                    localStorage.removeItem(`knobly_task_code_${id}`);
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load saved task code', e);
+        }
+        setCode('');
+        setPreviewHtml('');
+    }, [id, task]);
+
+    // Periodically verify inactivity while page is open (clears editor if inactive for 15 minutes)
+    useEffect(() => {
+        const checkInactivity = () => {
+            const idleTime = Date.now() - lastActiveRef.current;
+            if (idleTime >= INACTIVITY_LIMIT_MS) {
+                try {
+                    localStorage.removeItem(`knobly_task_code_${id}`);
+                } catch {}
+                setCode('');
+                setPreviewHtml('');
+            }
+        };
+
+        window.addEventListener('focus', checkInactivity);
+        const interval = setInterval(checkInactivity, 30000); // Check every 30 seconds
+        return () => {
+            window.removeEventListener('focus', checkInactivity);
+            clearInterval(interval);
+        };
     }, [id]);
 
     // Update line count
@@ -167,13 +233,26 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
         };
     }, [theme]);
 
-    // Auto-save to localStorage
+    // Auto-save to localStorage with lastActive timestamp (updates as long as student is typing)
     useEffect(() => {
-        if (code && task) {
+        if (!task) return;
+        if (code && code.trim()) {
             const timer = setTimeout(() => {
-                localStorage.setItem(`knobly_task_code_${id}`, code);
-            }, 1000);
+                try {
+                    const payload = {
+                        code,
+                        lastActive: Date.now()
+                    };
+                    localStorage.setItem(`knobly_task_code_${id}`, JSON.stringify(payload));
+                    lastActiveRef.current = Date.now();
+                } catch (e) {
+                    console.error('Failed to save task code', e);
+                }
+            }, 800);
             return () => clearTimeout(timer);
+        } else {
+            // When editor is blank/cleared, remove immediately from localStorage
+            localStorage.removeItem(`knobly_task_code_${id}`);
         }
     }, [code, id, task]);
 
@@ -301,11 +380,21 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                 {/* Left: Back & Title */}
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                     <button
-                        onClick={() => router.back()}
-                        className={`p-1.5 rounded-lg transition-colors ${
+                        onClick={() => {
+                            if (typeof window !== 'undefined') {
+                                const params = new URLSearchParams(window.location.search);
+                                const from = params.get('from');
+                                if (from) {
+                                    router.push(from);
+                                    return;
+                                }
+                            }
+                            router.push(`/html/tasks/${id}`);
+                        }}
+                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                             isWhite ? 'text-slate-500 hover:text-slate-900 hover:bg-slate-100' : 'text-slate-300 hover:text-white hover:bg-slate-800'
                         }`}
-                        title="Go Back"
+                        title="Go Back to Task"
                     >
                         <ArrowLeft size={18} />
                     </button>

@@ -166,8 +166,14 @@ export default function TasksPage() {
                 <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <button 
-                            onClick={() => router.back()} 
-                            className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors"
+                            onClick={() => {
+                                if (typeof window !== 'undefined' && window.history.length > 1 && document.referrer && document.referrer.includes(window.location.host)) {
+                                    router.back();
+                                } else {
+                                    router.push('/html');
+                                }
+                            }} 
+                            className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors cursor-pointer"
                             title="Go Back"
                         >
                             <ArrowLeft size={18} />

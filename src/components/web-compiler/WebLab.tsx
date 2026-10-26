@@ -810,9 +810,29 @@ export function WebLab() {
         {/* Left: Logo & Title */}
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
           <button
-            onClick={() => router.back()}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                const params = new URLSearchParams(window.location.search);
+                const from = params.get('from');
+                if (from) {
+                  router.push(from);
+                  return;
+                }
+                const storedFrom = sessionStorage.getItem('knobly_compiler_return');
+                if (storedFrom) {
+                  sessionStorage.removeItem('knobly_compiler_return');
+                  router.push(storedFrom);
+                  return;
+                }
+                if (window.history.length > 1 && document.referrer && document.referrer.includes(window.location.host)) {
+                  router.back();
+                  return;
+                }
+              }
+              router.push('/html');
+            }}
             title="Go Back"
-            className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-[var(--border-color)] shadow-sm flex items-center justify-center bg-[var(--glass-bg)] hover:bg-[var(--bg-tertiary)] transition-all"
+            className="w-8 h-8 md:w-9 md:h-9 rounded-full border border-[var(--border-color)] shadow-sm flex items-center justify-center bg-[var(--glass-bg)] hover:bg-[var(--bg-tertiary)] transition-all cursor-pointer"
           >
             <ArrowLeft size={16} className="text-[var(--text-primary)]" />
           </button>

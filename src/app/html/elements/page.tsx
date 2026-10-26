@@ -12,9 +12,13 @@ const SIDEBAR_ITEMS = [
     { id: 'p-tag', label: '<p> Tag and Its Attributes' },
     { id: 'pre-tag', label: '<pre> Tag' },
     { id: 'br-tag', label: '<br> Tag & First Project' },
+    { id: 'hr-tag', label: '<hr> Tag and Attributes' },
+    { id: 'comment-tag', label: 'HTML Comment Tag' },
     { id: 'formatting', label: 'HTML Formatting Elements' },
-    { id: 'heading-tag', label: 'Heading Tags (h1-h6)' },
+    { id: 'font-tag', label: '<font> Tag and Attributes' },
     { id: 'img-tag', label: '<img> Tag and Attributes' },
+    { id: 'heading-tag', label: 'Heading Tags (h1-h6)' },
+    { id: 'marquee-tag', label: '<marquee> Tag and Attributes' },
     { id: 'anchor-tag', label: '<a> Anchor Tag' },
     { id: 'list-tags', label: 'List Tags (ul, ol, dl)' },
     { id: 'table-tag', label: 'Table Tag and Attributes' },
@@ -28,13 +32,13 @@ const SIDEBAR_ITEMS = [
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
     return (
-        <section id={id} className="relative bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 p-4 sm:p-5 md:p-7 mb-5 scroll-mt-16 transition-shadow duration-300 overflow-hidden">
+        <section id={id} className="relative bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 p-4 sm:p-5 md:p-7 mb-5 scroll-mt-16 transition-shadow duration-300 overflow-hidden select-text">
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
-            <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-gray-900 mb-4 pb-3 border-b border-gray-100 flex items-center gap-2">
+            <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-gray-900 mb-4 pb-3 border-b border-gray-100 flex items-center gap-2 select-text">
                 <span className="inline-block w-1.5 h-6 rounded-full bg-gradient-to-b from-blue-500 to-indigo-600" />
                 {title}
             </h2>
-            <div className="text-[13px] sm:text-sm text-gray-600 leading-relaxed space-y-4">{children}</div>
+            <div className="text-[13px] sm:text-sm text-gray-600 leading-relaxed space-y-4 select-text">{children}</div>
         </section>
     );
 }
@@ -43,7 +47,7 @@ function Code({ code }: { code: string }) {
     const [copied, setCopied] = useState(false);
     const handleCopy = () => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000); };
     return (
-        <div className="rounded-xl overflow-hidden my-4 shadow-sm border border-gray-800/20" style={{ background: '#1e1e2e' }}>
+        <div className="rounded-xl overflow-hidden my-4 shadow-sm border border-gray-800/20 select-text" style={{ background: '#1e1e2e' }}>
             <div className="flex items-center justify-between px-3 py-2" style={{ background: '#181825' }}>
                 <div className="flex items-center gap-1.5">
                     <div className="flex gap-1">
@@ -55,9 +59,12 @@ function Code({ code }: { code: string }) {
                 </div>
                 <div className="flex items-center gap-1.5">
                     <Link
-                        href="/html/compiler"
+                        href="/html/compiler?from=/html/elements"
                         onClick={() => {
-                            try { localStorage.setItem('knobly_web_draft_html', code); } catch (e) { }
+                            try {
+                                localStorage.setItem('knobly_web_draft_html', code);
+                                sessionStorage.setItem('knobly_compiler_return', '/html/elements');
+                            } catch (e) { }
                         }}
                         className="text-[10px] px-2.5 py-1 rounded-md font-semibold transition-all flex items-center gap-1 bg-orange-500/20 text-orange-300 hover:bg-orange-500 hover:text-white"
                         title="Open and run in Web Compiler"
@@ -70,7 +77,7 @@ function Code({ code }: { code: string }) {
                     </button>
                 </div>
             </div>
-            <pre className="p-3 sm:p-4 overflow-x-auto text-xs sm:text-[13px] leading-relaxed font-mono" style={{ color: '#cdd6f4' }}><code>{code}</code></pre>
+            <pre className="p-3 sm:p-4 overflow-x-auto text-xs sm:text-[13px] leading-relaxed font-mono select-text" style={{ color: '#cdd6f4' }}><code className="select-text">{code}</code></pre>
         </div>
     );
 }
@@ -136,7 +143,7 @@ function PracticeTaskCard({
                 </div>
 
                 <Link
-                    href={`/html/tasks/${taskId}`}
+                    href={`/html/tasks/${taskId}?from=/html/elements`}
                     className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl text-xs font-bold shadow-md shadow-orange-500/20 transition-all hover:scale-105 shrink-0 self-start sm:self-auto"
                 >
                     <span>Start Task #{taskId}</span>
@@ -172,7 +179,7 @@ export default function HtmlElements() {
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-1.5">Elements, Tags, and Attributes</h1>
                     <p className="text-blue-200 text-xs sm:text-sm mb-4">Complete reference for HTML elements — live practice tasks appear as each tag group is completed.</p>
                     <div className="flex flex-wrap gap-2">
-                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">18 Chapters</span>
+                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">22 Chapters</span>
                         <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">50+ Code Examples</span>
                         <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">15 Hands-on Tasks</span>
                     </div>
@@ -248,7 +255,6 @@ and "Visit Knobly" is the content.`} />
             <Section id="body-tag" title="3. Body Tag and Attributes">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;body&gt;</code> tag defines the main visible content of a web page. Everything displayed on screen goes inside this tag.</p>
                 <Code code={`<body bgcolor="lightyellow" text="darkblue" 
-      link="red" vlink="green" alink="orange"
       background="bg.jpg">
     <h1>Welcome to My Page</h1>
     <p>This is the body content.</p>
@@ -339,8 +345,112 @@ It stretches the text so each line has equal width.</p>`} />
                 />
             </Section>
 
-            {/* 7 */}
-            <Section id="formatting" title="7. HTML Formatting Elements">
+            {/* 7 - HR TAG */}
+            <Section id="hr-tag" title="7. <hr> Tag and Attributes">
+                <p>The <code className="bg-gray-100 px-1 rounded">&lt;hr&gt;</code> tag creates a horizontal rule (line) across the page. It is an empty tag (no closing tag). Used to separate content sections visually.</p>
+                <Code code={`<!-- Basic horizontal line -->
+<hr>
+
+<!-- HR with width attribute -->
+<hr width="50%">
+<hr width="300">
+
+<!-- HR with size (thickness) -->
+<hr size="5">
+<hr size="10">
+
+<!-- HR with color -->
+<hr color="red">
+<hr color="#3b82f6">
+
+<!-- HR with alignment -->
+<hr align="left" width="50%">
+<hr align="center" width="70%">
+<hr align="right" width="40%">
+
+<!-- HR without shadow (noshade) -->
+<hr noshade>
+<hr noshade size="3" color="darkblue" width="80%">
+
+<!-- Complete Example -->
+<h2>Chapter 1: Introduction</h2>
+<p>This is the first chapter content.</p>
+<hr color="orange" size="3" width="90%" align="center" noshade>
+<h2>Chapter 2: Getting Started</h2>
+<p>This is the second chapter content.</p>`} />
+                <AttrTable rows={[
+                    ['width', 'Width of the line in pixels or percentage (e.g., width="50%" or width="300")'],
+                    ['size', 'Thickness/height of the line in pixels (e.g., size="5")'],
+                    ['color', 'Color of the line (e.g., color="red" or color="#ff0000")'],
+                    ['align', 'Alignment: left, center (default), or right'],
+                    ['noshade', 'Removes the 3D shadow effect, makes line flat and solid'],
+                ]} />
+                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200 my-3">
+                    <h4 className="text-sm font-bold text-amber-700 mb-2">HR vs BR Comparison:</h4>
+                    <div className="space-y-1 text-xs text-gray-700">
+                        <div><code className="bg-white px-1 rounded text-red-600">&lt;hr&gt;</code> — Draws a visible horizontal line to separate sections</div>
+                        <div><code className="bg-white px-1 rounded text-red-600">&lt;br&gt;</code> — Only adds an invisible line break (no visible line)</div>
+                    </div>
+                </div>
+                <QuickPractice title="HR Attributes Practice">
+                    Try creating a colored divider: <code className="bg-white px-1.5 py-0.5 rounded border border-slate-200">&lt;hr color=&quot;red&quot; size=&quot;3&quot; width=&quot;80%&quot; noshade&gt;</code>. The <code className="bg-white px-1 rounded">noshade</code> attribute removes the default shadow effect for a cleaner look.
+                </QuickPractice>
+            </Section>
+
+            {/* 8 - COMMENT TAG */}
+            <Section id="comment-tag" title="8. HTML Comment Tag">
+                <p>HTML comments are used to add notes, explanations, or reminders in the source code. Comments are <strong>not displayed</strong> in the browser — they are only visible in the source code.</p>
+                <Code code={`<!-- This is an HTML comment -->
+<!-- Comments are invisible in the browser -->
+
+<p>This text is visible.</p>
+<!-- This paragraph below is commented out and won't display -->
+<!-- <p>This text is hidden from the browser.</p> -->
+
+<!-- 
+    Multi-line comment:
+    Author: Piyush
+    Date: 2025
+    Purpose: Student profile page
+-->
+
+<!-- Section: Navigation Bar -->
+<h1>My Website</h1>
+
+<!-- TODO: Add contact form here later -->
+<p>Welcome to my website!</p>
+
+<!-- Debugging: temporarily hiding this section -->
+<!--
+<div>
+    <h2>Under Construction</h2>
+    <p>This section is not ready yet.</p>
+</div>
+-->`} />
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200 my-3">
+                    <h4 className="text-sm font-bold text-green-700 mb-2">Comment Uses:</h4>
+                    <div className="space-y-1.5 text-xs text-gray-700">
+                        <div>📝 <strong>Notes & Documentation:</strong> Explain what your code does for yourself and others</div>
+                        <div>🔧 <strong>Debugging:</strong> Temporarily hide code without deleting it</div>
+                        <div>📋 <strong>Section Labels:</strong> Mark different parts of a long HTML page</div>
+                        <div>⏳ <strong>TODO Reminders:</strong> Leave notes for future work</div>
+                    </div>
+                </div>
+                <div className="bg-red-50 rounded-lg p-4 border border-red-200 my-3">
+                    <h4 className="text-sm font-bold text-red-700 mb-2">⚠️ Important Rules:</h4>
+                    <div className="space-y-1 text-xs text-gray-700">
+                        <div>• Comments start with <code className="bg-white px-1 rounded">&lt;!--</code> and end with <code className="bg-white px-1 rounded">--&gt;</code></div>
+                        <div>• You <strong>cannot nest</strong> comments inside comments</div>
+                        <div>• Comments are visible in <strong>View Source</strong> — don&apos;t put passwords or secrets!</div>
+                    </div>
+                </div>
+                <QuickPractice title="Comment Practice">
+                    Write a comment above your <code className="bg-white px-1 rounded">&lt;body&gt;</code> tag explaining the purpose of your page. Example: <code className="bg-white px-1.5 py-0.5 rounded border border-slate-200">&lt;!-- My Profile Page - Created for O-Level Practice --&gt;</code>
+                </QuickPractice>
+            </Section>
+
+            {/* 9 */}
+            <Section id="formatting" title="9. HTML Formatting Elements">
                 <p>HTML provides several tags for formatting text:</p>
                 <Code code={`<b>Bold Text</b>
 <strong>Strong/Important Text</strong>
@@ -380,40 +490,70 @@ It stretches the text so each line has equal width.</p>`} />
                 </QuickPractice>
             </Section>
 
-            {/* 8 - HEADINGS: Milestone for Task 2 */}
-            <Section id="heading-tag" title="8. Heading Tags (h1-h6)">
-                <p>HTML provides six levels of headings. <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> is the largest and most important, <code className="bg-gray-100 px-1 rounded">&lt;h6&gt;</code> is the smallest.</p>
-                <Code code={`<h1>Heading 1 - Most Important</h1>
-<h2 id="heading-2">Heading 2</h2>
-<h3 id="heading-3">Heading 3</h3>
-<h4>Heading 4</h4>
-<h5>Heading 5</h5>
-<h6>Heading 6 - Least Important</h6>
+            {/* 10 - FONT TAG */}
+            <Section id="font-tag" title="10. <font> Tag and Attributes">
+                <p>The <code className="bg-gray-100 px-1 rounded">&lt;font&gt;</code> tag is used to change the color, size, and face (typeface) of text. It is a container tag that wraps around the text you want to style.</p>
+                <Code code={`<!-- Font with color -->
+<font color="red">This text is red.</font>
+<font color="#3b82f6">This text is blue.</font>
+<font color="green">This text is green.</font>
 
-<h1 align="center">Centered Heading</h1>
-<h2 id="right-aligned-heading" align="right">Right-aligned Heading</h2>`} />
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 my-3 space-y-1">
-                    <p className="text-2xl sm:text-3xl font-bold text-gray-900">H1 Heading</p>
-                    <p className="text-xl sm:text-2xl font-bold text-gray-800">H2 Heading</p>
-                    <p className="text-lg sm:text-xl font-bold text-gray-700">H3 Heading</p>
-                    <p className="text-base sm:text-lg font-bold text-gray-700">H4 Heading</p>
-                    <p className="text-sm font-bold text-gray-600">H5 Heading</p>
-                    <p className="text-xs font-bold text-gray-500">H6 Heading</p>
+<!-- Font with size (1 to 7, default is 3) -->
+<font size="1">Size 1 - Smallest</font>
+<font size="2">Size 2</font>
+<font size="3">Size 3 - Default</font>
+<font size="4">Size 4</font>
+<font size="5">Size 5</font>
+<font size="6">Size 6</font>
+<font size="7">Size 7 - Largest</font>
+
+<!-- Font with face (typeface/font family) -->
+<font face="Arial">This is Arial font.</font>
+<font face="Times New Roman">This is Times New Roman.</font>
+<font face="Courier New">This is Courier New (monospace).</font>
+<font face="Verdana">This is Verdana font.</font>
+
+<!-- Combining all attributes -->
+<font color="darkblue" size="5" face="Arial">
+    Welcome to Knobly Education!
+</font>
+
+<!-- Nested font tags -->
+<font color="red" size="4">
+    This is <font face="Courier New">mixed</font> styling.
+</font>
+
+<!-- Font used with other tags -->
+<h2><font color="orange">Colored Heading</font></h2>
+<p><font color="green" size="4" face="Verdana">Styled paragraph text.</font></p>`} />
+                <AttrTable rows={[
+                    ['color', 'Text color — name (red, blue) or hex code (#ff0000)'],
+                    ['size', 'Text size from 1 (smallest) to 7 (largest). Default is 3'],
+                    ['face', 'Font family/typeface — Arial, Times New Roman, Courier New, Verdana, etc.'],
+                ]} />
+                <div className="bg-indigo-50 rounded-lg p-4 border border-indigo-200 my-3">
+                    <h4 className="text-sm font-bold text-indigo-700 mb-2">Font Size Reference:</h4>
+                    <div className="space-y-1 text-gray-700">
+                        <div style={{ fontSize: '10px' }}>Size 1 — Very small (10px)</div>
+                        <div style={{ fontSize: '13px' }}>Size 2 — Small (13px)</div>
+                        <div style={{ fontSize: '16px' }}>Size 3 — Default/Medium (16px)</div>
+                        <div style={{ fontSize: '18px' }}>Size 4 — Large (18px)</div>
+                        <div style={{ fontSize: '24px' }}>Size 5 — Extra Large (24px)</div>
+                        <div style={{ fontSize: '32px' }}>Size 6 — Huge (32px)</div>
+                        <div style={{ fontSize: '48px' }}>Size 7 — Maximum (48px)</div>
+                    </div>
                 </div>
-                <p><strong>Rules:</strong> Use only one <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> per page. Do not skip heading levels. Headings help SEO.</p>
-
-                {/* TASK 2: Placed right after Headings & Formatting are complete! */}
-                <PracticeTaskCard
-                    taskId="2"
-                    title="Task 2: Basic HTML Tags & Formatting"
-                    desc="Formatting tags (b, i, u, center) aur Headings (h1-h6) complete hone ke baad ab Task 2 solve karein — bold, italic, underline, preformatted text, aur multi-level headings."
-                    tagsCovered={['<h1>, <h2>', '<center>', '<b>, <i>, <u>', '<pre>', '<br>', '<hr>']}
-                    highlightBadge="Headings & Formatting Project"
-                />
+                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200 my-3">
+                    <h4 className="text-sm font-bold text-amber-700 mb-2">⚠️ Note:</h4>
+                    <p className="text-xs text-gray-700">The <code className="bg-white px-1 rounded">&lt;font&gt;</code> tag is <strong>deprecated in HTML5</strong> — modern websites use CSS for styling. But it is still important for O-Level exams and understanding HTML fundamentals!</p>
+                </div>
+                <QuickPractice title="Font Tag Practice">
+                    Write a heading with colored text: <code className="bg-white px-1.5 py-0.5 rounded border border-slate-200">&lt;h1&gt;&lt;font color=&quot;red&quot; face=&quot;Arial&quot;&gt;Welcome&lt;/font&gt;&lt;/h1&gt;</code>. Try different sizes and faces to see the visual difference.
+                </QuickPractice>
             </Section>
 
-            {/* 9 - IMAGE TAG: Milestone for Task 3 & 4 */}
-            <Section id="img-tag" title="9. <img> Tag and Attributes">
+            {/* 11 - IMAGE TAG: Milestone for Task 3 & 4 */}
+            <Section id="img-tag" title="11. <img> Tag and Attributes">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;img&gt;</code> tag embeds images. It is a self-closing (empty) tag.</p>
                 <Code code={`<img src="photo.jpg" alt="A photo" width="300" height="200">
 
@@ -458,8 +598,108 @@ It stretches the text so each line has equal width.</p>`} />
                 </div>
             </Section>
 
-            {/* 10 - ANCHOR TAG: Milestone for Task 7 */}
-            <Section id="anchor-tag" title="10. <a> Anchor Tag">
+            {/* 12 - HEADINGS: Milestone for Task 2 */}
+            <Section id="heading-tag" title="12. Heading Tags (h1-h6)">
+                <p>HTML provides six levels of headings. <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> is the largest and most important, <code className="bg-gray-100 px-1 rounded">&lt;h6&gt;</code> is the smallest.</p>
+                <Code code={`<h1>Heading 1 - Most Important</h1>
+<h2 id="heading-2">Heading 2</h2>
+<h3 id="heading-3">Heading 3</h3>
+<h4>Heading 4</h4>
+<h5>Heading 5</h5>
+<h6>Heading 6 - Least Important</h6>
+
+<h1 align="center">Centered Heading</h1>
+<h2 id="right-aligned-heading" align="right">Right-aligned Heading</h2>`} />
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 my-3 space-y-1">
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-900">H1 Heading</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-800">H2 Heading</p>
+                    <p className="text-lg sm:text-xl font-bold text-gray-700">H3 Heading</p>
+                    <p className="text-base sm:text-lg font-bold text-gray-700">H4 Heading</p>
+                    <p className="text-sm font-bold text-gray-600">H5 Heading</p>
+                    <p className="text-xs font-bold text-gray-500">H6 Heading</p>
+                </div>
+                <p><strong>Rules:</strong> Use only one <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> per page. Do not skip heading levels. Headings help SEO.</p>
+
+                {/* TASK 2: Placed right after Headings & Formatting are complete! */}
+                <PracticeTaskCard
+                    taskId="2"
+                    title="Task 2: Basic HTML Tags & Formatting"
+                    desc="Formatting tags (b, i, u, center) aur Headings (h1-h6) complete hone ke baad ab Task 2 solve karein — bold, italic, underline, preformatted text, aur multi-level headings."
+                    tagsCovered={['<h1>, <h2>', '<center>', '<b>, <i>, <u>', '<pre>', '<br>', '<hr>']}
+                    highlightBadge="Headings & Formatting Project"
+                />
+            </Section>
+
+            {/* 13 - MARQUEE TAG */}
+            <Section id="marquee-tag" title="13. <marquee> Tag and Attributes">
+                <p>The <code className="bg-gray-100 px-1 rounded">&lt;marquee&gt;</code> tag creates scrolling/moving text or images on a webpage. It is a container tag that makes its content move automatically.</p>
+                <Code code={`<!-- Basic scrolling text (left to right default) -->
+<marquee>Welcome to Knobly Education!</marquee>
+
+<!-- Scroll Amount (speed control) -->
+<marquee scrollamount="2">Slow scrolling text</marquee>
+<marquee scrollamount="10">Fast scrolling text</marquee>
+<marquee scrollamount="20">Very fast scrolling!</marquee>
+
+<!-- Behavior: scroll, slide, alternate -->
+<marquee behavior="scroll">Scroll (default) - loops continuously</marquee>
+<marquee behavior="slide">Slide - stops at the edge</marquee>
+<marquee behavior="alternate">Alternate - bounces back and forth</marquee>
+
+<!-- Direction: left, right, up, down -->
+<marquee direction="right">Moving Right →</marquee>
+<marquee direction="up" height="80">Moving Up ↑</marquee>
+<marquee direction="down" height="80">Moving Down ↓</marquee>
+
+<!-- Loop count -->
+<marquee loop="3">This scrolls only 3 times.</marquee>
+<marquee loop="1">This scrolls only once!</marquee>
+<marquee loop="-1">Infinite loop (default)</marquee>
+
+<!-- Height and Width -->
+<marquee width="50%" height="50" bgcolor="lightyellow">
+    Half-width marquee with background color
+</marquee>
+
+<!-- Combined Example -->
+<marquee behavior="alternate" scrollamount="5" 
+    bgcolor="#1e293b" width="100%" height="40">
+    <font color="white" size="4">★ Breaking News: HTML is Fun! ★</font>
+</marquee>
+
+<!-- Image in marquee -->
+<marquee scrollamount="8" behavior="alternate">
+    <img src="logo.png" alt="Logo" width="60">
+</marquee>`} />
+                <AttrTable rows={[
+                    ['scrollamount', 'Speed of scrolling in pixels per frame (default: 6). Higher = faster'],
+                    ['behavior', 'scroll (default, continuous), slide (stops at edge), alternate (bounces)'],
+                    ['direction', 'Scroll direction: left (default), right, up, down'],
+                    ['loop', 'Number of times to repeat. -1 or default = infinite'],
+                    ['height', 'Height of the marquee area in pixels or percentage'],
+                    ['width', 'Width of the marquee area in pixels or percentage'],
+                    ['bgcolor', 'Background color of the marquee area'],
+                    ['scrolldelay', 'Delay between each frame in milliseconds (default: 85)'],
+                ]} />
+                <div className="bg-violet-50 rounded-lg p-4 border border-violet-200 my-3">
+                    <h4 className="text-sm font-bold text-violet-700 mb-2">Behavior Comparison:</h4>
+                    <div className="space-y-1.5 text-xs text-gray-700">
+                        <div><code className="bg-white px-1 rounded text-red-600">scroll</code> — Text scrolls continuously in one direction and repeats from the other side</div>
+                        <div><code className="bg-white px-1 rounded text-red-600">slide</code> — Text slides in and stops when it reaches the edge</div>
+                        <div><code className="bg-white px-1 rounded text-red-600">alternate</code> — Text bounces back and forth between the edges like a ping-pong ball</div>
+                    </div>
+                </div>
+                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200 my-3">
+                    <h4 className="text-sm font-bold text-amber-700 mb-2">⚠️ Note:</h4>
+                    <p className="text-xs text-gray-700">The <code className="bg-white px-1 rounded">&lt;marquee&gt;</code> tag is <strong>deprecated in HTML5</strong> — modern websites use CSS animations. But it is still asked in O-Level exams and useful for learning text animation concepts!</p>
+                </div>
+                <QuickPractice title="Marquee Practice">
+                    Create a bouncing news banner: <code className="bg-white px-1.5 py-0.5 rounded border border-slate-200">&lt;marquee behavior=&quot;alternate&quot; scrollamount=&quot;5&quot;&gt;Breaking News!&lt;/marquee&gt;</code>. Try changing <code className="bg-white px-1 rounded">scrollamount</code> to see speed differences.
+                </QuickPractice>
+            </Section>
+
+            {/* 14 - ANCHOR TAG: Milestone for Task 7 */}
+            <Section id="anchor-tag" title="14. <a> Anchor Tag">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;a&gt;</code> tag creates hyperlinks.</p>
                 <Code code={`<!-- External link -->
 <a href="https://www.google.com">Visit Google</a>
@@ -498,8 +738,8 @@ It stretches the text so each line has equal width.</p>`} />
                 />
             </Section>
 
-            {/* 11 - LIST TAGS: Milestone for Task 5 & 5.3 */}
-            <Section id="list-tags" title="11. List Tags (ul, ol, dl)">
+            {/* 15 - LIST TAGS: Milestone for Task 5 & 5.3 */}
+            <Section id="list-tags" title="15. List Tags (ul, ol, dl)">
                 <p>HTML supports three types of lists:</p>
                 <h4 className="text-sm font-bold text-blue-700 mt-2">A. Unordered List (&lt;ul&gt;)</h4>
                 <Code code={`<ul>
@@ -560,8 +800,8 @@ It stretches the text so each line has equal width.</p>`} />
                 </div>
             </Section>
 
-            {/* 12 - TABLE TAG: Milestone for Task 5.1, 5.2 & 6 */}
-            <Section id="table-tag" title="12. Table Tag and Attributes">
+            {/* 16 - TABLE TAG: Milestone for Task 5.1, 5.2 & 6 */}
+            <Section id="table-tag" title="16. Table Tag and Attributes">
                 <p>Tables arrange data into rows and columns.</p>
                 <Code code={`<table border="1" cellpadding="8" cellspacing="0" width="100%">
     <caption>Student Marks Sheet</caption>
@@ -625,8 +865,8 @@ It stretches the text so each line has equal width.</p>`} />
                 </div>
             </Section>
 
-            {/* 13 - FORM TAG: Milestone for Task 8 */}
-            <Section id="form-tag" title="13. Form Tag and Elements">
+            {/* 17 - FORM TAG: Milestone for Task 8 */}
+            <Section id="form-tag" title="17. Form Tag and Elements">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;form&gt;</code> tag collects user input.</p>
                 <Code code={`<form action="/submit" method="POST">
     <label>Name:</label><br>
@@ -681,8 +921,8 @@ It stretches the text so each line has equal width.</p>`} />
                 />
             </Section>
 
-            {/* 14 */}
-            <Section id="div-span" title="14. <div> and <span> Tags">
+            {/* 18 */}
+            <Section id="div-span" title="18. <div> and <span> Tags">
                 <p><code className="bg-gray-100 px-1 rounded">&lt;div&gt;</code> is a block-level container. <code className="bg-gray-100 px-1 rounded">&lt;span&gt;</code> is an inline container.</p>
                 <Code code={`<!-- div - Block level -->
 <div style="background:#eee; padding:20px; margin:10px 0;">
@@ -710,8 +950,8 @@ Computer Science</span>.</p>`} />
                 </QuickPractice>
             </Section>
 
-            {/* 15 - SEMANTIC HTML5: Milestone for Task 11 */}
-            <Section id="semantic" title="15. HTML5 Semantic Elements">
+            {/* 19 - SEMANTIC HTML5: Milestone for Task 11 */}
+            <Section id="semantic" title="19. HTML5 Semantic Elements">
                 <p>Semantic elements describe their meaning clearly, helping browsers and search engines understand page structure.</p>
                 <Code code={`<header>
     <nav>
@@ -758,8 +998,8 @@ Computer Science</span>.</p>`} />
                 />
             </Section>
 
-            {/* 16 - AUDIO & VIDEO: Milestone for Task 9 & 5.4 */}
-            <Section id="audio-video" title="16. Audio and Video Tags">
+            {/* 20 - AUDIO & VIDEO: Milestone for Task 9 & 5.4 */}
+            <Section id="audio-video" title="20. Audio and Video Tags">
                 <p>HTML5 supports audio and video directly.</p>
                 <Code code={`<!-- Audio -->
 <audio controls>
@@ -807,8 +1047,8 @@ Computer Science</span>.</p>`} />
                 </div>
             </Section>
 
-            {/* 17 */}
-            <Section id="iframe-tag" title="17. <iframe> Tag">
+            {/* 21 */}
+            <Section id="iframe-tag" title="21. <iframe> Tag">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;iframe&gt;</code> tag embeds another HTML page within the current page.</p>
                 <Code code={`<!-- Embed a webpage -->
 <iframe src="https://www.example.com" 
@@ -829,8 +1069,8 @@ Computer Science</span>.</p>`} />
                 </QuickPractice>
             </Section>
 
-            {/* 18 - ENTITIES & CAPSTONE: Milestone for Task 10 */}
-            <Section id="entities" title="18. HTML Entities & Capstone Project">
+            {/* 22 - ENTITIES & CAPSTONE: Milestone for Task 10 */}
+            <Section id="entities" title="22. HTML Entities & Capstone Project">
                 <p>Reserved characters in HTML must be displayed using entities.</p>
                 <div className="overflow-x-auto my-3">
                     <table className="w-full text-xs sm:text-sm border border-gray-200 rounded-lg overflow-hidden">

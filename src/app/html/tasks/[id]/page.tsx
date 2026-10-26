@@ -43,6 +43,32 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
     const [successMsg, setSuccessMsg] = useState('');
     const [showPasswordBox, setShowPasswordBox] = useState(false);
 
+    const handleGoBack = () => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            const from = params.get('from');
+            if (from) {
+                router.push(from);
+                return;
+            }
+            if (window.history.length > 1 && document.referrer && document.referrer.includes(window.location.host)) {
+                router.back();
+                return;
+            }
+        }
+        router.push('/html/tasks');
+    };
+
+    const getCompilerUrl = () => {
+        if (typeof window !== 'undefined') {
+            const from = new URLSearchParams(window.location.search).get('from');
+            if (from) {
+                return `/html/tasks/${id}/compiler?from=${encodeURIComponent(from)}`;
+            }
+        }
+        return `/html/tasks/${id}/compiler`;
+    };
+
     const checkLockStatus = async () => {
         // Immediate check from localStorage
         try {
@@ -150,14 +176,14 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
             <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
                 <div className="px-3 sm:px-4 py-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                        <button onClick={() => router.back()} className="text-gray-500 hover:text-gray-900 shrink-0" title="Go Back"><ArrowLeft size={20} /></button>
+                        <button onClick={handleGoBack} className="text-gray-500 hover:text-gray-900 shrink-0 cursor-pointer" title="Go Back"><ArrowLeft size={20} /></button>
                         <FileCode size={16} className="text-blue-600 shrink-0" />
                         <h1 className="text-xs sm:text-sm font-bold text-gray-900 truncate">Task {id}: {task.title}</h1>
                     </div>
                     <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                         {unlocked && (
                             <Link
-                                href={`/html/tasks/${id}/compiler`}
+                                href={getCompilerUrl()}
                                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-sm transition-all mr-1"
                             >
                                 <FileCode size={13} />
@@ -217,7 +243,7 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
                                 </Link>
 
                                 <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                                    <button onClick={() => router.back()} className="text-xs font-semibold text-slate-500 hover:text-slate-800">
+                                    <button onClick={handleGoBack} className="text-xs font-semibold text-slate-500 hover:text-slate-800 cursor-pointer">
                                         ← Back to Tasks
                                     </button>
 
@@ -303,7 +329,7 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
                     />
                     {/* Floating Compiler Button */}
                     <Link
-                        href={`/html/tasks/${id}/compiler`}
+                        href={getCompilerUrl()}
                         className="fixed bottom-5 right-5 z-40 flex items-center gap-2 px-5 py-3 rounded-2xl text-white text-xs font-bold shadow-2xl hover:scale-105 transition-all duration-200"
                         style={{
                             background: 'linear-gradient(135deg, #f97316, #ea580c)',

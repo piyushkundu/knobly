@@ -53,7 +53,7 @@ export default function SidebarLayout({ title, backHref, sidebarTitle, items, ch
     const activeIndex = items.findIndex(i => i.id === activeId);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50/10" style={{ color: '#1e293b' }}>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50/10 select-text" style={{ color: '#1e293b' }}>
             {/* Header */}
             <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200/60 shadow-sm">
                 <div className="px-4 py-2.5 flex items-center justify-between">
@@ -140,7 +140,7 @@ export default function SidebarLayout({ title, backHref, sidebarTitle, items, ch
                 )}
 
                 {/* Main Content */}
-                <main className="flex-1 min-w-0 px-3 sm:px-5 md:px-8 py-5 max-w-4xl mx-auto">
+                <main className="flex-1 min-w-0 px-3 sm:px-5 md:px-8 py-5 max-w-4xl mx-auto select-text">
                     {children}
                 </main>
             </div>
