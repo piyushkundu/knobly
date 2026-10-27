@@ -8,7 +8,7 @@ import {
     Code2, Eye, RefreshCw, Trophy, Star, Target, TrendingUp,
     Zap, ChevronRight, X, BarChart3, Tag, Lightbulb, ThumbsUp,
     ChevronDown, FileCode, Loader2, ExternalLink, Columns, Sun, Moon,
-    Maximize2, Minimize2
+    Maximize2, Minimize2, ZoomIn, ZoomOut
 } from 'lucide-react';
 
 interface TaskInfo {
@@ -105,6 +105,18 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
     const [showTaskInfo, setShowTaskInfo] = useState(true);
     const [lineCount, setLineCount] = useState(1);
     const [targetModalOpen, setTargetModalOpen] = useState(false);
+
+    // Code Editor Font Size / Zoom (10px to 24px, default: 13px)
+    const [fontSize, setFontSize] = useState<number>(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('task_compiler_font_size');
+            if (saved) {
+                const parsed = parseInt(saved, 10);
+                if (!isNaN(parsed) && parsed >= 10 && parsed <= 24) return parsed;
+            }
+        }
+        return 13;
+    });
 
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const lineNumberRef = useRef<HTMLDivElement>(null);
@@ -268,6 +280,29 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
         }
     }, [code, previewMode]);
 
+    const handleZoomIn = useCallback(() => {
+        setFontSize(prev => {
+            const next = Math.min(prev + 1, 24);
+            if (typeof window !== 'undefined') localStorage.setItem('task_compiler_font_size', String(next));
+            return next;
+        });
+    }, []);
+
+    const handleZoomOut = useCallback(() => {
+        setFontSize(prev => {
+            const next = Math.max(prev - 1, 10);
+            if (typeof window !== 'undefined') localStorage.setItem('task_compiler_font_size', String(next));
+            return next;
+        });
+    }, []);
+
+    const handleZoomReset = useCallback(() => {
+        setFontSize(13);
+        if (typeof window !== 'undefined') localStorage.setItem('task_compiler_font_size', '13');
+    }, []);
+
+    const lineHeightPx = Math.round(fontSize * 1.68);
+
     const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Tab') {
             e.preventDefault();
@@ -285,7 +320,22 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
             e.preventDefault();
             handleRun();
         }
-    }, [code, handleRun]);
+        // Ctrl + + / Ctrl + = to zoom in
+        if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
+            e.preventDefault();
+            handleZoomIn();
+        }
+        // Ctrl + - to zoom out
+        if ((e.ctrlKey || e.metaKey) && e.key === '-') {
+            e.preventDefault();
+            handleZoomOut();
+        }
+        // Ctrl + 0 to reset zoom
+        if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+            e.preventDefault();
+            handleZoomReset();
+        }
+    }, [code, handleRun, handleZoomIn, handleZoomOut, handleZoomReset]);
 
     // Sync scroll between textarea and line numbers
     const handleScroll = useCallback(() => {
@@ -706,7 +756,54 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                 </span>
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                                {/* Font Zoom Controls */}
+                                <div
+                                    style={!isWhite ? { backgroundColor: '#0e1422', borderColor: '#1e293b' } : {}}
+                                    className={`flex items-center rounded-lg border p-0.5 ${
+                                        isWhite ? 'bg-white border-slate-200' : 'bg-[#0f1523] border-slate-700'
+                                    }`}
+                                >
+                                    <button
+                                        onClick={handleZoomOut}
+                                        disabled={fontSize <= 10}
+                                        style={!isWhite ? { color: '#cbd5e1' } : {}}
+                                        className={`p-1 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
+                                            isWhite
+                                                ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                                                : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                                        }`}
+                                        title="Zoom Out Code (Ctrl + -)"
+                                    >
+                                        <ZoomOut size={12} />
+                                    </button>
+
+                                    <button
+                                        onClick={handleZoomReset}
+                                        style={!isWhite ? { color: '#cbd5e1' } : {}}
+                                        className={`px-1.5 py-0.5 text-[10px] font-mono font-bold select-none transition-colors hover:text-orange-500 ${
+                                            isWhite ? 'text-slate-600' : 'text-slate-300'
+                                        }`}
+                                        title="Reset Zoom (Click to reset to 13px)"
+                                    >
+                                        {fontSize}px
+                                    </button>
+
+                                    <button
+                                        onClick={handleZoomIn}
+                                        disabled={fontSize >= 24}
+                                        style={!isWhite ? { color: '#cbd5e1' } : {}}
+                                        className={`p-1 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
+                                            isWhite
+                                                ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                                                : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                                        }`}
+                                        title="Zoom In Code (Ctrl + +)"
+                                    >
+                                        <ZoomIn size={12} />
+                                    </button>
+                                </div>
+
                                 <button
                                     onClick={handleReset}
                                     style={!isWhite ? { color: '#cbd5e1' } : {}}
@@ -718,7 +815,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                     title="Reset Code"
                                 >
                                     <RefreshCw size={11} />
-                                    <span>Reset</span>
+                                    <span className="hidden sm:inline">Reset</span>
                                 </button>
                             </div>
                         </div>
@@ -728,15 +825,25 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                             {/* Line Numbers */}
                             <div
                                 ref={lineNumberRef}
-                                style={!isWhite ? { backgroundColor: '#0b101d', borderColor: '#1e293b', color: '#94a3b8', lineHeight: '22px' } : { lineHeight: '22px' }}
-                                className={`w-11 py-3 text-right pr-2.5 font-mono text-xs select-none overflow-hidden shrink-0 border-r ${
+                                style={{
+                                    lineHeight: `${lineHeightPx}px`,
+                                    ...(!isWhite ? { backgroundColor: '#0b101d', borderColor: '#1e293b', color: '#94a3b8' } : {})
+                                }}
+                                className={`w-11 py-3 text-right pr-2.5 font-mono select-none overflow-hidden shrink-0 border-r ${
                                     isWhite
                                         ? 'bg-slate-50 border-slate-200 text-slate-400'
                                         : 'bg-[#0c101c] border-slate-800 text-slate-400'
                                 }`}
                             >
                                 {Array.from({ length: Math.max(lineCount, 15) }, (_, i) => (
-                                    <div key={i} className="h-[22px] leading-[22px] text-[11px]">
+                                    <div
+                                        key={i}
+                                        style={{
+                                            height: `${lineHeightPx}px`,
+                                            lineHeight: `${lineHeightPx}px`,
+                                            fontSize: `${Math.max(10, fontSize - 2)}px`
+                                        }}
+                                    >
                                         {i + 1}
                                     </div>
                                 ))}
@@ -752,11 +859,12 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                 spellCheck={false}
                                 placeholder="<!DOCTYPE html>&#10;<html>&#10;<head>&#10;    <title>...</title>&#10;</head>&#10;<body>&#10;    <!-- Apna HTML code yahan shuru se likhein... -->&#10;</body>&#10;</html>"
                                 style={{
-                                    lineHeight: '22px',
+                                    fontSize: `${fontSize}px`,
+                                    lineHeight: `${lineHeightPx}px`,
                                     tabSize: 4,
                                     ...(!isWhite ? { backgroundColor: '#090d16', color: '#f8fafc' } : {})
                                 }}
-                                className={`flex-1 p-3 font-mono text-xs outline-none resize-none overflow-auto border-0 focus:ring-0 ${
+                                className={`flex-1 p-3 font-mono outline-none resize-none overflow-auto border-0 focus:ring-0 ${
                                     isWhite
                                         ? 'bg-white text-slate-900 caret-orange-600 selection:bg-orange-100'
                                         : 'bg-[#090d16] text-slate-100 caret-orange-400 selection:bg-orange-500/30'
