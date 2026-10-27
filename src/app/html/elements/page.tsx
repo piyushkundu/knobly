@@ -15,9 +15,10 @@ const SIDEBAR_ITEMS = [
     { id: 'hr-tag', label: '<hr> Tag and Attributes' },
     { id: 'comment-tag', label: 'HTML Comment Tag' },
     { id: 'formatting', label: 'HTML Formatting Elements' },
+    { id: 'heading-tag', label: 'Heading Tags (h1-h6)' },
+    { id: 'center-tag', label: '<center> Tag & Task 2' },
     { id: 'font-tag', label: '<font> Tag and Attributes' },
     { id: 'img-tag', label: '<img> Tag and Attributes' },
-    { id: 'heading-tag', label: 'Heading Tags (h1-h6)' },
     { id: 'marquee-tag', label: '<marquee> Tag and Attributes' },
     { id: 'anchor-tag', label: '<a> Anchor Tag' },
     { id: 'list-tags', label: 'List Tags (ul, ol, dl)' },
@@ -179,7 +180,7 @@ export default function HtmlElements() {
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-1.5">Elements, Tags, and Attributes</h1>
                     <p className="text-blue-200 text-xs sm:text-sm mb-4">Complete reference for HTML elements — live practice tasks appear as each tag group is completed.</p>
                     <div className="flex flex-wrap gap-2">
-                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">22 Chapters</span>
+                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">23 Chapters</span>
                         <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">50+ Code Examples</span>
                         <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">15 Hands-on Tasks</span>
                     </div>
@@ -490,8 +491,84 @@ It stretches the text so each line has equal width.</p>`} />
                 </QuickPractice>
             </Section>
 
-            {/* 10 - FONT TAG */}
-            <Section id="font-tag" title="10. <font> Tag and Attributes">
+            {/* 10 - HEADINGS */}
+            <Section id="heading-tag" title="10. Heading Tags (h1-h6)">
+                <p>HTML provides six levels of headings. <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> is the largest and most important, <code className="bg-gray-100 px-1 rounded">&lt;h6&gt;</code> is the smallest.</p>
+                <Code code={`<h1>Heading 1 - Most Important</h1>
+<h2 id="heading-2">Heading 2</h2>
+<h3 id="heading-3">Heading 3</h3>
+<h4>Heading 4</h4>
+<h5>Heading 5</h5>
+<h6>Heading 6 - Least Important</h6>
+
+<h1 align="center">Centered Heading</h1>
+<h2 id="right-aligned-heading" align="right">Right-aligned Heading</h2>`} />
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 my-3 space-y-1">
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-900">H1 Heading</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-800">H2 Heading</p>
+                    <p className="text-lg sm:text-xl font-bold text-gray-700">H3 Heading</p>
+                    <p className="text-base sm:text-lg font-bold text-gray-700">H4 Heading</p>
+                    <p className="text-sm font-bold text-gray-600">H5 Heading</p>
+                    <p className="text-xs font-bold text-gray-500">H6 Heading</p>
+                </div>
+                <p><strong>Rules:</strong> Use only one <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> per page. Do not skip heading levels. Headings help SEO.</p>
+                <QuickPractice title="Headings Practice">
+                    Try creating a structured outline using <code className="bg-white px-1.5 py-0.5 rounded border border-slate-200">&lt;h1&gt;Main Topic&lt;/h1&gt;</code>, followed by sub-headings <code className="bg-white px-1.5 py-0.5 rounded border border-slate-200">&lt;h2&gt;Sub-Topic&lt;/h2&gt;</code>.
+                </QuickPractice>
+            </Section>
+
+            {/* 11 - CENTER TAG & TASK 2 */}
+            <Section id="center-tag" title="11. <center> Tag and Alignment">
+                <p>The <code className="bg-gray-100 px-1 rounded">&lt;center&gt;</code> tag is a container tag used to horizontally center-align text, headings, paragraphs, images, or entire sections on a web page.</p>
+                <Code code={`<!-- Centering headings -->
+<center>
+    <h1>Welcome to Knobly Education</h1>
+    <h3>Learn Web Development Step by Step</h3>
+</center>
+
+<!-- Centering formatted text -->
+<center>
+    <p><b><u>Important Notice:</u></b> All exams start at 10:00 AM.</p>
+</center>
+
+<!-- Difference between <center> tag and align="center" attribute -->
+<center><h3>Centered using &lt;center&gt; container tag</h3></center>
+<h3 align="center">Centered using align="center" attribute</h3>
+
+<!-- Centering images and content blocks -->
+<center>
+    <img src="logo.png" alt="Logo" width="100">
+    <p>Empowering Students Across India</p>
+    <hr width="50%">
+</center>`} />
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 my-3">
+                    <h4 className="text-sm font-bold text-blue-700 mb-2">Visual Alignment Demo:</h4>
+                    <div className="bg-white p-3 rounded border border-blue-100 space-y-2">
+                        <div className="text-center p-2 bg-blue-100/50 rounded text-blue-900 font-semibold text-xs sm:text-sm">
+                            &lt;center&gt; This text is horizontally centered across the full width &lt;/center&gt;
+                        </div>
+                        <div className="text-left text-xs text-gray-500 pl-1">
+                            Default text starts aligned to the left edge.
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200 my-3">
+                    <h4 className="text-sm font-bold text-amber-700 mb-2">⚠️ O-Level Exam Note:</h4>
+                    <p className="text-xs text-gray-700">The <code className="bg-white px-1 rounded">&lt;center&gt;</code> tag is <strong>deprecated in HTML5</strong> (where CSS <code className="bg-white px-1 rounded">text-align: center;</code> is preferred). However, in NIELIT O-Level (M2-R5) and CCC exams, question papers frequently test the <code className="bg-white px-1 rounded">&lt;center&gt;</code> tag and <code className="bg-white px-1 rounded">align=&quot;center&quot;</code> attribute!</p>
+                </div>
+
+                {/* TASK 2: Placed right after Headings, Formatting & Center Tag are complete! */}
+                <PracticeTaskCard
+                    taskId="2"
+                    title="Task 2: Basic HTML Tags & Formatting"
+                    desc="Formatting tags (b, i, u), Headings (h1-h6), aur <center> tag complete hone ke baad ab Task 2 solve karein — bold, italic, underline, center-aligned text, preformatted text, aur multi-level headings."
+                    tagsCovered={['<h1>, <h2>', '<center>', '<b>, <i>, <u>', '<pre>', '<br>', '<hr>']}
+                    highlightBadge="Headings, Center & Formatting Project"
+                />
+            </Section>
+
+            {/* 12 - FONT TAG */}
+            <Section id="font-tag" title="12. <font> Tag and Attributes">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;font&gt;</code> tag is used to change the color, size, and face (typeface) of text. It is a container tag that wraps around the text you want to style.</p>
                 <Code code={`<!-- Font with color -->
 <font color="red">This text is red.</font>
@@ -552,8 +629,8 @@ It stretches the text so each line has equal width.</p>`} />
                 </QuickPractice>
             </Section>
 
-            {/* 11 - IMAGE TAG: Milestone for Task 3 & 4 */}
-            <Section id="img-tag" title="11. <img> Tag and Attributes">
+            {/* 13 - IMAGE TAG: Milestone for Task 3 & 4 */}
+            <Section id="img-tag" title="13. <img> Tag and Attributes">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;img&gt;</code> tag embeds images. It is a self-closing (empty) tag.</p>
                 <Code code={`<img src="photo.jpg" alt="A photo" width="300" height="200">
 
@@ -598,40 +675,8 @@ It stretches the text so each line has equal width.</p>`} />
                 </div>
             </Section>
 
-            {/* 12 - HEADINGS: Milestone for Task 2 */}
-            <Section id="heading-tag" title="12. Heading Tags (h1-h6)">
-                <p>HTML provides six levels of headings. <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> is the largest and most important, <code className="bg-gray-100 px-1 rounded">&lt;h6&gt;</code> is the smallest.</p>
-                <Code code={`<h1>Heading 1 - Most Important</h1>
-<h2 id="heading-2">Heading 2</h2>
-<h3 id="heading-3">Heading 3</h3>
-<h4>Heading 4</h4>
-<h5>Heading 5</h5>
-<h6>Heading 6 - Least Important</h6>
-
-<h1 align="center">Centered Heading</h1>
-<h2 id="right-aligned-heading" align="right">Right-aligned Heading</h2>`} />
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 my-3 space-y-1">
-                    <p className="text-2xl sm:text-3xl font-bold text-gray-900">H1 Heading</p>
-                    <p className="text-xl sm:text-2xl font-bold text-gray-800">H2 Heading</p>
-                    <p className="text-lg sm:text-xl font-bold text-gray-700">H3 Heading</p>
-                    <p className="text-base sm:text-lg font-bold text-gray-700">H4 Heading</p>
-                    <p className="text-sm font-bold text-gray-600">H5 Heading</p>
-                    <p className="text-xs font-bold text-gray-500">H6 Heading</p>
-                </div>
-                <p><strong>Rules:</strong> Use only one <code className="bg-gray-100 px-1 rounded">&lt;h1&gt;</code> per page. Do not skip heading levels. Headings help SEO.</p>
-
-                {/* TASK 2: Placed right after Headings & Formatting are complete! */}
-                <PracticeTaskCard
-                    taskId="2"
-                    title="Task 2: Basic HTML Tags & Formatting"
-                    desc="Formatting tags (b, i, u, center) aur Headings (h1-h6) complete hone ke baad ab Task 2 solve karein — bold, italic, underline, preformatted text, aur multi-level headings."
-                    tagsCovered={['<h1>, <h2>', '<center>', '<b>, <i>, <u>', '<pre>', '<br>', '<hr>']}
-                    highlightBadge="Headings & Formatting Project"
-                />
-            </Section>
-
-            {/* 13 - MARQUEE TAG */}
-            <Section id="marquee-tag" title="13. <marquee> Tag and Attributes">
+            {/* 14 - MARQUEE TAG */}
+            <Section id="marquee-tag" title="14. <marquee> Tag and Attributes">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;marquee&gt;</code> tag creates scrolling/moving text or images on a webpage. It is a container tag that makes its content move automatically.</p>
                 <Code code={`<!-- Basic scrolling text (left to right default) -->
 <marquee>Welcome to Knobly Education!</marquee>
@@ -698,8 +743,8 @@ It stretches the text so each line has equal width.</p>`} />
                 </QuickPractice>
             </Section>
 
-            {/* 14 - ANCHOR TAG: Milestone for Task 7 */}
-            <Section id="anchor-tag" title="14. <a> Anchor Tag">
+            {/* 15 - ANCHOR TAG: Milestone for Task 7 */}
+            <Section id="anchor-tag" title="15. <a> Anchor Tag">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;a&gt;</code> tag creates hyperlinks.</p>
                 <Code code={`<!-- External link -->
 <a href="https://www.google.com">Visit Google</a>
@@ -738,8 +783,8 @@ It stretches the text so each line has equal width.</p>`} />
                 />
             </Section>
 
-            {/* 15 - LIST TAGS: Milestone for Task 5 & 5.3 */}
-            <Section id="list-tags" title="15. List Tags (ul, ol, dl)">
+            {/* 16 - LIST TAGS: Milestone for Task 5 & 5.3 */}
+            <Section id="list-tags" title="16. List Tags (ul, ol, dl)">
                 <p>HTML supports three types of lists:</p>
                 <h4 className="text-sm font-bold text-blue-700 mt-2">A. Unordered List (&lt;ul&gt;)</h4>
                 <Code code={`<ul>
@@ -800,8 +845,8 @@ It stretches the text so each line has equal width.</p>`} />
                 </div>
             </Section>
 
-            {/* 16 - TABLE TAG: Milestone for Task 5.1, 5.2 & 6 */}
-            <Section id="table-tag" title="16. Table Tag and Attributes">
+            {/* 17 - TABLE TAG: Milestone for Task 5.1, 5.2 & 6 */}
+            <Section id="table-tag" title="17. Table Tag and Attributes">
                 <p>Tables arrange data into rows and columns.</p>
                 <Code code={`<table border="1" cellpadding="8" cellspacing="0" width="100%">
     <caption>Student Marks Sheet</caption>
@@ -865,8 +910,8 @@ It stretches the text so each line has equal width.</p>`} />
                 </div>
             </Section>
 
-            {/* 17 - FORM TAG: Milestone for Task 8 */}
-            <Section id="form-tag" title="17. Form Tag and Elements">
+            {/* 18 - FORM TAG: Milestone for Task 8 */}
+            <Section id="form-tag" title="18. Form Tag and Elements">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;form&gt;</code> tag collects user input.</p>
                 <Code code={`<form action="/submit" method="POST">
     <label>Name:</label><br>
@@ -921,8 +966,8 @@ It stretches the text so each line has equal width.</p>`} />
                 />
             </Section>
 
-            {/* 18 */}
-            <Section id="div-span" title="18. <div> and <span> Tags">
+            {/* 19 */}
+            <Section id="div-span" title="19. <div> and <span> Tags">
                 <p><code className="bg-gray-100 px-1 rounded">&lt;div&gt;</code> is a block-level container. <code className="bg-gray-100 px-1 rounded">&lt;span&gt;</code> is an inline container.</p>
                 <Code code={`<!-- div - Block level -->
 <div style="background:#eee; padding:20px; margin:10px 0;">
@@ -950,8 +995,8 @@ Computer Science</span>.</p>`} />
                 </QuickPractice>
             </Section>
 
-            {/* 19 - SEMANTIC HTML5: Milestone for Task 11 */}
-            <Section id="semantic" title="19. HTML5 Semantic Elements">
+            {/* 20 - SEMANTIC HTML5: Milestone for Task 11 */}
+            <Section id="semantic" title="20. HTML5 Semantic Elements">
                 <p>Semantic elements describe their meaning clearly, helping browsers and search engines understand page structure.</p>
                 <Code code={`<header>
     <nav>
@@ -998,8 +1043,8 @@ Computer Science</span>.</p>`} />
                 />
             </Section>
 
-            {/* 20 - AUDIO & VIDEO: Milestone for Task 9 & 5.4 */}
-            <Section id="audio-video" title="20. Audio and Video Tags">
+            {/* 21 - AUDIO & VIDEO: Milestone for Task 9 & 5.4 */}
+            <Section id="audio-video" title="21. Audio and Video Tags">
                 <p>HTML5 supports audio and video directly.</p>
                 <Code code={`<!-- Audio -->
 <audio controls>
@@ -1047,8 +1092,8 @@ Computer Science</span>.</p>`} />
                 </div>
             </Section>
 
-            {/* 21 */}
-            <Section id="iframe-tag" title="21. <iframe> Tag">
+            {/* 22 */}
+            <Section id="iframe-tag" title="22. <iframe> Tag">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;iframe&gt;</code> tag embeds another HTML page within the current page.</p>
                 <Code code={`<!-- Embed a webpage -->
 <iframe src="https://www.example.com" 
@@ -1069,8 +1114,8 @@ Computer Science</span>.</p>`} />
                 </QuickPractice>
             </Section>
 
-            {/* 22 - ENTITIES & CAPSTONE: Milestone for Task 10 */}
-            <Section id="entities" title="22. HTML Entities & Capstone Project">
+            {/* 23 - ENTITIES & CAPSTONE: Milestone for Task 10 */}
+            <Section id="entities" title="23. HTML Entities & Capstone Project">
                 <p>Reserved characters in HTML must be displayed using entities.</p>
                 <div className="overflow-x-auto my-3">
                     <table className="w-full text-xs sm:text-sm border border-gray-200 rounded-lg overflow-hidden">

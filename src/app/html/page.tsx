@@ -46,7 +46,7 @@ const htmlTopics = [
         borderColor: '#60a5fa',
         desc: 'Complete reference for every tag: headings, lists, tables, media, links, forms, and semantic HTML5.',
         duration: '4 Hours',
-        lessons: '22 Chapters',
+        lessons: '23 Chapters',
         locked: false,
         completed: false,
         current: true,
