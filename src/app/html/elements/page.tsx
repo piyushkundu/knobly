@@ -656,23 +656,14 @@ It stretches the text so each line has equal width.</p>`} />
                     ['vspace', 'Vertical space around image'],
                 ]} />
 
-                {/* TASK 3 & 4: Placed right after <img> tag completion! */}
-                <div className="space-y-3">
-                    <PracticeTaskCard
-                        taskId="3"
-                        title="Task 3: India - A Diverse Nation"
-                        desc="Ab aapne <img> tag seekh liya hai! Task 3 me India ke bare me article banayein jisme headings, font colors, aur India ka map image embedded ho."
-                        tagsCovered={['<img> (src, alt, align)', '<h1> - <h5>', '<font color>', '<p>', '<hr>']}
-                        highlightBadge="Image Embedding Project"
-                    />
-                    <PracticeTaskCard
-                        taskId="4"
-                        title="Task 4: Indian History Timeline"
-                        desc="Image alignment (align='right'), marquee, font size/color, aur historical period sections ka use karke Indian History Timeline banayein."
-                        tagsCovered={['<img align="right">', '<marquee>', '<font face/size/color>', '<h1> - <h3>', '<hr color>']}
-                        highlightBadge="Multimedia Article Project"
-                    />
-                </div>
+                {/* TASK 3: Placed right after <img> tag completion! */}
+                <PracticeTaskCard
+                    taskId="3"
+                    title="Task 3: India - A Diverse Nation"
+                    desc="Ab aapne <img> tag seekh liya hai! Task 3 me India ke bare me article banayein jisme headings, font colors, aur India ka map image embedded ho."
+                    tagsCovered={['<img> (src, alt, align)', '<h1> - <h5>', '<font color>', '<p>', '<hr>']}
+                    highlightBadge="Image Embedding Project"
+                />
             </Section>
 
             {/* 14 - MARQUEE TAG */}
@@ -741,6 +732,15 @@ It stretches the text so each line has equal width.</p>`} />
                 <QuickPractice title="Marquee Practice">
                     Create a bouncing news banner: <code className="bg-white px-1.5 py-0.5 rounded border border-slate-200">&lt;marquee behavior=&quot;alternate&quot; scrollamount=&quot;5&quot;&gt;Breaking News!&lt;/marquee&gt;</code>. Try changing <code className="bg-white px-1 rounded">scrollamount</code> to see speed differences.
                 </QuickPractice>
+
+                {/* TASK 4: Placed right after <marquee> tag completion! */}
+                <PracticeTaskCard
+                    taskId="4"
+                    title="Task 4: Indian History Timeline"
+                    desc="Image alignment (align='right'), marquee, font size/color, aur historical period sections ka use karke Indian History Timeline banayein."
+                    tagsCovered={['<img align="right">', '<marquee>', '<font face/size/color>', '<h1> - <h3>', '<hr color>']}
+                    highlightBadge="Multimedia Article Project"
+                />
             </Section>
 
             {/* 15 - ANCHOR TAG: Milestone for Task 7 */}
