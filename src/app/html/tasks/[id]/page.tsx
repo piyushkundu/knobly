@@ -136,12 +136,16 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
             if (!res.ok) {
                 setErrorMsg(data.error || 'Password verification failed');
             } else {
-                // Update localStorage with unlocked task
+                // Update localStorage with server-synced unlocked tasks
                 try {
-                    const cached = localStorage.getItem('knobly_unlocked_html_tasks');
-                    let list: string[] = cached ? JSON.parse(cached) : [];
-                    if (!list.includes(id)) list.push(id);
-                    localStorage.setItem('knobly_unlocked_html_tasks', JSON.stringify(list));
+                    if (Array.isArray(data.unlockedTasks)) {
+                        localStorage.setItem('knobly_unlocked_html_tasks', JSON.stringify(data.unlockedTasks));
+                    } else {
+                        const cached = localStorage.getItem('knobly_unlocked_html_tasks');
+                        let list: string[] = cached ? JSON.parse(cached) : [];
+                        if (!list.includes(id)) list.push(id);
+                        localStorage.setItem('knobly_unlocked_html_tasks', JSON.stringify(list));
+                    }
                 } catch (e) {}
 
                 setSuccessMsg('Task unlocked successfully!');

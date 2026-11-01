@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import { getAdminDb } from '@/lib/firebase-admin';
+
+// Force dynamic — serverless function must always execute live and not be statically cached
+export const dynamic = 'force-dynamic';
 
 const ADMIN_PASSWORD = '85338533';
 const ALL_TASK_IDS = ['1', '2', '3', '4', '5', '5.1', '5.2', '5.3', '5.4', '6', '7', '8', '9', '10', '11'];
 
-// Persistent in-memory cache across requests within the same lambda/process
-let memoryUnlockedTasks: string[] = [];
-let hasInitializedMemory = false;
+// Persistent in-memory cache across requests within the same warm lambda
+let memoryUnlockedTasks: string[] | null = null;
 
 // Filesystem locations (local repo & serverless /tmp)
 const LOCAL_DATA_FILE = path.join(process.cwd(), 'data', 'html-tasks-state.json');
@@ -20,10 +23,10 @@ function tryReadFile(filePath: string): string[] | null {
             const raw = fs.readFileSync(filePath, 'utf-8');
             const parsed = JSON.parse(raw);
             if (Array.isArray(parsed.unlockedTasks)) {
-                return parsed.unlockedTasks;
+                return parsed.unlockedTasks.map(String);
             }
         }
-    } catch (e) {
+    } catch {
         // Ignore read errors
     }
     return null;
@@ -37,60 +40,120 @@ function tryWriteFile(filePath: string, state: { unlockedTasks: string[] }): boo
         }
         fs.writeFileSync(filePath, JSON.stringify(state, null, 2), 'utf-8');
         return true;
-    } catch (e) {
-        // File system might be read-only on Vercel/serverless
+    } catch {
         return false;
     }
 }
 
-function getUnlockedTasks(req?: NextRequest): string[] {
-    // 1. Check in-memory if already loaded
-    if (hasInitializedMemory && memoryUnlockedTasks.length > 0) {
+/**
+ * Read unlocked tasks from Firestore (Cloud Database - Permanent across Vercel deployments & restarts)
+ */
+async function fetchUnlockedTasksFromFirestore(): Promise<string[] | null> {
+    try {
+        const db = getAdminDb();
+        const docRef = db.collection('app_settings').doc('html_tasks');
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+            const data = docSnap.data();
+            if (Array.isArray(data?.unlockedTasks)) {
+                return data.unlockedTasks.map(String);
+            }
+        }
+    } catch (err) {
+        console.warn('[HTML Tasks API] Firestore read fallback:', err);
+    }
+    return null;
+}
+
+/**
+ * Persist unlocked tasks to Firestore (Permanent Cloud DB)
+ */
+async function saveUnlockedTasksToFirestore(tasks: string[]): Promise<boolean> {
+    try {
+        const db = getAdminDb();
+        const docRef = db.collection('app_settings').doc('html_tasks');
+        await docRef.set({
+            unlockedTasks: tasks,
+            updatedAt: new Date().toISOString()
+        }, { merge: true });
+        return true;
+    } catch (err) {
+        console.error('[HTML Tasks API] Firestore write error:', err);
+        return false;
+    }
+}
+
+/**
+ * Retrieve unlocked tasks using a multi-layer strategy:
+ * 1. Firestore (Cloud Database - Single Source of Truth, permanent)
+ * 2. In-memory cache
+ * 3. Client cookie (if request provided)
+ * 4. Local file / /tmp
+ */
+async function getUnlockedTasks(req?: NextRequest): Promise<string[]> {
+    // 1. Try reading from Firestore first (guarantees cross-instance consistency on Vercel)
+    const firestoreTasks = await fetchUnlockedTasksFromFirestore();
+    if (firestoreTasks !== null) {
+        memoryUnlockedTasks = firestoreTasks;
+        // Also sync local file & /tmp as backup
+        tryWriteFile(LOCAL_DATA_FILE, { unlockedTasks: firestoreTasks });
+        tryWriteFile(TMP_DATA_FILE, { unlockedTasks: firestoreTasks });
+        return firestoreTasks;
+    }
+
+    // 2. In-memory warm cache
+    if (memoryUnlockedTasks !== null && memoryUnlockedTasks.length > 0) {
         return memoryUnlockedTasks;
     }
 
-    // 2. Try reading from cookie if request is available
+    // 3. Try reading from cookie if present in request
     if (req) {
         const cookie = req.cookies.get('knobly_unlocked_tasks');
         if (cookie?.value) {
             try {
                 const parsed = JSON.parse(decodeURIComponent(cookie.value));
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                    memoryUnlockedTasks = parsed;
-                    hasInitializedMemory = true;
-                    return memoryUnlockedTasks;
+                    const cookieTasks = parsed.map(String);
+                    memoryUnlockedTasks = cookieTasks;
+                    return cookieTasks;
                 }
-            } catch (e) {}
+            } catch {}
         }
     }
 
-    // 3. Try reading from local data file (dev) or /tmp (Vercel)
+    // 4. Try reading from local data file (dev) or /tmp (Vercel)
     const local = tryReadFile(LOCAL_DATA_FILE);
     if (local !== null) {
         memoryUnlockedTasks = local;
-        hasInitializedMemory = true;
-        return memoryUnlockedTasks;
+        return local;
     }
 
     const tmp = tryReadFile(TMP_DATA_FILE);
     if (tmp !== null) {
         memoryUnlockedTasks = tmp;
-        hasInitializedMemory = true;
-        return memoryUnlockedTasks;
+        return tmp;
     }
 
-    hasInitializedMemory = true;
-    return memoryUnlockedTasks;
+    // Default: Tasks 1 and 2 unlocked initially if no configuration exists yet
+    const defaults = ['1', '2'];
+    memoryUnlockedTasks = defaults;
+    return defaults;
 }
 
-function persistUnlockedTasks(tasks: string[]) {
+/**
+ * Persist unlocked tasks across all storage layers (Firestore, Memory, File, /tmp)
+ */
+async function persistUnlockedTasks(tasks: string[]) {
     memoryUnlockedTasks = tasks;
-    hasInitializedMemory = true;
 
+    // 1. Save to Cloud Firestore (Primary permanent storage)
+    await saveUnlockedTasksToFirestore(tasks);
+
+    // 2. Save to local data file (Local dev)
     const payload = { unlockedTasks: tasks };
-    // Try local file first (local development)
     const localSaved = tryWriteFile(LOCAL_DATA_FILE, payload);
-    // Also try /tmp (works in serverless environments like Vercel)
+
+    // 3. Save to /tmp (Serverless instance)
     if (!localSaved) {
         tryWriteFile(TMP_DATA_FILE, payload);
     }
@@ -99,24 +162,27 @@ function persistUnlockedTasks(tasks: string[]) {
 // GET: Return list of unlocked tasks
 export async function GET(req: NextRequest) {
     try {
-        const unlocked = getUnlockedTasks(req);
+        const unlocked = await getUnlockedTasks(req);
         const res = NextResponse.json({ 
             success: true, 
             unlockedTasks: unlocked 
         });
 
-        // Sync cookie
-        if (unlocked.length > 0) {
-            res.cookies.set('knobly_unlocked_tasks', encodeURIComponent(JSON.stringify(unlocked)), {
-                path: '/',
-                maxAge: 60 * 60 * 24 * 365, // 1 year
-                sameSite: 'lax',
-            });
-        }
+        // Set cache control so browser and CDN never cache stale lock status
+        res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+
+        // Sync 1-year persistent cookie
+        res.cookies.set('knobly_unlocked_tasks', encodeURIComponent(JSON.stringify(unlocked)), {
+            path: '/',
+            maxAge: 60 * 60 * 24 * 365, // 1 year
+            sameSite: 'lax',
+        });
+
         return res;
     } catch (err) {
         console.error('[HTML Tasks API] GET error:', err);
-        return NextResponse.json({ success: true, unlockedTasks: memoryUnlockedTasks });
+        const fallback = memoryUnlockedTasks || ['1', '2'];
+        return NextResponse.json({ success: true, unlockedTasks: fallback });
     }
 }
 
@@ -137,7 +203,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Galat Password! (Incorrect admin password)' }, { status: 401 });
         }
 
-        let currentUnlocked = [...getUnlockedTasks(req)];
+        let currentUnlocked = [...(await getUnlockedTasks(req))];
 
         if (taskId === 'all') {
             if (action === 'lock') {
@@ -158,18 +224,20 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Task ID is required' }, { status: 400 });
         }
 
-        // Save in-memory, /tmp, and local file (safe, never throws 500)
-        persistUnlockedTasks(currentUnlocked);
+        // Save permanently to Firestore + in-memory + filesystem
+        await persistUnlockedTasks(currentUnlocked);
 
         const res = NextResponse.json({
             success: true,
             unlockedTasks: currentUnlocked,
             message: action === 'lock' 
                 ? (taskId === 'all' ? 'All tasks locked successfully' : `Task ${taskId} locked`)
-                : (taskId === 'all' ? 'All tasks unlocked successfully' : `Task ${taskId} unlocked`)
+                : (taskId === 'all' ? 'All tasks unlocked successfully' : `Task ${taskId} unlocked permanently`)
         });
 
-        // Set persistent cookie on the client response
+        res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+
+        // Set persistent cookie on client
         res.cookies.set('knobly_unlocked_tasks', encodeURIComponent(JSON.stringify(currentUnlocked)), {
             path: '/',
             maxAge: 60 * 60 * 24 * 365, // 1 year
@@ -179,10 +247,9 @@ export async function POST(req: NextRequest) {
         return res;
     } catch (err) {
         console.error('[HTML Tasks API] POST error:', err);
-        // Fallback: even if unexpected error happens, if password was checked, return current state
         return NextResponse.json({ 
             success: true, 
-            unlockedTasks: memoryUnlockedTasks,
+            unlockedTasks: memoryUnlockedTasks || [],
             message: 'Updated' 
         });
     }
