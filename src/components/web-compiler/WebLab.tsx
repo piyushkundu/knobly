@@ -612,7 +612,7 @@ export function WebLab() {
 
   // Intercept anchor clicks
   document.addEventListener('click', function(e) {
-    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    var a = e.target && e.target.closest ? e.target.closest('a, area') : null;
     if (!a) return;
     var href = a.getAttribute('href');
     if (!href) return;
@@ -623,11 +623,12 @@ export function WebLab() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    if (trimmed.toLowerCase().startsWith('javascript:')) return;
+    var lower = trimmed.toLowerCase();
+    if (lower.startsWith('javascript:')) return;
     if (trimmed.startsWith('#')) {
       e.preventDefault();
       e.stopPropagation();
-      var targetId = trimmed.substring(1);
+      var targetId = trimmed.substring(1).trim();
       if (!targetId || targetId.toLowerCase() === 'top') {
         var topEl = document.getElementById('top') || document.querySelector('[name="top"]') || document.querySelector('a[name="top"]');
         if (topEl) topEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -635,8 +636,7 @@ export function WebLab() {
         return;
       }
       try {
-        var escaped = (window.CSS && CSS.escape) ? CSS.escape(targetId) : targetId.replace(/["\\\\]/g, '\\\\$&');
-        var el = document.getElementById(targetId) || document.querySelector('[name="' + escaped + '"]') || document.querySelector('a[name="' + escaped + '"]');
+        var el = document.getElementById(targetId) || document.querySelector('[name="' + targetId + '"]') || document.querySelector('a[name="' + targetId + '"]');
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch(err) {
         var el = document.getElementById(targetId);
@@ -644,7 +644,12 @@ export function WebLab() {
       }
       return;
     }
-    if (/^(https?:\\/\\/|\\/\\/|mailto:|tel:)/i.test(trimmed)) {
+    var isExternal = lower.startsWith('http://')
+                  || lower.startsWith('https://')
+                  || lower.startsWith('//')
+                  || lower.startsWith('mailto:')
+                  || lower.startsWith('tel:');
+    if (isExternal) {
       e.preventDefault();
       e.stopPropagation();
       try { window.open(trimmed, '_blank', 'noopener,noreferrer'); } catch(err) {}

@@ -131,8 +131,10 @@ function preparePreviewHtml(rawHtml: string): string {
       return;
     }
 
-    // 2. Allow javascript:...
-    if (trimmed.toLowerCase().startsWith('javascript:')) {
+    var lower = trimmed.toLowerCase();
+
+    // 2. Inline javascript:
+    if (lower.startsWith('javascript:')) {
       return;
     }
 
@@ -140,7 +142,7 @@ function preparePreviewHtml(rawHtml: string): string {
     if (trimmed.startsWith('#')) {
       e.preventDefault();
       e.stopPropagation();
-      var targetId = trimmed.substring(1);
+      var targetId = trimmed.substring(1).trim();
 
       // Back to top handling
       if (!targetId || targetId.toLowerCase() === 'top') {
@@ -158,10 +160,9 @@ function preparePreviewHtml(rawHtml: string): string {
 
       // Other hash targets (e.g. #features, #about)
       try {
-        var escaped = (window.CSS && CSS.escape) ? CSS.escape(targetId) : targetId.replace(/["\\]/g, '\\$&');
         var el = document.getElementById(targetId)
-              || document.querySelector('[name="' + escaped + '"]')
-              || document.querySelector('a[name="' + escaped + '"]');
+              || document.querySelector('[name="' + targetId + '"]')
+              || document.querySelector('a[name="' + targetId + '"]');
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
@@ -175,7 +176,13 @@ function preparePreviewHtml(rawHtml: string): string {
     }
 
     // 4. External / Global links (http://, https://, //, mailto:, tel:)
-    if (/^(https?:\/\/|\/\/|mailto:|tel:)/i.test(trimmed)) {
+    var isExternal = lower.startsWith('http://')
+                  || lower.startsWith('https://')
+                  || lower.startsWith('//')
+                  || lower.startsWith('mailto:')
+                  || lower.startsWith('tel:');
+
+    if (isExternal) {
       e.preventDefault();
       e.stopPropagation();
       try {
