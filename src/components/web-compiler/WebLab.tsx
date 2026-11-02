@@ -619,12 +619,14 @@ export function WebLab() {
     var trimmed = href.trim();
     if (!trimmed || trimmed === '#') {
       e.preventDefault();
+      e.stopPropagation();
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
     if (trimmed.toLowerCase().startsWith('javascript:')) return;
     if (trimmed.startsWith('#')) {
       e.preventDefault();
+      e.stopPropagation();
       var targetId = trimmed.substring(1);
       if (!targetId || targetId.toLowerCase() === 'top') {
         var topEl = document.getElementById('top') || document.querySelector('[name="top"]') || document.querySelector('a[name="top"]');
@@ -644,29 +646,22 @@ export function WebLab() {
     }
     if (/^(https?:\\/\\/|\\/\\/|mailto:|tel:)/i.test(trimmed)) {
       e.preventDefault();
+      e.stopPropagation();
       try { window.open(trimmed, '_blank', 'noopener,noreferrer'); } catch(err) {}
       return;
     }
     e.preventDefault();
+    e.stopPropagation();
   }, true);
 
   document.addEventListener('submit', function(e) {
     e.preventDefault();
+    e.stopPropagation();
   }, true);
 })();
 </script>`;
 
     let finalHtml = htmlTab;
-
-    // Inject <base target="_blank">
-    const baseTag = '<base target="_blank">';
-    if (/<head[^>]*>/i.test(finalHtml)) {
-      finalHtml = finalHtml.replace(/(<head[^>]*>)/i, `$1\n${baseTag}`);
-    } else if (/<html[^>]*>/i.test(finalHtml)) {
-      finalHtml = finalHtml.replace(/(<html[^>]*>)/i, `$1\n<head>${baseTag}</head>`);
-    } else {
-      finalHtml = `<head>${baseTag}</head>\n` + finalHtml;
-    }
 
     // Inject CSS
     if (cssTab.trim()) {

@@ -87,17 +87,15 @@ function getScoreEmoji(score: number) {
 function preparePreviewHtml(rawHtml: string): string {
     if (!rawHtml || !rawHtml.trim()) return '';
 
-    const linkInterceptorScript = `
-<script>
+    const scriptClose = '<' + '/script>';
+    const linkInterceptorScript = `<script>
 (function() {
-  // Smooth scroll styling
   try {
     var style = document.createElement('style');
     style.textContent = 'html { scroll-behavior: smooth; }';
     (document.head || document.documentElement).appendChild(style);
   } catch(e) {}
 
-  // Subtle toast notification for dummy/relative links
   function showToast(msg) {
     try {
       var old = document.getElementById('__knobly_toast__');
@@ -118,7 +116,7 @@ function preparePreviewHtml(rawHtml: string): string {
 
   // Intercept all link clicks inside the iframe
   document.addEventListener('click', function(e) {
-    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    var a = e.target && e.target.closest ? e.target.closest('a, area') : null;
     if (!a) return;
 
     var href = a.getAttribute('href');
@@ -128,6 +126,7 @@ function preparePreviewHtml(rawHtml: string): string {
     // 1. Empty or plain "#" -> scroll to top
     if (!trimmed || trimmed === '#') {
       e.preventDefault();
+      e.stopPropagation();
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -140,6 +139,7 @@ function preparePreviewHtml(rawHtml: string): string {
     // 3. In-page Hash (#top, #features, #contact, etc.)
     if (trimmed.startsWith('#')) {
       e.preventDefault();
+      e.stopPropagation();
       var targetId = trimmed.substring(1);
 
       // Back to top handling
@@ -177,6 +177,7 @@ function preparePreviewHtml(rawHtml: string): string {
     // 4. External / Global links (http://, https://, //, mailto:, tel:)
     if (/^(https?:\/\/|\/\/|mailto:|tel:)/i.test(trimmed)) {
       e.preventDefault();
+      e.stopPropagation();
       try {
         window.open(trimmed, '_blank', 'noopener,noreferrer');
       } catch (err) {
@@ -187,42 +188,27 @@ function preparePreviewHtml(rawHtml: string): string {
 
     // 5. Relative / Local links (e.g. "about.html", "contact.html", "/page")
     e.preventDefault();
+    e.stopPropagation();
     showToast('🔗 Link: "' + trimmed + '" (External pages disabled in practice preview)');
   }, true);
 
   // Intercept form submissions to prevent iframe reload / crash
   document.addEventListener('submit', function(e) {
     e.preventDefault();
+    e.stopPropagation();
     showToast('📋 Form submitted successfully (Preview simulation)');
   }, true);
 })();
-<\/script>
-`;
+` + scriptClose;
 
     let processed = rawHtml;
 
-    // Inject <base target="_blank"> into <head> or at top
-    const baseTag = '<base target="_blank">';
-    const headRegex = new RegExp('<head[^>]*>', 'i');
-    const htmlRegex = new RegExp('<html[^>]*>', 'i');
-    const closeBodyRegex = new RegExp('<\\/body>', 'i');
-    const closeHtmlRegex = new RegExp('<\\/html>', 'i');
-
+    // Inject interceptor script at the very top of <head> or at beginning
+    const headRegex = new RegExp('(<head[^>]*>)', 'i');
     if (headRegex.test(processed)) {
-        processed = processed.replace(headRegex, `$1\n${baseTag}`);
-    } else if (htmlRegex.test(processed)) {
-        processed = processed.replace(htmlRegex, `$1\n<head>${baseTag}</head>`);
+        processed = processed.replace(headRegex, (m) => m + '\n' + linkInterceptorScript);
     } else {
-        processed = `<head>${baseTag}</head>\n` + processed;
-    }
-
-    // Inject interceptor script before </body>, </html>, or append
-    if (closeBodyRegex.test(processed)) {
-        processed = processed.replace(closeBodyRegex, `${linkInterceptorScript}\n</body>`);
-    } else if (closeHtmlRegex.test(processed)) {
-        processed = processed.replace(closeHtmlRegex, `${linkInterceptorScript}\n</html>`);
-    } else {
-        processed = processed + '\n' + linkInterceptorScript;
+        processed = linkInterceptorScript + '\n' + processed;
     }
 
     return processed;
