@@ -1,6 +1,8 @@
 'use client';
 
 import { use, useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import Editor, { BeforeMount, OnMount } from '@monaco-editor/react';
+import type { editor } from 'monaco-editor';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -10,6 +12,19 @@ import {
     ChevronDown, FileCode, Loader2, ExternalLink, Columns, Sun, Moon,
     Maximize2, Minimize2, ZoomIn, ZoomOut
 } from 'lucide-react';
+
+const KNOWN_HTML_ATTRIBUTES = new Set([
+    'align', 'bgcolor', 'border', 'cellpadding', 'cellspacing',
+    'colspan', 'rowspan', 'href', 'src', 'alt', 'width', 'height',
+    'color', 'face', 'size', 'type', 'value', 'name', 'target',
+    'placeholder', 'required', 'rows', 'cols', 'checked', 'selected',
+    'id', 'class', 'style', 'title', 'radio', 'checkbox'
+]);
+
+function isHtmlAttribute(name: string): boolean {
+    const clean = name.trim().toLowerCase().replace(/^attr:/, '');
+    return KNOWN_HTML_ATTRIBUTES.has(clean);
+}
 
 interface TaskInfo {
     id: string;
@@ -261,8 +276,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
         return 13;
     });
 
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const lineNumberRef = useRef<HTMLDivElement>(null);
+    const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+    const handleRunRef = useRef<(() => void) | null>(null);
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     // Record task as opened for progress tracking
@@ -413,10 +428,6 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
         }
     }, [code, id, task]);
 
-    const handleCodeChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setCode(e.target.value);
-    }, []);
-
     const handleRun = useCallback(() => {
         setPreviewHtml(code);
         setPreviewKey(k => k + 1);
@@ -425,6 +436,107 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
             setPreviewMode('preview');
         }
     }, [code, previewMode]);
+
+    useEffect(() => {
+        handleRunRef.current = handleRun;
+    }, [handleRun]);
+
+    const handleBeforeMount: BeforeMount = (monaco) => {
+        monaco.editor.defineTheme('task-compiler-dark', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [
+                { token: 'comment', foreground: '64748b', fontStyle: 'italic' },
+                { token: 'comment.html', foreground: '64748b', fontStyle: 'italic' },
+                { token: 'tag', foreground: 'f97316', fontStyle: 'bold' },
+                { token: 'tag.html', foreground: 'f97316', fontStyle: 'bold' },
+                { token: 'tag.id', foreground: 'fbbf24', fontStyle: 'bold' },
+                { token: 'tag.class', foreground: '38bdf8' },
+                { token: 'metatag', foreground: 'f43f5e', fontStyle: 'bold' },
+                { token: 'metatag.content.html', foreground: '34d399' },
+                // HTML Attributes: Vibrant Violet/Purple (#c084fc)
+                { token: 'attribute.name', foreground: 'c084fc', fontStyle: 'bold' },
+                { token: 'attribute.name.html', foreground: 'c084fc', fontStyle: 'bold' },
+                { token: 'entity.other.attribute-name', foreground: 'c084fc', fontStyle: 'bold' },
+                // HTML Attribute Values & Strings: Emerald Green (#34d399)
+                { token: 'attribute.value', foreground: '34d399' },
+                { token: 'attribute.value.html', foreground: '34d399' },
+                { token: 'string', foreground: '34d399' },
+                { token: 'string.html', foreground: '34d399' },
+                { token: 'number', foreground: 'fbbf24' },
+                { token: 'keyword', foreground: 'c084fc', fontStyle: 'bold' },
+                { token: 'delimiter', foreground: '94a3b8' },
+                { token: 'delimiter.html', foreground: 'f97316' },
+            ],
+            colors: {
+                'editor.background': '#090d16',
+                'editor.foreground': '#f8fafc',
+                'editor.lineHighlightBackground': '#111726',
+                'editor.selectionBackground': '#7c3aed40',
+                'editorCursor.foreground': '#f97316',
+                'editorLineNumber.foreground': '#475569',
+                'editorLineNumber.activeForeground': '#cbd5e1',
+                'editorBracketMatch.background': '#f9731630',
+                'editorBracketMatch.border': '#f97316',
+                'editorIndentGuide.background': '#1e293b',
+                'editorIndentGuide.activeBackground': '#333857',
+            },
+        });
+
+        monaco.editor.defineTheme('task-compiler-light', {
+            base: 'vs',
+            inherit: true,
+            rules: [
+                { token: 'comment', foreground: '94a3b8', fontStyle: 'italic' },
+                { token: 'comment.html', foreground: '94a3b8', fontStyle: 'italic' },
+                { token: 'tag', foreground: 'ea580c', fontStyle: 'bold' },
+                { token: 'tag.html', foreground: 'ea580c', fontStyle: 'bold' },
+                { token: 'tag.id', foreground: 'd97706', fontStyle: 'bold' },
+                { token: 'tag.class', foreground: '0284c7' },
+                { token: 'metatag', foreground: 'e11d48', fontStyle: 'bold' },
+                // HTML Attributes: Vibrant Deep Purple (#7c3aed)
+                { token: 'attribute.name', foreground: '7c3aed', fontStyle: 'bold' },
+                { token: 'attribute.name.html', foreground: '7c3aed', fontStyle: 'bold' },
+                { token: 'entity.other.attribute-name', foreground: '7c3aed', fontStyle: 'bold' },
+                // HTML Attribute Values & Strings: Emerald Green (#059669)
+                { token: 'attribute.value', foreground: '059669' },
+                { token: 'attribute.value.html', foreground: '059669' },
+                { token: 'string', foreground: '059669' },
+                { token: 'string.html', foreground: '059669' },
+                { token: 'number', foreground: 'd97706' },
+                { token: 'keyword', foreground: '7c3aed', fontStyle: 'bold' },
+                { token: 'delimiter', foreground: '64748b' },
+                { token: 'delimiter.html', foreground: 'ea580c' },
+            ],
+            colors: {
+                'editor.background': '#ffffff',
+                'editor.foreground': '#0f172a',
+                'editor.lineHighlightBackground': '#f8fafc',
+                'editor.selectionBackground': '#ede9fe',
+                'editorCursor.foreground': '#ea580c',
+                'editorLineNumber.foreground': '#94a3b8',
+                'editorLineNumber.activeForeground': '#334155',
+                'editorBracketMatch.background': '#fed7aa60',
+                'editorBracketMatch.border': '#ea580c',
+                'editorIndentGuide.background': '#f1f5f9',
+                'editorIndentGuide.activeBackground': '#cbd5e1',
+            },
+        });
+    };
+
+    const handleEditorMount: OnMount = (editor, monaco) => {
+        editorRef.current = editor;
+
+        // Ctrl+Enter to Run
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+            handleRunRef.current?.();
+        });
+
+        // F5 to Run
+        editor.addCommand(monaco.KeyCode.F5, () => {
+            handleRunRef.current?.();
+        });
+    };
 
     const handleZoomIn = useCallback(() => {
         setFontSize(prev => {
@@ -447,48 +559,25 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
         if (typeof window !== 'undefined') localStorage.setItem('task_compiler_font_size', '13');
     }, []);
 
-    const lineHeightPx = Math.round(fontSize * 1.68);
-
-    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            const textarea = e.currentTarget;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const newCode = code.substring(0, start) + '    ' + code.substring(end);
-            setCode(newCode);
-            setTimeout(() => {
-                textarea.selectionStart = textarea.selectionEnd = start + 4;
-            }, 0);
-        }
-        // Ctrl+Enter to run
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-            e.preventDefault();
-            handleRun();
-        }
-        // Ctrl + + / Ctrl + = to zoom in
-        if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
-            e.preventDefault();
-            handleZoomIn();
-        }
-        // Ctrl + - to zoom out
-        if ((e.ctrlKey || e.metaKey) && e.key === '-') {
-            e.preventDefault();
-            handleZoomOut();
-        }
-        // Ctrl + 0 to reset zoom
-        if ((e.ctrlKey || e.metaKey) && e.key === '0') {
-            e.preventDefault();
-            handleZoomReset();
-        }
-    }, [code, handleRun, handleZoomIn, handleZoomOut, handleZoomReset]);
-
-    // Sync scroll between textarea and line numbers
-    const handleScroll = useCallback(() => {
-        if (textareaRef.current && lineNumberRef.current) {
-            lineNumberRef.current.scrollTop = textareaRef.current.scrollTop;
-        }
-    }, []);
+    useEffect(() => {
+        const handleGlobalKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
+                e.preventDefault();
+                handleZoomIn();
+            } else if ((e.ctrlKey || e.metaKey) && e.key === '-') {
+                e.preventDefault();
+                handleZoomOut();
+            } else if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+                e.preventDefault();
+                handleZoomReset();
+            } else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                handleRunRef.current?.();
+            }
+        };
+        window.addEventListener('keydown', handleGlobalKeyDown);
+        return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    }, [handleZoomIn, handleZoomOut, handleZoomReset]);
 
     const handleSubmit = async () => {
         if (!code.trim()) {
@@ -551,6 +640,19 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
         );
     }
 
+    const { tagsList, attrsList } = useMemo(() => {
+        const raw = task.topics.split(',').map(t => t.trim()).filter(Boolean);
+        const tags: string[] = [];
+        const attrs: string[] = [];
+        raw.forEach(item => {
+            if (isHtmlAttribute(item)) {
+                attrs.push(item);
+            } else {
+                tags.push(item);
+            }
+        });
+        return { tagsList: tags, attrsList: attrs };
+    }, [task.topics]);
     const requiredTags = task.topics.split(',').map(t => t.trim());
     const isWhite = theme === 'white';
 
@@ -790,36 +892,58 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                        {/* Required Tags Pills */}
-                        <div className="flex items-center gap-1 flex-wrap">
-                            <span
-                                style={!isWhite ? { color: '#cbd5e1' } : {}}
-                                className={`text-[10px] font-bold uppercase tracking-wider mr-1 ${
-                                    isWhite ? 'text-slate-400' : 'text-slate-300 font-bold'
-                                }`}
-                            >
-                                Tags:
-                            </span>
-                            {requiredTags.slice(0, 6).map(tag => (
-                                <code
-                                    key={tag}
-                                    style={!isWhite ? { backgroundColor: '#1e293b', color: '#fdba74', borderColor: '#f97316' } : {}}
-                                    className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
-                                        isWhite
-                                            ? 'bg-white text-orange-700 border border-orange-200 shadow-2xs'
-                                            : 'bg-slate-800 text-orange-300 border border-orange-500/40 shadow-xs'
-                                    }`}
-                                >
-                                    &lt;{tag}&gt;
-                                </code>
-                            ))}
-                            {requiredTags.length > 6 && (
-                                <span
-                                    style={!isWhite ? { color: '#94a3b8' } : {}}
-                                    className={`text-[10px] font-semibold ${isWhite ? 'text-slate-400' : 'text-slate-400'}`}
-                                >
-                                    +{requiredTags.length - 6} more
-                                </span>
+                        {/* Required Tags & Attributes Pills */}
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                            {tagsList.length > 0 && (
+                                <div className="flex items-center gap-1 flex-wrap">
+                                    <span
+                                        style={!isWhite ? { color: '#cbd5e1' } : {}}
+                                        className={`text-[10px] font-bold uppercase tracking-wider mr-0.5 ${
+                                            isWhite ? 'text-slate-500' : 'text-slate-300'
+                                        }`}
+                                    >
+                                        Tags:
+                                    </span>
+                                    {tagsList.map(tag => (
+                                        <code
+                                            key={tag}
+                                            style={!isWhite ? { backgroundColor: '#1e293b', color: '#fdba74', borderColor: '#f97316' } : {}}
+                                            className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
+                                                isWhite
+                                                    ? 'bg-white text-orange-700 border border-orange-200 shadow-2xs'
+                                                    : 'bg-slate-800 text-orange-300 border border-orange-500/40 shadow-xs'
+                                            }`}
+                                        >
+                                            &lt;{tag}&gt;
+                                        </code>
+                                    ))}
+                                </div>
+                            )}
+
+                            {attrsList.length > 0 && (
+                                <div className="flex items-center gap-1 flex-wrap">
+                                    <span
+                                        style={!isWhite ? { color: '#c084fc' } : {}}
+                                        className={`text-[10px] font-bold uppercase tracking-wider mr-0.5 ${
+                                            isWhite ? 'text-purple-700 font-bold' : 'text-purple-300 font-bold'
+                                        }`}
+                                    >
+                                        Attrs:
+                                    </span>
+                                    {attrsList.map(attr => (
+                                        <code
+                                            key={attr}
+                                            style={!isWhite ? { backgroundColor: '#2e1065', color: '#d8b4fe', borderColor: '#a855f7' } : {}}
+                                            className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
+                                                isWhite
+                                                    ? 'bg-purple-50 text-purple-700 border border-purple-200 shadow-2xs'
+                                                    : 'bg-purple-950/70 text-purple-200 border border-purple-500/50 shadow-xs'
+                                            }`}
+                                        >
+                                            {attr === 'radio' || attr === 'checkbox' ? `type="${attr}"` : `${attr}=""`}
+                                        </code>
+                                    ))}
+                                </div>
                             )}
                         </div>
 
@@ -966,55 +1090,38 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                             </div>
                         </div>
 
-                        {/* Editor Code Area */}
-                        <div className="flex-1 relative overflow-hidden flex">
-                            {/* Line Numbers */}
-                            <div
-                                ref={lineNumberRef}
-                                style={{
-                                    lineHeight: `${lineHeightPx}px`,
-                                    ...(!isWhite ? { backgroundColor: '#0b101d', borderColor: '#1e293b', color: '#94a3b8' } : {})
-                                }}
-                                className={`w-11 py-3 text-right pr-2.5 font-mono select-none overflow-hidden shrink-0 border-r ${
-                                    isWhite
-                                        ? 'bg-slate-50 border-slate-200 text-slate-400'
-                                        : 'bg-[#0c101c] border-slate-800 text-slate-400'
-                                }`}
-                            >
-                                {Array.from({ length: Math.max(lineCount, 15) }, (_, i) => (
-                                    <div
-                                        key={i}
-                                        style={{
-                                            height: `${lineHeightPx}px`,
-                                            lineHeight: `${lineHeightPx}px`,
-                                            fontSize: `${Math.max(10, fontSize - 2)}px`
-                                        }}
-                                    >
-                                        {i + 1}
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Textarea */}
-                            <textarea
-                                ref={textareaRef}
+                        {/* Editor Code Area (Monaco Editor with Custom Highlighting) */}
+                        <div
+                            style={!isWhite ? { backgroundColor: '#090d16' } : { backgroundColor: '#ffffff' }}
+                            className={`flex-1 relative overflow-hidden w-full h-full min-h-[350px] ${
+                                isWhite ? 'bg-white' : 'bg-[#090d16]'
+                            }`}
+                        >
+                            <Editor
+                                height="100%"
+                                language="html"
                                 value={code}
-                                onChange={handleCodeChange}
-                                onKeyDown={handleKeyDown}
-                                onScroll={handleScroll}
-                                spellCheck={false}
-                                placeholder="<!DOCTYPE html>&#10;<html>&#10;<head>&#10;    <title>...</title>&#10;</head>&#10;<body>&#10;    <!-- Apna HTML code yahan shuru se likhein... -->&#10;</body>&#10;</html>"
-                                style={{
-                                    fontSize: `${fontSize}px`,
-                                    lineHeight: `${lineHeightPx}px`,
+                                theme={isWhite ? 'task-compiler-light' : 'task-compiler-dark'}
+                                onChange={(value) => setCode(value || '')}
+                                beforeMount={handleBeforeMount}
+                                onMount={handleEditorMount}
+                                options={{
+                                    fontSize,
+                                    fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace",
+                                    minimap: { enabled: false },
+                                    scrollBeyondLastLine: false,
+                                    wordWrap: 'on',
+                                    lineNumbers: 'on',
+                                    renderLineHighlight: 'all',
+                                    automaticLayout: true,
                                     tabSize: 4,
-                                    ...(!isWhite ? { backgroundColor: '#090d16', color: '#f8fafc' } : {})
+                                    insertSpaces: true,
+                                    padding: { top: 12, bottom: 12 },
+                                    smoothScrolling: true,
+                                    suggestOnTriggerCharacters: true,
+                                    acceptSuggestionOnEnter: 'on',
+                                    quickSuggestions: true,
                                 }}
-                                className={`flex-1 p-3 font-mono outline-none resize-none overflow-auto border-0 focus:ring-0 ${
-                                    isWhite
-                                        ? 'bg-white text-slate-900 caret-orange-600 selection:bg-orange-100'
-                                        : 'bg-[#090d16] text-slate-100 caret-orange-400 selection:bg-orange-500/30'
-                                }`}
                             />
                         </div>
                     </div>
@@ -1284,7 +1391,19 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                 isWhite ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-slate-900 border-slate-800 text-slate-300'
                             }`}
                         >
-                            <span>Required Tags: <strong className={isWhite ? 'text-slate-800' : 'text-white'}>{task.topics}</strong></span>
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <span>Required:</span>
+                                {tagsList.map(t => (
+                                    <span key={t} className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-orange-100 text-orange-800 border border-orange-200">
+                                        &lt;{t}&gt;
+                                    </span>
+                                ))}
+                                {attrsList.map(a => (
+                                    <span key={a} className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-100 text-purple-800 border border-purple-200">
+                                        {a === 'radio' || a === 'checkbox' ? `type="${a}"` : `${a}=""`}
+                                    </span>
+                                ))}
+                            </div>
                             <button
                                 onClick={() => setTargetModalOpen(false)}
                                 className="px-4 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold transition-all shadow-sm"
@@ -1388,14 +1507,21 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                         <CheckCircle2 size={12} /> Correctly Used Tags
                                     </span>
                                     <div className="flex flex-wrap gap-1.5">
-                                        {evaluation.tagAnalysis.used.map(t => (
-                                            <span
-                                                key={t}
-                                                className="px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                            >
-                                                &lt;{t}&gt;
-                                            </span>
-                                        ))}
+                                        {evaluation.tagAnalysis.used.map(t => {
+                                            const isAttr = isHtmlAttribute(t);
+                                            return (
+                                                <span
+                                                    key={t}
+                                                    className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
+                                                        isAttr
+                                                            ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                                                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                                    }`}
+                                                >
+                                                    {isAttr ? (t === 'radio' || t === 'checkbox' ? `type="${t}"` : `${t}=""`) : `<${t}>`}
+                                                </span>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             )}
@@ -1407,14 +1533,17 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                         <XCircle size={12} /> Missing Required Tags
                                     </span>
                                     <div className="flex flex-wrap gap-1.5">
-                                        {evaluation.tagAnalysis.missing.map(t => (
-                                            <span
-                                                key={t}
-                                                className="px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-red-50 text-red-700 border border-red-200"
-                                            >
-                                                &lt;{t}&gt;
-                                            </span>
-                                        ))}
+                                        {evaluation.tagAnalysis.missing.map(t => {
+                                            const isAttr = isHtmlAttribute(t);
+                                            return (
+                                                <span
+                                                    key={t}
+                                                    className="px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-red-50 text-red-700 border border-red-200"
+                                                >
+                                                    {isAttr ? (t === 'radio' || t === 'checkbox' ? `type="${t}"` : `${t}=""`) : `<${t}>`}
+                                                </span>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             )}

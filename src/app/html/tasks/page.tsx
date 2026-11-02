@@ -8,6 +8,19 @@ import {
     KeyRound, CheckCircle2, AlertCircle, X, Shield, Sparkles, RefreshCw, Code2, Eye
 } from 'lucide-react';
 
+const KNOWN_HTML_ATTRIBUTES = new Set([
+    'align', 'bgcolor', 'border', 'cellpadding', 'cellspacing',
+    'colspan', 'rowspan', 'href', 'src', 'alt', 'width', 'height',
+    'color', 'face', 'size', 'type', 'value', 'name', 'target',
+    'placeholder', 'required', 'rows', 'cols', 'checked', 'selected',
+    'id', 'class', 'style', 'title', 'radio', 'checkbox'
+]);
+
+function isHtmlAttribute(name: string): boolean {
+    const clean = name.trim().toLowerCase().replace(/^attr:/, '');
+    return KNOWN_HTML_ATTRIBUTES.has(clean);
+}
+
 interface TaskItem {
     id: string;
     title: string;
@@ -326,11 +339,29 @@ export default function TasksPage() {
                                     </p>
 
                                     {/* Topics Covered */}
-                                    <div className="bg-white/80 rounded-lg p-2 border border-slate-200/80 mb-4">
-                                        <span className="text-[10px] font-semibold text-slate-400 block mb-0.5 uppercase tracking-wider">Tags Tested</span>
-                                        <code className="text-[11px] text-slate-700 font-mono font-medium block truncate">
-                                            {task.topics}
-                                        </code>
+                                    <div className="bg-white/90 rounded-lg p-2 border border-slate-200/80 mb-4">
+                                        <span className="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-wider">Tags & Attributes</span>
+                                        <div className="flex flex-wrap gap-1">
+                                            {task.topics.split(',').map(item => {
+                                                const trimmed = item.trim();
+                                                const isAttr = isHtmlAttribute(trimmed);
+                                                return (
+                                                    <span
+                                                        key={trimmed}
+                                                        className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-semibold ${
+                                                            isAttr
+                                                                ? 'bg-purple-50 text-purple-700 border border-purple-200 shadow-2xs'
+                                                                : 'bg-orange-50 text-orange-700 border border-orange-200 shadow-2xs'
+                                                        }`}
+                                                    >
+                                                        {isAttr 
+                                                            ? (trimmed === 'radio' || trimmed === 'checkbox' ? `type="${trimmed}"` : `${trimmed}=""`)
+                                                            : `<${trimmed}>`
+                                                        }
+                                                    </span>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
 
