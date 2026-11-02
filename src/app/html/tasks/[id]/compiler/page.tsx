@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState, useEffect, useRef, useCallback } from 'react';
+import { use, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -83,6 +83,151 @@ function getScoreEmoji(score: number) {
     return '📝';
 }
 
+
+function preparePreviewHtml(rawHtml: string): string {
+    if (!rawHtml || !rawHtml.trim()) return '';
+
+    const linkInterceptorScript = `
+<script>
+(function() {
+  // Smooth scroll styling
+  try {
+    var style = document.createElement('style');
+    style.textContent = 'html { scroll-behavior: smooth; }';
+    (document.head || document.documentElement).appendChild(style);
+  } catch(e) {}
+
+  // Subtle toast notification for dummy/relative links
+  function showToast(msg) {
+    try {
+      var old = document.getElementById('__knobly_toast__');
+      if (old && old.parentNode) old.parentNode.removeChild(old);
+      var t = document.createElement('div');
+      t.id = '__knobly_toast__';
+      t.textContent = msg;
+      t.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#0f172a;color:#f8fafc;padding:8px 16px;border-radius:10px;font-size:12px;font-family:system-ui,-apple-system,sans-serif;box-shadow:0 10px 25px -5px rgba(0,0,0,0.5);z-index:999999;border:1px solid #334155;pointer-events:none;transition:opacity 0.25s ease;';
+      (document.body || document.documentElement).appendChild(t);
+      setTimeout(function() {
+        t.style.opacity = '0';
+        setTimeout(function() {
+          if (t.parentNode) t.parentNode.removeChild(t);
+        }, 250);
+      }, 2500);
+    } catch(e) {}
+  }
+
+  // Intercept all link clicks inside the iframe
+  document.addEventListener('click', function(e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (!a) return;
+
+    var href = a.getAttribute('href');
+    if (!href) return;
+    var trimmed = href.trim();
+
+    // 1. Empty or plain "#" -> scroll to top
+    if (!trimmed || trimmed === '#') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // 2. Allow javascript:...
+    if (trimmed.toLowerCase().startsWith('javascript:')) {
+      return;
+    }
+
+    // 3. In-page Hash (#top, #features, #contact, etc.)
+    if (trimmed.startsWith('#')) {
+      e.preventDefault();
+      var targetId = trimmed.substring(1);
+
+      // Back to top handling
+      if (!targetId || targetId.toLowerCase() === 'top') {
+        var topEl = document.getElementById('top')
+                 || document.querySelector('[name="top"]')
+                 || document.querySelector('[name="TOP"]')
+                 || document.querySelector('a[name="top"]');
+        if (topEl) {
+          topEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        return;
+      }
+
+      // Other hash targets (e.g. #features, #about)
+      try {
+        var escaped = (window.CSS && CSS.escape) ? CSS.escape(targetId) : targetId.replace(/["\\]/g, '\\$&');
+        var el = document.getElementById(targetId)
+              || document.querySelector('[name="' + escaped + '"]')
+              || document.querySelector('a[name="' + escaped + '"]');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          console.warn('[Knobly Preview] Element not found for #' + targetId);
+        }
+      } catch (err) {
+        var el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+
+    // 4. External / Global links (http://, https://, //, mailto:, tel:)
+    if (/^(https?:\/\/|\/\/|mailto:|tel:)/i.test(trimmed)) {
+      e.preventDefault();
+      try {
+        window.open(trimmed, '_blank', 'noopener,noreferrer');
+      } catch (err) {
+        console.error('[Knobly Preview] Could not open external link:', err);
+      }
+      return;
+    }
+
+    // 5. Relative / Local links (e.g. "about.html", "contact.html", "/page")
+    e.preventDefault();
+    showToast('🔗 Link: "' + trimmed + '" (External pages disabled in practice preview)');
+  }, true);
+
+  // Intercept form submissions to prevent iframe reload / crash
+  document.addEventListener('submit', function(e) {
+    e.preventDefault();
+    showToast('📋 Form submitted successfully (Preview simulation)');
+  }, true);
+})();
+<\/script>
+`;
+
+    let processed = rawHtml;
+
+    // Inject <base target="_blank"> into <head> or at top
+    const baseTag = '<base target="_blank">';
+    const headRegex = new RegExp('<head[^>]*>', 'i');
+    const htmlRegex = new RegExp('<html[^>]*>', 'i');
+    const closeBodyRegex = new RegExp('<\\/body>', 'i');
+    const closeHtmlRegex = new RegExp('<\\/html>', 'i');
+
+    if (headRegex.test(processed)) {
+        processed = processed.replace(headRegex, `$1\n${baseTag}`);
+    } else if (htmlRegex.test(processed)) {
+        processed = processed.replace(htmlRegex, `$1\n<head>${baseTag}</head>`);
+    } else {
+        processed = `<head>${baseTag}</head>\n` + processed;
+    }
+
+    // Inject interceptor script before </body>, </html>, or append
+    if (closeBodyRegex.test(processed)) {
+        processed = processed.replace(closeBodyRegex, `${linkInterceptorScript}\n</body>`);
+    } else if (closeHtmlRegex.test(processed)) {
+        processed = processed.replace(closeHtmlRegex, `${linkInterceptorScript}\n</html>`);
+    } else {
+        processed = processed + '\n' + linkInterceptorScript;
+    }
+
+    return processed;
+}
+
 export default function TaskCompilerPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const router = useRouter();
@@ -98,6 +243,11 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
     const [theme, setTheme] = useState<'white' | 'dark'>('white');
 
     const [previewHtml, setPreviewHtml] = useState('');
+    const [previewKey, setPreviewKey] = useState(0);
+
+    const processedPreviewHtml = useMemo(() => {
+        return preparePreviewHtml(previewHtml);
+    }, [previewHtml]);
     const [isEvaluating, setIsEvaluating] = useState(false);
     const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
     const [showResult, setShowResult] = useState(false);
@@ -183,6 +333,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                 if (isActiveWithinLimit && savedCode.trim()) {
                     setCode(savedCode);
                     setPreviewHtml(savedCode);
+                    setPreviewKey(k => k + 1);
                     lastActiveRef.current = Date.now();
                     return;
                 } else {
@@ -194,7 +345,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
             console.error('Failed to load saved task code', e);
         }
         setCode('');
-        setPreviewHtml('');
+            setPreviewHtml('');
+            setPreviewKey(k => k + 1);
     }, [id, task]);
 
     // Periodically verify inactivity while page is open (clears editor if inactive for 15 minutes)
@@ -274,6 +426,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
 
     const handleRun = useCallback(() => {
         setPreviewHtml(code);
+        setPreviewKey(k => k + 1);
         // If currently in target mode, switch to preview so user sees the result of Run
         if (previewMode === 'target') {
             setPreviewMode('preview');
@@ -972,11 +1125,12 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                             {/* CASE 1: Student Live Output */}
                             {previewMode === 'preview' && (
                                 <iframe
+                                    key={`student-live-${previewKey}`}
                                     ref={iframeRef}
-                                    srcDoc={previewHtml}
+                                    srcDoc={processedPreviewHtml}
                                     className="w-full h-full border-0 bg-white"
                                     title="Student Live Output Preview"
-                                    sandbox="allow-scripts"
+                                    sandbox="allow-scripts allow-modals allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"
                                 />
                             )}
 
@@ -1064,10 +1218,11 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                         </div>
                                         <div className="flex-1 relative overflow-hidden">
                                             <iframe
-                                                srcDoc={previewHtml}
+                                                key={`compare-student-${previewKey}`}
+                                                srcDoc={processedPreviewHtml}
                                                 className="w-full h-full border-0 bg-white"
                                                 title="Compare Student Output"
-                                                sandbox="allow-scripts"
+                                                sandbox="allow-scripts allow-modals allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"
                                             />
                                         </div>
                                     </div>

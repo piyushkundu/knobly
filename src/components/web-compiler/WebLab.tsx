@@ -609,10 +609,64 @@ export function WebLab() {
       }
     }
   });
+
+  // Intercept anchor clicks
+  document.addEventListener('click', function(e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (!a) return;
+    var href = a.getAttribute('href');
+    if (!href) return;
+    var trimmed = href.trim();
+    if (!trimmed || trimmed === '#') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (trimmed.toLowerCase().startsWith('javascript:')) return;
+    if (trimmed.startsWith('#')) {
+      e.preventDefault();
+      var targetId = trimmed.substring(1);
+      if (!targetId || targetId.toLowerCase() === 'top') {
+        var topEl = document.getElementById('top') || document.querySelector('[name="top"]') || document.querySelector('a[name="top"]');
+        if (topEl) topEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        else window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      try {
+        var escaped = (window.CSS && CSS.escape) ? CSS.escape(targetId) : targetId.replace(/["\\\\]/g, '\\\\$&');
+        var el = document.getElementById(targetId) || document.querySelector('[name="' + escaped + '"]') || document.querySelector('a[name="' + escaped + '"]');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch(err) {
+        var el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+    if (/^(https?:\\/\\/|\\/\\/|mailto:|tel:)/i.test(trimmed)) {
+      e.preventDefault();
+      try { window.open(trimmed, '_blank', 'noopener,noreferrer'); } catch(err) {}
+      return;
+    }
+    e.preventDefault();
+  }, true);
+
+  document.addEventListener('submit', function(e) {
+    e.preventDefault();
+  }, true);
 })();
 </script>`;
 
     let finalHtml = htmlTab;
+
+    // Inject <base target="_blank">
+    const baseTag = '<base target="_blank">';
+    if (/<head[^>]*>/i.test(finalHtml)) {
+      finalHtml = finalHtml.replace(/(<head[^>]*>)/i, `$1\n${baseTag}`);
+    } else if (/<html[^>]*>/i.test(finalHtml)) {
+      finalHtml = finalHtml.replace(/(<html[^>]*>)/i, `$1\n<head>${baseTag}</head>`);
+    } else {
+      finalHtml = `<head>${baseTag}</head>\n` + finalHtml;
+    }
 
     // Inject CSS
     if (cssTab.trim()) {

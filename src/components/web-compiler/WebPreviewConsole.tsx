@@ -264,7 +264,7 @@ export function WebPreviewConsole({
                 ref={iframeRef}
                 srcDoc={bundledHtml}
                 title="Knobly Web Output"
-                sandbox="allow-scripts allow-modals allow-forms allow-same-origin"
+                sandbox="allow-scripts allow-modals allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"
                 className="w-full flex-1 bg-white border-0"
               />
             </div>
