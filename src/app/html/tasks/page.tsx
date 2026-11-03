@@ -35,7 +35,7 @@ const TASKS: TaskItem[] = [
     { id: '3', title: 'India - A Diverse Nation', desc: 'Article about India using headings, images, font colors, and hr', topics: 'h1-h5, img, font, br, hr, align', color: 'bg-orange-500' },
     { id: '4', title: 'Indian History Timeline', desc: 'History page using semantic elements: header, nav, section, footer', topics: 'header, nav, section, footer, address, ul', color: 'bg-red-500' },
     { id: '5', title: 'Operating Systems (Lists)', desc: 'OS information page with unordered and ordered lists', topics: 'ul, ol, li, h1-h3, p, hr', color: 'bg-purple-500' },
-    { id: '5.0', title: 'Web Dev Roadmap (Nested Lists)', desc: 'Multi-level learning roadmap using nested unordered and ordered lists', topics: 'ul, ol, li, type, h1-h3, p, hr', color: 'bg-teal-500' },
+    { id: '5.0', title: 'Web Dev Roadmap (Nested Lists)', desc: 'Multi-level learning roadmap using nested unordered, ordered, and description lists', topics: 'ul, ol, li, dl, dt, dd, type, h1-h3, p, hr', color: 'bg-teal-500' },
     { id: '5.1', title: 'Operating Systems (Table)', desc: 'OS comparison using tables with borders and cellpadding', topics: 'table, tr, th, td, border, cellpadding', color: 'bg-purple-400' },
     { id: '5.2', title: 'Internet Usage Statistics', desc: 'Global internet stats with colspan and rowspan tables', topics: 'table, colspan, rowspan, th, td, caption', color: 'bg-indigo-500' },
     { id: '5.3', title: 'History of the Internet', desc: 'Internet timeline with description lists and tables', topics: 'dl, dt, dd, table, iframe, ol', color: 'bg-indigo-400' },

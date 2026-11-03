@@ -886,8 +886,8 @@ It stretches the text so each line has equal width.</p>`} />
                         <PracticeTaskCard
                             taskId="5.0"
                             title="Task 5.0: Web Development Roadmap (Nested Lists)"
-                            desc="Multi-level unordered aur ordered nested lists (<ul type='...'>, <ol type='...'>) ka use karke complete Web Development learning roadmap banayein."
-                            tagsCovered={['<ul>', '<ol>', '<li>', 'type="circle"', 'type="square"', 'type="A"', 'font', 'h1-h3']}
+                            desc="Multi-level unordered, ordered, aur description lists (<ul type='...'>, <ol type='...'>, <dl>, <dt>, <dd>) ka use karke complete Web Development learning roadmap banayein."
+                            tagsCovered={['<ul>', '<ol>', '<li>', '<dl>', '<dt>', '<dd>', 'type="circle"', 'type="square"', 'font', 'h1-h3']}
                             highlightBadge="Nested Lists Mastery Project"
                         />
                     </div>
