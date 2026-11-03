@@ -14,6 +14,7 @@ const TASKS: Record<string, { title: string; file: string }> = {
     '3': { title: 'India - A Diverse Nation', file: 'task3.html' },
     '4': { title: 'Indian History Timeline', file: 'task4(1).html' },
     '5': { title: 'Operating Systems (Lists)', file: 'task5.html' },
+    '5.0': { title: 'Web Development Roadmap (Nested Lists)', file: 'task5.0.html' },
     '5.1': { title: 'Operating Systems (Table)', file: 'task5.1.html' },
     '5.2': { title: 'Internet Usage Statistics', file: 'task5.2.html' },
     '5.3': { title: 'History of the Internet', file: 'task5.3.html' },
@@ -26,7 +27,7 @@ const TASKS: Record<string, { title: string; file: string }> = {
     '11': { title: 'Premium Demo Website', file: 'task11.html' },
 };
 
-const TASK_ORDER = ['1', '2', '3', '4', '5', '5.1', '5.2', '5.3', '5.4', '6', '7', '8', '9', '10', '11'];
+const TASK_ORDER = ['1', '2', '3', '4', '5', '5.0', '5.1', '5.2', '5.3', '5.4', '6', '7', '8', '9', '10', '11'];
 
 export default function TaskPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);

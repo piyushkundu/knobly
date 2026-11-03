@@ -21,7 +21,7 @@ const SIDEBAR_ITEMS = [
     { id: 'img-tag', label: '<img> Tag and Attributes' },
     { id: 'marquee-tag', label: '<marquee> Tag and Attributes' },
     { id: 'anchor-tag', label: '<a> Anchor Tag' },
-    { id: 'list-tags', label: 'List Tags (ul, ol, dl)' },
+    { id: 'list-tags', label: 'List Tags & Nested Lists' },
     { id: 'table-tag', label: 'Table Tag and Attributes' },
     { id: 'form-tag', label: 'Form Tag and Elements' },
     { id: 'div-span', label: '<div> and <span> Tags' },
@@ -784,7 +784,7 @@ It stretches the text so each line has equal width.</p>`} />
             </Section>
 
             {/* 16 - LIST TAGS: Milestone for Task 5 & 5.3 */}
-            <Section id="list-tags" title="16. List Tags (ul, ol, dl)">
+            <Section id="list-tags" title="16. List Tags (ul, ol, dl & Nested Lists)">
                 <p>HTML supports three types of lists:</p>
                 <h4 className="text-sm font-bold text-blue-700 mt-2">A. Unordered List (&lt;ul&gt;)</h4>
                 <Code code={`<ul>
@@ -826,8 +826,8 @@ It stretches the text so each line has equal width.</p>`} />
     <dd>Cascading Style Sheets</dd>
 </dl>`} />
 
-                {/* TASK 5 & 5.3: Placed right after List tags completion! */}
-                <div className="space-y-3">
+                {/* TASK 5: Basic Lists Project */}
+                <div className="my-4">
                     <PracticeTaskCard
                         taskId="5"
                         title="Task 5: Operating Systems (Lists & Style Guide)"
@@ -835,13 +835,62 @@ It stretches the text so each line has equal width.</p>`} />
                         tagsCovered={['<ul>', '<ol>', '<li>', '<dl>', '<dt>', '<dd>', '<img>', 'h1-h4']}
                         highlightBadge="Lists Mastery Project"
                     />
-                    <PracticeTaskCard
-                        taskId="5.3"
-                        title="Task 5.3: History of the Internet"
-                        desc="Description lists aur ordered timeline ka use karke History of Internet ka educational page banayein."
-                        tagsCovered={['<dl>', '<dt>', '<dd>', '<ol>', '<ul>', '<img>', 'font']}
-                        highlightBadge="Timeline Lists Project"
-                    />
+                </div>
+
+                {/* D. Nested List Explanation */}
+                <div className="pt-4 border-t border-slate-200/80 mt-6">
+                    <h4 className="text-sm font-bold text-blue-700 mt-1">D. HTML Nested Lists (List ke andar List)</h4>
+                    <p className="text-xs text-slate-700 leading-relaxed mt-1">
+                        Jab kisi ek List Item (<code>&lt;li&gt;</code>) ke andar ek aur list (<code>&lt;ul&gt;</code> ya <code>&lt;ol&gt;</code>) shuru ki jaati hai, toh use <strong>Nested List (Sub-list)</strong> kehte hain. Iska use Multi-level navigation menu, Categories & Subcategories, Book Table of Contents, aur Course Syllabus banane ke liye kiya jaata hai.
+                    </p>
+
+                    <div className="bg-amber-50/90 border border-amber-200/90 rounded-xl p-3 my-3 text-xs text-amber-900 leading-relaxed">
+                        <strong className="text-amber-800">⚠️ Sabse Zaroori Niyam (Golden Rule):</strong> Nested list ko hamesha parent <code>&lt;li&gt;</code> ke closing tag <code>&lt;/li&gt;</code> ke <em>andar</em> likha jaata hai, bahar nahi! Agar parent <code>&lt;li&gt;</code> ko pehle hi close kar denge, toh browser me indentation aur numbering hierarchy toot jayegi.
+                    </div>
+
+                    <Code code={`<!-- 1. Unordered List ke andar Unordered List -->
+<ul>
+    <li>Frontend Web Development
+        <ul type="circle">
+            <li>HTML5 - Page Structure</li>
+            <li>CSS3 - Styling & Design</li>
+            <li>JavaScript - Interactivity</li>
+        </ul>
+    </li>
+    <li>Backend Web Development
+        <ul type="circle">
+            <li>Node.js / Express</li>
+            <li>Python / Django</li>
+        </ul>
+    </li>
+</ul>
+
+<!-- 2. Mixed Nested List (OL ke andar UL) -->
+<ol>
+    <li>Core Computer Skills
+        <ul type="square">
+            <li>Notepad & WordPad</li>
+            <li>MS Office Suite</li>
+        </ul>
+    </li>
+    <li>Programming Fundamentals
+        <ul type="square">
+            <li>C Language</li>
+            <li>Python</li>
+        </ul>
+    </li>
+</ol>`} />
+
+                    {/* TASK 5.0: Dedicated Nested Lists Project */}
+                    <div className="mt-4">
+                        <PracticeTaskCard
+                            taskId="5.0"
+                            title="Task 5.0: Web Development Roadmap (Nested Lists)"
+                            desc="Multi-level unordered aur ordered nested lists (<ul type='...'>, <ol type='...'>) ka use karke complete Web Development learning roadmap banayein."
+                            tagsCovered={['<ul>', '<ol>', '<li>', 'type="circle"', 'type="square"', 'type="A"', 'font', 'h1-h3']}
+                            highlightBadge="Nested Lists Mastery Project"
+                        />
+                    </div>
                 </div>
             </Section>
 
@@ -899,6 +948,13 @@ It stretches the text so each line has equal width.</p>`} />
                         desc="Rowspan aur Colspan ka advanced use karke regional internet usage data table banayein."
                         tagsCovered={['colspan="2"', 'rowspan="2"', '<caption>', '<th>', '<td>', 'align']}
                         highlightBadge="Colspan & Rowspan Project"
+                    />
+                    <PracticeTaskCard
+                        taskId="5.3"
+                        title="Task 5.3: History of the Internet (Table & Timeline)"
+                        desc="Description lists, ordered timeline, aur styled data tables (<table border='1'>, <caption>, <tr>, <th>, <td>) ka use karke History of Internet ka educational page banayein."
+                        tagsCovered={['<table>', '<caption>', '<tr>', '<th>', '<td>', '<dl>', '<ol>', 'font']}
+                        highlightBadge="Timeline Table & Lists Project"
                     />
                     <PracticeTaskCard
                         taskId="6"

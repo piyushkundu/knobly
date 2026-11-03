@@ -75,6 +75,16 @@ const TASKS_MAP: Record<string, TaskDefinition> = {
     optionalHeadings: ['h1', 'h2', 'h3'],
     keywords: ['operating system', 'windows', 'linux', 'macos', 'android', 'os', 'process', 'management']
   },
+  '5.0': {
+    id: '5.0',
+    title: 'Web Dev Roadmap (Nested Lists)',
+    desc: 'Multi-level learning roadmap using nested unordered and ordered lists',
+    topics: 'ul, ol, li, type, h1-h3, p, hr',
+    requiredTags: ['ul', 'ol', 'li', 'p', 'hr'],
+    optionalHeadings: ['h1', 'h2', 'h3'],
+    requiredAttrs: ['type'],
+    keywords: ['frontend', 'backend', 'development', 'html', 'css', 'javascript', 'roadmap', 'database', 'tools']
+  },
   '5.1': {
     id: '5.1',
     title: 'Operating Systems (Table)',

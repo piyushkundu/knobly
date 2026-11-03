@@ -8,7 +8,7 @@ import { getAdminDb } from '@/lib/firebase-admin';
 export const dynamic = 'force-dynamic';
 
 const ADMIN_PASSWORD = '85338533';
-const ALL_TASK_IDS = ['1', '2', '3', '4', '5', '5.1', '5.2', '5.3', '5.4', '6', '7', '8', '9', '10', '11'];
+const ALL_TASK_IDS = ['1', '2', '3', '4', '5', '5.0', '5.1', '5.2', '5.3', '5.4', '6', '7', '8', '9', '10', '11'];
 
 // Persistent in-memory cache across requests within the same warm lambda
 let memoryUnlockedTasks: string[] | null = null;

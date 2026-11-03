@@ -40,6 +40,7 @@ const TASKS: Record<string, TaskInfo> = {
     '3': { id: '3', title: 'India - A Diverse Nation', desc: 'Article about India using headings, images, font colors, and hr', topics: 'h1-h5, img, font, br, hr, align', file: 'task3.html' },
     '4': { id: '4', title: 'Indian History Timeline', desc: 'History page using semantic elements: header, nav, section, footer', topics: 'header, nav, section, footer, address, ul', file: 'task4(1).html' },
     '5': { id: '5', title: 'Operating Systems (Lists)', desc: 'OS information page with unordered and ordered lists', topics: 'ul, ol, li, h1-h3, p, hr', file: 'task5.html' },
+    '5.0': { id: '5.0', title: 'Web Dev Roadmap (Nested Lists)', desc: 'Multi-level learning roadmap using nested unordered and ordered lists', topics: 'ul, ol, li, type, h1-h3, p, hr', file: 'task5.0.html' },
     '5.1': { id: '5.1', title: 'Operating Systems (Table)', desc: 'OS comparison using tables with borders and cellpadding', topics: 'table, tr, th, td, border, cellpadding', file: 'task5.1.html' },
     '5.2': { id: '5.2', title: 'Internet Usage Statistics', desc: 'Global internet stats with colspan and rowspan tables', topics: 'table, colspan, rowspan, th, td, caption', file: 'task5.2.html' },
     '5.3': { id: '5.3', title: 'History of the Internet', desc: 'Internet timeline with description lists and tables', topics: 'dl, dt, dd, table, iframe, ol', file: 'task5.3.html' },
