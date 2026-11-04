@@ -184,6 +184,16 @@ const TASKS_MAP: Record<string, TaskDefinition> = {
     optionalHeadings: ['h1', 'h2', 'h3'],
     keywords: ['demo', 'premium', 'services', 'portfolio', 'quality', 'features', 'contact', 'welcome']
   },
+  'test-1': {
+    id: 'test-1',
+    title: 'Test - 1: Foundation & Lists Mastery',
+    desc: 'Comprehensive test covering all tags up to lists: headings, paragraphs, pre, formatting, marquee, images, anchor links, unordered, ordered, nested, and description lists.',
+    topics: 'h1-h3, p, pre, b, i, u, mark, marquee, img, a, ul, ol, dl, dt, dd, font, hr, bgcolor, align, href, src',
+    requiredTags: ['h1', 'p', 'pre', 'hr', 'a', 'img', 'marquee', 'ul', 'ol', 'li', 'dl', 'dt', 'dd'],
+    optionalHeadings: ['h1', 'h2', 'h3'],
+    requiredAttrs: ['href', 'src', 'align', 'color'],
+    keywords: ['institute', 'academy', 'technology', 'education', 'admissions', 'course', 'syllabus', 'frontend', 'glossary', 'schedule']
+  },
 };
 
 interface DeterministicEvaluation {

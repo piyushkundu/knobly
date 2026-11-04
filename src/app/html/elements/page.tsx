@@ -891,6 +891,17 @@ It stretches the text so each line has equal width.</p>`} />
                             highlightBadge="Nested Lists Mastery Project"
                         />
                     </div>
+
+                    {/* TEST - 1: Comprehensive Milestone Exam up to Lists */}
+                    <div className="mt-4">
+                        <PracticeTaskCard
+                            taskId="test-1"
+                            title="Test - 1: HTML Foundation & Lists Mastery (Comprehensive Exam)"
+                            desc="Headings, paragraphs, pre, formatting, marquee, images, internal bookmark links (<a href='#...'>), nested lists, aur description lists (<dl>) ka complete real-world portal test."
+                            tagsCovered={['<h1>-<h3>', '<pre>', '<marquee>', '<img>', '<a href>', '<ul>', '<ol>', '<dl>', 'nested']}
+                            highlightBadge="🏆 Milestone Test - 1"
+                        />
+                    </div>
                 </div>
             </Section>
 

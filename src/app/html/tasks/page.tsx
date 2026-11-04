@@ -46,6 +46,7 @@ const TASKS: TaskItem[] = [
     { id: '9', title: 'Solar System Basics', desc: 'Solar system page with tables, lists, and audio', topics: 'table, ol, ul, audio, img, details', color: 'bg-sky-500' },
     { id: '10', title: 'Full Website Layout', desc: 'Multi-section website with marquee, nav, tables, forms, media', topics: 'marquee, nav, table, form, video, iframe', color: 'bg-emerald-500' },
     { id: '11', title: 'Premium Demo Website', desc: 'Professional-looking demo site with header, sections, and footer', topics: 'header, section, article, aside, footer, figure', color: 'bg-violet-500' },
+    { id: 'test-1', title: 'Test - 1: HTML Foundation & Lists Mastery', desc: 'Comprehensive test covering all tags up to lists: headings, paragraphs, pre, formatting, marquee, images, anchor links, unordered, ordered, nested, and description lists.', topics: 'h1-h3, p, pre, b, i, u, mark, marquee, img, a, ul, ol, dl, dt, dd, font, hr, bgcolor, align, href, src', color: 'bg-gradient-to-r from-red-500 to-rose-600' },
 ];
 
 export default function TasksPage() {

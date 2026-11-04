@@ -25,9 +25,10 @@ const TASKS: Record<string, { title: string; file: string }> = {
     '9': { title: 'Solar System Basics', file: 'task9.html' },
     '10': { title: 'Full Website Layout', file: 'task10.html' },
     '11': { title: 'Premium Demo Website', file: 'task11.html' },
+    'test-1': { title: 'Test - 1: HTML Foundation & Lists Mastery', file: 'test1.html' },
 };
 
-const TASK_ORDER = ['1', '2', '3', '4', '5', '5.0', '5.1', '5.2', '5.3', '5.4', '6', '7', '8', '9', '10', '11'];
+const TASK_ORDER = ['1', '2', '3', '4', '5', '5.0', '5.1', '5.2', '5.3', '5.4', '6', '7', '8', '9', '10', '11', 'test-1'];
 
 export default function TaskPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);

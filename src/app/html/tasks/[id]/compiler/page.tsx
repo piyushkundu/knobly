@@ -51,6 +51,7 @@ const TASKS: Record<string, TaskInfo> = {
     '9': { id: '9', title: 'Solar System Basics', desc: 'Solar system page with tables, lists, and audio', topics: 'table, ol, ul, audio, img, details', file: 'task9.html' },
     '10': { id: '10', title: 'Full Website Layout', desc: 'Multi-section website with marquee, nav, tables, forms, media', topics: 'marquee, nav, table, form, video, iframe', file: 'task10.html' },
     '11': { id: '11', title: 'Premium Demo Website', desc: 'Professional-looking demo site with header, sections, and footer', topics: 'header, section, article, aside, footer, figure', file: 'task11.html' },
+    'test-1': { id: 'test-1', title: 'Test - 1: HTML Foundation & Lists Mastery', desc: 'Comprehensive test covering all tags up to lists: headings, paragraphs, pre, formatting, marquee, images, anchor links, unordered, ordered, nested, and description lists.', topics: 'h1-h3, p, pre, b, i, u, mark, marquee, img, a, ul, ol, dl, dt, dd, font, hr, bgcolor, align, href, src', file: 'test1.html' },
 };
 
 interface Evaluation {
