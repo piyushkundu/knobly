@@ -905,44 +905,316 @@ It stretches the text so each line has equal width.</p>`} />
                 </div>
             </Section>
 
-            {/* 17 - TABLE TAG: Milestone for Task 5.1, 5.2 & 6 */}
-            <Section id="table-tag" title="17. Table Tag and Attributes">
-                <p>Tables arrange data into rows and columns.</p>
-                <Code code={`<table border="1" cellpadding="8" cellspacing="0" width="100%">
-    <caption>Student Marks Sheet</caption>
-    <tr bgcolor="#0ea5e9">
-        <th>Roll No</th><th>Name</th>
-        <th>Hindi</th><th>English</th><th>Math</th>
+            {/* 17 - TABLE TAG: Milestone for Task 5.1, 5.2, 5.3 & 6 */}
+            <Section id="table-tag" title="17. Table Tag and Attributes (Complete Master Guide)">
+                <p className="text-xs text-slate-700 leading-relaxed">
+                    HTML me data ko grid format me yani <strong>Rows (पंक्तियाँ)</strong> aur <strong>Columns (कॉलम)</strong> me tabular roop se organize karne ke liye Table tags ka use kiya jaata hai. Ek standard HTML table 5 mukhya tags se milkar banti hai:
+                </p>
+
+                {/* Structure Overview Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 my-3">
+                    <div className="bg-blue-50/90 border border-blue-200 rounded-xl p-2.5 text-center shadow-2xs">
+                        <code className="text-xs font-bold text-blue-700">&lt;table&gt;</code>
+                        <p className="text-[10px] text-slate-600 mt-1">Main Table Container</p>
+                    </div>
+                    <div className="bg-amber-50/90 border border-amber-200 rounded-xl p-2.5 text-center shadow-2xs">
+                        <code className="text-xs font-bold text-amber-700">&lt;caption&gt;</code>
+                        <p className="text-[10px] text-slate-600 mt-1">Table Title / Heading</p>
+                    </div>
+                    <div className="bg-purple-50/90 border border-purple-200 rounded-xl p-2.5 text-center shadow-2xs">
+                        <code className="text-xs font-bold text-purple-700">&lt;tr&gt;</code>
+                        <p className="text-[10px] text-slate-600 mt-1">Table Row (Horizontal)</p>
+                    </div>
+                    <div className="bg-emerald-50/90 border border-emerald-200 rounded-xl p-2.5 text-center shadow-2xs">
+                        <code className="text-xs font-bold text-emerald-700">&lt;th&gt;</code>
+                        <p className="text-[10px] text-slate-600 mt-1">Header Cell (Bold + Center)</p>
+                    </div>
+                    <div className="bg-rose-50/90 border border-rose-200 rounded-xl p-2.5 text-center col-span-2 sm:col-span-1 shadow-2xs">
+                        <code className="text-xs font-bold text-rose-700">&lt;td&gt;</code>
+                        <p className="text-[10px] text-slate-600 mt-1">Data Cell (Normal + Left)</p>
+                    </div>
+                </div>
+
+                {/* ─────────────────────────────────────────────────────────── */}
+                {/* A. <table> Tag & Attributes */}
+                {/* ─────────────────────────────────────────────────────────── */}
+                <div className="pt-3 border-t border-slate-200/80 mt-4">
+                    <h4 className="text-sm font-bold text-blue-700 flex items-center gap-2">
+                        <span>A. &lt;table&gt; Tag (Parent Container)</span>
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed mt-1">
+                        Yeh table ka main boundary tag hota hai. Sabhi rows aur cells isi ke andar aate hain. Iske attributes poori table ke appearance, size, border, aur internal/external spacing ko define karte hain:
+                    </p>
+
+                    <AttrTable rows={[
+                        ['border', 'Table ke borders ki motai pixels me (jaise border="1" ya border="2"). Agar border="0" ho toh borders invisible hote hain.'],
+                        ['cellpadding', 'Cell ke border aur text content ke beech ka internal space / padding (pixels me, jaise cellpadding="8").'],
+                        ['cellspacing', 'Do adjacent cells ke beech ka external gap / doori (pixels me, jaise cellspacing="0" sharp grid look ke liye).'],
+                        ['width', 'Table ki poori chaudai (percentage jaise width="100%" ya pixels me width="600").'],
+                        ['height', 'Table ki vertical unchai (pixels me, jaise height="250").'],
+                        ['align', 'Poori table ka webpage par horizontal alignment ("left", "center", "right").'],
+                        ['bgcolor', 'Poori table ka background color (color name ya HEX code, jaise bgcolor="#f8fafc").'],
+                        ['bordercolor', 'Table ke borders ka color specify karta hai (jaise bordercolor="#0284c7").'],
+                        ['background', 'Table ke background me image lagane ke liye (jaise background="pattern.jpg").'],
+                    ]} />
+
+                    <Code code={`<!-- <table> tag ke attributes ka live use -->
+<table border="2" cellpadding="10" cellspacing="2" width="100%" align="center" bgcolor="#f8fafc" bordercolor="#0284c7">
+    <caption><b>Products & Price List</b></caption>
+    <tr bgcolor="#0284c7">
+        <th><font color="white">Item</font></th>
+        <th><font color="white">Quantity</font></th>
+        <th><font color="white">Price</font></th>
     </tr>
     <tr align="center">
-        <td>1</td><td>Rahul</td>
-        <td>85</td><td>90</td><td>95</td>
+        <td>Mechanical Keyboard</td>
+        <td>5</td>
+        <td>₹2,500</td>
     </tr>
-    <tr align="center" bgcolor="#f0f9ff">
-        <td>2</td><td>Priya</td>
-        <td>78</td><td>88</td><td>82</td>
+    <tr align="center">
+        <td>Optical Mouse</td>
+        <td>10</td>
+        <td>₹850</td>
     </tr>
-</table>
-
-<!-- Colspan & Rowspan -->
-<table border="1">
-    <tr><th colspan="3">Student Info</th></tr>
-    <tr>
-        <td rowspan="2">India</td>
-        <td>Delhi</td><td>28°C</td>
-    </tr>
-    <tr><td>Mumbai</td><td>32°C</td></tr>
 </table>`} />
-                <AttrTable rows={[
-                    ['border', 'Border width in pixels'],
-                    ['cellpadding', 'Space between content and border'],
-                    ['cellspacing', 'Space between cells'],
-                    ['width', 'Table width (px or %)'],
-                    ['bgcolor', 'Background color'],
-                    ['colspan', 'Merge columns horizontally'],
-                    ['rowspan', 'Merge rows vertically'],
-                    ['align', 'left, center, right'],
-                ]} />
+                </div>
+
+                {/* ─────────────────────────────────────────────────────────── */}
+                {/* B. <caption> Tag & Attributes */}
+                {/* ─────────────────────────────────────────────────────────── */}
+                <div className="pt-3 border-t border-slate-200/80 mt-4">
+                    <h4 className="text-sm font-bold text-amber-700 flex items-center gap-2">
+                        <span>B. &lt;caption&gt; Tag (Table Title & Heading)</span>
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed mt-1">
+                        Table ka title ya main topic heading display karne ke liye <code>&lt;caption&gt;</code> tag ka use hota hai. Yeh hamesha <code>&lt;table&gt;</code> tag ke turant baad pehla child tag hona chahiye.
+                    </p>
+
+                    <AttrTable rows={[
+                        ['align', 'Caption ki vertical position set karta hai: "top" (table ke upar, default) ya "bottom" (table ke neeche).'],
+                    ]} />
+
+                    <Code code={`<table border="1" width="80%" align="center" cellpadding="6">
+    <!-- Caption table ke upar title display karega -->
+    <caption align="top"><b>Monthly Sales Report - 2026</b></caption>
+    <tr bgcolor="#e2e8f0" align="center">
+        <th>Month</th>
+        <th>Revenue</th>
+    </tr>
+    <tr align="center">
+        <td>January</td>
+        <td>₹45,000</td>
+    </tr>
+</table>`} />
+                </div>
+
+                {/* ─────────────────────────────────────────────────────────── */}
+                {/* C. <tr> Tag & Attributes */}
+                {/* ─────────────────────────────────────────────────────────── */}
+                <div className="pt-3 border-t border-slate-200/80 mt-4">
+                    <h4 className="text-sm font-bold text-purple-700 flex items-center gap-2">
+                        <span>C. &lt;tr&gt; Tag (Table Row)</span>
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed mt-1">
+                        <code>&lt;tr&gt;</code> ka full form <strong>Table Row</strong> hai. Yeh table me ek horizontal line (row) banata hai. Row ke andar ya toh <code>&lt;th&gt;</code> (headings) aate hain ya <code>&lt;td&gt;</code> (data cells). Iske attributes us row ke sabhi cells par ek sath apply ho jaate hain:
+                    </p>
+
+                    <AttrTable rows={[
+                        ['align', 'Us row ke sabhi cells ka horizontal text alignment: "left", "center", "right", "justify".'],
+                        ['valign', 'Us row ke sabhi cells ka vertical alignment: "top" (upar), "middle" (beech me, default), "bottom" (neeche).'],
+                        ['bgcolor', 'Us specific row ka background color (jaise header row ya zebra striping ke liye).'],
+                        ['bordercolor', 'Us specific row ke border ka color specify karta hai.'],
+                    ]} />
+
+                    <Code code={`<table border="1" width="100%" cellpadding="8">
+    <!-- Row 1: Header row with purple background & centered text -->
+    <tr bgcolor="#7e22ce" align="center">
+        <th><font color="white">Emp ID</font></th>
+        <th><font color="white">Employee Name</font></th>
+        <th><font color="white">Department</font></th>
+    </tr>
+
+    <!-- Row 2: Data row with align="center" and light purple background -->
+    <tr bgcolor="#faf5ff" align="center" valign="middle">
+        <td>E-101</td>
+        <td>Amit Sharma</td>
+        <td>Web Development</td>
+    </tr>
+
+    <!-- Row 3: Data row with different alignment -->
+    <tr align="center" valign="middle">
+        <td>E-102</td>
+        <td>Pooja Verma</td>
+        <td>UI/UX Design</td>
+    </tr>
+</table>`} />
+                </div>
+
+                {/* ─────────────────────────────────────────────────────────── */}
+                {/* D. <th> Tag & Attributes */}
+                {/* ─────────────────────────────────────────────────────────── */}
+                <div className="pt-3 border-t border-slate-200/80 mt-4">
+                    <h4 className="text-sm font-bold text-emerald-700 flex items-center gap-2">
+                        <span>D. &lt;th&gt; Tag (Table Header Cell)</span>
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed mt-1">
+                        <code>&lt;th&gt;</code> ka full form <strong>Table Header</strong> hai. Yeh table ke columns ya rows ki headings ke liye use hota hai. By default iska text <strong>Bold (गाढ़ा)</strong> hota hai aur <strong>Center Aligned</strong> hota hai.
+                    </p>
+
+                    <AttrTable rows={[
+                        ['colspan', 'Horizontal columns ko merge karne ke liye number specify karta hai (jaise colspan="3" teen columns merge karega).'],
+                        ['rowspan', 'Vertical rows ko merge karne ke liye number specify karta hai (jaise rowspan="2" do rows merge karega).'],
+                        ['align', 'Header cell ka horizontal text alignment: "left", "center", "right".'],
+                        ['valign', 'Vertical text alignment: "top", "middle", "bottom".'],
+                        ['bgcolor', 'Header cell ka specific background color.'],
+                        ['width', 'Header cell ki width pixels ya percentage me.'],
+                        ['height', 'Header cell ki unchai (height in pixels).'],
+                        ['nowrap', 'Header text ko bina wrap hue single line me rakhta hai.'],
+                    ]} />
+
+                    <Code code={`<table border="1" width="100%" cellpadding="8" cellspacing="0">
+    <tr bgcolor="#0f766e">
+        <!-- colspan="2" se do columns merge hokar ek broad header banenge -->
+        <th colspan="2"><font color="white">Student Details</font></th>
+        <!-- normal th -->
+        <th bgcolor="#047857"><font color="white">Grade</font></th>
+    </tr>
+    <tr align="center">
+        <td>Roll No: 101</td>
+        <td>Rahul Kumar</td>
+        <td>A+</td>
+    </tr>
+</table>`} />
+                </div>
+
+                {/* ─────────────────────────────────────────────────────────── */}
+                {/* E. <td> Tag & Attributes */}
+                {/* ─────────────────────────────────────────────────────────── */}
+                <div className="pt-3 border-t border-slate-200/80 mt-4">
+                    <h4 className="text-sm font-bold text-rose-700 flex items-center gap-2">
+                        <span>E. &lt;td&gt; Tag (Table Data Cell)</span>
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed mt-1">
+                        <code>&lt;td&gt;</code> ka full form <strong>Table Data</strong> hai. Yeh table ka basic data container cell hota hai jisme actual text, numbers, images, ya links store hote hain. By default iska text <strong>Regular (Normal font)</strong> aur <strong>Left Aligned</strong> hota hai.
+                    </p>
+
+                    <AttrTable rows={[
+                        ['colspan', 'Data cell ko horizontal roop se multiple columns me merge karna (jaise colspan="2").'],
+                        ['rowspan', 'Data cell ko vertical roop se multiple rows me merge karna (jaise rowspan="2").'],
+                        ['align', 'Cell content ka horizontal alignment: "left", "center", "right".'],
+                        ['valign', 'Cell content ka vertical alignment: "top", "middle", "bottom".'],
+                        ['bgcolor', 'Individual data cell ka custom background color.'],
+                        ['width', 'Cell ki custom width (pixels ya % me).'],
+                        ['height', 'Cell ki custom height (pixels me).'],
+                        ['nowrap', 'Cell text me automatic line break hone se rokna.'],
+                    ]} />
+
+                    <Code code={`<table border="1" width="100%" cellpadding="8" cellspacing="0">
+    <tr bgcolor="#334155">
+        <th><font color="white">State</font></th>
+        <th><font color="white">City</font></th>
+        <th><font color="white">Status</font></th>
+    </tr>
+    <tr>
+        <!-- rowspan="2" se Uttar Pradesh 2 rows me merge hoga -->
+        <td rowspan="2" align="center" bgcolor="#f1f5f9"><b>Uttar Pradesh</b></td>
+        <td>Lucknow</td>
+        <td bgcolor="#dcfce7" align="center">Active</td>
+    </tr>
+    <tr>
+        <td>Kanpur</td>
+        <td bgcolor="#dcfce7" align="center">Active</td>
+    </tr>
+</table>`} />
+                </div>
+
+                {/* ─────────────────────────────────────────────────────────── */}
+                {/* F. Quick Comparison: <th> vs <td> */}
+                {/* ─────────────────────────────────────────────────────────── */}
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 my-4">
+                    <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
+                        🔍 Quick Comparison: &lt;th&gt; (Header) vs &lt;td&gt; (Data)
+                    </h4>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-xs">
+                            <thead>
+                                <tr className="border-b border-slate-200 text-left text-slate-600">
+                                    <th className="py-2 px-3 font-bold">Feature</th>
+                                    <th className="py-2 px-3 font-bold text-emerald-700">&lt;th&gt; (Table Header)</th>
+                                    <th className="py-2 px-3 font-bold text-rose-700">&lt;td&gt; (Table Data)</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                <tr>
+                                    <td className="py-2 px-3 font-semibold text-slate-700">Default Font Weight</td>
+                                    <td className="py-2 px-3 text-emerald-800 font-bold">Bold (गाढ़ा)</td>
+                                    <td className="py-2 px-3 text-slate-600">Regular (सामान्य)</td>
+                                </tr>
+                                <tr>
+                                    <td className="py-2 px-3 font-semibold text-slate-700">Default Text Alignment</td>
+                                    <td className="py-2 px-3 text-emerald-800 font-bold">Center (बीच में)</td>
+                                    <td className="py-2 px-3 text-slate-600">Left (बाईं तरफ)</td>
+                                </tr>
+                                <tr>
+                                    <td className="py-2 px-3 font-semibold text-slate-700">Primary Purpose</td>
+                                    <td className="py-2 px-3 text-slate-700">Column ya Row ki heading batana</td>
+                                    <td className="py-2 px-3 text-slate-700">Actual data content display karna</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* ─────────────────────────────────────────────────────────── */}
+                {/* G. Complete Master Table with Colspan & Rowspan */}
+                {/* ─────────────────────────────────────────────────────────── */}
+                <div className="pt-3 border-t border-slate-200/80 mt-4 mb-4">
+                    <h4 className="text-sm font-bold text-blue-700 flex items-center gap-2">
+                        <span>G. Complete Master Table (Colspan, Rowspan & Zebra Styling)</span>
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed mt-1">
+                        Neeche diye gaye complete code me <code>border</code>, <code>cellpadding</code>, <code>cellspacing</code>, <code>&lt;caption&gt;</code>, <code>bgcolor</code>, <code>colspan</code>, aur <code>rowspan</code> sabhi ka real-world use dekhein:
+                    </p>
+
+                    <Code code={`<table border="1" cellpadding="8" cellspacing="0" width="100%" bgcolor="#ffffff">
+    <caption align="top"><b>Student Examination Scoreboard 2026</b></caption>
+    
+    <!-- Top Super-Header using colspan -->
+    <tr bgcolor="#1e293b" align="center">
+        <th rowspan="2"><font color="white">Roll No</font></th>
+        <th rowspan="2"><font color="white">Student Name</font></th>
+        <th colspan="3"><font color="white">Marks Obtained</font></th>
+        <th rowspan="2"><font color="white">Status</font></th>
+    </tr>
+
+    <!-- Sub-headers for Subjects -->
+    <tr bgcolor="#334155" align="center">
+        <th><font color="white">HTML</font></th>
+        <th><font color="white">CSS</font></th>
+        <th><font color="white">JS</font></th>
+    </tr>
+
+    <!-- Student 1 -->
+    <tr align="center">
+        <td>101</td>
+        <td align="left">Aarav Sharma</td>
+        <td>88</td>
+        <td>92</td>
+        <td>85</td>
+        <td bgcolor="#dcfce7"><font color="#15803d"><b>PASS</b></font></td>
+    </tr>
+
+    <!-- Student 2 with zebra background -->
+    <tr align="center" bgcolor="#f8fafc">
+        <td>102</td>
+        <td align="left">Priya Patel</td>
+        <td>95</td>
+        <td>90</td>
+        <td>94</td>
+        <td bgcolor="#dcfce7"><font color="#15803d"><b>PASS</b></font></td>
+    </tr>
+</table>`} />
+                </div>
 
                 {/* TASK 5.1, 5.2, 6: Placed right after Table tags completion! */}
                 <div className="space-y-3">
