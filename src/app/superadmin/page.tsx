@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useSuperAdmin } from './useSuperAdmin';
+import { adminFetch } from '@/lib/admin-fetch';
 import {
     LayoutDashboard, FlaskConical, HelpCircle, BarChart3, Users, Medal, Bell,
     Plus, Trash2, Pencil, Play, Lock, X, Eye, RefreshCw, Upload, Send,
@@ -379,7 +380,7 @@ export default function SuperAdminPage() {
                                                 <button disabled={aiGenerating || !importText.trim()} onClick={async () => {
                                                     setAiGenerating(true); setImportLog('🤖 AI is reading & formatting your questions...');
                                                     try {
-                                                        const res = await fetch('/api/admin-ai-format', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({input: importText, mode: 'format'})});
+                                                        const res = await adminFetch('/api/admin-ai-format', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({input: importText, mode: 'format'})});
                                                         const data = await res.json();
                                                         if (data.result) { 
                                                             setImportLog('✅ AI structured perfectly. Importing to database...'); 
@@ -412,7 +413,7 @@ export default function SuperAdminPage() {
                                                         if (!aiTopic.trim()) return alert("Enter a topic!");
                                                         setAiGenerating(true); setImportLog('🤖 AI is writing fresh questions...');
                                                         try {
-                                                            const res = await fetch('/api/admin-ai-format', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({input: aiTopic, num_questions: aiCount, mode: 'generate'})});
+                                                            const res = await adminFetch('/api/admin-ai-format', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({input: aiTopic, num_questions: aiCount, mode: 'generate'})});
                                                             const data = await res.json();
                                                             if (data.result) { 
                                                                 setImportLog('✅ AI created them. Importing to database...');
@@ -1000,7 +1001,7 @@ export default function SuperAdminPage() {
                                 setVerifyingTest(true);
                                 setAiFeedback({});
                                 try {
-                                    const res = await fetch('/api/admin/verify-test', {
+                                    const res = await adminFetch('/api/admin/verify-test', {
                                         method: 'POST', headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({ testTitle: previewData.test.title, questions: previewData.questions })
                                     });

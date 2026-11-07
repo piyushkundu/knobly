@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Download, Sparkles, BookOpen, Lightbulb, Code2, ExternalLink, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
+import { SafeAIContent } from '@/components/ai/SafeAIContent';
 
 interface Section {
     heading: string;
@@ -271,8 +272,9 @@ export default function TopicPage() {
                                 </h2>
                                 <div
                                     style={{ fontSize: 14, color: contentColor, lineHeight: 1.75 }}
-                                    dangerouslySetInnerHTML={{ __html: section.content }}
-                                />
+                                >
+                                    <SafeAIContent content={section.content} format="html" isDark={isDark} />
+                                </div>
                                 
                                 {section.code && (
                                     <div style={{ marginTop: 16 }}>

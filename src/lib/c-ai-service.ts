@@ -1,23 +1,30 @@
 import { CAIExplanation } from '@/types/c-lang';
+import { AIRequestError, createAIClient, type AIClient } from '@/lib/ai-request';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_API_KEY_ALT = process.env.GROQ_API_KEY_ALT;
 
-async function fetchWithFallback(url: string, options: RequestInit): Promise<Response> {
+async function fetchWithFallback(url: string, options: RequestInit, client: AIClient): Promise<Response> {
   const primaryKey = GROQ_API_KEY;
   const secondaryKey = GROQ_API_KEY_ALT;
   
-  let response = await fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      'Authorization': `Bearer ${primaryKey}`,
-    }
-  });
+  let response: Response;
+  try {
+    response = await client.fetch(url, {
+      ...options,
+      headers: { ...options.headers, 'Authorization': `Bearer ${primaryKey}` },
+    });
+  } catch (error) {
+    if (!secondaryKey || (error instanceof AIRequestError && error.status === 408)) throw error;
+    return client.fetch(url, {
+      ...options,
+      headers: { ...options.headers, 'Authorization': `Bearer ${secondaryKey}` },
+    });
+  }
 
   if (!response.ok && secondaryKey) {
     console.warn('Primary Groq API Key failed. Attempting fallback...');
-    response = await fetch(url, {
+    response = await client.fetch(url, {
       ...options,
       headers: {
         ...options.headers,
@@ -29,7 +36,7 @@ async function fetchWithFallback(url: string, options: RequestInit): Promise<Res
   return response;
 }
 
-export async function explainCError(code: string, error: string, language: 'en' | 'hi'): Promise<CAIExplanation> {
+export async function explainCError(code: string, error: string, language: 'en' | 'hi', client: AIClient = createAIClient()): Promise<CAIExplanation> {
   const isHindi = language === 'hi';
   
   const systemPrompt = isHindi
@@ -77,11 +84,10 @@ Do not include any other text outside the JSON object. Ensure the JSON is proper
       temperature: 0.1,
       response_format: { type: "json_object" }, // Force JSON response if supported
     }),
-  });
+  }, client);
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error?.message || 'Failed to get AI explanation');
+    throw new AIRequestError(502, 'AI service is temporarily unavailable. Please try again.');
   }
 
   const data = await response.json();
@@ -120,7 +126,7 @@ Do not include any other text outside the JSON object. Ensure the JSON is proper
       corrected_code: parsed.corrected_code || code,
     };
   } catch (parseErr) {
-    console.error('Parse error:', parseErr, 'Raw content:', content);
+    console.error('Parse error:', parseErr);
     
     return {
       error_type: 'AI Parse Error',
@@ -134,7 +140,7 @@ Do not include any other text outside the JSON object. Ensure the JSON is proper
   }
 }
 
-export async function generateCCode(prompt: string, language: 'en' | 'hi'): Promise<string> {
+export async function generateCCode(prompt: string, language: 'en' | 'hi', client: AIClient = createAIClient()): Promise<string> {
   const isHindi = language === 'hi';
   
   const systemPrompt = isHindi
@@ -157,11 +163,10 @@ export async function generateCCode(prompt: string, language: 'en' | 'hi'): Prom
       temperature: 0.2,
       max_tokens: 1000,
     }),
-  });
+  }, client);
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error?.message || 'Failed to generate code');
+    throw new AIRequestError(502, 'AI service is temporarily unavailable. Please try again.');
   }
 
   const data = await response.json();

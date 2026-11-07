@@ -7,6 +7,7 @@ import {
   Maximize2, Minimize2
 } from 'lucide-react';
 import { ConsoleMessage, DeviceMode } from '@/types/web-compiler';
+import { MAX_PREVIEW_TEXT_LENGTH, PREVIEW_SANDBOX, openSandboxedPreview, readPreviewConsoleEvent } from '@/lib/preview-sandbox';
 
 interface WebPreviewConsoleProps {
   bundledHtml: string;
@@ -35,23 +36,12 @@ export function WebPreviewConsole({
   // Listen to postMessage from sandboxed iframe
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data && event.data.type === 'KNOBLY_WEB_CONSOLE') {
-        const newMsg: ConsoleMessage = {
-          id: Date.now().toString() + Math.random().toString(36).slice(2, 6),
-          level: event.data.level || 'log',
-          message: event.data.message || '',
-          time: event.data.time || new Date().toLocaleTimeString(),
-        };
-        setConsoleMessages((prev) => [...prev.slice(-150), newMsg]);
-      } else if (event.data && event.data.type === 'KNOBLY_EVAL_RESULT') {
-        const newMsg: ConsoleMessage = {
-          id: Date.now().toString() + Math.random().toString(36).slice(2, 6),
-          level: event.data.error ? 'error' : 'log',
-          message: event.data.error ? `Error: ${event.data.error}` : `<= ${event.data.result}`,
-          time: new Date().toLocaleTimeString(),
-        };
-        setConsoleMessages((prev) => [...prev.slice(-150), newMsg]);
-      }
+      const message = readPreviewConsoleEvent(event, iframeRef.current?.contentWindow ?? null);
+      if (!message) return;
+      setConsoleMessages((prev) => [...prev.slice(-149), {
+        ...message,
+        id: Date.now().toString() + Math.random().toString(36).slice(2, 6),
+      }]);
     };
 
     window.addEventListener('message', handleMessage);
@@ -75,12 +65,7 @@ export function WebPreviewConsole({
   };
 
   const handleOpenExternal = () => {
-    const win = window.open('', '_blank');
-    if (win) {
-      win.document.open();
-      win.document.write(bundledHtml);
-      win.document.close();
-    }
+    openSandboxedPreview(bundledHtml);
   };
 
   const handleReplSubmit = (e: React.FormEvent) => {
@@ -90,7 +75,7 @@ export function WebPreviewConsole({
     // Log user command
     const cmd = replInput.trim();
     setConsoleMessages((prev) => [
-      ...prev,
+      ...prev.slice(-149),
       {
         id: Date.now().toString(),
         level: 'info',
@@ -101,6 +86,7 @@ export function WebPreviewConsole({
 
     // Send to iframe for eval
     if (iframeRef.current && iframeRef.current.contentWindow) {
+      // Opaque sandbox origins require '*'; send only to this frame's window.
       iframeRef.current.contentWindow.postMessage(
         { type: 'KNOBLY_EVAL_CMD', code: cmd },
         '*'
@@ -237,8 +223,7 @@ export function WebPreviewConsole({
 
       {/* Main Content: Preview or Console */}
       <div className="flex-1 w-full min-h-0 relative overflow-hidden bg-[var(--bg-primary)]">
-        {activeTab === 'preview' ? (
-          <div className="w-full h-full flex flex-col items-center justify-start p-2 sm:p-4 overflow-auto">
+          <div className={`w-full h-full ${activeTab === 'preview' ? 'flex' : 'hidden'} flex-col items-center justify-start p-2 sm:p-4 overflow-auto`}>
             {/* Simulated Browser Frame for Mobile / Tablet */}
             <div
               className={`w-full ${getContainerWidth()} h-full transition-all duration-300 flex flex-col rounded-xl overflow-hidden shadow-2xl border border-[var(--border-color)] bg-white`}
@@ -264,14 +249,14 @@ export function WebPreviewConsole({
                 ref={iframeRef}
                 srcDoc={bundledHtml}
                 title="Knobly Web Output"
-                sandbox="allow-scripts allow-modals allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                sandbox={PREVIEW_SANDBOX}
+                referrerPolicy="no-referrer"
                 className="w-full flex-1 bg-white border-0"
               />
             </div>
           </div>
-        ) : (
-          /* Developer Console View */
-          <div className="flex flex-col h-full w-full bg-[var(--bg-primary)] text-[var(--text-primary)] font-mono text-xs">
+          {/* Keep the preview mounted while the console sends REPL commands. */}
+          <div className={`${activeTab === 'console' ? 'flex' : 'hidden'} flex-col h-full w-full bg-[var(--bg-primary)] text-[var(--text-primary)] font-mono text-xs`}>
             {/* Console Toolbar */}
             <div className="flex items-center justify-between px-3 py-2 bg-[var(--bg-secondary)] border-b border-[var(--border-color)]">
               <div className="flex items-center gap-2">
@@ -376,6 +361,7 @@ export function WebPreviewConsole({
               <input
                 type="text"
                 value={replInput}
+                maxLength={MAX_PREVIEW_TEXT_LENGTH}
                 onChange={(e) => setReplInput(e.target.value)}
                 placeholder="Execute JavaScript in page context (e.g. document.title, 5 * 25)..."
                 className="flex-1 bg-transparent text-xs text-[var(--text-primary)] focus:outline-none font-mono"
@@ -389,7 +375,6 @@ export function WebPreviewConsole({
               </button>
             </form>
           </div>
-        )}
       </div>
     </div>
   );

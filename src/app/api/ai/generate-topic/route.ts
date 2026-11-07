@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { AI_LIMITS, aiChoice, aiErrorResponse, aiText, createAIClient, readAIRequest } from '@/lib/ai-request';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 const SARVAM_API_KEY = process.env.SARVAM_API_KEY || '';
@@ -186,11 +187,10 @@ function parseMarkdownToContent(markdown: string, topicFallback: string) {
 
 export async function POST(req: NextRequest) {
     try {
-        const { topic, language = 'en' } = await req.json();
-
-        if (!topic) {
-            return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
-        }
+        const body = await readAIRequest(req);
+        const topic = aiText(body, 'topic', AI_LIMITS.topic);
+        const language = aiChoice(body, 'language', ['en', 'hi'] as const, 'en');
+        const client = createAIClient(req.signal, { totalMs: 35000, attemptMs: 20000 });
 
         const isHindi = language === 'hi';
 
@@ -206,7 +206,7 @@ export async function POST(req: NextRequest) {
             if (SARVAM_API_KEY) {
                 console.log('[Generate Topic] 🇮🇳 Using Sarvam AI for Hindi...');
                 try {
-                    const sarvamRes = await fetch('https://api.sarvam.ai/v1/chat/completions', {
+                    const sarvamRes = await client.fetch('https://api.sarvam.ai/v1/chat/completions', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -222,8 +222,7 @@ export async function POST(req: NextRequest) {
                             max_tokens: 4000,
                             temperature: 0.65
                         }),
-                        signal: AbortSignal.timeout(25000) // 25 seconds — Hindi gen takes longer
-                    });
+                    }, 25000);
 
                     if (sarvamRes.ok) {
                         const data = await sarvamRes.json();
@@ -235,8 +234,7 @@ export async function POST(req: NextRequest) {
                             console.warn('[Generate Topic] Sarvam response too short, falling back...');
                         }
                     } else {
-                        const errText = await sarvamRes.text().catch(() => '');
-                        console.warn('[Generate Topic] Sarvam API error:', sarvamRes.status, errText);
+                        console.warn('[Generate Topic] Sarvam API status:', sarvamRes.status);
                     }
                 } catch (err) {
                     console.warn('[Generate Topic] Sarvam AI timeout/error:', err);
@@ -247,7 +245,7 @@ export async function POST(req: NextRequest) {
             if (!markdownReply) {
                 console.log('[Generate Topic] 🔄 Falling back to Groq for Hindi...');
                 try {
-                    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    const groqRes = await client.fetch('https://api.groq.com/openai/v1/chat/completions', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -269,11 +267,11 @@ export async function POST(req: NextRequest) {
                         markdownReply = data.choices?.[0]?.message?.content ?? '';
                     } else {
                         console.error('[Generate Topic] Groq Hindi fallback also failed');
-                        return NextResponse.json({ error: 'AI service error' }, { status: 500 });
+                        return aiErrorResponse(null);
                     }
                 } catch (err) {
                     console.error('[Generate Topic] Groq Hindi error:', err);
-                    return NextResponse.json({ error: 'AI service error' }, { status: 500 });
+                    return aiErrorResponse(err);
                 }
             }
 
@@ -286,7 +284,7 @@ export async function POST(req: NextRequest) {
         // ENGLISH PATH: Groq with JSON output
         // ═══════════════════════════════════════════
         console.log('[Generate Topic] 🇬🇧 Using Groq for English...');
-        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const groqRes = await client.fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -305,9 +303,7 @@ export async function POST(req: NextRequest) {
         });
 
         if (!groqRes.ok) {
-            const err = await groqRes.text();
-            console.error('Groq English API error:', err);
-            return NextResponse.json({ error: 'AI service error' }, { status: 500 });
+            return aiErrorResponse(null);
         }
 
         const data = await groqRes.json();
@@ -326,7 +322,7 @@ export async function POST(req: NextRequest) {
                 const parsed = JSON.parse(rawReply.substring(startIdx, endIdx + 1));
                 return NextResponse.json({ content: parsed });
             } catch {
-                console.error('Extraction also failed:', rawReply.substring(0, 200));
+                console.error('AI lesson response could not be parsed as JSON.');
                 return NextResponse.json({
                     content: {
                         title: topic,
@@ -339,8 +335,7 @@ export async function POST(req: NextRequest) {
             }
         }
     } catch (err) {
-        console.error('Topic generation error:', err);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return aiErrorResponse(err);
     }
 }
 

@@ -1,24 +1,16 @@
 import { NextResponse } from 'next/server';
 import { explainWebCode } from '@/lib/python-ai-service';
+import { AI_LIMITS, aiChoice, aiErrorResponse, aiText, createAIClient, readAIRequest } from '@/lib/ai-request';
 
 export async function POST(req: Request) {
   try {
-    const { code, language, question } = await req.json();
-
-    if (!code) {
-      return NextResponse.json(
-        { error: 'Code is required' },
-        { status: 400 }
-      );
-    }
-
-    const result = await explainWebCode(code, language || 'en', question);
+    const body = await readAIRequest(req);
+    const code = aiText(body, 'code', AI_LIMITS.code);
+    const question = aiText(body, 'question', AI_LIMITS.prompt, { optional: true, allowEmpty: true });
+    const language = aiChoice(body, 'language', ['en', 'hi'] as const, 'en');
+    const result = await explainWebCode(code, language, question, createAIClient(req.signal));
     return NextResponse.json(result);
   } catch (error) {
-    console.error('AI Explain Web Error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to explain code' },
-      { status: 500 }
-    );
+    return aiErrorResponse(error);
   }
 }

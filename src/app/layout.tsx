@@ -5,7 +5,6 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import KnoblyAI from "@/components/ai/KnoblyAI";
 import FirestoreErrorGuard from "@/components/FirestoreErrorGuard";
-import { GoogleAnalytics } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://knoblyweb.in'),
@@ -105,9 +104,10 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.35.0/dist/tabler-icons.min.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
         {/* Google Analytics */}
-        <GoogleAnalytics gaId="G-LWC7XK46E6" />
+
       </head>
       <body className="antialiased" suppressHydrationWarning>
+        <div role="status" style={{background:'#fef3c7',color:'#78350f',padding:'10px',textAlign:'center',fontSize:'14px'}}>Isolated Preview: live login, saved data, email and AI providers are disabled.</div>
         <ThemeProvider>
           <AuthProvider>
             <FirestoreErrorGuard />

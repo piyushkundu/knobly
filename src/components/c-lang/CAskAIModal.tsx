@@ -14,6 +14,7 @@ interface CAskAIModalProps {
 
 export function CAskAIModal({ isOpen, onClose, onGenerate, language }: CAskAIModalProps) {
   const [prompt, setPrompt] = useState('');
+  const [error, setError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
   const isHindi = language === 'hi';
@@ -33,12 +34,15 @@ export function CAskAIModal({ isOpen, onClose, onGenerate, language }: CAskAIMod
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prompt.trim() || isGenerating) return;
+    setError('');
 
     setIsGenerating(true);
     try {
       await onGenerate(prompt);
       setPrompt('');
       onClose();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'AI service is temporarily unavailable. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -126,6 +130,7 @@ export function CAskAIModal({ isOpen, onClose, onGenerate, language }: CAskAIMod
                     </div>
                   )}
 
+                  {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
                   <div className="pt-2 flex gap-3">
                     <Button
                       type="button"

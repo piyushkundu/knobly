@@ -1,5 +1,7 @@
 'use client';
 
+import { aiClientError } from '@/lib/ai-limits';
+
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Play, History, Sparkles, Code2, Zap, Sun, Moon, Trash2, ChevronLeft, Save, FolderOpen, User, LogIn, LogOut, Globe, Bot, ChevronDown, X, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -473,13 +475,14 @@ export function PythonLab() {
         body: JSON.stringify({ prompt, language }),
       });
       if (!res.ok) {
-        throw new Error('Failed to generate code');
+        throw await aiClientError(res, 'Failed to generate code');
       }
       const data = await res.json();
       setCode(data.code);
       localStorage.setItem('python-code', data.code);
     } catch (err) {
       console.error('Failed to generate code:', err);
+      throw err;
     }
   };
 

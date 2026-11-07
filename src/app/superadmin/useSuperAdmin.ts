@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { auth, db } from '@/lib/firebase';
+import { adminFetch } from '@/lib/admin-fetch';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from 'firebase/auth';
 import { collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, query, where, orderBy, limit, serverTimestamp, writeBatch } from 'firebase/firestore';
 
@@ -185,7 +186,7 @@ export function useSuperAdmin() {
     };
     const deleteQuestion = async (id: string, testId: string) => {
         try {
-            const res = await fetch('/api/admin-delete', {
+            const res = await adminFetch('/api/admin-delete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'delete_question', questionId: id, testId })
@@ -201,7 +202,7 @@ export function useSuperAdmin() {
     const deleteAllQuestions = async (testId: string): Promise<string> => {
         if (!window.confirm('Delete ALL questions for this test? This cannot be undone.')) return 'cancelled';
         try {
-            const res = await fetch('/api/admin-delete', {
+            const res = await adminFetch('/api/admin-delete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'delete_all_questions', testId })
@@ -231,7 +232,7 @@ export function useSuperAdmin() {
     };
     const importQuestions = async (testId: string, text: string) => {
         // Route through server API (uses Firebase Admin SDK, bypasses Firestore Security Rules)
-        const res = await fetch('/api/admin-delete', {
+        const res = await adminFetch('/api/admin-delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'import_questions', testId, text }),

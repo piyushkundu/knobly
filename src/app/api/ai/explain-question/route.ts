@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { AI_LIMITS, aiChoice, aiErrorResponse, aiOptions, aiText, createAIClient, readAIRequest } from '@/lib/ai-request';
 
 const SARVAM_API_KEY = process.env.SARVAM_API_KEY || '';
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 
 export async function POST(req: NextRequest) {
     try {
-        const { question_text, options, correct_option, user_answer, language } = await req.json();
-
-        if (!question_text) {
-            return NextResponse.json({ error: 'Missing question text' }, { status: 400 });
-        }
+        const body = await readAIRequest(req);
+        const question_text = aiText(body, 'question_text', AI_LIMITS.prompt);
+        const options = aiOptions(body);
+        const correct_option = aiText(body, 'correct_option', AI_LIMITS.option, { optional: true, allowEmpty: true });
+        const user_answer = aiText(body, 'user_answer', AI_LIMITS.prompt, { optional: true, allowEmpty: true });
+        const selectedLanguage = aiChoice(body, 'language', ['Hindi', 'English', 'hi', 'en'] as const, 'Hindi');
+        const language = selectedLanguage === 'English' || selectedLanguage === 'en' ? 'English' : 'Hindi (in devanagari)';
+        const client = createAIClient(req.signal, { totalMs: 15000, attemptMs: 9000 });
 
         const prompt = `You are a friendly, deeply encouraging AI tutor on Knobly Web.
 A student needs the absolute simplest explanation for the following question:
@@ -27,9 +31,9 @@ Keep it short, engaging, and format it neatly with emojis or bullet points.
 CRITICAL REQUIREMENT: You MUST respond entirely in ${language || 'Hindi (in devanagari)'}. Make sure it is deeply easy to understand for a school student.`;
 
         // 1. Try Sarvam AI
-        try {
+        if (SARVAM_API_KEY) try {
             console.log('[AI Explain] Trying Sarvam AI...');
-            const sarvamRes = await fetch('https://api.sarvam.ai/v1/chat/completions', {
+            const sarvamRes = await client.fetch('https://api.sarvam.ai/v1/chat/completions', {
                  method: 'POST',
                  headers: {
                      'Content-Type': 'application/json',
@@ -42,8 +46,7 @@ CRITICAL REQUIREMENT: You MUST respond entirely in ${language || 'Hindi (in deva
                      max_tokens: 500,
                      temperature: 0.3
                  }),
-                 signal: AbortSignal.timeout(6000) // Fallback sooner if it hangs
-            });
+            }, 6000);
 
             if (sarvamRes.ok) {
                  const data = await sarvamRes.json();
@@ -53,7 +56,7 @@ CRITICAL REQUIREMENT: You MUST respond entirely in ${language || 'Hindi (in deva
                      return NextResponse.json({ explanation: text, provider: 'sarvam' });
                  }
             } else {
-                 console.warn('[AI Explain] Sarvam AI failed. Status:', sarvamRes.status, await sarvamRes.text().catch(()=>''));
+                 console.warn('[AI Explain] Sarvam AI failed. Status:', sarvamRes.status);
             }
         } catch (sarvamErr) {
             console.warn('[AI Explain] Sarvam AI fetch error:', sarvamErr);
@@ -61,7 +64,7 @@ CRITICAL REQUIREMENT: You MUST respond entirely in ${language || 'Hindi (in deva
 
         // 2. Fallback to Groq AI
         console.log('[AI Explain] Falling back to Groq AI...');
-        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const groqRes = await client.fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,9 +79,7 @@ CRITICAL REQUIREMENT: You MUST respond entirely in ${language || 'Hindi (in deva
         });
 
         if (!groqRes.ok) {
-            const errText = await groqRes.text();
-            console.error('[AI Explain] Groq AI fallback also failed:', errText);
-            return NextResponse.json({ error: 'Both AI providers failed' }, { status: 500 });
+            return aiErrorResponse(null);
         }
 
         const data = await groqRes.json();
@@ -86,7 +87,6 @@ CRITICAL REQUIREMENT: You MUST respond entirely in ${language || 'Hindi (in deva
         return NextResponse.json({ explanation: text || 'Sorry, I could not generate an explanation at this time.', provider: 'groq' });
 
     } catch (err) {
-        console.error('[AI Explain API] Error:', err);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return aiErrorResponse(err);
     }
 }

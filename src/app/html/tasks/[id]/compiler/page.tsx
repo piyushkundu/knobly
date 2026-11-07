@@ -5,6 +5,7 @@ import Editor, { BeforeMount, OnMount } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { PREVIEW_SANDBOX } from '@/lib/preview-sandbox';
 import {
     ArrowLeft, Play, Send, Award, CheckCircle2, XCircle, AlertCircle,
     Code2, Eye, RefreshCw, Trophy, Star, Target, TrendingUp,
@@ -1232,7 +1233,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                     srcDoc={processedPreviewHtml}
                                     className="w-full h-full border-0 bg-white"
                                     title="Student Live Output Preview"
-                                    sandbox="allow-scripts allow-modals allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                                    sandbox={PREVIEW_SANDBOX}
+                                    referrerPolicy="no-referrer"
                                 />
                             )}
 
@@ -1263,6 +1265,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                     </div>
                                     <iframe
                                         src={`/html-tasks/${task.file}`}
+                                        sandbox={PREVIEW_SANDBOX}
+                                        referrerPolicy="no-referrer"
                                         className="flex-1 w-full border-0 bg-white"
                                         title={`Target Task Reference ${task.title}`}
                                     />
@@ -1291,6 +1295,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                         <div className="flex-1 relative overflow-hidden">
                                             <iframe
                                                 src={`/html-tasks/${task.file}`}
+                                                sandbox={PREVIEW_SANDBOX}
+                                                referrerPolicy="no-referrer"
                                                 className="w-full h-full border-0 bg-white"
                                                 title="Compare Target Output"
                                             />
@@ -1324,7 +1330,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                                 srcDoc={processedPreviewHtml}
                                                 className="w-full h-full border-0 bg-white"
                                                 title="Compare Student Output"
-                                                sandbox="allow-scripts allow-modals allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                                                sandbox={PREVIEW_SANDBOX}
+                                                referrerPolicy="no-referrer"
                                             />
                                         </div>
                                     </div>
@@ -1381,6 +1388,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                         <div className="flex-1 relative bg-white">
                             <iframe
                                 src={`/html-tasks/${task.file}`}
+                                sandbox={PREVIEW_SANDBOX}
+                                referrerPolicy="no-referrer"
                                 className="w-full h-full border-0"
                                 title="Target Task Modal Preview"
                             />

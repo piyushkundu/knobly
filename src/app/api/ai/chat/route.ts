@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { aiChatMessages, aiErrorResponse, createAIClient, readAIRequest } from '@/lib/ai-request';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 
@@ -59,9 +60,10 @@ LANGUAGE RULE: If the user types in Hindi/Hinglish (e.g. "kya hai"), your respon
 
 export async function POST(req: NextRequest) {
     try {
-        const { messages } = await req.json();
+        const messages = aiChatMessages(await readAIRequest(req));
+        const client = createAIClient(req.signal, { totalMs: 20000, attemptMs: 20000 });
 
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const response = await client.fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -79,9 +81,7 @@ export async function POST(req: NextRequest) {
         });
 
         if (!response.ok) {
-            const err = await response.text();
-            console.error('Groq API error:', err);
-            return NextResponse.json({ error: 'AI service error' }, { status: 500 });
+            return aiErrorResponse(null);
         }
 
         const data = await response.json();
@@ -89,7 +89,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ reply });
     } catch (err) {
-        console.error('Chat API error:', err);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return aiErrorResponse(err);
     }
 }

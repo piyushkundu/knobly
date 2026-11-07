@@ -909,7 +909,7 @@ export default function HomePage() {
                             placeholder="Enter a name to display in greeting" />
                         </label>
                         <button onClick={saveUserName}
-                          className="self-start mt-1 px-3 py-1.5 rounded-xl bg-slate-700 text-white text-[10px] font-bold uppercase tracking-[0.18em] hover:bg-slate-600 transition-all">
+                          className="self-start mt-1 px-3 py-1.5 rounded-xl bg-slate-700 text-slate-50 text-[10px] font-bold uppercase tracking-[0.18em] hover:bg-slate-600 transition-all">
                           Save Guest Name
                         </button>
                       </div>

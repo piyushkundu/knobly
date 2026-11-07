@@ -1,24 +1,15 @@
 import { NextResponse } from 'next/server';
 import { generateCCode } from '@/lib/c-ai-service';
+import { AI_LIMITS, aiChoice, aiErrorResponse, aiText, createAIClient, readAIRequest } from '@/lib/ai-request';
 
 export async function POST(req: Request) {
   try {
-    const { prompt, language } = await req.json();
-
-    if (!prompt) {
-      return NextResponse.json(
-        { error: 'Prompt is required' },
-        { status: 400 }
-      );
-    }
-
-    const code = await generateCCode(prompt, language || 'en');
+    const body = await readAIRequest(req);
+    const prompt = aiText(body, 'prompt', AI_LIMITS.prompt);
+    const language = aiChoice(body, 'language', ['en', 'hi'] as const, 'en');
+    const code = await generateCCode(prompt, language, createAIClient(req.signal));
     return NextResponse.json({ code });
   } catch (error) {
-    console.error('C AI Generate Error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to generate code' },
-      { status: 500 }
-    );
+    return aiErrorResponse(error);
   }
 }

@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
+import { requireAdmin } from '@/lib/admin-api-auth';
 
 export async function POST(req: NextRequest) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const { action, testId, questionId, text } = await req.json();
         const db = getAdminDb();

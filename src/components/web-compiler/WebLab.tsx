@@ -15,6 +15,7 @@ import { WebSavedProjects } from './WebSavedProjects';
 import { WebEditorTab, DeviceMode, Language, SavedWebProject } from '@/types/web-compiler';
 import { useAuth } from '@/context/AuthContext';
 import LoginModal from '@/components/auth/LoginModal';
+import { createPreviewConsoleBridge } from '@/lib/preview-sandbox';
 
 import './web-compiler.css';
 
@@ -554,62 +555,8 @@ export function WebLab() {
 
     const consoleInjectionScript = `
 <script>
+${createPreviewConsoleBridge(window.location.origin)}
 (function() {
-  function serialize(arg) {
-    if (arg === null) return 'null';
-    if (arg === undefined) return 'undefined';
-    if (typeof arg === 'object') {
-      try { return JSON.stringify(arg); } catch(e) { return String(arg); }
-    }
-    return String(arg);
-  }
-
-  function sendLog(level, args) {
-    try {
-      var msg = Array.from(args).map(serialize).join(' ');
-      window.parent.postMessage({
-        type: 'KNOBLY_WEB_CONSOLE',
-        level: level,
-        message: msg,
-        time: new Date().toLocaleTimeString()
-      }, '*');
-    } catch(err) {}
-  }
-
-  var origLog = console.log;
-  var origWarn = console.warn;
-  var origError = console.error;
-  var origInfo = console.info;
-
-  console.log = function() { origLog.apply(console, arguments); sendLog('log', arguments); };
-  console.warn = function() { origWarn.apply(console, arguments); sendLog('warn', arguments); };
-  console.error = function() { origError.apply(console, arguments); sendLog('error', arguments); };
-  console.info = function() { origInfo.apply(console, arguments); sendLog('info', arguments); };
-
-  window.onerror = function(message, source, lineno, colno, error) {
-    sendLog('error', ['[Line ' + lineno + '] ' + message]);
-  };
-
-  window.addEventListener('message', function(ev) {
-    if (ev.data && ev.data.type === 'KNOBLY_EVAL_CMD') {
-      try {
-        var execFn = new Function('return (' + ev.data.code + ')');
-        var res = execFn();
-        window.parent.postMessage({
-          type: 'KNOBLY_EVAL_RESULT',
-          result: serialize(res),
-          error: null
-        }, '*');
-      } catch(err) {
-        window.parent.postMessage({
-          type: 'KNOBLY_EVAL_RESULT',
-          result: null,
-          error: err.message
-        }, '*');
-      }
-    }
-  });
-
   // Intercept anchor clicks
   document.addEventListener('click', function(e) {
     var a = e.target && e.target.closest ? e.target.closest('a, area') : null;

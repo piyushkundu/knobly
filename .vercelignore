@@ -1,0 +1,9 @@
+node_modules
+.next
+.env*
+service-account.json
+*.pem
+*.key
+PREVIEW-ARTIFACT.json
+build.log
+build-summary.json

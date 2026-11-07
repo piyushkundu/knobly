@@ -1,27 +1,30 @@
 import { AIExplanation } from '@/types/python';
+import { AIRequestError, createAIClient, type AIClient } from '@/lib/ai-request';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_API_KEY_ALT = process.env.GROQ_API_KEY_ALT;
 
-async function fetchWithFallback(url: string, options: RequestInit): Promise<Response> {
+async function fetchWithFallback(url: string, options: RequestInit, client: AIClient): Promise<Response> {
   const primaryKey = GROQ_API_KEY;
   const secondaryKey = GROQ_API_KEY_ALT;
   
   // Try with primary key first
-  let response = await fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      'Authorization': `Bearer ${primaryKey}`,
-    }
-  });
+  let response: Response | undefined;
+  try {
+    response = await client.fetch(url, {
+      ...options,
+      headers: { ...options.headers, 'Authorization': `Bearer ${primaryKey}` },
+    });
+  } catch (error) {
+    if (error instanceof AIRequestError && error.status === 408) throw error;
+  }
 
   // If failed (likely rate limit or quota), try fallback
-  if (!response.ok) {
+  if (!response?.ok) {
     const fallbackKey = secondaryKey || primaryKey;
     console.warn('Primary request failed. Attempting fallback model/key...');
     
-    let fallbackOptions = { ...options };
+    const fallbackOptions = { ...options };
     if (fallbackOptions.body && typeof fallbackOptions.body === 'string') {
       try {
         const bodyObj = JSON.parse(fallbackOptions.body);
@@ -34,7 +37,7 @@ async function fetchWithFallback(url: string, options: RequestInit): Promise<Res
       }
     }
 
-    response = await fetch(url, {
+    response = await client.fetch(url, {
       ...fallbackOptions,
       headers: {
         ...fallbackOptions.headers,
@@ -46,7 +49,7 @@ async function fetchWithFallback(url: string, options: RequestInit): Promise<Res
   return response;
 }
 
-export async function explainError(code: string, error: string, language: 'en' | 'hi'): Promise<AIExplanation> {
+export async function explainError(code: string, error: string, language: 'en' | 'hi', client: AIClient = createAIClient()): Promise<AIExplanation> {
   const isHindi = language === 'hi';
   
   const systemPrompt = isHindi
@@ -102,11 +105,10 @@ Provide exactly this JSON structure with your custom answers:
       temperature: 0.2,
       max_tokens: 1000,
     }),
-  });
+  }, client);
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error?.message || 'Failed to get AI explanation with both keys');
+    throw new AIRequestError(502, 'AI service is temporarily unavailable. Please try again.');
   }
 
   const data = await response.json();
@@ -116,7 +118,6 @@ Provide exactly this JSON structure with your custom answers:
     throw new Error('No response from AI');
   }
 
-  console.log('AI Response:', content);
 
   try {
     let jsonStr = content.trim();
@@ -143,7 +144,6 @@ Provide exactly this JSON structure with your custom answers:
     };
   } catch (parseErr) {
     console.error('Parse error:', parseErr);
-    console.error('Raw:', content);
     
     return {
       error_type: 'Error',
@@ -157,7 +157,7 @@ Provide exactly this JSON structure with your custom answers:
   }
 }
 
-export async function generateCode(prompt: string, language: 'en' | 'hi', mode?: 'python' | 'c' | 'web'): Promise<string> {
+export async function generateCode(prompt: string, language: 'en' | 'hi', mode?: 'python' | 'c' | 'web', client: AIClient = createAIClient()): Promise<string> {
   const isHindi = language === 'hi';
 
   // Detect if user is asking for Web / HTML or C language
@@ -198,11 +198,10 @@ export async function generateCode(prompt: string, language: 'en' | 'hi', mode?:
       temperature: 0.2,
       max_tokens: 1500,
     }),
-  });
+  }, client);
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error?.message || 'Failed to generate code with both keys');
+    throw new AIRequestError(502, 'AI service is temporarily unavailable. Please try again.');
   }
 
   const data = await response.json();
@@ -231,7 +230,7 @@ export async function generateCode(prompt: string, language: 'en' | 'hi', mode?:
   return cleanedContent.trim();
 }
 
-export async function explainWebCode(code: string, language: 'en' | 'hi', question?: string): Promise<{ explanation: string; how_to_fix: string; corrected_code: string }> {
+export async function explainWebCode(code: string, language: 'en' | 'hi', question?: string, client: AIClient = createAIClient()): Promise<{ explanation: string; how_to_fix: string; corrected_code: string }> {
   const isHindi = language === 'hi';
   const systemPrompt = isHindi
     ? `Tum ek friendly HTML/CSS/JavaScript web development teacher ho. Student ka HTML/CSS/JS code dekho aur use Hindi/Hinglish me explain karo. Code me agar koi galti hai ya improvement ka scope hai toh clearly samjhao. Output strictly JSON me do jisme "explanation", "how_to_fix", aur "corrected_code" (pura corrected HTML code) ho.`
@@ -252,14 +251,10 @@ export async function explainWebCode(code: string, language: 'en' | 'hi', questi
       temperature: 0.2,
       max_tokens: 1500,
     }),
-  });
+  }, client);
 
   if (!response.ok) {
-    return {
-      explanation: isHindi ? 'Code ko analyze karne me problem aayi.' : 'Could not analyze code at this moment.',
-      how_to_fix: 'Check tag closing & syntax',
-      corrected_code: code,
-    };
+    throw new AIRequestError(502, 'AI service is temporarily unavailable. Please try again.');
   }
 
   const data = await response.json();

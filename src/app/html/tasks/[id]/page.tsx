@@ -3,9 +3,13 @@
 import { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { PREVIEW_SANDBOX } from '@/lib/preview-sandbox';
+import { adminFetch } from '@/lib/admin-fetch';
+import { AdminTaskGate } from '@/components/auth/AdminTaskGate';
+import LoginModal from '@/components/auth/LoginModal';
 import { 
     ArrowLeft, Home, FileCode, ChevronLeft, ChevronRight, 
-    Lock, Shield, KeyRound, CheckCircle2, AlertCircle, RefreshCw
+    Lock, Shield, CheckCircle2, AlertCircle, RefreshCw
 } from 'lucide-react';
 
 const TASKS: Record<string, { title: string; file: string }> = {
@@ -39,11 +43,11 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
     const nextId = currentIndex < TASK_ORDER.length - 1 ? TASK_ORDER[currentIndex + 1] : null;
 
     const [unlocked, setUnlocked] = useState<boolean | null>(null);
-    const [adminPassword, setAdminPassword] = useState('');
+    const [showLoginModal, setShowLoginModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
-    const [showPasswordBox, setShowPasswordBox] = useState(false);
+    const [showAdminControls, setShowAdminControls] = useState(false);
 
     const handleGoBack = () => {
         if (typeof window !== 'undefined') {
@@ -123,11 +127,10 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
         setLoading(true);
 
         try {
-            const res = await fetch('/api/html-tasks', {
+            const res = await adminFetch('/api/html-tasks', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    password: adminPassword,
                     taskId: id,
                     action: 'unlock',
                 }),
@@ -135,19 +138,13 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
 
             const data = await res.json();
 
-            if (!res.ok) {
-                setErrorMsg(data.error || 'Password verification failed');
+            if (!res.ok || data.success !== true || !Array.isArray(data.unlockedTasks) ||
+                !data.unlockedTasks.every((taskId: unknown) => typeof taskId === 'string') || !data.unlockedTasks.includes(id)) {
+                setErrorMsg(data.error || 'Task unlock could not be confirmed. Please try again.');
             } else {
                 // Update localStorage with server-synced unlocked tasks
                 try {
-                    if (Array.isArray(data.unlockedTasks)) {
-                        localStorage.setItem('knobly_unlocked_html_tasks', JSON.stringify(data.unlockedTasks));
-                    } else {
-                        const cached = localStorage.getItem('knobly_unlocked_html_tasks');
-                        let list: string[] = cached ? JSON.parse(cached) : [];
-                        if (!list.includes(id)) list.push(id);
-                        localStorage.setItem('knobly_unlocked_html_tasks', JSON.stringify(list));
-                    }
+                    localStorage.setItem('knobly_unlocked_html_tasks', JSON.stringify(data.unlockedTasks));
                 } catch (e) {}
 
                 setSuccessMsg('Task unlocked successfully!');
@@ -155,8 +152,8 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
                     setUnlocked(true);
                 }, 600);
             }
-        } catch {
-            setErrorMsg('Network error. Please try again.');
+        } catch (error) {
+            setErrorMsg(error instanceof Error ? error.message : 'Network error. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -239,7 +236,7 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
                             This practice task is locked to follow the step-by-step syllabus. Complete the related tags in the Elements guide first or request your instructor to unlock it.
                         </p>
 
-                        {!showPasswordBox ? (
+                        {!showAdminControls ? (
                             <div className="space-y-3">
                                 <Link
                                     href="/html/elements"
@@ -255,7 +252,7 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
 
                                     {/* Small Lock Icon for Admin */}
                                     <button
-                                        onClick={() => setShowPasswordBox(true)}
+                                        onClick={() => setShowAdminControls(true)}
                                         className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-amber-700 transition-colors p-1"
                                         title="Admin Unlock"
                                     >
@@ -265,63 +262,55 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
                                 </div>
                             </div>
                         ) : (
-                            <form onSubmit={handleUnlockSubmit} className="space-y-3 text-left pt-2 border-t border-slate-100">
+                            <div className="space-y-3 text-left pt-2 border-t border-slate-100">
                                 <div className="flex items-center justify-between">
                                     <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                                         <Shield size={13} className="text-amber-600" />
-                                        <span>Enter Admin Password</span>
+                                        <span>Admin Task Control</span>
                                     </label>
                                     <button
                                         type="button"
-                                        onClick={() => setShowPasswordBox(false)}
+                                        onClick={() => setShowAdminControls(false)}
                                         className="text-[11px] text-slate-400 hover:text-slate-600"
                                     >
                                         Cancel
                                     </button>
                                 </div>
 
-                                {errorMsg && (
-                                    <div className="p-2.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
-                                        <AlertCircle size={14} className="text-red-500 shrink-0" />
-                                        <span>{errorMsg}</span>
-                                    </div>
-                                )}
+                                <AdminTaskGate onSignIn={() => setShowLoginModal(true)}>
+                                    <form onSubmit={handleUnlockSubmit} className="space-y-3">
+                                        <p className="text-xs text-slate-500">Signed in as administrator. Unlocking makes this task available to all students.</p>
+                                        {errorMsg && (
+                                            <div className="p-2.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
+                                                <AlertCircle size={14} className="text-red-500 shrink-0" />
+                                                <span>{errorMsg}</span>
+                                            </div>
+                                        )}
 
-                                {successMsg && (
-                                    <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 flex items-center gap-2">
-                                        <CheckCircle2 size={14} className="text-emerald-500 shrink-0" />
-                                        <span>{successMsg}</span>
-                                    </div>
-                                )}
+                                        {successMsg && (
+                                            <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 flex items-center gap-2">
+                                                <CheckCircle2 size={14} className="text-emerald-500 shrink-0" />
+                                                <span>{successMsg}</span>
+                                            </div>
+                                        )}
 
-                                <div className="relative">
-                                    <input
-                                        type="password"
-                                        value={adminPassword}
-                                        onChange={(e) => setAdminPassword(e.target.value)}
-                                        placeholder="Admin password..."
-                                        autoFocus
-                                        required
-                                        className="w-full pl-3 pr-10 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                    />
-                                    <KeyRound size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={loading || !adminPassword}
-                                    className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
-                                >
-                                    {loading ? (
-                                        <>
-                                            <RefreshCw size={13} className="animate-spin" />
-                                            <span>Verifying...</span>
-                                        </>
-                                    ) : (
-                                        <span>Unlock Task Now</span>
-                                    )}
-                                </button>
-                            </form>
+                                        <button
+                                            type="submit"
+                                            disabled={loading}
+                                            className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
+                                        >
+                                            {loading ? (
+                                                <>
+                                                    <RefreshCw size={13} className="animate-spin" />
+                                                    <span>Saving...</span>
+                                                </>
+                                            ) : (
+                                                <span>Unlock Task Now</span>
+                                            )}
+                                        </button>
+                                    </form>
+                                </AdminTaskGate>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -330,6 +319,8 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
                 <div className="flex-1 bg-white relative">
                     <iframe
                         src={`/html-tasks/${task.file}`}
+                        sandbox={PREVIEW_SANDBOX}
+                        referrerPolicy="no-referrer"
                         className="w-full h-[calc(100vh-49px)] border-0"
                         title={task.title}
                     />
@@ -348,6 +339,7 @@ export default function TaskPage({ params }: { params: Promise<{ id: string }> }
                     </Link>
                 </div>
             )}
+            <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
         </div>
     );
 }

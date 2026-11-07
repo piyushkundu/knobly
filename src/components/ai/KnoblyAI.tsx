@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { ArrowUp, X, Minus, ArrowUpRight, FileText, Download, Sparkles } from 'lucide-react';
+import { SafeAIContent } from './SafeAIContent';
+import { AI_LIMITS, buildAIChatHistory } from '@/lib/ai-limits';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface Message {
@@ -497,7 +499,7 @@ export default function KnoblyAI() {
     const isTestPage = pathname?.startsWith('/test/');
     const isPythonLabPage = pathname === '/python-lab' || pathname === '/c-lab';
     const isCompilerPage = pathname?.includes('/compiler') || pathname?.startsWith('/html/tasks');
-    if (isTestPage || isPythonLabPage || isCompilerPage) return null;
+    const isHiddenPage = Boolean(isTestPage || isPythonLabPage || isCompilerPage);
 
     const [open, setOpen] = useState(false);
     const [minimized, setMinimized] = useState(false);
@@ -543,11 +545,12 @@ export default function KnoblyAI() {
     // ── Theme detection ──
     useEffect(() => {
         const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+        if (isHiddenPage) return;
         check();
         const obs = new MutationObserver(check);
         obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
         return () => obs.disconnect();
-    }, []);
+    }, [isHiddenPage]);
     const T = isDark ? DARK : LIGHT;
 
     // ── Click outside ──
@@ -558,37 +561,44 @@ export default function KnoblyAI() {
                 !triggerWrapRef.current.contains(e.target as Node))
                 setOpen(false);
         };
+        if (isHiddenPage) return;
         if (open) document.addEventListener('mousedown', handler);
         return () => document.removeEventListener('mousedown', handler);
-    }, [open]);
+    }, [open, isHiddenPage]);
 
     // ── Focus input ──
     useEffect(() => {
-        if (open && !minimized) setTimeout(() => inputRef.current?.focus(), 320);
-    }, [open, minimized]);
+        if (isHiddenPage || !open || minimized) return;
+        const timeout = setTimeout(() => inputRef.current?.focus(), 320);
+        return () => clearTimeout(timeout);
+    }, [open, minimized, isHiddenPage]);
 
     // ── Scroll to bottom ──
     useEffect(() => {
         const lastMsg = messages[messages.length - 1];
+        if (isHiddenPage) return;
         if (loading || (lastMsg && lastMsg.role === 'user')) {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [messages, loading]);
+    }, [messages, loading, isHiddenPage]);
 
     // ── External toggle ──
     useEffect(() => {
         const h = () => setOpen(p => !p);
+        if (isHiddenPage) return;
         window.addEventListener('toggle-knobly-ai', h);
         return () => window.removeEventListener('toggle-knobly-ai', h);
-    }, []);
+    }, [isHiddenPage]);
 
     // Peak Behavior & Bubble Cycle
     useEffect(() => {
-        if (open) return;
+        if (open || isHiddenPage) return;
         
         let msgTimeout: NodeJS.Timeout;
         let swapTimeout: NodeJS.Timeout;
         let hideTimeout: NodeJS.Timeout;
+        let fadeTimeout: NodeJS.Timeout;
+        let peekTimeout: NodeJS.Timeout;
 
         const cycle = () => {
             setIsPeekMode(false); // Pop out completely
@@ -602,7 +612,7 @@ export default function KnoblyAI() {
             // 2 seconds AFTER "Hi" is visible (2.5s total), swap to Ask me anything
             swapTimeout = setTimeout(() => {
                 setBubbleVis(false); // Fade out briefly
-                setTimeout(() => {
+                fadeTimeout = setTimeout(() => {
                     setBubbleIdx(1); // Set to "Ask me anything"
                     setBubbleVis(true);
                 }, 300); // 300ms fade duration
@@ -611,7 +621,7 @@ export default function KnoblyAI() {
             // Stay fully out for 10 seconds total, then hide again
             hideTimeout = setTimeout(() => {
                 setBubbleVis(false); // Hide message bubble completely
-                setTimeout(() => setIsPeekMode(true), 400); // Slide robot fully out of view
+                peekTimeout = setTimeout(() => setIsPeekMode(true), 400); // Slide robot fully out of view
             }, 10000);
         };
 
@@ -627,8 +637,10 @@ export default function KnoblyAI() {
             clearTimeout(msgTimeout); 
             clearTimeout(swapTimeout);
             clearTimeout(hideTimeout); 
+            clearTimeout(fadeTimeout);
+            clearTimeout(peekTimeout);
         };
-    }, [open]);
+    }, [open, isHiddenPage]);
 
     const handleClick = useCallback(() => {
         playClickSound();
@@ -647,18 +659,29 @@ export default function KnoblyAI() {
     const send = useCallback(async (text?: string) => {
         const msg = (text ?? input).trim();
         if (!msg || loading) return;
+        if (msg.length > AI_LIMITS.chatMessage) {
+            setMessages(p => [...p, { role: 'assistant', content: `Message is too long (maximum ${AI_LIMITS.chatMessage} characters).` }]);
+            return;
+        }
         setInput('');
         const userMsg: Message = { role: 'user', content: msg };
         setMessages(p => [...p, userMsg]);
         setLoading(true);
         try {
-            const history = [...messages, userMsg].slice(-10);
+            const history = buildAIChatHistory([...messages, userMsg]);
             const res = await fetch('/api/ai/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ messages: history.map(m => ({ role: m.role, content: m.content })) }),
             });
             const data = await res.json();
+            if (!res.ok) {
+                setMessages(p => [...p, {
+                    role: 'assistant',
+                    content: typeof data.error === 'string' ? data.error : 'AI service is temporarily unavailable. Please try again.',
+                }]);
+                return;
+            }
             const reply: string = data.reply ?? 'Kuch galat hua. Dobara try karo.';
             const { clean, intent, navOptions, relatedTopics } = parseAIResponse(reply);
 
@@ -692,6 +715,9 @@ export default function KnoblyAI() {
             setLoading(false);
         }
     }, [input, loading, messages, navigateTo]);
+
+    // Every render must call the same Hooks, including routes that hide the AI.
+    if (isHiddenPage) return null;
 
     const onKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
@@ -1021,11 +1047,7 @@ export default function KnoblyAI() {
                                             } : {
                                                 color: T.msg, maxWidth: '100%', fontSize: 13, lineHeight: 1.65, background: 'transparent',
                                             }}>
-                                                <div dangerouslySetInnerHTML={{
-                                                    __html: m.content
-                                                        .replace(/\*\*(.*?)\*\*/g, `<strong style="color:${isDark ? '#e9d5ff' : '#4c1d95'}">$1</strong>`)
-                                                        .replace(/\n/g, '<br/>')
-                                                }} />
+                                                <SafeAIContent content={m.content} isDark={isDark} />
                                             </div>
                                             {m.navOptions && m.navOptions.length > 0 && (
                                                 <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -1186,6 +1208,7 @@ export default function KnoblyAI() {
                                 <textarea
                                     ref={inputRef as React.RefObject<HTMLTextAreaElement>}
                                     value={input}
+                                    maxLength={AI_LIMITS.chatMessage}
                                     onChange={e => {
                                         setInput(e.target.value);
                                         e.target.style.height = '46px';

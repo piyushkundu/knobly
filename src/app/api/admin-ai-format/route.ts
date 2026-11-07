@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/admin-api-auth';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 
@@ -113,6 +114,9 @@ Mark correct answer with *. Separate questions with ###---###. Every question MU
 
 
 export async function POST(req: NextRequest) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const body = await req.json();
         const { input, mode = 'format', num_questions = 5 } = body;

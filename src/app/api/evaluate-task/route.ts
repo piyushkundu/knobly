@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { AI_LIMITS, AIRequestError, aiErrorResponse, aiText, createAIClient, readAIRequest, type AIClient } from '@/lib/ai-request';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_API_KEY_ALT = process.env.GROQ_API_KEY_ALT;
@@ -444,7 +445,8 @@ function generateRuleBasedFeedback(taskTitle: string, deterministic: Determinist
 async function fetchAiTeacherFeedback(
   taskTitle: string,
   deterministic: DeterministicEvaluation,
-  studentSnippet: string
+  studentSnippet: string,
+  client: AIClient,
 ): Promise<{ feedback: string; strengths: string[]; improvements: string[] } | null> {
   const keys = [GROQ_API_KEY, GROQ_API_KEY_ALT].filter(Boolean) as string[];
   if (keys.length === 0) return null;
@@ -472,7 +474,7 @@ ${studentSnippet.slice(0, 400)}`;
   for (const key of keys) {
     for (const model of models) {
       try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const response = await client.fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -488,8 +490,7 @@ ${studentSnippet.slice(0, 400)}`;
             max_tokens: 300,
             response_format: { type: 'json_object' }
           }),
-          signal: AbortSignal.timeout(4000) // 4s timeout prevents hanging
-        });
+        }, 4000);
 
         if (response.ok) {
           const data = await response.json();
@@ -521,22 +522,12 @@ ${studentSnippet.slice(0, 400)}`;
 
 export async function POST(req: Request) {
   try {
-    const { taskId, studentCode } = await req.json();
-
-    if (!taskId || typeof studentCode !== 'string') {
-      return NextResponse.json(
-        { error: 'Task ID and student code are required' },
-        { status: 400 }
-      );
-    }
-
-    const task = TASKS_MAP[String(taskId)];
-    if (!task) {
-      return NextResponse.json(
-        { error: `Task #${taskId} not found` },
-        { status: 404 }
-      );
-    }
+    const body = await readAIRequest(req);
+    const taskId = aiText(body, 'taskId', 30);
+    const studentCode = aiText(body, 'studentCode', AI_LIMITS.code, { allowEmpty: true });
+    if (!Object.hasOwn(TASKS_MAP, taskId)) throw new AIRequestError(404, 'Task not found.');
+    const task = TASKS_MAP[taskId];
+    const client = createAIClient(req.signal, { totalMs: 8000, attemptMs: 4000 });
 
     // 1. Calculate deterministic score & rubric (100% consistent across submits)
     const deterministic = analyzeCodeDeterministically(task, studentCode);
@@ -544,7 +535,7 @@ export async function POST(req: Request) {
     // 2. Try fast AI Teacher for warm personalized Hinglish feedback
     let teacherFeedback: { feedback: string; strengths: string[]; improvements: string[] } | null = null;
     try {
-      teacherFeedback = await fetchAiTeacherFeedback(task.title, deterministic, studentCode);
+      if (studentCode.trim()) teacherFeedback = await fetchAiTeacherFeedback(task.title, deterministic, studentCode, client);
     } catch (aiErr) {
       console.warn('[AI Eval] AI service error, falling back to rule-based engine:', aiErr);
     }
@@ -573,24 +564,6 @@ export async function POST(req: Request) {
     });
 
   } catch (error) {
-    console.error('Task Evaluation Unexpected Error:', error);
-
-    // Even in case of unexpected exceptions, never crash or leave student with nothing!
-    return NextResponse.json(
-      {
-        evaluation: {
-          score: 50,
-          grade: 'C',
-          tagAnalysis: { used: [], missing: [], extra: [] },
-          feedback: 'Code receive ho gaya hai. Dobara submit karke detailed review le sakte hain.',
-          strengths: ['Code submit ho chuka hai.'],
-          improvements: ['HTML tags aur structure ko re-check karein.'],
-          detailedBreakdown: { tagUsage: 20, structure: 10, contentRelevance: 10, codeQuality: 5, creativity: 5 }
-        },
-        taskId: '1',
-        taskTitle: 'HTML Task'
-      },
-      { status: 200 }
-    );
+    return aiErrorResponse(error);
   }
 }

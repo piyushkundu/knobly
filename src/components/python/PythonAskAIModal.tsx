@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Sparkles, X, Loader2, Code2, HelpCircle, BookOpen, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { AI_LIMITS } from '@/lib/ai-limits';
 
 type AIModeType = 'code' | 'question' | 'explain';
 type LangType = 'en' | 'hi';
@@ -25,6 +26,7 @@ const MODES: { id: AIModeType; icon: typeof Code2; label_en: string; label_hi: s
 export function PythonAskAIModal({ isOpen, onClose, onGenerate, language = 'en' }: PythonAskAIModalProps) {
   const [activeMode, setActiveMode] = useState<AIModeType>('code');
   const [prompt, setPrompt] = useState('');
+  const [error, setError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiLang, setAiLang] = useState<LangType>(language);
   const [progLang, setProgLang] = useState<ProgLangType>('python');
@@ -35,9 +37,14 @@ export function PythonAskAIModal({ isOpen, onClose, onGenerate, language = 'en' 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prompt.trim() || isGenerating) return;
+    setError('');
 
     // For 'explain' mode → navigate to topic explainer
     if (activeMode === 'explain') {
+      if (prompt.trim().length > AI_LIMITS.topic) {
+        setError(`Topic is too long (maximum ${AI_LIMITS.topic} characters).`);
+        return;
+      }
       const slug = encodeURIComponent(prompt.trim());
       const lang = aiLang;
       onClose();
@@ -67,11 +74,15 @@ export function PythonAskAIModal({ isOpen, onClose, onGenerate, language = 'en' 
         }
       }
 
+      if (finalPrompt.length > AI_LIMITS.prompt) {
+        setError(`Prompt is too long (maximum ${AI_LIMITS.prompt} characters, including question instructions).`);
+        return;
+      }
       await onGenerate(finalPrompt);
       setPrompt('');
       onClose();
     } catch (error) {
-      console.error('Failed:', error);
+      setError(error instanceof Error ? error.message : 'AI service is temporarily unavailable. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -269,6 +280,7 @@ export function PythonAskAIModal({ isOpen, onClose, onGenerate, language = 'en' 
                 </div>
               )}
 
+              {error && <p role="alert" className="mb-3 text-sm text-red-500">{error}</p>}
               <div className="flex justify-end gap-2.5">
                 <button
                   type="button"

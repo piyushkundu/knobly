@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { aiClientError } from '@/lib/ai-limits';
 import {
   Sparkles, X, Wand2, Lightbulb, Wrench, Check, Copy,
   ArrowRight, Loader2, MessageSquare
@@ -68,7 +69,7 @@ export function WebAIAssistant({
       });
 
       if (!res.ok) {
-        throw new Error('Failed to generate web code');
+        throw await aiClientError(res, 'Failed to generate web code');
       }
 
       const data = await res.json();
@@ -102,7 +103,7 @@ export function WebAIAssistant({
       });
 
       if (!res.ok) {
-        throw new Error('Failed to explain code');
+        throw await aiClientError(res, 'Failed to explain code');
       }
 
       const data = await res.json();
@@ -136,7 +137,7 @@ export function WebAIAssistant({
       });
 
       if (!res.ok) {
-        throw new Error('Failed to debug code');
+        throw await aiClientError(res, 'Failed to debug code');
       }
 
       const data = await res.json();

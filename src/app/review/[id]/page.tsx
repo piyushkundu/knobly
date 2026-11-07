@@ -225,7 +225,8 @@ export default function ReviewPage() {
                 const data = await res.json();
                 setAiExplanations(prev => ({ ...prev, [q.id]: data.explanation }));
             } else {
-                setAiExplanations(prev => ({ ...prev, [q.id]: '⚠️ AI failed to generate an explanation.' }));
+                const data = await res.json().catch(() => ({}));
+                setAiExplanations(prev => ({ ...prev, [q.id]: typeof data.error === 'string' ? data.error : 'AI failed to generate an explanation. Please try again.' }));
             }
         } catch (err) {
             setAiExplanations(prev => ({ ...prev, [q.id]: '⚠️ Network error.' }));

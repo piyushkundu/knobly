@@ -3,11 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { getAdminDb } from '@/lib/firebase-admin';
+import { requireAdmin } from '@/lib/admin-api-auth';
 
 // Force dynamic — serverless function must always execute live and not be statically cached
 export const dynamic = 'force-dynamic';
 
-const ADMIN_PASSWORD = '85338533';
 const ALL_TASK_IDS = ['1', '2', '3', '4', '5', '5.0', '5.1', '5.2', '5.3', '5.4', '6', '7', '8', '9', '10', '11', 'test-1'];
 
 // Persistent in-memory cache across requests within the same warm lambda
@@ -17,14 +17,20 @@ let memoryUnlockedTasks: string[] | null = null;
 const LOCAL_DATA_FILE = path.join(process.cwd(), 'data', 'html-tasks-state.json');
 const TMP_DATA_FILE = path.join(os.tmpdir(), 'html-tasks-state.json');
 
+function readStoredTasks(value: unknown): string[] | null {
+    if (!Array.isArray(value) || !value.every(id => typeof id === 'string' || (typeof id === 'number' && Number.isFinite(id)))) {
+        return null;
+    }
+    // Preserve existing IDs, including legacy entries, without migrating data.
+    return value.map(String);
+}
+
 function tryReadFile(filePath: string): string[] | null {
     try {
         if (fs.existsSync(filePath)) {
             const raw = fs.readFileSync(filePath, 'utf-8');
             const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed.unlockedTasks)) {
-                return parsed.unlockedTasks.map(String);
-            }
+            return readStoredTasks(parsed?.unlockedTasks);
         }
     } catch {
         // Ignore read errors
@@ -55,9 +61,7 @@ async function fetchUnlockedTasksFromFirestore(): Promise<string[] | null> {
         const docSnap = await docRef.get();
         if (docSnap.exists) {
             const data = docSnap.data();
-            if (Array.isArray(data?.unlockedTasks)) {
-                return data.unlockedTasks.map(String);
-            }
+            return readStoredTasks(data?.unlockedTasks);
         }
     } catch (err) {
         console.warn('[HTML Tasks API] Firestore read fallback:', err);
@@ -66,88 +70,58 @@ async function fetchUnlockedTasksFromFirestore(): Promise<string[] | null> {
 }
 
 /**
- * Persist unlocked tasks to Firestore (Permanent Cloud DB)
+ * Read trusted server caches without accepting client-provided state.
  */
-async function saveUnlockedTasksToFirestore(tasks: string[]): Promise<boolean> {
-    try {
-        const db = getAdminDb();
-        const docRef = db.collection('app_settings').doc('html_tasks');
-        await docRef.set({
-            unlockedTasks: tasks,
-            updatedAt: new Date().toISOString()
-        }, { merge: true });
-        return true;
-    } catch (err) {
-        console.error('[HTML Tasks API] Firestore write error:', err);
-        return false;
-    }
+function getTrustedFallback(): string[] {
+    if (memoryUnlockedTasks !== null) return [...memoryUnlockedTasks];
+    return tryReadFile(LOCAL_DATA_FILE) ?? tryReadFile(TMP_DATA_FILE) ?? ['1', '2'];
 }
 
 /**
  * Retrieve unlocked tasks using a multi-layer strategy:
  * 1. Firestore (Cloud Database - Single Source of Truth, permanent)
  * 2. In-memory cache
- * 3. Client cookie (if request provided)
- * 4. Local file / /tmp
+ * 3. Local file / /tmp
  */
-async function getUnlockedTasks(req?: NextRequest): Promise<string[]> {
+async function getUnlockedTasks(): Promise<string[]> {
     // 1. Try reading from Firestore first (guarantees cross-instance consistency on Vercel)
     const firestoreTasks = await fetchUnlockedTasksFromFirestore();
     if (firestoreTasks !== null) {
         memoryUnlockedTasks = firestoreTasks;
-        // Also sync local file & /tmp as backup
-        tryWriteFile(LOCAL_DATA_FILE, { unlockedTasks: firestoreTasks });
-        tryWriteFile(TMP_DATA_FILE, { unlockedTasks: firestoreTasks });
         return firestoreTasks;
     }
 
     // 2. In-memory warm cache
-    if (memoryUnlockedTasks !== null && memoryUnlockedTasks.length > 0) {
-        return memoryUnlockedTasks;
-    }
-
-    // 3. Try reading from cookie if present in request
-    if (req) {
-        const cookie = req.cookies.get('knobly_unlocked_tasks');
-        if (cookie?.value) {
-            try {
-                const parsed = JSON.parse(decodeURIComponent(cookie.value));
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    const cookieTasks = parsed.map(String);
-                    memoryUnlockedTasks = cookieTasks;
-                    return cookieTasks;
-                }
-            } catch {}
-        }
-    }
-
-    // 4. Try reading from local data file (dev) or /tmp (Vercel)
-    const local = tryReadFile(LOCAL_DATA_FILE);
-    if (local !== null) {
-        memoryUnlockedTasks = local;
-        return local;
-    }
-
-    const tmp = tryReadFile(TMP_DATA_FILE);
-    if (tmp !== null) {
-        memoryUnlockedTasks = tmp;
-        return tmp;
-    }
-
-    // Default: Tasks 1 and 2 unlocked initially if no configuration exists yet
-    const defaults = ['1', '2'];
-    memoryUnlockedTasks = defaults;
-    return defaults;
+    // Use only server-owned fallback state; cookies cannot unlock shared tasks.
+    const fallback = getTrustedFallback();
+    memoryUnlockedTasks = fallback;
+    return fallback;
 }
 
 /**
- * Persist unlocked tasks across all storage layers (Firestore, Memory, File, /tmp)
+ * Commit the admin change atomically, then refresh best-effort server caches.
  */
-async function persistUnlockedTasks(tasks: string[]) {
-    memoryUnlockedTasks = tasks;
+async function updateUnlockedTasks(taskId: string, action: 'lock' | 'unlock'): Promise<string[]> {
+    const db = getAdminDb();
+    const docRef = db.collection('app_settings').doc('html_tasks');
+    const tasks = await db.runTransaction(async transaction => {
+        const snapshot = await transaction.get(docRef);
+        const existing = snapshot.exists
+            ? readStoredTasks(snapshot.data()?.unlockedTasks)
+            : getTrustedFallback();
+        if (existing === null) throw new Error('Invalid stored task state');
 
-    // 1. Save to Cloud Firestore (Primary permanent storage)
-    await saveUnlockedTasksToFirestore(tasks);
+        const updated = taskId === 'all'
+            ? (action === 'lock' ? [] : [...ALL_TASK_IDS])
+            : action === 'lock'
+                ? existing.filter(id => id !== taskId)
+                : existing.includes(taskId) ? [...existing] : [...existing, taskId];
+        transaction.set(docRef, { unlockedTasks: updated, updatedAt: new Date().toISOString() }, { merge: true });
+        return updated;
+    });
+
+    // Update caches only after the authoritative transaction has committed.
+    memoryUnlockedTasks = tasks;
 
     // 2. Save to local data file (Local dev)
     const payload = { unlockedTasks: tasks };
@@ -157,12 +131,13 @@ async function persistUnlockedTasks(tasks: string[]) {
     if (!localSaved) {
         tryWriteFile(TMP_DATA_FILE, payload);
     }
+    return tasks;
 }
 
 // GET: Return list of unlocked tasks
-export async function GET(req: NextRequest) {
+export async function GET() {
     try {
-        const unlocked = await getUnlockedTasks(req);
+        const unlocked = await getUnlockedTasks();
         const res = NextResponse.json({ 
             success: true, 
             unlockedTasks: unlocked 
@@ -186,46 +161,32 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// POST: Unlock or lock task(s) - verified with server-side password only
+// POST: Only authenticated admins may change shared task availability.
 export async function POST(req: NextRequest) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
-        let body: any = {};
+        let body: unknown;
         try {
             body = await req.json();
         } catch {
-            return NextResponse.json({ error: 'Invalid JSON request' }, { status: 400 });
+            return NextResponse.json({ success: false, error: 'Invalid JSON request' }, { status: 400 });
         }
 
-        const { password, taskId, action } = body;
-
-        // Verify password strictly on server side
-        if (String(password).trim() !== ADMIN_PASSWORD) {
-            return NextResponse.json({ error: 'Galat Password! (Incorrect admin password)' }, { status: 401 });
+        if (!body || typeof body !== 'object' || Array.isArray(body)) {
+            return NextResponse.json({ success: false, error: 'Invalid task update request' }, { status: 400 });
         }
-
-        let currentUnlocked = [...(await getUnlockedTasks(req))];
-
-        if (taskId === 'all') {
-            if (action === 'lock') {
-                currentUnlocked = [];
-            } else {
-                currentUnlocked = [...ALL_TASK_IDS];
-            }
-        } else if (taskId !== undefined && taskId !== null) {
-            const idStr = String(taskId).trim();
-            if (action === 'lock') {
-                currentUnlocked = currentUnlocked.filter(id => id !== idStr);
-            } else {
-                if (!currentUnlocked.includes(idStr)) {
-                    currentUnlocked.push(idStr);
-                }
-            }
-        } else {
-            return NextResponse.json({ error: 'Task ID is required' }, { status: 400 });
+        const { taskId, action } = body as Record<string, unknown>;
+        if (typeof taskId !== 'string' || (taskId !== 'all' && !ALL_TASK_IDS.includes(taskId))) {
+            return NextResponse.json({ success: false, error: 'Invalid task ID' }, { status: 400 });
+        }
+        if (action !== 'lock' && action !== 'unlock') {
+            return NextResponse.json({ success: false, error: 'Action must be lock or unlock' }, { status: 400 });
         }
 
         // Save permanently to Firestore + in-memory + filesystem
-        await persistUnlockedTasks(currentUnlocked);
+        const currentUnlocked = await updateUnlockedTasks(taskId, action);
 
         const res = NextResponse.json({
             success: true,
@@ -248,9 +209,8 @@ export async function POST(req: NextRequest) {
     } catch (err) {
         console.error('[HTML Tasks API] POST error:', err);
         return NextResponse.json({ 
-            success: true, 
-            unlockedTasks: memoryUnlockedTasks || [],
-            message: 'Updated' 
-        });
+            success: false,
+            error: 'Unable to save task status. Please try again.'
+        }, { status: 503 });
     }
 }
