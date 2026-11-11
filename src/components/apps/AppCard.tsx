@@ -18,7 +18,7 @@ export default function AppCard({ app, isFavourite, isNew, activeNav, onClick, o
         <div
             onClick={onClick}
             onContextMenu={onContextMenu}
-            className={`glass-card app-card rounded-[22px] flex flex-col items-center justify-center gap-2 cursor-pointer group relative overflow-hidden active-press ${isComingSoon ? 'opacity-50 pointer-events-auto cursor-not-allowed' : ''}`}
+            className={`glass-card app-card rounded-[22px] flex flex-col items-center justify-center gap-2 cursor-pointer group relative overflow-hidden active-press ${isComingSoon ? 'pointer-events-auto cursor-not-allowed' : ''}`}
             data-tilt
             data-tilt-scale="1.05"
         >
@@ -29,21 +29,21 @@ export default function AppCard({ app, isFavourite, isNew, activeNav, onClick, o
             )}
 
             {isNew && (
-                <div className="absolute top-2 left-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded z-20 shadow-md">
+                <div className="theme-fixed absolute top-2 left-2 bg-red-700 text-white text-[8px] font-bold px-1.5 py-0.5 rounded z-20 shadow-md">
                     NEW
                 </div>
             )}
 
             {isComingSoon && (
                 <div className="absolute top-2 right-2 z-20">
-                    <i className="ph-bold ph-lock-simple text-gray-500 text-xs" />
+                    <i className="ph-bold ph-lock-simple text-gray-400 text-xs" />
                 </div>
             )}
 
             <div
                 className={`w-12 h-12 sm:w-16 sm:h-16 app-icon-tile flex items-center justify-center transition-transform duration-300 bg-black/40 shadow-inner border z-10 backdrop-blur-md group-hover:scale-[1.03] rounded-full app-icon-accent-cyan ${app.borderClass}`}
             >
-                <i className={`${app.icon} devicon-fix ${app.color}`} />
+                <i className={`${app.icon} devicon-fix app-color-icon ${app.color}`} />
             </div>
 
             <div className="text-center z-10 pointer-events-none">
@@ -51,12 +51,12 @@ export default function AppCard({ app, isFavourite, isNew, activeNav, onClick, o
                     {app.name}
                 </h3>
                 {app.id === 'notes' && (
-                    <div className="text-[8px] text-emerald-400 mt-0.5 uppercase tracking-[0.16em]">
+                    <div className="app-saved-label text-[8px] text-emerald-400 mt-0.5 uppercase tracking-[0.16em]">
                         ● Saved
                     </div>
                 )}
                 {activeNav !== 'apps' && (
-                    <p className={`text-[9px] mt-0.5 uppercase tracking-[0.14em] ${isComingSoon ? 'text-gray-600' : 'text-gray-400'}`}>
+                    <p className="app-type-label text-[9px] mt-0.5 uppercase tracking-[0.14em] text-gray-400">
                         {app.type}
                     </p>
                 )}

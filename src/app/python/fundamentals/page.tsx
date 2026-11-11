@@ -13,7 +13,7 @@ function CB({ code, lang = 'python' }: { code: string; lang?: string }) {
             <div className="flex items-center justify-between px-4 py-1.5" style={{ background: '#0f172a', borderBottom: '1px solid #334155' }}>
                 <div className="flex items-center gap-2">
                     <div className="flex gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-400/60" /><span className="w-2.5 h-2.5 rounded-full bg-yellow-400/60" /><span className="w-2.5 h-2.5 rounded-full bg-green-400/60" /></div>
-                    <span className="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-500">{lang}</span>
+                    <span className="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-600">{lang}</span>
                 </div>
                 <button onClick={copy} className="text-xs flex items-center gap-1 transition-colors" style={{ color: c ? '#34d399' : '#64748b' }}>
                     {c ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
@@ -116,7 +116,7 @@ export default function PythonFundamentals() {
     const [activeSection, setActiveSection] = useState('intro');
 
     return (
-        <div className="min-h-screen bg-white relative">
+        <div className="min-h-screen bg-white text-slate-800 relative">
 
             {/* Animated Jungle Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -285,7 +285,7 @@ export default function PythonFundamentals() {
                                 </div>
                                 <div>
                                     <h3 className="text-sm font-bold" style={{ color: '#1e293b' }}>Watch the Video Lesson</h3>
-                                    <p className="text-[11px]" style={{ color: '#94a3b8' }}>Python Fundamentals — Knobly YouTube</p>
+                                    <p className="text-[11px]" style={{ color: '#475569' }}>Python Fundamentals — Knobly YouTube</p>
                                 </div>
                                 <div className="ml-auto hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}>
                                     <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /> YouTube
@@ -347,20 +347,20 @@ export default function PythonFundamentals() {
 
                         <h3 className="text-base font-bold mt-4 mb-2" style={{ color: '#1e293b' }}>Step 1: Python Install Karo</h3>
                         <ol className="list-decimal ml-6 space-y-2 mb-4">
-                            <li><strong>Download karo:</strong> <a href="https://www.python.org/downloads/" className="text-emerald-600 underline font-semibold" target="_blank" rel="noopener noreferrer">python.org/downloads</a> par jaake latest version download karo</li>
+                            <li><strong>Download karo:</strong> <a href="https://www.python.org/downloads/" className="text-emerald-700 underline font-semibold" target="_blank" rel="noopener noreferrer">python.org/downloads</a> par jaake latest version download karo</li>
                             <li><strong>Install karo:</strong> Installer open karo. ⚠️ <strong>&quot;Add Python to PATH&quot;</strong> checkbox zaroor tick karo!</li>
                             <li><strong>Check karo:</strong> Command Prompt open karo aur type karo:</li>
                         </ol>
                         <CB code="python --version\n# Output: Python 3.12.x" />
 
                         <h3 className="text-base font-bold mt-6 mb-2" style={{ color: '#1e293b' }}>Step 2: Interactive Mode (Direct Typing)</h3>
-                        <p>Command Prompt mein <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">python</code> type karo aur directly code likho. Ye testing ke liye best hai!</p>
+                        <p>Command Prompt mein <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-700 font-mono text-xs">python</code> type karo aur directly code likho. Ye testing ke liye best hai!</p>
                         <CB code={`>>> print("Hello, World!")\nHello, World!\n\n>>> 2 + 3\n5\n\n>>> name = "Python"\n>>> print(f"I love {name}!")\nI love Python!\n\n>>> exit()  # Interactive mode se bahar aane ke liye`} />
 
                         <h3 className="text-base font-bold mt-6 mb-2" style={{ color: '#1e293b' }}>Step 3: Program Mode (File mein Code)</h3>
-                        <p>Bade programs ke liye code ek <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">.py</code> file mein likho:</p>
+                        <p>Bade programs ke liye code ek <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-700 font-mono text-xs">.py</code> file mein likho:</p>
                         <CB code={`# hello.py file banao aur ye likho:\nprint("Namaste! Mera naam Python hai!")\nprint("Mein ek programming language hoon.")\n\nfor i in range(1, 6):\n    print(f"Counting: {i}")`} />
-                        <p>Phir terminal mein run karo: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">python hello.py</code></p>
+                        <p>Phir terminal mein run karo: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-700 font-mono text-xs">python hello.py</code></p>
                     </Sec>
 
                     <Sec id="modules" title="Modules and Program Files" icon={<FileCode2 size={16} className="text-emerald-500" />}>
@@ -369,10 +369,10 @@ export default function PythonFundamentals() {
                         <ol className="list-decimal ml-6 space-y-1 mb-4">
                             <li>Koi bhi text editor kholo (VSCode, Notepad++, PyCharm)</li>
                             <li>Naya file banao aur Python code likho</li>
-                            <li>File ko <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">.py</code> extension ke saath save karo (jaise: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">calculator.py</code>)</li>
+                            <li>File ko <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">.py</code> extension ke saath save karo (jaise: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-700 font-mono text-xs">calculator.py</code>)</li>
                         </ol>
                         <CB code={`# calculator.py - ek simple calculator\nnum1 = 10\nnum2 = 5\n\nprint(f"Jod (Sum): {num1 + num2}")      # 15\nprint(f"Ghata (Diff): {num1 - num2}")    # 5\nprint(f"Guna (Multiply): {num1 * num2}") # 50\nprint(f"Bhaag (Divide): {num1 / num2}")  # 2.0`} />
-                        <p>Run karo: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-600 font-mono text-xs">python calculator.py</code></p>
+                        <p>Run karo: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-emerald-700 font-mono text-xs">python calculator.py</code></p>
                     </Sec>
 
                     <Sec id="tokens" title="Python Tokens" icon={<Code2 size={16} className="text-teal-500" />}>
@@ -514,7 +514,7 @@ export default function PythonFundamentals() {
                                     <div className="p-4">
                                         <p className="text-sm mb-2" style={{ color: '#475569' }}>Output kya hoga? Pehle socho, phir check karo! 🤔</p>
                                         <CB code={item.code} />
-                                        <p className="text-xs" style={{ color: '#94a3b8' }}>💡 <strong>Hint:</strong> {item.h}</p>
+                                        <p className="text-xs" style={{ color: '#475569' }}>💡 <strong>Hint:</strong> {item.h}</p>
                                     </div>
                                 </div>
                             ))}

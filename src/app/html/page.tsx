@@ -107,6 +107,8 @@ const features = [
     },
 ];
 
+const TOPIC_TEXT_COLORS: Record<string, string> = { '#10b981': '#047857', '#3b82f6': '#1d4ed8', '#8b5cf6': '#6d28d9' };
+
 export default function HtmlPage() {
     const [openedTasksCount, setOpenedTasksCount] = useState<number>(0);
 
@@ -136,7 +138,7 @@ export default function HtmlPage() {
     const taskPercentage = Math.min(100, Math.round((openedTasksCount / 15) * 100));
 
     return (
-        <div className="min-h-screen bg-white relative overflow-x-hidden">
+        <div className="min-h-screen bg-white text-slate-800 relative overflow-x-hidden">
             {/* Animated Web Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 {/* Gradient Background */}
@@ -203,7 +205,7 @@ export default function HtmlPage() {
 
                 {/* Decorative Elements */}
                 <div className="absolute top-40 left-10 w-20 h-20 opacity-[0.06] animate-float">
-                    <Hash className="w-full h-full text-orange-600" />
+                    <Hash className="w-full h-full text-orange-700" />
                 </div>
                 <div className="absolute bottom-60 right-10 w-16 h-16 opacity-[0.05] animate-float-delayed">
                     <Terminal className="w-full h-full text-red-700" />
@@ -215,7 +217,7 @@ export default function HtmlPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center gap-3">
-                            <Link href="/" className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-lg shadow-orange-200 hover:shadow-xl hover:scale-105 transition-all duration-300">
+                            <Link href="/" className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-orange-700 to-red-700 text-white shadow-lg shadow-orange-200 hover:shadow-xl hover:scale-105 transition-all duration-300">
                                 <ArrowLeft size={18} />
                             </Link>
                             <div className="flex items-center gap-2">
@@ -231,7 +233,7 @@ export default function HtmlPage() {
                                     <h1 className="text-lg font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
                                         HTML
                                     </h1>
-                                    <p className="text-[10px] text-gray-400 -mt-0.5">Web Design</p>
+                                    <p className="text-[10px] text-gray-600 -mt-0.5">Web Design</p>
                                 </div>
                             </div>
                         </div>
@@ -241,7 +243,7 @@ export default function HtmlPage() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50/80 transition-all duration-200"
+                                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-orange-700 hover:bg-orange-50/80 transition-all duration-200"
                                 >
                                     {link.icon}
                                     <span>{link.label}</span>
@@ -252,13 +254,13 @@ export default function HtmlPage() {
                         <div className="flex items-center gap-2 sm:gap-3">
                             <Link
                                 href="/html/compiler"
-                                className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white text-xs font-bold shadow-md shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
+                                className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-orange-700 to-red-700 text-white text-xs font-bold shadow-md shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
                             >
                                 <Terminal size={13} />
                                 <span>Web Compiler</span>
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
                             </Link>
-                            <Link href="/" className="md:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-gray-100 text-gray-600 hover:bg-orange-100 hover:text-orange-600 transition-colors">
+                            <Link href="/" className="md:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-gray-100 text-gray-600 hover:bg-orange-100 hover:text-orange-700 transition-colors">
                                 <Home size={16} />
                             </Link>
                         </div>
@@ -389,7 +391,7 @@ export default function HtmlPage() {
                 <div className="mb-12">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-lg shadow-orange-200">
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-700 to-red-700 flex items-center justify-center text-white shadow-lg shadow-orange-200">
                                 <Globe size={24} />
                             </div>
                             <div>
@@ -399,7 +401,7 @@ export default function HtmlPage() {
                         </div>
                         <div className="hidden md:flex items-center gap-4 text-sm">
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                                <div className="w-3 h-3 rounded-full bg-emerald-700" />
                                 <span className="text-gray-600 font-medium">Completed</span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -431,7 +433,7 @@ export default function HtmlPage() {
                                     >
                                         <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110 ${
                                             isTopicCompleted
-                                                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200'
+                                                ? 'bg-emerald-700 text-white shadow-lg shadow-emerald-200'
                                                 : isTaskStarted
                                                     ? 'bg-emerald-50 text-emerald-700 border-2 border-emerald-400 font-black text-xs shadow-md shadow-emerald-100 flex items-center justify-center'
                                                     : topic.current
@@ -475,9 +477,9 @@ export default function HtmlPage() {
                                 >
                                     <div className={`relative z-10 w-5 h-5 rounded-full border-4 border-white shadow-md ${
                                         isTopicCompleted
-                                            ? 'bg-emerald-500'
+                                            ? 'bg-emerald-700'
                                             : isTaskStarted
-                                                ? 'bg-emerald-500 ring-2 ring-emerald-200'
+                                                ? 'bg-emerald-700 ring-2 ring-emerald-200'
                                                 : topic.current
                                                     ? 'bg-blue-500 animate-pulse ring-2 ring-blue-200'
                                                     : 'bg-slate-300'
@@ -501,7 +503,7 @@ export default function HtmlPage() {
                                             {isTopicCompleted && <CheckCircle2 size={20} className="text-emerald-500" />}
                                             {isTaskStarted && !isTaskDone && <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">{taskPercentage}%</span>}
                                             {topic.current && !isTaskStarted && <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-bold">Start Here</span>}
-                                            {topic.locked && <Lock size={20} className="text-gray-400" />}
+                                            {topic.locked && <Lock size={20} className="text-gray-600" />}
                                         </div>
                                     </div>
                                 </Link>
@@ -514,7 +516,7 @@ export default function HtmlPage() {
                 <div id="chapters" className="mb-12">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-md shadow-orange-200">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-700 to-red-700 flex items-center justify-center text-white shadow-md shadow-orange-200">
                                 <BookOpen size={20} />
                             </div>
                             <div>
@@ -536,7 +538,7 @@ export default function HtmlPage() {
                             if (isTopicCompleted) {
                                 statusBadge = (
                                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold border border-emerald-200 flex items-center gap-1">
-                                        <CheckCircle2 size={11} className="text-emerald-600" />
+                                        <CheckCircle2 size={11} className="text-emerald-700" />
                                         Completed
                                     </span>
                                 );
@@ -553,7 +555,7 @@ export default function HtmlPage() {
                                     </span>
                                 );
                             } else if (topic.locked) {
-                                statusBadge = <Lock size={16} className="text-gray-400" />;
+                                statusBadge = <Lock size={16} className="text-gray-600" />;
                             }
 
                             // Dynamic progress percent & labels
@@ -585,19 +587,19 @@ export default function HtmlPage() {
                                     : 'bg-gray-200';
 
                             const textColorClass = isTopicCompleted
-                                ? 'text-emerald-600'
+                                ? 'text-emerald-700'
                                 : topic.current
                                     ? 'text-blue-600'
                                     : isTaskStarted
-                                        ? 'text-emerald-600'
+                                        ? 'text-emerald-700'
                                         : 'text-gray-500';
 
                             const hoverTitleClass = isTopicCompleted
-                                ? 'group-hover:text-emerald-600'
+                                ? 'group-hover:text-emerald-700'
                                 : topic.current
                                     ? 'group-hover:text-blue-600'
                                     : isPracticeTask
-                                        ? 'group-hover:text-emerald-600'
+                                        ? 'group-hover:text-emerald-700'
                                         : 'group-hover:text-purple-600';
 
                             return (
@@ -659,7 +661,7 @@ export default function HtmlPage() {
                                             {/* Meta Info */}
                                             <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
                                                 <span className="flex items-center gap-1 bg-gray-50 px-2.5 py-1 rounded-lg font-medium text-slate-700">
-                                                    <Play size={11} style={{ color: isTopicCompleted ? '#10b981' : topic.color }} />
+                                                    <Play size={11} style={{ color: isTopicCompleted ? '#047857' : (TOPIC_TEXT_COLORS[topic.color] || topic.color) }} />
                                                     {isPracticeTask && isTaskStarted ? `${openedTasksCount}/15 Tasks` : topic.lessons}
                                                 </span>
                                                 <span className="flex items-center gap-1 bg-gray-50 px-2.5 py-1 rounded-lg font-medium text-slate-700">
@@ -675,7 +677,7 @@ export default function HtmlPage() {
                                                         <span className={`font-semibold ${textColorClass}`}>
                                                             {progressLabel}
                                                         </span>
-                                                        <span className={`font-bold ${isTopicCompleted || isTaskStarted ? textColorClass : 'text-gray-400'}`}>
+                                                        <span className={`font-bold ${isTopicCompleted || isTaskStarted ? textColorClass : 'text-gray-600'}`}>
                                                             {progressRightText}
                                                         </span>
                                                     </div>
@@ -691,7 +693,7 @@ export default function HtmlPage() {
                                             {/* Hover Arrow */}
                                             <div
                                                 className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold group-hover:translate-x-1 transition-all duration-300"
-                                                style={{ color: isTopicCompleted ? '#10b981' : topic.color }}
+                                                style={{ color: isTopicCompleted ? '#047857' : (TOPIC_TEXT_COLORS[topic.color] || topic.color) }}
                                             >
                                                 <span>{isTopicCompleted ? 'Review Module' : topic.current ? 'Start Module' : 'Open Module'}</span>
                                                 <ChevronRight size={16} />
@@ -721,7 +723,7 @@ export default function HtmlPage() {
                             <div className="w-full md:w-56 h-36 rounded-2xl overflow-hidden border-2 border-blue-200 shadow-xl transform group-hover:scale-105 group-hover:rotate-1 transition-all duration-500 bg-white">
                                 <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center relative">
                                     <Terminal size={56} className="text-blue-600" />
-                                    <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">▶</div>
+                                    <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center text-white text-xs font-bold">▶</div>
                                 </div>
                             </div>
 
@@ -784,18 +786,18 @@ export default function HtmlPage() {
                     {[
                         { label: 'Elements & Tags', value: '18', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
                         { label: 'Practice Tasks', value: '15', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-                        { label: 'Code Examples', value: '50+', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+                        { label: 'Code Examples', value: '50+', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-100' },
                         { label: 'Reference Tables', value: '10+', color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
                     ].map((stat) => (
                         <div key={stat.label} className={`${stat.bg} rounded-2xl border ${stat.border} p-5 text-center shadow-sm hover:shadow-md transition-shadow`}>
                             <p className={`text-3xl sm:text-4xl font-extrabold ${stat.color}`}>{stat.value}</p>
-                            <p className="text-xs text-gray-500 font-medium mt-1">{stat.label}</p>
+                            <p className="text-xs text-gray-600 font-medium mt-1">{stat.label}</p>
                         </div>
                     ))}
                 </div>
 
                 {/* ── Call to Action ── */}
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-orange-500 via-red-500 to-pink-600 p-8 md:p-12 text-center">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-orange-700 via-red-700 to-pink-700 p-8 md:p-12 text-center">
                     <div className="absolute inset-0 opacity-20">
                         <svg width="100%" height="100%">
                             <pattern id="cta-html-pattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -808,7 +810,7 @@ export default function HtmlPage() {
                         <h3 className="text-2xl md:text-3xl font-black text-white mb-4">Ready to Build Your First Web Page?</h3>
                         <p className="text-orange-100 mb-6 max-w-2xl mx-auto">Start with the basics and work your way up to building complete websites. Every tag, every attribute, every concept — all in one place!</p>
                         <div className="flex flex-wrap justify-center gap-4">
-                            <Link href="/html/intro" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-orange-600 font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                            <Link href="/html/intro" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-orange-700 font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
                                 <Play size={18} fill="currentColor" />
                                 Start Learning Now
                             </Link>

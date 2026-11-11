@@ -269,7 +269,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         onClick={onClose}
                     />
                     <motion.div
-                        className="relative w-[90%] max-w-[380px] bg-[#0f172a] border border-cyan-500/30 rounded-2xl p-5 shadow-[0_0_50px_rgba(6,182,212,0.15)] z-50"
+                        className="theme-panel relative w-[90%] max-w-[380px] bg-[#0f172a] border border-cyan-500/30 rounded-2xl p-5 shadow-[0_0_50px_rgba(6,182,212,0.15)] z-50"
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
@@ -324,7 +324,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                     <button
                                         onClick={handlePasswordReset}
                                         disabled={loading}
-                                        className="mt-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-2.5 rounded-xl text-sm hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="mt-1 theme-fixed bg-gradient-to-r from-cyan-700 to-blue-700 text-white font-bold py-2.5 rounded-xl text-sm hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {loading ? 'SENDING...' : 'SEND RESET LINK'}
                                     </button>
@@ -360,7 +360,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                     </button>
                                     <button
                                         onClick={() => { setShowVerificationScreen(false); setIsSignUp(false); setError(''); setSuccessMessage(''); }}
-                                        className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-2.5 px-6 rounded-xl text-sm hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95"
+                                        className="theme-fixed bg-gradient-to-r from-cyan-700 to-blue-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95"
                                     >
                                         GO TO LOGIN
                                     </button>
@@ -486,7 +486,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <button
                                 onClick={!isSignUp && loginMode === 'userid' ? handleUserIdLogin : handleSubmit}
                                 disabled={loading}
-                                className="mt-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-2.5 rounded-xl text-sm hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="mt-1 theme-fixed bg-gradient-to-r from-cyan-700 to-blue-700 text-white font-bold py-2.5 rounded-xl text-sm hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? 'PROCESSING...' : isSignUp ? 'REGISTER' : loginMode === 'userid' ? 'LOGIN WITH USER ID' : 'AUTHENTICATE'}
                             </button>

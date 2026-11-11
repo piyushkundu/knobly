@@ -42,7 +42,7 @@ export default function IoTSensors() {
     const [activeSection, setActiveSection] = useState('transducer');
 
     return (
-        <div className="min-h-screen bg-white relative">
+        <div className="min-h-screen bg-white text-slate-800 relative">
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30" />
             </div>
@@ -163,7 +163,7 @@ export default function IoTSensors() {
                             <div className="p-5 rounded-2xl bg-amber-100 border border-amber-300 text-amber-900 flex flex-col items-center justify-center text-center shadow-md">
                                 <div className="text-4xl mb-3">☀️</div>
                                 <h5 className="font-bold text-amber-800 mb-1">Jab Light Jyada Hoti Hai</h5>
-                                <p className="text-sm font-semibold text-emerald-600 mt-2 bg-white px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm">📉 Resistance Kam Ho Jata Hai</p>
+                                <p className="text-sm font-semibold text-emerald-700 mt-2 bg-white px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm">📉 Resistance Kam Ho Jata Hai</p>
                             </div>
                         </div>
 
@@ -468,7 +468,7 @@ export default function IoTSensors() {
                                 <div className="space-y-2">
                                     {['Controller actuator ko signal bhejta hai', 'Actuator signal receive karta hai', 'Signal ko motion ya force me convert karta hai', 'Machine ya device movement perform karti hai'].map((step, i) => (
                                         <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-emerald-50 border border-emerald-100">
-                                            <span className="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
+                                            <span className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
                                             <span className="text-xs font-medium text-emerald-800">{step}</span>
                                         </div>
                                     ))}
@@ -1284,7 +1284,7 @@ export default function IoTSensors() {
                                     <span className="text-[9px] font-bold text-indigo-800">Types:</span>
                                     <div className="flex gap-1.5">
                                         {['UART', 'SPI', 'I2C'].map((type, i) => (
-                                            <span key={i} className="text-[8px] font-bold text-white bg-indigo-400 px-1.5 py-0.5 rounded">{type}</span>
+                                            <span key={i} className="text-[8px] font-bold text-white bg-indigo-700 px-1.5 py-0.5 rounded">{type}</span>
                                         ))}
                                     </div>
                                 </div>

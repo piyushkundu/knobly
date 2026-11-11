@@ -22,7 +22,7 @@ function CB({ code }: { code: string }) {
                         <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                         <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
                     </div>
-                    <span className="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-400">python</span>
+                    <span className="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-600">python</span>
                 </div>
                 <button onClick={copy} className="text-xs flex items-center gap-1 transition-colors" style={{ color: c ? '#34d399' : '#64748b' }}>
                     {c ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
@@ -342,7 +342,7 @@ export default function NumPyPage() {
                         <IB type="note">PIP Python ke saath automatically install hota hai (Python 3.4+ versions me)। Agar nahi hai to <code>python -m ensurepip</code> run karein।</IB>
 
                         <div className="mt-2 mb-2">
-                            <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Installation Command</span>
+                            <span className="text-[10px] font-bold uppercase text-slate-600 tracking-wider">Installation Command</span>
                         </div>
                         <CB code={`pip install numpy`} />
 
@@ -704,23 +704,23 @@ Shape: (2, 2, 2)
                             <div className="flex justify-center">
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs font-bold text-purple-500 w-12 text-right">Row 0 →</span>
+                                        <span className="text-xs font-bold text-purple-600 w-12 text-right">Row 0 →</span>
                                         <div className="flex gap-1">
                                             {['[0,0]', '[0,1]', '[0,2]'].map((idx, i) => (
                                                 <div key={i} className="w-14 h-10 rounded-md flex flex-col items-center justify-center border border-purple-200 bg-white">
                                                     <span className="text-xs font-bold text-purple-700">{[4, 7, 6][i]}</span>
-                                                    <span className="text-[8px] text-purple-400">{idx}</span>
+                                                    <span className="text-[8px] text-purple-600">{idx}</span>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs font-bold text-purple-500 w-12 text-right">Row 1 →</span>
+                                        <span className="text-xs font-bold text-purple-600 w-12 text-right">Row 1 →</span>
                                         <div className="flex gap-1">
                                             {['[1,0]', '[1,1]', '[1,2]'].map((idx, i) => (
                                                 <div key={i} className="w-14 h-10 rounded-md flex flex-col items-center justify-center border border-purple-200 bg-white">
                                                     <span className="text-xs font-bold text-purple-700">{[7, 8, 4][i]}</span>
-                                                    <span className="text-[8px] text-purple-400">{idx}</span>
+                                                    <span className="text-[8px] text-purple-600">{idx}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -1097,7 +1097,7 @@ k=-2 (lower diagonal):
                                     <div className="text-slate-800 font-medium text-[15px] leading-relaxed pt-2">{q}</div>
                                     <button
                                         onClick={() => { const ev = new CustomEvent('toggle-knobly-ai'); window.dispatchEvent(ev); }}
-                                        className="ml-auto w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-cyan-100 hover:text-cyan-600 transition-colors"
+                                        className="ml-auto w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full bg-slate-50 text-slate-600 hover:bg-cyan-100 hover:text-cyan-600 transition-colors"
                                         title="Ask AI to Explain"
                                     >
                                         <Sparkles size={16} />

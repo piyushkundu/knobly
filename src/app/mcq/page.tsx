@@ -76,7 +76,7 @@ export default function MCQPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a0a1a] to-[#0f172a] overflow-y-auto">
+        <div className="min-h-screen text-slate-100 bg-gradient-to-b from-[#0a0a1a] to-[#0f172a] overflow-y-auto">
             <header className="sticky top-0 z-50 bg-[#0a0a1a]/90 backdrop-blur-xl border-b border-white/5">
                 <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
                     <div>

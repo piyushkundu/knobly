@@ -1408,7 +1408,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                             </div>
                             <button
                                 onClick={() => setTargetModalOpen(false)}
-                                className="px-4 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold transition-all shadow-sm"
+                                className="px-4 py-1.5 rounded-xl bg-orange-700 hover:bg-orange-600 text-white font-bold transition-all shadow-sm"
                             >
                                 Start Coding Now →
                             </button>
@@ -1562,7 +1562,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                 <ul className="space-y-1.5">
                                     {evaluation.strengths.map((s, i) => (
                                         <li key={i} className="text-[11px] text-emerald-900 leading-relaxed flex items-start gap-1.5">
-                                            <span className="text-emerald-500 font-bold">•</span>
+                                            <span className="text-emerald-700 font-bold">•</span>
                                             <span>{s}</span>
                                         </li>
                                     ))}
@@ -1578,7 +1578,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                 <ul className="space-y-1.5">
                                     {evaluation.improvements.map((s, i) => (
                                         <li key={i} className="text-[11px] text-orange-900 leading-relaxed flex items-start gap-1.5">
-                                            <span className="text-orange-500 font-bold">•</span>
+                                            <span className="text-orange-700 font-bold">•</span>
                                             <span>{s}</span>
                                         </li>
                                     ))}

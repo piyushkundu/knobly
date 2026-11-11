@@ -56,7 +56,7 @@ function Code({ code }: { code: string }) {
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
                         <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
                     </div>
-                    <span className="text-[10px] text-gray-500 font-mono ml-1">index.html</span>
+                    <span className="text-[10px] text-gray-400 font-mono ml-1">index.html</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <Link
@@ -88,7 +88,7 @@ function AttrTable({ rows }: { rows: [string, string][] }) {
         <div className="overflow-x-auto my-4 rounded-xl border border-gray-200 shadow-sm">
             <table className="w-full text-xs sm:text-sm">
                 <thead><tr className="bg-gradient-to-r from-blue-50 to-indigo-50"><th className="text-left py-2.5 px-3 text-blue-700 font-bold text-xs border-b border-blue-100">Attribute</th><th className="text-left py-2.5 px-3 text-blue-700 font-bold text-xs border-b border-blue-100">Description</th></tr></thead>
-                <tbody>{rows.map(([a, d], i) => (<tr key={i} className={`${i % 2 ? 'bg-gray-50/50' : 'bg-white'} hover:bg-blue-50/30 transition-colors`}><td className="py-2.5 px-3 border-b border-gray-50"><code className="text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-100">{a}</code></td><td className="py-2.5 px-3 border-b border-gray-50 text-gray-600">{d}</td></tr>))}</tbody>
+                <tbody>{rows.map(([a, d], i) => (<tr key={i} className={`${i % 2 ? 'bg-gray-50/50' : 'bg-white'} hover:bg-blue-50/30 transition-colors`}><td className="py-2.5 px-3 border-b border-gray-50"><code className="text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-100">{a}</code></td><td className="py-2.5 px-3 border-b border-gray-50 text-gray-600">{d}</td></tr>))}</tbody>
             </table>
         </div>
     );

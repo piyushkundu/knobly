@@ -59,7 +59,7 @@ export default function IoTIntroduction() {
     const [activeSection, setActiveSection] = useState('intro');
 
     return (
-        <div className="min-h-screen bg-white relative">
+        <div className="min-h-screen bg-white text-slate-800 relative">
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-50/50 via-white to-blue-50/30" />
             </div>
@@ -193,7 +193,7 @@ export default function IoTIntroduction() {
                                 <div key={i} className="p-3 rounded-xl text-center" style={{ background: '#ecfdf5', border: '1px solid #a7f3d0' }}>
                                     <div className="text-2xl mb-1">{item.emoji}</div>
                                     <h5 className="font-bold text-xs text-emerald-700">{item.t}</h5>
-                                    <p className="text-[10px] text-gray-500 mt-0.5">{item.d}</p>
+                                    <p className="text-[10px] text-gray-600 mt-0.5">{item.d}</p>
                                 </div>
                             ))}
                         </div>
@@ -226,7 +226,7 @@ export default function IoTIntroduction() {
                                 <div key={i} className="p-3 rounded-xl" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
                                     <div className="text-xl mb-1">{item.emoji}</div>
                                     <h5 className="font-bold text-xs text-red-700">{item.t}</h5>
-                                    <p className="text-[10px] text-gray-500 mt-0.5">{item.d}</p>
+                                    <p className="text-[10px] text-gray-600 mt-0.5">{item.d}</p>
                                 </div>
                             ))}
                         </div>
@@ -237,7 +237,7 @@ export default function IoTIntroduction() {
                                 <span className="text-red-400">→</span>
                                 <span className="px-3 py-1.5 rounded-lg bg-orange-100 text-orange-700 font-semibold">Read &amp; Convert</span>
                                 <span className="text-orange-400">→</span>
-                                <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 font-semibold">Digital Data</span>
+                                <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-800 font-semibold">Digital Data</span>
                                 <span className="text-green-400">→</span>
                                 <span className="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 font-semibold">Problem Solving</span>
                             </div>
@@ -255,7 +255,7 @@ export default function IoTIntroduction() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div className="flex items-center gap-3 p-3 rounded-xl bg-orange-50 border border-orange-200">
                                     <span className="text-2xl">🌴</span>
-                                    <div><h5 className="font-bold text-sm text-orange-700">Mumbai</h5><p className="text-xs text-orange-600">Temperature: 32°C — Humid &amp; Hot</p></div>
+                                    <div><h5 className="font-bold text-sm text-orange-700">Mumbai</h5><p className="text-xs text-orange-700">Temperature: 32°C — Humid &amp; Hot</p></div>
                                 </div>
                                 <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 border border-blue-200">
                                     <span className="text-2xl">🏔️</span>
@@ -297,14 +297,14 @@ export default function IoTIntroduction() {
                                     <span className="text-xl">💀</span>
                                     <div>
                                         <h5 className="font-bold text-sm text-red-700">Data Hack</h5>
-                                        <p className="text-xs text-red-600">Koi bhi aapka data chura sakta hai</p>
+                                        <p className="text-xs text-red-700">Koi bhi aapka data chura sakta hai</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3 p-2.5 rounded-xl bg-orange-50 border border-orange-200">
                                     <span className="text-xl">🔧</span>
                                     <div>
                                         <h5 className="font-bold text-sm text-orange-700">Data Manipulate</h5>
-                                        <p className="text-xs text-orange-600">Data ko galat tarike se change kiya ja sakta hai</p>
+                                        <p className="text-xs text-orange-700">Data ko galat tarike se change kiya ja sakta hai</p>
                                     </div>
                                 </div>
                             </div>
@@ -358,7 +358,7 @@ export default function IoTIntroduction() {
                         <div className="rounded-2xl p-4 my-4" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #86efac' }}>
                             <h4 className="font-bold text-green-700 mb-3">🎯 IoT system ka main kaam:</h4>
                             <div className="flex flex-wrap items-center gap-2">
-                                <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 font-semibold text-sm">📥 Data Collect karna</span>
+                                <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-800 font-semibold text-sm">📥 Data Collect karna</span>
                                 <span className="text-green-400 font-bold">→</span>
                                 <span className="px-3 py-1.5 rounded-lg bg-teal-100 text-teal-700 font-semibold text-sm">⚙️ Data Process karna</span>
                                 <span className="text-teal-400 font-bold">→</span>
@@ -397,7 +397,7 @@ export default function IoTIntroduction() {
                                         <span key={i} className="px-2 py-1 rounded-lg bg-cyan-50 text-cyan-700 text-xs font-semibold border border-cyan-200">{s}</span>
                                     ))}
                                 </div>
-                                <p className="text-[11px] text-cyan-600 mt-1">Ye sab sensing ka kaam karte hain!</p>
+                                <p className="text-[11px] text-cyan-700 mt-1">Ye sab sensing ka kaam karte hain!</p>
                             </div>
                         </div>
 
@@ -421,7 +421,7 @@ export default function IoTIntroduction() {
                             <h4 className="font-bold text-green-700 mb-2 flex items-center gap-2">⚙️ <span>(3) Data Processing</span></h4>
                             <p className="text-sm text-green-800 mb-3">Jo data collect hota hai usko <strong>process</strong> kiya jata hai.</p>
                             <div className="flex flex-wrap items-center gap-2">
-                                <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 font-semibold text-xs">☁️ Cloud mein store</span>
+                                <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-800 font-semibold text-xs">☁️ Cloud mein store</span>
                                 <span className="text-green-400">→</span>
                                 <span className="px-3 py-1.5 rounded-lg bg-teal-100 text-teal-700 font-semibold text-xs">💻 Software se process</span>
                                 <span className="text-teal-400">→</span>
@@ -669,7 +669,7 @@ export default function IoTIntroduction() {
                             <h4 className="font-bold text-green-700 mb-2">⚙️ (3) Data Processing</h4>
                             <p className="text-xs text-green-800 mb-2">Jo data sensors collect karte hain, use <strong>process</strong> kiya jata hai.</p>
                             <div className="flex flex-wrap items-center gap-2">
-                                <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-xs font-semibold">☁️ Cloud / Local Server</span>
+                                <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-800 text-xs font-semibold">☁️ Cloud / Local Server</span>
                                 <span className="text-green-400">→</span>
                                 <span className="px-3 py-1.5 rounded-lg bg-teal-100 text-teal-700 text-xs font-semibold">✅ Useful Information</span>
                             </div>
@@ -693,7 +693,7 @@ export default function IoTIntroduction() {
                                 <span className="text-gray-400 font-bold">→</span>
                                 <span className="px-3 py-2 rounded-xl bg-purple-100 text-purple-700 font-bold">🌐 Network se bheja</span>
                                 <span className="text-gray-400 font-bold">→</span>
-                                <span className="px-3 py-2 rounded-xl bg-green-100 text-green-700 font-bold">⚙️ Process hota</span>
+                                <span className="px-3 py-2 rounded-xl bg-green-100 text-green-800 font-bold">⚙️ Process hota</span>
                                 <span className="text-gray-400 font-bold">→</span>
                                 <span className="px-3 py-2 rounded-xl bg-orange-100 text-orange-700 font-bold">👤 User ko info</span>
                             </div>
@@ -804,12 +804,12 @@ export default function IoTIntroduction() {
                                 <div key={i} className="rounded-2xl p-4" style={{ background: `${t.color}08`, border: `1px solid ${t.color}25` }}>
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-xl">{t.emoji}</span>
-                                        <div><h5 className="font-bold text-sm" style={{ color: t.color }}>{t.title}</h5><span className="text-[10px] font-mono text-gray-400">{t.std}</span></div>
+                                        <div><h5 className="font-bold text-sm" style={{ color: t.color }}>{t.title}</h5><span className="text-[10px] font-mono text-gray-600">{t.std}</span></div>
                                         <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: t.color }}>{t.range}</span>
                                     </div>
                                     <div className="flex flex-wrap gap-1 mb-2">{t.uses.map((u, j) => <span key={j} className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${t.color}15`, color: t.color }}>{u}</span>)}</div>
                                     <div className="text-[11px] text-gray-500">{t.features.join(' · ')}</div>
-                                    {t.freq && <div className="text-[10px] text-gray-400 mt-1">📡 {t.freq}</div>}
+                                    {t.freq && <div className="text-[10px] text-gray-600 mt-1">📡 {t.freq}</div>}
                                 </div>
                             ))}
                         </div>
@@ -826,12 +826,12 @@ export default function IoTIntroduction() {
                                 <div key={i} className="rounded-2xl p-4" style={{ background: `${t.color}08`, border: `1px solid ${t.color}25` }}>
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-xl">{t.emoji}</span>
-                                        <div><h5 className="font-bold text-sm" style={{ color: t.color }}>{t.title}</h5><span className="text-[10px] font-mono text-gray-400">{t.std}</span></div>
+                                        <div><h5 className="font-bold text-sm" style={{ color: t.color }}>{t.title}</h5><span className="text-[10px] font-mono text-gray-600">{t.std}</span></div>
                                         <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: t.color }}>{t.range}</span>
                                     </div>
                                     <div className="flex flex-wrap gap-1 mb-2">{t.uses.map((u, j) => <span key={j} className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${t.color}15`, color: t.color }}>{u}</span>)}</div>
                                     <div className="text-[11px] text-gray-500">{t.features.join(' · ')}</div>
-                                    <div className="text-[10px] text-gray-400 mt-1">📡 {t.freq}</div>
+                                    <div className="text-[10px] text-gray-600 mt-1">📡 {t.freq}</div>
                                 </div>
                             ))}
                         </div>
@@ -866,7 +866,7 @@ export default function IoTIntroduction() {
                                 <div key={i} className="rounded-2xl p-4" style={{ background: `${t.color}08`, border: `1px solid ${t.color}25` }}>
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-xl">{t.emoji}</span>
-                                        <div><h5 className="font-bold text-sm" style={{ color: t.color }}>{t.title}</h5><span className="text-[10px] font-mono text-gray-400">{t.std}</span></div>
+                                        <div><h5 className="font-bold text-sm" style={{ color: t.color }}>{t.title}</h5><span className="text-[10px] font-mono text-gray-600">{t.std}</span></div>
                                     </div>
                                     <div className="flex flex-wrap gap-1 mb-2">{t.uses.map((u, j) => <span key={j} className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${t.color}15`, color: t.color }}>{u}</span>)}</div>
                                     <div className="text-[11px] text-gray-500">{t.features.join(' · ')}</div>
@@ -1024,7 +1024,7 @@ export default function IoTIntroduction() {
                                 ].map((item, i) => (
                                     <div key={i} className="p-2 rounded-xl bg-white border border-pink-200 text-center">
                                         <p className="font-black text-xs text-pink-700">{item.p}</p>
-                                        <p className="text-[10px] text-gray-500 mt-0.5">{item.d}</p>
+                                        <p className="text-[10px] text-gray-600 mt-0.5">{item.d}</p>
                                     </div>
                                 ))}
                             </div>
@@ -1042,7 +1042,7 @@ export default function IoTIntroduction() {
                                 ].map((item, i) => (
                                     <div key={i} className="p-2 rounded-xl bg-white border border-purple-200 text-center">
                                         <p className="font-black text-xs text-purple-700">{item.p}</p>
-                                        <p className="text-[10px] text-gray-500 mt-0.5">{item.d}</p>
+                                        <p className="text-[10px] text-gray-600 mt-0.5">{item.d}</p>
                                     </div>
                                 ))}
                             </div>
@@ -1082,7 +1082,7 @@ export default function IoTIntroduction() {
                                 ].map((item, i) => (
                                     <div key={i} className="p-2 rounded-xl bg-white border border-cyan-200 text-center">
                                         <p className="font-black text-xs text-cyan-700">{item.p}</p>
-                                        <p className="text-[10px] text-gray-500 mt-0.5">{item.d}</p>
+                                        <p className="text-[10px] text-gray-600 mt-0.5">{item.d}</p>
                                     </div>
                                 ))}
                             </div>
@@ -1111,7 +1111,7 @@ export default function IoTIntroduction() {
                                 ].map((item, i) => (
                                     <div key={i} className="p-2 rounded-xl bg-white border border-orange-200 text-center">
                                         <p className="font-black text-xs text-orange-700">{item.p}</p>
-                                        <p className="text-[10px] text-gray-500 mt-0.5">{item.d}</p>
+                                        <p className="text-[10px] text-gray-600 mt-0.5">{item.d}</p>
                                     </div>
                                 ))}
                             </div>
@@ -1163,9 +1163,9 @@ export default function IoTIntroduction() {
                                 <h5 className="font-bold text-xs text-blue-700 mb-2">⚙️ Kaise kaam karta hai?</h5>
                                 <div className="flex flex-wrap items-center gap-2 text-xs">
                                     <span className="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 font-semibold">🖥️ Client (Browser)</span>
-                                    <span className="text-blue-400 font-bold">→ Request →</span>
+                                    <span className="text-blue-600 font-bold">→ Request →</span>
                                     <span className="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 font-semibold">🌐 Server</span>
-                                    <span className="text-blue-400 font-bold">→ Response →</span>
+                                    <span className="text-blue-600 font-bold">→ Response →</span>
                                     <span className="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 font-semibold">🖥️ Client</span>
                                 </div>
                             </div>
@@ -1190,7 +1190,7 @@ export default function IoTIntroduction() {
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="p-2 rounded-lg bg-blue-50 border border-blue-200 text-center">
                                         <p className="font-bold text-xs text-blue-700">HTTP</p>
-                                        <p className="text-[10px] text-gray-500">Heavy · TCP · Web ke liye</p>
+                                        <p className="text-[10px] text-gray-600">Heavy · TCP · Web ke liye</p>
                                     </div>
                                     <div className="p-2 rounded-lg bg-green-50 border border-green-200 text-center">
                                         <p className="font-bold text-xs text-green-700">CoAP ✅</p>
@@ -1218,9 +1218,9 @@ export default function IoTIntroduction() {
                                 <h5 className="font-bold text-xs text-purple-700 mb-2">🔄 MQTT Working Flow</h5>
                                 <div className="flex flex-wrap items-center gap-2 text-xs">
                                     <span className="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 font-semibold">📡 Publisher</span>
-                                    <span className="text-purple-400 font-bold">→ Data →</span>
+                                    <span className="text-purple-600 font-bold">→ Data →</span>
                                     <span className="px-3 py-2 rounded-lg bg-purple-200 text-purple-800 font-black">🏢 BROKER</span>
-                                    <span className="text-purple-400 font-bold">→ Data →</span>
+                                    <span className="text-purple-600 font-bold">→ Data →</span>
                                     <span className="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 font-semibold">📱 Subscriber</span>
                                 </div>
                             </div>
@@ -1276,7 +1276,7 @@ export default function IoTIntroduction() {
                                     </div>
                                     <div className="p-2 rounded-lg bg-red-50 border border-red-200 text-center">
                                         <p className="font-bold text-xs text-red-700">DDS ✅</p>
-                                        <p className="text-[10px] text-gray-500">No Broker · Peer-to-Peer</p>
+                                        <p className="text-[10px] text-gray-600">No Broker · Peer-to-Peer</p>
                                     </div>
                                 </div>
                             </div>
@@ -1300,11 +1300,11 @@ export default function IoTIntroduction() {
                                 <h5 className="font-bold text-xs text-cyan-700 mb-2">⚙️ AMQP Working</h5>
                                 <div className="flex flex-wrap items-center gap-2 text-xs">
                                     <span className="px-3 py-1.5 rounded-lg bg-cyan-100 text-cyan-700 font-semibold">📤 Producer</span>
-                                    <span className="text-cyan-400 font-bold">→</span>
+                                    <span className="text-cyan-700 font-bold">→</span>
                                     <span className="px-3 py-1.5 rounded-lg bg-cyan-100 text-cyan-700 font-semibold">📬 Exchange</span>
-                                    <span className="text-cyan-400 font-bold">→</span>
+                                    <span className="text-cyan-700 font-bold">→</span>
                                     <span className="px-3 py-2 rounded-lg bg-cyan-200 text-cyan-800 font-black">📦 Queue (Store)</span>
-                                    <span className="text-cyan-400 font-bold">→</span>
+                                    <span className="text-cyan-700 font-bold">→</span>
                                     <span className="px-3 py-1.5 rounded-lg bg-cyan-100 text-cyan-700 font-semibold">📥 Consumer</span>
                                 </div>
                             </div>
@@ -1850,7 +1850,7 @@ export default function IoTIntroduction() {
                         <Link href="/iot" className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-cyan-50 hover:text-cyan-700 transition-all">
                             <ArrowLeft size={16} /> Back to IoT
                         </Link>
-                        <div className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-100 text-gray-400 font-semibold cursor-not-allowed">
+                        <div className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-100 text-gray-600 font-semibold cursor-not-allowed">
                             Chapter 2 <Shield size={16} /> 🔒
                         </div>
                     </div>

@@ -65,7 +65,7 @@ export default function IoTApplications() {
     const [activeSection, setActiveSection] = useState('arduino-intro');
 
     return (
-        <div className="min-h-screen bg-white relative">
+        <div className="min-h-screen bg-white text-slate-800 relative">
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-white to-teal-50/30" />
             </div>
@@ -140,7 +140,7 @@ export default function IoTApplications() {
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                                 <span className="px-4 py-2 bg-white rounded-lg border border-sky-200 text-sky-700 shadow-sm font-bold text-xs flex items-center gap-1"><Eye size={14} /> 1. Read Sensors</span>
                                 <ChevronRight className="text-sky-400 rotate-90 sm:rotate-0" />
-                                <span className="px-4 py-2 bg-sky-600 rounded-lg text-white shadow-md font-bold text-xs flex items-center gap-1"><Cpu size={14} /> 2. Process Data</span>
+                                <span className="px-4 py-2 bg-sky-700 rounded-lg text-white shadow-md font-bold text-xs flex items-center gap-1"><Cpu size={14} /> 2. Process Data</span>
                                 <ChevronRight className="text-sky-400 rotate-90 sm:rotate-0" />
                                 <span className="px-4 py-2 bg-white rounded-lg border border-sky-200 text-sky-700 shadow-sm font-bold text-xs flex items-center gap-1"><Cog size={14} /> 3. Control Actuators</span>
                             </div>
@@ -154,9 +154,9 @@ export default function IoTApplications() {
                                 <p>Arduino ko program karne ke liye <strong>Arduino IDE (Integrated Development Environment)</strong> ka use kiya jata hai.</p>
                                 <p>Ye ek software hota hai jisme:</p>
                                 <ul className="space-y-2 mb-3">
-                                    <li className="flex items-center gap-2 text-sm text-gray-700 bg-purple-50 px-3 py-2 rounded-lg border border-purple-100"><span className="text-purple-500 font-bold">1.</span> Code likha jata hai</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-700 bg-purple-50 px-3 py-2 rounded-lg border border-purple-100"><span className="text-purple-500 font-bold">2.</span> Code compile hota hai (Errors check hote hain)</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-700 bg-purple-50 px-3 py-2 rounded-lg border border-purple-100"><span className="text-purple-500 font-bold">3.</span> Code upload hota hai (Microcontroller me save hota hai)</li>
+                                    <li className="flex items-center gap-2 text-sm text-gray-700 bg-purple-50 px-3 py-2 rounded-lg border border-purple-100"><span className="text-purple-600 font-bold">1.</span> Code likha jata hai</li>
+                                    <li className="flex items-center gap-2 text-sm text-gray-700 bg-purple-50 px-3 py-2 rounded-lg border border-purple-100"><span className="text-purple-600 font-bold">2.</span> Code compile hota hai (Errors check hote hain)</li>
+                                    <li className="flex items-center gap-2 text-sm text-gray-700 bg-purple-50 px-3 py-2 rounded-lg border border-purple-100"><span className="text-purple-600 font-bold">3.</span> Code upload hota hai (Microcontroller me save hota hai)</li>
                                 </ul>
                                 <IB type="note">Arduino IDE <strong>C/C++ based language</strong> ko support karta hai. Iski language seekhna bahut aasan hota hai.</IB>
                             </div>
@@ -226,15 +226,15 @@ export default function IoTApplications() {
                             
                             <ul className="space-y-3 relative z-10">
                                 <li className="flex items-start gap-2">
-                                    <div className="w-5 h-5 mt-0.5 flex-shrink-0 bg-rose-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold">1</div>
+                                    <div className="w-5 h-5 mt-0.5 flex-shrink-0 bg-rose-700 rounded-full flex items-center justify-center text-white text-[10px] font-bold">1</div>
                                     <p className="text-sm text-gray-700">Arduino ko <strong>2005</strong> me <strong>Italy</strong> me develop kiya gaya tha.</p>
                                 </li>
                                 <li className="flex items-start gap-2">
-                                    <div className="w-5 h-5 mt-0.5 flex-shrink-0 bg-rose-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold">2</div>
+                                    <div className="w-5 h-5 mt-0.5 flex-shrink-0 bg-rose-700 rounded-full flex items-center justify-center text-white text-[10px] font-bold">2</div>
                                     <p className="text-sm text-gray-700">Isse <strong>Ivrea Interaction Design Institute</strong> ne students ke liye ek low-cost aur easy programming board ke roop me design kiya tha.</p>
                                 </li>
                                 <li className="flex items-start gap-2">
-                                    <div className="w-5 h-5 mt-0.5 flex-shrink-0 bg-rose-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold">3</div>
+                                    <div className="w-5 h-5 mt-0.5 flex-shrink-0 bg-rose-700 rounded-full flex items-center justify-center text-white text-[10px] font-bold">3</div>
                                     <p className="text-sm text-gray-700">Arduino ek microcontroller based board hai jo <strong>ATmega series</strong> ke microcontrollers par based hota hai.</p>
                                 </li>
                             </ul>
@@ -818,27 +818,27 @@ export default function IoTApplications() {
                             <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 shadow-sm hover:shadow-md transition-shadow">
                                 <h5 className="font-bold text-blue-900 text-sm mb-1">1. Ethernet Shield</h5>
                                 <p className="text-xs text-gray-600 mb-2">Internet aur network communication ke liye use hota hai.</p>
-                                <p className="text-[11px] font-semibold text-blue-700"><span className="text-blue-500">Uses:</span> IoT networking, Web server projects</p>
+                                <p className="text-[11px] font-semibold text-blue-700"><span className="text-blue-600">Uses:</span> IoT networking, Web server projects</p>
                             </div>
                             <div className="p-4 rounded-xl bg-orange-50 border border-orange-100 shadow-sm hover:shadow-md transition-shadow">
                                 <h5 className="font-bold text-orange-900 text-sm mb-1">2. Motor Shield</h5>
                                 <p className="text-xs text-gray-600 mb-2">Motors ko control karne ke liye use hota hai.</p>
-                                <p className="text-[11px] font-semibold text-orange-700"><span className="text-orange-500">Uses:</span> Robotics, Automation systems</p>
+                                <p className="text-[11px] font-semibold text-orange-700"><span className="text-orange-700">Uses:</span> Robotics, Automation systems</p>
                             </div>
                             <div className="p-4 rounded-xl bg-cyan-50 border border-cyan-100 shadow-sm hover:shadow-md transition-shadow">
                                 <h5 className="font-bold text-cyan-900 text-sm mb-1">3. WiFi Shield</h5>
                                 <p className="text-xs text-gray-600 mb-2">Arduino ko wireless internet se connect karne ke liye use hota hai.</p>
-                                <p className="text-[11px] font-semibold text-cyan-700"><span className="text-cyan-500">Uses:</span> Smart home systems, IoT communication</p>
+                                <p className="text-[11px] font-semibold text-cyan-700"><span className="text-cyan-700">Uses:</span> Smart home systems, IoT communication</p>
                             </div>
                             <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 shadow-sm hover:shadow-md transition-shadow">
                                 <h5 className="font-bold text-indigo-900 text-sm mb-1">4. GSM Shield</h5>
                                 <p className="text-xs text-gray-600 mb-2">Mobile network communication provide karta hai.</p>
-                                <p className="text-[11px] font-semibold text-indigo-700"><span className="text-indigo-500">Uses:</span> SMS sending, Remote monitoring</p>
+                                <p className="text-[11px] font-semibold text-indigo-700"><span className="text-indigo-600">Uses:</span> SMS sending, Remote monitoring</p>
                             </div>
                             <div className="p-4 rounded-xl bg-purple-50 border border-purple-100 shadow-sm hover:shadow-md transition-shadow">
                                 <h5 className="font-bold text-purple-900 text-sm mb-1">5. Bluetooth Shield</h5>
                                 <p className="text-xs text-gray-600 mb-2">Bluetooth communication ke liye use hota hai.</p>
-                                <p className="text-[11px] font-semibold text-purple-700"><span className="text-purple-500">Uses:</span> Wireless control system, Mobile connectivity</p>
+                                <p className="text-[11px] font-semibold text-purple-700"><span className="text-purple-600">Uses:</span> Wireless control system, Mobile connectivity</p>
                             </div>
                         </div>
                     </Sec>
@@ -1073,8 +1073,8 @@ export default function IoTApplications() {
                                 <div><span className="text-orange-400">pinMode</span>(pin, mode);</div>
                                 
                                 <p className="text-gray-400 mt-4 mb-1 text-xs">// Examples</p>
-                                <div><span className="text-orange-400">pinMode</span>(<span className="text-purple-400">13</span>, <span className="text-sky-400">OUTPUT</span>); <span className="text-gray-500">// Pin 13 ko output mode me set karta hai</span></div>
-                                <div className="mt-2"><span className="text-orange-400">pinMode</span>(<span className="text-purple-400">2</span>, <span className="text-sky-400">INPUT</span>); <span className="text-gray-500">// Pin 2 ko input mode me set karta hai</span></div>
+                                <div><span className="text-orange-400">pinMode</span>(<span className="text-purple-400">13</span>, <span className="text-sky-400">OUTPUT</span>); <span className="text-gray-400">// Pin 13 ko output mode me set karta hai</span></div>
+                                <div className="mt-2"><span className="text-orange-400">pinMode</span>(<span className="text-purple-400">2</span>, <span className="text-sky-400">INPUT</span>); <span className="text-gray-400">// Pin 2 ko input mode me set karta hai</span></div>
                             </div>
                         </div>
                     </Sec>
@@ -1177,12 +1177,12 @@ export default function IoTApplications() {
                                     <p className="text-gray-400 mb-1 text-xs">// Basic Structure of Arduino Sketch</p>
                                     <div><span className="text-orange-400">void</span> <span className="text-sky-400">setup</span>()</div>
                                     <div>{'{'}</div>
-                                    <div className="ml-4 text-gray-500">// Initialization code</div>
+                                    <div className="ml-4 text-gray-400">// Initialization code</div>
                                     <div>{'}'}</div>
                                     <br/>
                                     <div><span className="text-orange-400">void</span> <span className="text-sky-400">loop</span>()</div>
                                     <div>{'{'}</div>
-                                    <div className="ml-4 text-gray-500">// Main program code</div>
+                                    <div className="ml-4 text-gray-400">// Main program code</div>
                                     <div>{'}'}</div>
                                 </div>
                             </div>
@@ -1204,7 +1204,7 @@ export default function IoTApplications() {
                                 <div className="bg-white/80 p-3 rounded-lg border border-purple-100 font-mono text-xs text-gray-800">
                                     <div className="text-gray-500 mb-1">// Example</div>
                                     <div><span className="text-purple-600">void</span> <span className="text-blue-600">setup</span>() {'{'}</div>
-                                    <div className="ml-4"><span className="text-orange-600">pinMode</span>(<span className="text-blue-500">13</span>, OUTPUT);</div>
+                                    <div className="ml-4"><span className="text-orange-600">pinMode</span>(<span className="text-blue-600">13</span>, OUTPUT);</div>
                                     <div>{'}'}</div>
                                 </div>
                             </div>
@@ -1221,7 +1221,7 @@ export default function IoTApplications() {
                                 <div className="bg-white/80 p-3 rounded-lg border border-sky-100 font-mono text-xs text-gray-800">
                                     <div className="text-gray-500 mb-1">// Example</div>
                                     <div><span className="text-purple-600">void</span> <span className="text-blue-600">loop</span>() {'{'}</div>
-                                    <div className="ml-4"><span className="text-orange-600">digitalWrite</span>(<span className="text-blue-500">13</span>, HIGH);</div>
+                                    <div className="ml-4"><span className="text-orange-600">digitalWrite</span>(<span className="text-blue-600">13</span>, HIGH);</div>
                                     <div>{'}'}</div>
                                 </div>
                             </div>
@@ -1240,19 +1240,19 @@ export default function IoTApplications() {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
                             <div className="p-4 rounded-2xl" style={{ background: '#ecfdf5', border: '1px solid #a7f3d0' }}>
-                                <h5 className="font-bold text-emerald-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center font-black">1</span> Reusability</h5>
+                                <h5 className="font-bold text-emerald-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-emerald-700 text-white text-xs flex items-center justify-center font-black">1</span> Reusability</h5>
                                 <p className="text-xs text-emerald-800">Ek function ko baar-baar call kiya ja sakta hai. Isse same code ko repeatedly likhne ki zarurat nahi padti.</p>
                             </div>
                             <div className="p-4 rounded-2xl" style={{ background: '#eff6ff', border: '1px solid #93c5fd' }}>
-                                <h5 className="font-bold text-blue-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-black">2</span> Modularity</h5>
+                                <h5 className="font-bold text-blue-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-blue-700 text-white text-xs flex items-center justify-center font-black">2</span> Modularity</h5>
                                 <p className="text-xs text-blue-800">Function program ko small-small parts me divide karta hai. Isse program samajhna aur manage karna easy ho jata hai.</p>
                             </div>
                             <div className="p-4 rounded-2xl" style={{ background: '#fefce8', border: '1px solid #fde047' }}>
-                                <h5 className="font-bold text-yellow-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-yellow-500 text-white text-xs flex items-center justify-center font-black">3</span> Reduces Complexity</h5>
+                                <h5 className="font-bold text-yellow-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-yellow-700 text-white text-xs flex items-center justify-center font-black">3</span> Reduces Complexity</h5>
                                 <p className="text-xs text-yellow-800">Large program ko simple aur organized banata hai. Program ki readability improve hoti hai.</p>
                             </div>
                             <div className="p-4 rounded-2xl" style={{ background: '#fdf2f8', border: '1px solid #f9a8d4' }}>
-                                <h5 className="font-bold text-pink-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-pink-500 text-white text-xs flex items-center justify-center font-black">4</span> Easy Debugging</h5>
+                                <h5 className="font-bold text-pink-700 mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-pink-700 text-white text-xs flex items-center justify-center font-black">4</span> Easy Debugging</h5>
                                 <p className="text-xs text-pink-800">Agar error aaye to specific function ko check karke error easily find kiya ja sakta hai.</p>
                             </div>
                         </div>
@@ -1328,7 +1328,7 @@ export default function IoTApplications() {
                                 <h5 className="font-bold text-emerald-700 mb-2">🔸 1. Variable Name Alphabet ya Underscore se Start Hona Chahiye</h5>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-white p-2.5 rounded-lg border border-emerald-200">
-                                        <p className="text-[10px] font-bold text-emerald-600 mb-1">✅ Correct</p>
+                                        <p className="text-[10px] font-bold text-emerald-700 mb-1">✅ Correct</p>
                                         <code className="text-xs text-gray-800 font-mono">temp, _value</code>
                                     </div>
                                     <div className="bg-white p-2.5 rounded-lg border border-red-200">
@@ -1343,7 +1343,7 @@ export default function IoTApplications() {
                                 <h5 className="font-bold text-blue-700 mb-2">🔸 2. Space Allowed Nahi Hota</h5>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-white p-2.5 rounded-lg border border-blue-200">
-                                        <p className="text-[10px] font-bold text-emerald-600 mb-1">✅ Correct</p>
+                                        <p className="text-[10px] font-bold text-emerald-700 mb-1">✅ Correct</p>
                                         <code className="text-xs text-gray-800 font-mono">totalMarks</code>
                                     </div>
                                     <div className="bg-white p-2.5 rounded-lg border border-red-200">
@@ -1375,7 +1375,7 @@ export default function IoTApplications() {
                                 <h5 className="font-bold text-purple-700 mb-2">🔸 5. Variable Name Meaningful Hona Chahiye</h5>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-white p-2.5 rounded-lg border border-purple-200">
-                                        <p className="text-[10px] font-bold text-emerald-600 mb-1">✅ Correct</p>
+                                        <p className="text-[10px] font-bold text-emerald-700 mb-1">✅ Correct</p>
                                         <code className="text-xs text-gray-800 font-mono">studentAge</code>
                                     </div>
                                     <div className="bg-white p-2.5 rounded-lg border border-red-200">
@@ -1390,7 +1390,7 @@ export default function IoTApplications() {
                                 <h5 className="font-bold text-cyan-700 mb-2">🔸 6. Variable Case Sensitive Hota Hai</h5>
                                 <div className="flex items-center justify-center gap-4 my-2">
                                     <span className="px-4 py-2 bg-white rounded-lg text-sm font-mono font-bold text-cyan-700 border border-cyan-200">age</span>
-                                    <span className="text-lg font-bold text-red-500">≠</span>
+                                    <span className="text-lg font-bold text-red-700">≠</span>
                                     <span className="px-4 py-2 bg-white rounded-lg text-sm font-mono font-bold text-cyan-700 border border-cyan-200">AGE</span>
                                 </div>
                                 <p className="text-xs text-cyan-800 text-center">Dono <strong>different variables</strong> hote hain.</p>
@@ -1401,7 +1401,7 @@ export default function IoTApplications() {
                                 <h5 className="font-bold text-orange-700 mb-2">🔸 7. Numbers Use Kar Sakte Hain But Starting Me Nahi</h5>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-white p-2.5 rounded-lg border border-orange-200">
-                                        <p className="text-[10px] font-bold text-emerald-600 mb-1">✅ Correct</p>
+                                        <p className="text-[10px] font-bold text-emerald-700 mb-1">✅ Correct</p>
                                         <code className="text-xs text-gray-800 font-mono">mark1</code>
                                     </div>
                                     <div className="bg-white p-2.5 rounded-lg border border-red-200">
@@ -1642,7 +1642,7 @@ export default function IoTApplications() {
                                 <div className="p-1.5 bg-amber-100 text-amber-600 rounded-lg"><Activity size={16} /></div>
                                 4. Assignment Operators
                             </h5>
-                            <p className="text-sm text-gray-600 mb-3">Ye variables me direct value store karne ke liye use hote hain. Short calculations ke liye <code className="bg-amber-50 px-1 font-mono text-amber-600">+=</code> aur <code className="bg-amber-50 px-1 font-mono text-amber-600">-=</code> zyada use hote hain.</p>
+                            <p className="text-sm text-gray-600 mb-3">Ye variables me direct value store karne ke liye use hote hain. Short calculations ke liye <code className="bg-amber-50 px-1 font-mono text-amber-600">+=</code> aur <code className="bg-amber-50 px-1 font-mono text-amber-700">-=</code> zyada use hote hain.</p>
                             
                             <div className="overflow-x-auto rounded-xl border border-amber-200 mb-4">
                                 <table className="w-full text-sm">
@@ -1687,11 +1687,11 @@ export default function IoTApplications() {
                             
                             <div className="grid grid-cols-2 gap-4 mb-4">
                                 <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl text-center">
-                                    <div className="text-2xl font-black text-rose-600 font-mono">++</div>
+                                    <div className="text-2xl font-black text-rose-700 font-mono">++</div>
                                     <div className="font-bold text-rose-800 text-sm mt-1">Increment (+1)</div>
                                 </div>
                                 <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl text-center">
-                                    <div className="text-2xl font-black text-rose-600 font-mono">--</div>
+                                    <div className="text-2xl font-black text-rose-700 font-mono">--</div>
                                     <div className="font-bold text-rose-800 text-sm mt-1">Decrement (-1)</div>
                                 </div>
                             </div>
@@ -1812,7 +1812,7 @@ export default function IoTApplications() {
                             </div>
                             <div className="p-4 rounded-xl text-center bg-rose-50 border border-rose-200">
                                 <h5 className="font-bold text-rose-800 text-lg">3. else-if</h5>
-                                <p className="text-xs text-rose-600 mt-1">Ladder</p>
+                                <p className="text-xs text-rose-700 mt-1">Ladder</p>
                             </div>
                         </div>
 
@@ -1953,7 +1953,7 @@ export default function IoTApplications() {
                                 <div><span className="text-gray-300">{'}'}</span></div>
                             </div>
                             <div className="bg-white p-3 rounded-lg border border-gray-200 mt-2 text-sm text-gray-700 font-semibold shadow-sm text-center">
-                                👉 Yahan <code className="bg-gray-100 px-1 py-0.5 rounded text-rose-600">marks &gt;= 70</code> TRUE hai isliye <strong>Grade B</strong> print hoga.
+                                👉 Yahan <code className="bg-gray-100 px-1 py-0.5 rounded text-rose-700">marks &gt;= 70</code> TRUE hai isliye <strong>Grade B</strong> print hoga.
                             </div>
                         </div>
                     </Sec>
@@ -1977,11 +1977,11 @@ export default function IoTApplications() {
                             </div>
                             <div className="p-4 rounded-xl text-center bg-teal-50 border border-teal-200">
                                 <h5 className="font-bold text-teal-800 text-lg">2. do-while</h5>
-                                <p className="text-xs text-teal-600 mt-1">Loop</p>
+                                <p className="text-xs text-teal-700 mt-1">Loop</p>
                             </div>
                             <div className="p-4 rounded-xl text-center bg-orange-50 border border-orange-200">
                                 <h5 className="font-bold text-orange-800 text-lg">3. for</h5>
-                                <p className="text-xs text-orange-600 mt-1">Loop</p>
+                                <p className="text-xs text-orange-700 mt-1">Loop</p>
                             </div>
                         </div>
 
@@ -2021,7 +2021,7 @@ export default function IoTApplications() {
                             </div>
                             <div className="bg-gray-100 p-3 rounded-lg border border-gray-300 mt-2 text-sm text-gray-800 shadow-sm">
                                 <div className="font-bold text-gray-600 text-xs mb-1 uppercase tracking-wider">Output</div>
-                                <pre className="font-mono text-sm leading-relaxed text-emerald-600">1<br/>2<br/>3<br/>4<br/>5</pre>
+                                <pre className="font-mono text-sm leading-relaxed text-emerald-700">1<br/>2<br/>3<br/>4<br/>5</pre>
                             </div>
                         </div>
 
@@ -2063,7 +2063,7 @@ export default function IoTApplications() {
                             </div>
                             <div className="bg-gray-100 p-3 rounded-lg border border-gray-300 mt-2 text-sm text-gray-800 shadow-sm">
                                 <div className="font-bold text-gray-600 text-xs mb-1 uppercase tracking-wider">Output</div>
-                                <pre className="font-mono text-sm leading-relaxed text-emerald-600">1<br/>2<br/>3<br/>4<br/>5</pre>
+                                <pre className="font-mono text-sm leading-relaxed text-emerald-700">1<br/>2<br/>3<br/>4<br/>5</pre>
                             </div>
                             
                             <div className="bg-amber-50 p-3 rounded-lg border border-amber-200 mt-3 text-sm text-amber-800 font-semibold shadow-sm flex gap-2">
@@ -2106,7 +2106,7 @@ export default function IoTApplications() {
                             </div>
                             <div className="bg-gray-100 p-3 rounded-lg border border-gray-300 mt-2 text-sm text-gray-800 shadow-sm">
                                 <div className="font-bold text-gray-600 text-xs mb-1 uppercase tracking-wider">Output</div>
-                                <pre className="font-mono text-sm leading-relaxed text-emerald-600">1<br/>2<br/>3<br/>4<br/>5</pre>
+                                <pre className="font-mono text-sm leading-relaxed text-emerald-700">1<br/>2<br/>3<br/>4<br/>5</pre>
                             </div>
                         </div>
 
@@ -2351,7 +2351,7 @@ export default function IoTApplications() {
                         {/* 1. analogRead() */}
                         <div className="p-5 rounded-2xl mb-4 bg-white border border-amber-100 shadow-sm">
                             <h5 className="font-bold text-amber-800 text-lg mb-2">🔴 1. analogRead()</h5>
-                            <p className="text-sm text-gray-600 mb-3"><strong>analogRead()</strong> function analog input pins se analog voltage ko read karne ke liye use hota hai. Arduino Uno me 6 analog input pins hoti hain: <code className="bg-gray-100 px-1 py-0.5 rounded text-amber-600 font-mono text-xs">A0, A1, A2, A3, A4, A5</code>. Ye function analog signal ko digital value me convert karke return karta hai.</p>
+                            <p className="text-sm text-gray-600 mb-3"><strong>analogRead()</strong> function analog input pins se analog voltage ko read karne ke liye use hota hai. Arduino Uno me 6 analog input pins hoti hain: <code className="bg-gray-100 px-1 py-0.5 rounded text-amber-800 font-mono text-xs">A0, A1, A2, A3, A4, A5</code>. Ye function analog signal ko digital value me convert karke return karta hai.</p>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="bg-gray-900 p-4 rounded-xl font-mono text-xs shadow-inner overflow-x-auto">
@@ -2412,8 +2412,8 @@ export default function IoTApplications() {
                                     <h6 className="font-bold text-indigo-900 text-sm mb-1">1. DEFAULT</h6>
                                     <p className="text-xs text-indigo-800 mb-2">DEFAULT reference me Arduino apni supply voltage (Uno me 5V) ko reference ke roop me use karta hai.</p>
                                     <div className="bg-white p-2 rounded border border-indigo-200 text-xs font-mono text-gray-700">
-                                        <span className="text-sky-500">analogReference</span>(DEFAULT);<br/>
-                                        <span className="text-gray-400">// ADC: 0V → 0 | 5V → 1023</span>
+                                        <span className="text-sky-700">analogReference</span>(DEFAULT);<br/>
+                                        <span className="text-gray-500">// ADC: 0V → 0 | 5V → 1023</span>
                                     </div>
                                 </div>
 
@@ -2422,8 +2422,8 @@ export default function IoTApplications() {
                                     <h6 className="font-bold text-indigo-900 text-sm mb-1">2. INTERNAL</h6>
                                     <p className="text-xs text-indigo-800 mb-2">INTERNAL reference Arduino ke internal voltage source ko use karta hai (Uno me 1.1 Volt). Small voltage measurements me accuracy increase hoti hai.</p>
                                     <div className="bg-white p-2 rounded border border-indigo-200 text-xs font-mono text-gray-700">
-                                        <span className="text-sky-500">analogReference</span>(INTERNAL);<br/>
-                                        <span className="text-gray-400">// ADC: 0V → 0 | 1.1V → 1023</span>
+                                        <span className="text-sky-700">analogReference</span>(INTERNAL);<br/>
+                                        <span className="text-gray-500">// ADC: 0V → 0 | 1.1V → 1023</span>
                                     </div>
                                 </div>
 
@@ -2432,7 +2432,7 @@ export default function IoTApplications() {
                                     <h6 className="font-bold text-indigo-900 text-sm mb-1">3. INTERNAL1V1</h6>
                                     <p className="text-xs text-indigo-800 mb-2">Ye specifically 1.1V internal reference ko select karta hai. (Precision sensors, Low voltage measurement).</p>
                                     <div className="bg-white p-2 rounded border border-indigo-200 text-xs font-mono text-gray-700">
-                                        <span className="text-sky-500">analogReference</span>(INTERNAL1V1);
+                                        <span className="text-sky-700">analogReference</span>(INTERNAL1V1);
                                     </div>
                                 </div>
 
@@ -2441,7 +2441,7 @@ export default function IoTApplications() {
                                     <h6 className="font-bold text-indigo-900 text-sm mb-1">4. INTERNAL2V56</h6>
                                     <p className="text-xs text-indigo-800 mb-2">Kuch Arduino boards me 2.56V internal reference available hota hai. (Medium voltage applications).</p>
                                     <div className="bg-white p-2 rounded border border-indigo-200 text-xs font-mono text-gray-700">
-                                        <span className="text-sky-500">analogReference</span>(INTERNAL2V56);
+                                        <span className="text-sky-700">analogReference</span>(INTERNAL2V56);
                                     </div>
                                 </div>
 
@@ -2450,8 +2450,8 @@ export default function IoTApplications() {
                                     <h6 className="font-bold text-indigo-900 text-sm mb-1">5. EXTERNAL</h6>
                                     <p className="text-xs text-indigo-800 mb-2">EXTERNAL mode me user khud AREF pin par external reference voltage provide karta hai. Custom voltage range aur precision measurements ke liye use hota hai.</p>
                                     <div className="bg-white p-2 rounded border border-indigo-200 text-xs font-mono text-gray-700">
-                                        <span className="text-sky-500">analogReference</span>(EXTERNAL);<br/>
-                                        <span className="text-gray-400">// Example if AREF = 3.3V: 0V → 0 | 3.3V → 1023</span>
+                                        <span className="text-sky-700">analogReference</span>(EXTERNAL);<br/>
+                                        <span className="text-gray-500">// Example if AREF = 3.3V: 0V → 0 | 3.3V → 1023</span>
                                     </div>
                                 </div>
                             </div>
@@ -2977,7 +2977,7 @@ function LDRPracticalSection() {
                         <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
                             <p className="text-xs font-bold text-slate-400 mb-1 font-mono">analogRead(A0)</p>
                             <p className="text-2xl font-black font-mono" style={{ color: sensorValue >= 900 ? '#f97316' : '#38bdf8' }}>{sensorValue}</p>
-                            <p className="text-[10px] text-slate-500 font-mono mt-1">Range: 0 – 1023</p>
+                            <p className="text-[10px] text-slate-400 font-mono mt-1">Range: 0 – 1023</p>
                         </div>
 
                         <div className="p-3 rounded-xl bg-purple-50 border border-purple-100">
@@ -2998,7 +2998,7 @@ function LDRPracticalSection() {
                         </div>
 
                         <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
-                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[10px] text-gray-400 mb-1">📟 Serial Monitor</p>
                             <p className="text-[11px]" style={{ color: ledOn ? '#4ade80' : '#94a3b8' }}>
                                 {ledOn ? `${sensorValue}\nLed on` : 'Led off'}
                             </p>
@@ -3019,8 +3019,8 @@ function LDRPracticalSection() {
                     </div>
                 </div>
                 <div className="bg-gray-950 p-4 font-mono text-xs leading-7 overflow-x-auto">
-                    <div><span className="text-sky-400">int</span> <span className="text-green-300">sensorPin</span> <span className="text-gray-400">=</span> <span className="text-orange-400">A0</span><span className="text-gray-400">;</span> <span className="text-gray-600">// LDR analog pin</span></div>
-                    <div><span className="text-sky-400">int</span> <span className="text-green-300">led</span> <span className="text-gray-400">=</span> <span className="text-orange-400">13</span><span className="text-gray-400">;</span> <span className="text-gray-600">// LED pin</span></div>
+                    <div><span className="text-sky-400">int</span> <span className="text-green-300">sensorPin</span> <span className="text-gray-400">=</span> <span className="text-orange-400">A0</span><span className="text-gray-400">;</span> <span className="text-gray-400">// LDR analog pin</span></div>
+                    <div><span className="text-sky-400">int</span> <span className="text-green-300">led</span> <span className="text-gray-400">=</span> <span className="text-orange-400">13</span><span className="text-gray-400">;</span> <span className="text-gray-400">// LED pin</span></div>
                     <div className="mt-2"><span className="text-purple-400">void</span> <span className="text-yellow-300">setup</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
                     <div className="ml-4"><span className="text-yellow-300">Serial</span><span className="text-gray-300">.</span><span className="text-sky-300">begin</span><span className="text-gray-300">(</span><span className="text-orange-400">9600</span><span className="text-gray-300">);</span></div>
                     <div className="ml-4"><span className="text-sky-300">pinMode</span><span className="text-gray-300">(</span><span className="text-green-300">led</span><span className="text-gray-300">,</span> <span className="text-orange-400">OUTPUT</span><span className="text-gray-300">);</span></div>
@@ -3077,7 +3077,7 @@ function LDRPracticalSection() {
                             { step: 'LED का anode (+) सिरा 220Ω resistor से, और resistor Pin 13 से connect करें।', color: 'text-emerald-700' },
                         ].map((c, i) => (
                             <li key={i} className="flex items-start gap-2 text-xs text-sky-900">
-                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-sky-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-sky-700 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
                                 <span className={`font-medium ${c.color}`}>{c.step}</span>
                             </li>
                         ))}
@@ -3198,7 +3198,7 @@ function UltrasonicPracticalSection() {
                 <div className="mt-5 p-4 bg-white rounded-xl border border-sky-200">
                     <p className="text-xs font-bold text-sky-800 mb-3 uppercase tracking-wide">📊 Working Flow:</p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
-                        <span className="px-3 py-2 bg-sky-500 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">📡 Transmit Wave</span>
+                        <span className="px-3 py-2 bg-sky-700 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">📡 Transmit Wave</span>
                         <ChevronRight className="text-sky-400 rotate-90 sm:rotate-0" size={14} />
                         <span className="px-3 py-2 bg-amber-100 rounded-lg text-amber-800 shadow-sm font-bold text-[11px] flex items-center gap-1">🧱 Hit Object</span>
                         <ChevronRight className="text-sky-400 rotate-90 sm:rotate-0" size={14} />
@@ -3371,7 +3371,7 @@ function UltrasonicPracticalSection() {
                         <div className="p-3 rounded-xl" style={{ background: '#f0f9ff', border: '1px solid #bae6fd' }}>
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs font-bold text-sky-800">📏 Distance</span>
-                                <span className="text-xs font-mono font-bold text-sky-600">{distance} cm</span>
+                                <span className="text-xs font-mono font-bold text-sky-700">{distance} cm</span>
                             </div>
                             <div className="h-3 rounded-full overflow-hidden bg-sky-100">
                                 <div className="h-full rounded-full transition-all duration-300" style={{ width: `${distance}%`, background: distance <= 30 ? 'linear-gradient(90deg,#ef4444,#f97316)' : 'linear-gradient(90deg,#0ea5e9,#38bdf8)' }} />
@@ -3381,7 +3381,7 @@ function UltrasonicPracticalSection() {
                         <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
                             <p className="text-xs font-bold text-slate-400 mb-1 font-mono">pulseIn(echo, HIGH)</p>
                             <p className="text-2xl font-black font-mono" style={{ color: '#38bdf8' }}>{duration} µs</p>
-                            <p className="text-[10px] text-slate-500 font-mono mt-1">Round-trip time</p>
+                            <p className="text-[10px] text-slate-400 font-mono mt-1">Round-trip time</p>
                         </div>
 
                         <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-100">
@@ -3403,7 +3403,7 @@ function UltrasonicPracticalSection() {
                         </div>
 
                         <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
-                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[10px] text-gray-400 mb-1">📟 Serial Monitor</p>
                             <p className="text-[11px]" style={{ color: '#4ade80' }}>
                                 distance {distance} cm
                             </p>
@@ -3532,7 +3532,7 @@ function UltrasonicPracticalSection() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
                         <div className="p-3 rounded-lg bg-sky-50 border border-sky-200">
                             <p className="text-[10px] font-bold text-sky-800 uppercase tracking-wide">Speed of Sound</p>
-                            <p className="text-sm font-bold font-mono text-sky-600">0.0344 cm/µs</p>
+                            <p className="text-sm font-bold font-mono text-sky-700">0.0344 cm/µs</p>
                         </div>
                         <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
                             <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wide">÷ 2 kyon?</p>
@@ -3540,7 +3540,7 @@ function UltrasonicPracticalSection() {
                         </div>
                         <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200">
                             <p className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide">Range</p>
-                            <p className="text-sm font-bold font-mono text-emerald-600">2 cm – 400 cm</p>
+                            <p className="text-sm font-bold font-mono text-emerald-700">2 cm – 400 cm</p>
                         </div>
                     </div>
                 </div>
@@ -3563,7 +3563,7 @@ function UltrasonicPracticalSection() {
                         'Agar Distance 30 cm se adhik hoti hai to LED OFF ho jaati hai।',
                     ].map((step, i) => (
                         <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow">
-                            <span className="w-7 h-7 rounded-full bg-teal-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
+                            <span className="w-7 h-7 rounded-full bg-teal-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
                             <span className="text-xs font-medium text-teal-800">{step}</span>
                         </div>
                     ))}
@@ -3726,7 +3726,7 @@ function PIRPracticalSection() {
                 <div className="mt-5 p-4 bg-white rounded-xl border border-pink-200">
                     <p className="text-xs font-bold text-pink-800 mb-3 uppercase tracking-wide">📊 Working Flow:</p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
-                        <span className="px-3 py-2 bg-pink-500 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">🚶 Person Moves</span>
+                        <span className="px-3 py-2 bg-pink-700 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">🚶 Person Moves</span>
                         <ChevronRight className="text-pink-400 rotate-90 sm:rotate-0" size={14} />
                         <span className="px-3 py-2 bg-red-100 rounded-lg text-red-800 shadow-sm font-bold text-[11px] flex items-center gap-1">🔴 IR Radiation Emit</span>
                         <ChevronRight className="text-pink-400 rotate-90 sm:rotate-0" size={14} />
@@ -3899,12 +3899,12 @@ function PIRPracticalSection() {
                         <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
                             <p className="text-xs font-bold text-slate-400 mb-1 font-mono">digitalRead(8)</p>
                             <p className="text-2xl font-black font-mono" style={{ color: motionDetected ? '#f87171' : '#4ade80' }}>{sensorValue}</p>
-                            <p className="text-[10px] text-slate-500 font-mono mt-1">PIR Sensor Output</p>
+                            <p className="text-[10px] text-slate-400 font-mono mt-1">PIR Sensor Output</p>
                         </div>
 
                         <div className="p-3 rounded-xl bg-pink-50 border border-pink-100">
                             <p className="text-xs font-bold text-pink-800 mb-1">🔴 Sensor Type</p>
-                            <p className="text-sm font-bold text-pink-600">Passive — Detects IR, doesn't emit</p>
+                            <p className="text-sm font-bold text-pink-700">Passive — Detects IR, doesn't emit</p>
                         </div>
 
                         <div className="p-3 rounded-xl border transition-all duration-500" style={{ background: ledOn ? '#fef2f2' : '#f0fdf4', border: `1px solid ${ledOn ? '#fca5a5' : '#86efac'}` }}>
@@ -3920,7 +3920,7 @@ function PIRPracticalSection() {
                         </div>
 
                         <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
-                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[10px] text-gray-400 mb-1">📟 Serial Monitor</p>
                             <p className="text-[11px]" style={{ color: motionDetected ? '#fbbf24' : '#94a3b8' }}>
                                 {motionDetected ? 'Hello, I found you' : 'I cannot find you'}
                             </p>
@@ -3993,7 +3993,7 @@ function PIRPracticalSection() {
                             { step: 'LED → LED ko Arduino की Pin 13 aur Ground se connect करें।', color: 'text-amber-600' },
                         ].map((c, i) => (
                             <li key={i} className="flex items-start gap-2 text-xs text-fuchsia-900">
-                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-fuchsia-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-fuchsia-700 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
                                 <span className={`font-medium ${c.color}`}>{c.step}</span>
                             </li>
                         ))}
@@ -4035,7 +4035,7 @@ function PIRPracticalSection() {
                         'Serial Monitor par "I cannot find you" message display hota hai।',
                     ].map((step, i) => (
                         <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow">
-                            <span className="w-7 h-7 rounded-full bg-teal-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
+                            <span className="w-7 h-7 rounded-full bg-teal-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
                             <span className="text-xs font-medium text-teal-800">{step}</span>
                         </div>
                     ))}
@@ -4184,7 +4184,7 @@ function IRPracticalSection() {
                 <div className="mt-5 p-4 bg-white rounded-xl border border-red-200">
                     <p className="text-xs font-bold text-red-800 mb-3 uppercase tracking-wide">📊 Working Flow:</p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
-                        <span className="px-3 py-2 bg-red-500 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">🟥 IR Transmit</span>
+                        <span className="px-3 py-2 bg-red-700 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">🟥 IR Transmit</span>
                         <ChevronRight className="text-red-400 rotate-90 sm:rotate-0" size={14} />
                         <span className="px-3 py-2 bg-amber-100 rounded-lg text-amber-800 shadow-sm font-bold text-[11px] flex items-center gap-1">🧱 Hit Object</span>
                         <ChevronRight className="text-red-400 rotate-90 sm:rotate-0" size={14} />
@@ -4366,7 +4366,7 @@ function IRPracticalSection() {
                         <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
                             <p className="text-xs font-bold text-slate-400 mb-1 font-mono">digitalRead(8)</p>
                             <p className="text-2xl font-black font-mono" style={{ color: objectPresent ? '#f87171' : '#4ade80' }}>{sensorValue}</p>
-                            <p className="text-[10px] text-slate-500 font-mono mt-1">IR Sensor Output</p>
+                            <p className="text-[10px] text-slate-400 font-mono mt-1">IR Sensor Output</p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
@@ -4395,7 +4395,7 @@ function IRPracticalSection() {
                         </div>
 
                         <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
-                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[10px] text-gray-400 mb-1">📟 Serial Monitor</p>
                             <p className="text-[11px]" style={{ color: objectPresent ? '#fbbf24' : '#94a3b8' }}>
                                 {objectPresent ? 'Object Detected — LED ON' : 'No Object — LED OFF'}
                             </p>
@@ -4464,7 +4464,7 @@ function IRPracticalSection() {
                             { step: 'LED → LED ko Arduino की Pin 13 aur Ground se connect करें।', color: 'text-amber-600' },
                         ].map((c, i) => (
                             <li key={i} className="flex items-start gap-2 text-xs text-orange-900">
-                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-orange-700 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
                                 <span className={`font-medium ${c.color}`}>{c.step}</span>
                             </li>
                         ))}
@@ -4506,7 +4506,7 @@ function IRPracticalSection() {
                         'Agar Object Detect nahi hota (value == LOW) to LED OFF ho jaati hai।',
                     ].map((step, i) => (
                         <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow">
-                            <span className="w-7 h-7 rounded-full bg-teal-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
+                            <span className="w-7 h-7 rounded-full bg-teal-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
                             <span className="text-xs font-medium text-teal-800">{step}</span>
                         </div>
                     ))}
@@ -4630,7 +4630,7 @@ function DHTSensorPracticalSection() {
                 <div className="mt-5 p-4 bg-white rounded-xl border border-emerald-200">
                     <p className="text-xs font-bold text-emerald-800 mb-3 uppercase tracking-wide">📊 Working Flow:</p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
-                        <span className="px-3 py-2 bg-emerald-500 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">🌡️ Sense Temp</span>
+                        <span className="px-3 py-2 bg-emerald-700 rounded-lg text-white shadow-sm font-bold text-[11px] flex items-center gap-1">🌡️ Sense Temp</span>
                         <ChevronRight className="text-emerald-400 rotate-90 sm:rotate-0" size={14} />
                         <span className="px-3 py-2 bg-sky-100 rounded-lg text-sky-800 shadow-sm font-bold text-[11px] flex items-center gap-1">💧 Sense Humidity</span>
                         <ChevronRight className="text-emerald-400 rotate-90 sm:rotate-0" size={14} />
@@ -4824,11 +4824,11 @@ function DHTSensorPracticalSection() {
                             <div className="grid grid-cols-2 gap-2 mt-2">
                                 <div>
                                     <p className="text-lg font-black font-mono" style={{ color: tempColor }}>{temp}°C</p>
-                                    <p className="text-[10px] text-slate-500">DHT.temperature</p>
+                                    <p className="text-[10px] text-slate-400">DHT.temperature</p>
                                 </div>
                                 <div>
                                     <p className="text-lg font-black font-mono" style={{ color: humidityColor }}>{humidity}%</p>
-                                    <p className="text-[10px] text-slate-500">DHT.humidity</p>
+                                    <p className="text-[10px] text-slate-400">DHT.humidity</p>
                                 </div>
                             </div>
                         </div>
@@ -4840,7 +4840,7 @@ function DHTSensorPracticalSection() {
                         </div>
 
                         <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
-                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[10px] text-gray-400 mb-1">📟 Serial Monitor</p>
                             <p className="text-[11px] text-green-400">Temperature = {temp} C {tempF} F</p>
                             <p className="text-[11px] text-sky-400">Humidity = {humidity} %</p>
                         </div>
@@ -4913,7 +4913,7 @@ function DHTSensorPracticalSection() {
                             { step: 'DATA → Sensor की Data Pin ko Arduino की Pin No. 8 se connect करें।', color: 'text-emerald-600' },
                         ].map((c, i) => (
                             <li key={i} className="flex items-start gap-2 text-xs text-teal-900">
-                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-teal-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-teal-700 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
                                 <span className={`font-medium ${c.color}`}>{c.step}</span>
                             </li>
                         ))}
@@ -4956,7 +4956,7 @@ function DHTSensorPracticalSection() {
                         'Har 1 Second ke baad New Reading Display hoti hai (delay 1000)।',
                     ].map((step, i) => (
                         <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-teal-100 shadow-sm hover:shadow-md transition-shadow">
-                            <span className="w-7 h-7 rounded-full bg-teal-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
+                            <span className="w-7 h-7 rounded-full bg-teal-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
                             <span className="text-xs font-medium text-teal-800">{step}</span>
                         </div>
                     ))}
@@ -5083,7 +5083,7 @@ function FadingLEDPracticalSection() {
                     <p className="text-xs font-bold text-amber-800 mb-2 uppercase tracking-wide">⚡ Arduino Uno PWM Pins:</p>
                     <div className="flex flex-wrap gap-2">
                         {[3, 5, 6, 9, 10, 11].map(pin => (
-                            <span key={pin} className="px-3 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-bold shadow-sm">Pin {pin} ~</span>
+                            <span key={pin} className="px-3 py-1.5 bg-amber-700 text-white rounded-lg text-xs font-bold shadow-sm">Pin {pin} ~</span>
                         ))}
                     </div>
                 </div>
@@ -5093,7 +5093,7 @@ function FadingLEDPracticalSection() {
                     <p className="text-xs font-bold text-amber-800 mb-2 uppercase tracking-wide">📝 analogWrite() Function:</p>
                     <div className="bg-gray-950 rounded-lg p-3 font-mono text-xs mb-3">
                         <span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">pin</span><span className="text-gray-300">,</span> <span className="text-orange-400">value</span><span className="text-gray-300">);</span>
-                        <span className="text-gray-600 ml-2">// value: 0-255</span>
+                        <span className="text-gray-400 ml-2">// value: 0-255</span>
                     </div>
                 </div>
 
@@ -5245,7 +5245,7 @@ function FadingLEDPracticalSection() {
                                 <Lightbulb size={28} className="text-white" style={{ opacity: 0.3 + brightness * 0.7 }} />
                             </div>
                             <p className="text-2xl font-black text-amber-700 font-mono">{pwmValue}</p>
-                            <p className="text-xs text-amber-600 font-semibold">analogWrite Value</p>
+                            <p className="text-xs text-amber-700 font-semibold">analogWrite Value</p>
                         </div>
 
                         <div className="p-3 rounded-xl bg-slate-900 border border-slate-700">
@@ -5253,11 +5253,11 @@ function FadingLEDPracticalSection() {
                             <div className="grid grid-cols-2 gap-2">
                                 <div>
                                     <p className="text-lg font-black font-mono text-amber-400">{dutyCycle}%</p>
-                                    <p className="text-[10px] text-slate-500">Duty Cycle</p>
+                                    <p className="text-[10px] text-slate-400">Duty Cycle</p>
                                 </div>
                                 <div>
                                     <p className="text-lg font-black font-mono text-amber-400">{pwmValue}/255</p>
-                                    <p className="text-[10px] text-slate-500">PWM Value</p>
+                                    <p className="text-[10px] text-slate-400">PWM Value</p>
                                 </div>
                             </div>
                         </div>
@@ -5273,7 +5273,7 @@ function FadingLEDPracticalSection() {
                         </div>
 
                         <div className="p-3 rounded-xl bg-gray-950 border border-gray-800 font-mono">
-                            <p className="text-[10px] text-gray-500 mb-1">📟 Serial Monitor</p>
+                            <p className="text-[10px] text-gray-400 mb-1">📟 Serial Monitor</p>
                             <p className="text-[11px] text-amber-400">analogWrite(11, {pwmValue})</p>
                             <p className="text-[11px] text-gray-400">Brightness: {dutyCycle}% | LED {pwmValue === 0 ? 'OFF' : pwmValue === 255 ? 'FULL ON' : 'GLOWING'}</p>
                         </div>
@@ -5296,13 +5296,13 @@ function FadingLEDPracticalSection() {
                     <div><span className="text-purple-400">void</span> <span className="text-yellow-300">setup</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
                     <div><span className="text-gray-300">{'}'}</span></div>
                     <div className="mt-3"><span className="text-purple-400">void</span> <span className="text-yellow-300">loop</span><span className="text-gray-300">()</span> <span className="text-gray-300">{'{'}</span></div>
-                    <div className="ml-4"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">0</span><span className="text-gray-300">);</span> <span className="text-gray-600">// OFF</span></div>
+                    <div className="ml-4"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">0</span><span className="text-gray-300">);</span> <span className="text-gray-400">// OFF</span></div>
                     <div className="ml-4"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">1000</span><span className="text-gray-300">);</span></div>
-                    <div className="ml-4 mt-1"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">64</span><span className="text-gray-300">);</span> <span className="text-gray-600">// 25%</span></div>
+                    <div className="ml-4 mt-1"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">64</span><span className="text-gray-300">);</span> <span className="text-gray-400">// 25%</span></div>
                     <div className="ml-4"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">1000</span><span className="text-gray-300">);</span></div>
-                    <div className="ml-4 mt-1"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">127</span><span className="text-gray-300">);</span> <span className="text-gray-600">// 50%</span></div>
+                    <div className="ml-4 mt-1"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">127</span><span className="text-gray-300">);</span> <span className="text-gray-400">// 50%</span></div>
                     <div className="ml-4"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">1000</span><span className="text-gray-300">);</span></div>
-                    <div className="ml-4 mt-1"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">255</span><span className="text-gray-300">);</span> <span className="text-gray-600">// 100%</span></div>
+                    <div className="ml-4 mt-1"><span className="text-sky-300">analogWrite</span><span className="text-gray-300">(</span><span className="text-orange-400">11</span><span className="text-gray-300">,</span><span className="text-orange-400">255</span><span className="text-gray-300">);</span> <span className="text-gray-400">// 100%</span></div>
                     <div className="ml-4"><span className="text-sky-300">delay</span><span className="text-gray-300">(</span><span className="text-orange-400">1000</span><span className="text-gray-300">);</span></div>
                     <div><span className="text-gray-300">{'}'}</span></div>
                 </div>
@@ -5405,7 +5405,7 @@ function FadingLEDPracticalSection() {
                             { step: 'LED की Negative Pin ko 220Ω Resistor ke through Ground se connect करें।', color: 'text-gray-600' },
                         ].map((c, i) => (
                             <li key={i} className="flex items-start gap-2 text-xs text-yellow-900">
-                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-yellow-500 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                                <span className="w-5 h-5 flex-shrink-0 rounded-full bg-yellow-700 text-white text-[10px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
                                 <span className={`font-medium ${c.color}`}>{c.step}</span>
                             </li>
                         ))}
@@ -5541,9 +5541,9 @@ function BluetoothLEDPracticalSection() {
                         <p className="text-xs font-bold text-blue-800 mb-2">📥 Data Flow</p>
                         <div className="flex items-center justify-between text-[11px] font-bold text-gray-600 bg-gray-50 p-2 rounded-lg border border-gray-200">
                             <span className="flex flex-col items-center gap-1"><Smartphone size={16} className="text-blue-500"/> Mobile App</span>
-                            <span className="text-blue-400">〰️ (Bluetooth) 〰️</span>
+                            <span className="text-blue-600">〰️ (Bluetooth) 〰️</span>
                             <span className="flex flex-col items-center gap-1"><Radio size={16} className="text-indigo-500"/> HC-05</span>
-                            <span className="text-gray-400">➡️ (RX/TX) ➡️</span>
+                            <span className="text-gray-500">➡️ (RX/TX) ➡️</span>
                             <span className="flex flex-col items-center gap-1"><CircuitBoard size={16} className="text-emerald-600"/> Arduino</span>
                         </div>
                     </div>
@@ -5582,7 +5582,7 @@ function BluetoothLEDPracticalSection() {
                                 <h4 className="text-[10px] font-bold tracking-widest uppercase mb-1 flex items-center justify-center gap-1">
                                     <Radio size={10} /> BT Controller
                                 </h4>
-                                <div className="text-[9px] text-blue-200">Status: {btConnected ? <span className="text-green-300 font-bold">Connected (HC-05)</span> : <span className="text-red-300 font-bold">Disconnected</span>}</div>
+                                <div className="text-[9px] text-blue-200">Status: {btConnected ? <span className="text-green-300 font-bold">Connected (HC-05)</span> : <span className="text-red-50 font-bold">Disconnected</span>}</div>
                             </div>
                             
                             {/* App Body */}
@@ -5613,7 +5613,7 @@ function BluetoothLEDPracticalSection() {
                                 </button>
 
                                 <div className="mt-auto w-full text-center">
-                                    <p className="text-[8px] text-gray-400">Last Sent Data</p>
+                                    <p className="text-[8px] text-gray-600">Last Sent Data</p>
                                     <div className="bg-white border border-gray-200 rounded p-1.5 mt-1 font-mono text-xs font-bold text-gray-700 min-h-[28px] flex items-center justify-center">
                                         {sendingData ? `Sending '${sendingData}'...` : serialLog.length > 0 ? `'${serialLog[serialLog.length-1].data}'` : '-'}
                                     </div>
@@ -5744,17 +5744,17 @@ function BluetoothLEDPracticalSection() {
 
                 {/* Serial Monitor Display */}
                 <div className="mt-4 bg-gray-950 rounded-xl p-3 border border-gray-800 font-mono text-xs flex flex-col h-28 relative">
-                    <p className="text-[10px] text-gray-500 mb-1 border-b border-gray-800 pb-1 flex justify-between">
+                    <p className="text-[10px] text-gray-400 mb-1 border-b border-gray-800 pb-1 flex justify-between">
                         <span>📟 COM3 - Serial Monitor (9600 baud)</span>
                         {btConnected && <span className="text-green-400">● BT Connected</span>}
                     </p>
                     <div className="flex-1 overflow-hidden flex flex-col justify-end space-y-1">
                         {serialLog.length === 0 ? (
-                            <p className="text-gray-600 italic text-[10px]">Waiting for Bluetooth data...</p>
+                            <p className="text-gray-400 italic text-[10px]">Waiting for Bluetooth data...</p>
                         ) : (
                             serialLog.map((log, i) => (
                                 <p key={i} className="text-green-400">
-                                    <span className="text-gray-500">[{log.time}]</span> Received: {log.data}
+                                    <span className="text-gray-400">[{log.time}]</span> Received: {log.data}
                                     <span className="text-gray-400 ml-2">→ LED {log.data === '1' ? 'ON' : log.data === '0' ? 'OFF' : 'Unknown'}</span>
                                 </p>
                             ))
@@ -5846,25 +5846,25 @@ function BluetoothLEDPracticalSection() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
-                            <code className="text-[11px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">char data = 0;</code>
+                            <code className="text-[11px] font-bold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded">char data = 0;</code>
                             <p className="text-xs text-gray-600 mt-1">Mobile se aane wale data ko store karne ke liye variable.</p>
                         </div>
                         <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
-                            <code className="text-[11px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">Serial.begin(9600);</code>
+                            <code className="text-[11px] font-bold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded">Serial.begin(9600);</code>
                             <p className="text-xs text-gray-600 mt-1">Arduino aur Bluetooth HC-05 ke beech 9600 baud rate par communication shuru karta hai.</p>
                         </div>
                         <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
-                            <code className="text-[11px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">Serial.available() &gt; 0</code>
+                            <code className="text-[11px] font-bold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded">Serial.available() &gt; 0</code>
                             <p className="text-xs text-gray-600 mt-1">Check karta hai ki Bluetooth se koi naya data aya hai ya nahi.</p>
                         </div>
                     </div>
                     <div className="space-y-2">
                         <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
-                            <code className="text-[11px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded">data = Serial.read();</code>
+                            <code className="text-[11px] font-bold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded">data = Serial.read();</code>
                             <p className="text-xs text-gray-600 mt-1">Bluetooth se aaye hue data (character) ko read karke `data` variable me store karta hai.</p>
                         </div>
                         <div className="p-3 bg-green-50 rounded-xl border border-green-100 shadow-sm">
-                            <code className="text-[11px] font-bold text-green-700 bg-green-100 px-1.5 py-0.5 rounded">if (data == '1')</code>
+                            <code className="text-[11px] font-bold text-green-800 bg-green-100 px-1.5 py-0.5 rounded">if (data == '1')</code>
                             <p className="text-xs text-green-800 mt-1">Agar mobile se '1' received hota hai, to `digitalWrite(13, HIGH)` se LED ON ho jati hai.</p>
                         </div>
                         <div className="p-3 bg-red-50 rounded-xl border border-red-100 shadow-sm">

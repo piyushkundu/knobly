@@ -180,10 +180,10 @@ export default function ReviewPage() {
                 if (resp.option_id === correctOpt.id) return { label: 'Correct', color: '#10b981', bg: '#ecfdf5', border: '#a7f3d0', icon: '✓' };
                 return { label: 'Wrong', color: '#ef4444', bg: '#fef2f2', border: '#fecaca', icon: '✗' };
             }
-            return { label: 'Skipped', color: '#94a3b8', bg: '#f8fafc', border: '#e2e8f0', icon: '—' };
+            return { label: 'Skipped', color: '#475569', bg: '#f8fafc', border: '#e2e8f0', icon: '—' };
         }
         if (resp?.short_answer) return { label: 'Review', color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe', icon: '✎' };
-        return { label: 'Skipped', color: '#94a3b8', bg: '#f8fafc', border: '#e2e8f0', icon: '—' };
+        return { label: 'Skipped', color: '#475569', bg: '#f8fafc', border: '#e2e8f0', icon: '—' };
     };
 
     const getDiffStyle = (d: string) => {
@@ -252,10 +252,10 @@ export default function ReviewPage() {
                                     ● Completed
                                 </span>
                             </div>
-                            <p className="text-[11px] truncate max-w-xs sm:max-w-lg" style={{ color: '#94a3b8' }}>{testData.title}</p>
+                            <p className="text-[11px] truncate max-w-xs sm:max-w-lg" style={{ color: '#475569' }}>{testData.title}</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3 text-[11px]" style={{ color: '#94a3b8' }}>
+                    <div className="flex items-center gap-3 text-[11px]" style={{ color: '#475569' }}>
                         <span className="hidden sm:inline">⏱ {testData.duration_minutes} min paper</span>
                         <span className="hidden sm:inline h-4 w-px" style={{ background: '#e2e8f0' }}></span>
                         <span className="hidden sm:inline">⚡ {stats.timeTaken || 'Finished'}</span>
@@ -274,14 +274,14 @@ export default function ReviewPage() {
                     {/* Score */}
                     <div className="rounded-2xl p-4 sm:p-5" style={{ background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#94a3b8' }}>Points Earned</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#475569' }}>Points Earned</span>
                             <span style={{ fontSize: '18px' }}>📊</span>
                         </div>
                         <div className="flex items-baseline gap-1">
                             <span className="text-2xl sm:text-3xl font-black" style={{ color: '#0f172a' }}>{stats.pointsEarned}</span>
                             <span className="text-sm" style={{ color: '#94a3b8' }}>/ {stats.totalPoints}</span>
                         </div>
-                        <p className="text-[10px] mt-1" style={{ color: '#94a3b8' }}>
+                        <p className="text-[10px] mt-1" style={{ color: '#475569' }}>
                             {accuracy >= 80 ? 'Excellent performance!' : accuracy >= 50 ? 'Good, keep improving!' : 'Keep practicing!'}
                         </p>
                     </div>
@@ -289,13 +289,13 @@ export default function ReviewPage() {
                     {/* Accuracy */}
                     <div className="rounded-2xl p-4 sm:p-5" style={{ background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#94a3b8' }}>Accuracy</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#475569' }}>Accuracy</span>
                             <span style={{ fontSize: '18px' }}>🎯</span>
                         </div>
                         <div className="text-2xl sm:text-3xl font-black" style={{ color: accuracy >= 80 ? '#10b981' : accuracy >= 50 ? '#f59e0b' : '#ef4444' }}>
                             {accuracy}%
                         </div>
-                        <p className="text-[10px] mt-1" style={{ color: '#94a3b8' }}>Correct vs total attempted</p>
+                        <p className="text-[10px] mt-1" style={{ color: '#475569' }}>Correct vs total attempted</p>
                     </div>
 
                     {/* Correct */}
@@ -325,7 +325,7 @@ export default function ReviewPage() {
                             <div className="h-7 w-7 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: '#94a3b8', color: '#fff' }}>—</div>
                         </div>
                         <div className="text-2xl sm:text-3xl font-black" style={{ color: '#475569' }}>{stats.skipped}</div>
-                        <p className="text-[10px] mt-1" style={{ color: '#94a3b8' }}>Unanswered questions</p>
+                        <p className="text-[10px] mt-1" style={{ color: '#475569' }}>Unanswered questions</p>
                     </div>
                 </section>
 
@@ -347,7 +347,7 @@ export default function ReviewPage() {
                         <div className="flex flex-wrap items-center gap-3">
                             {/* AI Language Selection */}
                             <div className="flex items-center p-1 rounded-xl bg-white shadow-sm" style={{ border: '1px solid #e2e8f0' }}>
-                                <span className="text-[10px] font-bold text-gray-400 tracking-wider px-2"><Sparkles size={10} className="inline mr-1 text-purple-400" />Explanation Language</span>
+                                <span className="text-[10px] font-bold text-gray-600 tracking-wider px-2"><Sparkles size={10} className="inline mr-1 text-purple-600" />Explanation Language</span>
                                 <button onClick={() => setAiLanguage('Hindi')} className={`text-[10px] px-3 py-1 font-bold rounded-lg transition-all ${aiLanguage === 'Hindi' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-50'}`}>Hindi</button>
                                 <button onClick={() => setAiLanguage('English')} className={`text-[10px] px-3 py-1 font-bold rounded-lg transition-all ${aiLanguage === 'English' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:bg-gray-50'}`}>English</button>
                             </div>
@@ -363,12 +363,12 @@ export default function ReviewPage() {
                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all"
                                     style={filter === f.key
                                         ? { background: f.bg, color: f.color, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }
-                                        : { background: 'transparent', color: '#94a3b8' }
+                                        : { background: 'transparent', color: '#475569' }
                                     }>
                                     {f.label}
                                     <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold" style={filter === f.key
                                         ? { background: f.color, color: '#ffffff' }
-                                        : { background: '#e2e8f0', color: '#94a3b8' }
+                                        : { background: '#e2e8f0', color: '#475569' }
                                     }>{f.count}</span>
                                 </button>
                             ))}
@@ -407,7 +407,7 @@ export default function ReviewPage() {
                                             <h3 className="text-sm sm:text-[15px] font-semibold leading-snug" style={{ color: '#0f172a' }}>
                                                 {q.question_text}
                                             </h3>
-                                            <p className="mt-1 text-[10px]" style={{ color: '#94a3b8' }}>
+                                            <p className="mt-1 text-[10px]" style={{ color: '#475569' }}>
                                                 {q.chapter && <span className="uppercase tracking-wider">{q.chapter} · </span>}
                                                 {q.marks || 1} mark{(q.marks || 1) > 1 ? 's' : ''}
                                             </p>
@@ -460,15 +460,15 @@ export default function ReviewPage() {
                                         /* Short Answer */
                                         <div className="mt-3 grid gap-3 sm:grid-cols-2">
                                             <div className="p-3 rounded-xl text-xs sm:text-sm" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                                                <p className="text-[10px] uppercase tracking-wider mb-1 flex items-center gap-1" style={{ color: '#94a3b8' }}>
+                                                <p className="text-[10px] uppercase tracking-wider mb-1 flex items-center gap-1" style={{ color: '#475569' }}>
                                                     ✏️ Your answer
                                                 </p>
                                                 <p className="whitespace-pre-wrap" style={{ color: '#0f172a' }}>
-                                                    {resp?.short_answer || <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>No answer provided</span>}
+                                                    {resp?.short_answer || <span style={{ color: '#475569', fontStyle: 'italic' }}>No answer provided</span>}
                                                 </p>
                                             </div>
                                             <div className="p-3 rounded-xl text-xs sm:text-sm" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                                                <p className="text-[10px] uppercase tracking-wider mb-1 flex items-center gap-1" style={{ color: '#94a3b8' }}>
+                                                <p className="text-[10px] uppercase tracking-wider mb-1 flex items-center gap-1" style={{ color: '#475569' }}>
                                                     💡 Evaluation note
                                                 </p>
                                                 <p style={{ color: '#64748b' }}>

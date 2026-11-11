@@ -52,7 +52,7 @@ export default function IoTSecurity() {
     const [activeSection, setActiveSection] = useState('need-security');
 
     return (
-        <div className="min-h-screen bg-white relative">
+        <div className="min-h-screen bg-white text-slate-800 relative">
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-red-50/50 via-white to-rose-50/30" />
             </div>
@@ -232,7 +232,7 @@ export default function IoTSecurity() {
                                     <div className="p-2 bg-emerald-100 text-emerald-600 rounded-xl"><ShieldCheck size={20} /></div>
                                     <div>
                                         <h4 className="font-bold text-gray-800 text-lg">🟢 1. White Hat Hacker</h4>
-                                        <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Ethical Hacker</span>
+                                        <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Ethical Hacker</span>
                                     </div>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-3">White Hat Hackers ko <strong>Ethical Hackers</strong> bhi kaha jaata hai। Ye legally aur authorized tarike se kisi company ya organization ke system ki security test karte hain।</p>
@@ -262,7 +262,7 @@ export default function IoTSecurity() {
                                     <div className="p-2 bg-gray-900 text-red-400 rounded-xl"><Skull size={20} /></div>
                                     <div>
                                         <h4 className="font-bold text-gray-800 text-lg">⚫ 2. Black Hat Hacker</h4>
-                                        <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider bg-red-50 px-2 py-0.5 rounded-full border border-red-200">Criminal Hacker</span>
+                                        <span className="text-[10px] font-bold text-red-700 uppercase tracking-wider bg-red-50 px-2 py-0.5 rounded-full border border-red-200">Criminal Hacker</span>
                                     </div>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-3">Black Hat Hackers galat uddeshya se kisi ke system me <strong>bina permission ke ghuste hain</strong>। Ye data chori, system damage, aur ransomware attacks karte hain।</p>
@@ -502,17 +502,17 @@ export default function IoTSecurity() {
                             <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-center">
                                 <div className="text-2xl mb-2">🐌</div>
                                 <p className="text-xs font-bold text-red-800">Website Slow</p>
-                                <p className="text-[10px] text-red-600 mt-1">Excessive traffic se response time badh jaata hai</p>
+                                <p className="text-[10px] text-red-700 mt-1">Excessive traffic se response time badh jaata hai</p>
                             </div>
                             <div className="p-4 rounded-xl bg-orange-50 border border-orange-100 text-center">
                                 <div className="text-2xl mb-2">💥</div>
                                 <p className="text-xs font-bold text-orange-800">Server Crash</p>
-                                <p className="text-[10px] text-orange-600 mt-1">Target system overload hokar crash ho jaata hai</p>
+                                <p className="text-[10px] text-orange-700 mt-1">Target system overload hokar crash ho jaata hai</p>
                             </div>
                             <div className="p-4 rounded-xl bg-amber-50 border border-amber-100 text-center">
                                 <div className="text-2xl mb-2">🚫</div>
                                 <p className="text-xs font-bold text-amber-800">Service Down</p>
-                                <p className="text-[10px] text-amber-600 mt-1">Real users website access nahi kar paate</p>
+                                <p className="text-[10px] text-amber-700 mt-1">Real users website access nahi kar paate</p>
                             </div>
                         </div>
 
@@ -870,7 +870,7 @@ export default function IoTSecurity() {
                                     <div className="p-2 bg-emerald-100 text-emerald-600 rounded-xl"><Lock size={20} /></div>
                                     <div>
                                         <h4 className="font-bold text-gray-800 text-lg">🟢 2. Private Cloud</h4>
-                                        <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Restricted Access</span>
+                                        <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Restricted Access</span>
                                     </div>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-3">Private Cloud kisi ek <strong>Organization ya Company</strong> ke liye banaya jaata hai। Iska upyog kewal wahi Organization karti hai, jisse Data adhik <strong>surakshit</strong> rehta hai।</p>

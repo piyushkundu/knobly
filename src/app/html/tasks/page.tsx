@@ -30,23 +30,23 @@ interface TaskItem {
 }
 
 const TASKS: TaskItem[] = [
-    { id: '1', title: 'My Profile Page', desc: 'Create a personal profile using basic HTML tags: p, pre, br, hr', topics: 'p, pre, br, hr, bgcolor', color: 'bg-blue-500' },
-    { id: '2', title: 'Basic HTML Tags', desc: 'Demonstrate bold, italic, underline, pre, br, center and heading tags', topics: 'b, i, u, pre, br, center, h1, h2, hr', color: 'bg-green-500' },
-    { id: '3', title: 'India - A Diverse Nation', desc: 'Article about India using headings, images, font colors, and hr', topics: 'h1-h5, img, font, br, hr, align', color: 'bg-orange-500' },
-    { id: '4', title: 'Indian History Timeline', desc: 'History page using semantic elements: header, nav, section, footer', topics: 'header, nav, section, footer, address, ul', color: 'bg-red-500' },
-    { id: '5', title: 'Operating Systems (Lists)', desc: 'OS information page with unordered and ordered lists', topics: 'ul, ol, li, h1-h3, p, hr', color: 'bg-purple-500' },
-    { id: '5.0', title: 'Web Dev Roadmap (Nested Lists)', desc: 'Multi-level learning roadmap using nested unordered, ordered, and description lists', topics: 'ul, ol, li, dl, dt, dd, type, h1-h3, p, hr', color: 'bg-teal-500' },
-    { id: '5.1', title: 'Operating Systems (Table)', desc: 'OS comparison using tables with borders and cellpadding', topics: 'table, tr, th, td, border, cellpadding', color: 'bg-purple-400' },
-    { id: '5.2', title: 'Internet Usage Statistics', desc: 'Global internet stats with colspan and rowspan tables', topics: 'table, colspan, rowspan, th, td, caption', color: 'bg-indigo-500' },
-    { id: '5.3', title: 'History of the Internet', desc: 'Internet timeline with description lists and tables', topics: 'dl, dt, dd, table, iframe, ol', color: 'bg-indigo-400' },
-    { id: '5.4', title: 'Wonders of Space', desc: 'Space exploration page with images, tables, and multimedia', topics: 'img, table, audio, video, iframe', color: 'bg-cyan-500' },
-    { id: '6', title: 'Weekly Study Schedule', desc: 'Complex table with colspan, rowspan, and colored cells', topics: 'table, colspan, rowspan, bgcolor, th, td', color: 'bg-teal-500' },
-    { id: '7', title: 'Simple Webpage (No CSS)', desc: 'Complete webpage using only semantic HTML tags, no CSS', topics: 'header, nav, main, article, section, footer', color: 'bg-amber-500' },
-    { id: '8', title: 'Registration Form', desc: 'Complete registration form with all input types', topics: 'form, input, select, textarea, radio, checkbox', color: 'bg-rose-500' },
-    { id: '9', title: 'Solar System Basics', desc: 'Solar system page with tables, lists, and audio', topics: 'table, ol, ul, audio, img, details', color: 'bg-sky-500' },
-    { id: '10', title: 'Full Website Layout', desc: 'Multi-section website with marquee, nav, tables, forms, media', topics: 'marquee, nav, table, form, video, iframe', color: 'bg-emerald-500' },
-    { id: '11', title: 'Premium Demo Website', desc: 'Professional-looking demo site with header, sections, and footer', topics: 'header, section, article, aside, footer, figure', color: 'bg-violet-500' },
-    { id: 'test-1', title: 'Test - 1: HTML Foundation & Lists Mastery', desc: 'Comprehensive test covering all tags up to lists: headings, paragraphs, pre, formatting, marquee, images, anchor links, unordered, ordered, nested, and description lists.', topics: 'h1-h3, p, pre, b, i, u, mark, marquee, img, a, ul, ol, dl, dt, dd, font, hr, bgcolor, align, href, src', color: 'bg-gradient-to-r from-red-500 to-rose-600' },
+    { id: '1', title: 'My Profile Page', desc: 'Create a personal profile using basic HTML tags: p, pre, br, hr', topics: 'p, pre, br, hr, bgcolor', color: 'bg-blue-700' },
+    { id: '2', title: 'Basic HTML Tags', desc: 'Demonstrate bold, italic, underline, pre, br, center and heading tags', topics: 'b, i, u, pre, br, center, h1, h2, hr', color: 'bg-green-700' },
+    { id: '3', title: 'India - A Diverse Nation', desc: 'Article about India using headings, images, font colors, and hr', topics: 'h1-h5, img, font, br, hr, align', color: 'bg-orange-700' },
+    { id: '4', title: 'Indian History Timeline', desc: 'History page using semantic elements: header, nav, section, footer', topics: 'header, nav, section, footer, address, ul', color: 'bg-red-700' },
+    { id: '5', title: 'Operating Systems (Lists)', desc: 'OS information page with unordered and ordered lists', topics: 'ul, ol, li, h1-h3, p, hr', color: 'bg-purple-700' },
+    { id: '5.0', title: 'Web Dev Roadmap (Nested Lists)', desc: 'Multi-level learning roadmap using nested unordered, ordered, and description lists', topics: 'ul, ol, li, dl, dt, dd, type, h1-h3, p, hr', color: 'bg-teal-700' },
+    { id: '5.1', title: 'Operating Systems (Table)', desc: 'OS comparison using tables with borders and cellpadding', topics: 'table, tr, th, td, border, cellpadding', color: 'bg-purple-700' },
+    { id: '5.2', title: 'Internet Usage Statistics', desc: 'Global internet stats with colspan and rowspan tables', topics: 'table, colspan, rowspan, th, td, caption', color: 'bg-indigo-700' },
+    { id: '5.3', title: 'History of the Internet', desc: 'Internet timeline with description lists and tables', topics: 'dl, dt, dd, table, iframe, ol', color: 'bg-indigo-700' },
+    { id: '5.4', title: 'Wonders of Space', desc: 'Space exploration page with images, tables, and multimedia', topics: 'img, table, audio, video, iframe', color: 'bg-cyan-700' },
+    { id: '6', title: 'Weekly Study Schedule', desc: 'Complex table with colspan, rowspan, and colored cells', topics: 'table, colspan, rowspan, bgcolor, th, td', color: 'bg-teal-700' },
+    { id: '7', title: 'Simple Webpage (No CSS)', desc: 'Complete webpage using only semantic HTML tags, no CSS', topics: 'header, nav, main, article, section, footer', color: 'bg-amber-700' },
+    { id: '8', title: 'Registration Form', desc: 'Complete registration form with all input types', topics: 'form, input, select, textarea, radio, checkbox', color: 'bg-rose-700' },
+    { id: '9', title: 'Solar System Basics', desc: 'Solar system page with tables, lists, and audio', topics: 'table, ol, ul, audio, img, details', color: 'bg-sky-700' },
+    { id: '10', title: 'Full Website Layout', desc: 'Multi-section website with marquee, nav, tables, forms, media', topics: 'marquee, nav, table, form, video, iframe', color: 'bg-emerald-700' },
+    { id: '11', title: 'Premium Demo Website', desc: 'Professional-looking demo site with header, sections, and footer', topics: 'header, section, article, aside, footer, figure', color: 'bg-violet-700' },
+    { id: 'test-1', title: 'Test - 1: HTML Foundation & Lists Mastery', desc: 'Comprehensive test covering all tags up to lists: headings, paragraphs, pre, formatting, marquee, images, anchor links, unordered, ordered, nested, and description lists.', topics: 'h1-h3, p, pre, b, i, u, mark, marquee, img, a, ul, ol, dl, dt, dd, font, hr, bgcolor, align, href, src', color: 'bg-gradient-to-r from-red-700 to-rose-700' },
 ];
 
 export default function TasksPage() {
@@ -194,12 +194,12 @@ export default function TasksPage() {
                             <ArrowLeft size={18} />
                         </button>
                         <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-lg bg-orange-500 flex items-center justify-center text-white shadow-sm">
+                            <div className="w-7 h-7 rounded-lg bg-orange-700 flex items-center justify-center text-white shadow-sm">
                                 <FileCode size={16} />
                             </div>
                             <div>
                                 <h1 className="text-sm font-bold text-slate-900 leading-tight">HTML Practice Tasks</h1>
-                                <span className="text-[10px] text-slate-400 font-medium">15 Hands-on Projects</span>
+                                <span className="text-[10px] text-slate-600 font-medium">15 Hands-on Projects</span>
                             </div>
                         </div>
                     </div>
@@ -207,7 +207,7 @@ export default function TasksPage() {
                     <div className="flex items-center gap-2">
                         <Link
                             href="/html/compiler"
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-sm hover:scale-105 active:scale-95 transition-all"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-orange-700 to-red-700 text-white shadow-sm hover:scale-105 active:scale-95 transition-all"
                             title="Open Web Compiler"
                         >
                             <FileCode size={13} />
@@ -238,7 +238,7 @@ export default function TasksPage() {
             {/* ── Main Content ── */}
             <main className="max-w-6xl mx-auto px-4 py-6">
                 {/* Banner */}
-                <div className="relative overflow-hidden bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-2xl p-6 mb-6 text-white shadow-lg shadow-orange-500/20">
+                <div className="relative overflow-hidden bg-gradient-to-r from-amber-700 via-orange-700 to-red-700 rounded-2xl p-6 mb-6 text-white shadow-lg shadow-orange-500/20">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
                     <div className="relative z-10 max-w-2xl">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold bg-white/20 backdrop-blur-sm mb-3">
@@ -253,13 +253,13 @@ export default function TasksPage() {
                             <span className="px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm font-semibold">
                                 Total: {TASKS.length} Tasks
                             </span>
-                            <span className="px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm font-semibold text-emerald-200">
+                            <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-semibold">
                                 Unlocked: {unlockedTasks.length} Tasks
                             </span>
-                            <span className="px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm font-semibold text-sky-200">
+                            <span className="px-3 py-1 rounded-full bg-sky-50 text-sky-800 font-semibold">
                                 Opened: {openedTasks.length}/{TASKS.length} ({Math.round((openedTasks.length / TASKS.length) * 100)}%)
                             </span>
-                            <span className="px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm font-semibold text-amber-200">
+                            <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-900 font-semibold">
                                 Locked: {TASKS.length - unlockedTasks.length} Tasks
                             </span>
                         </div>
@@ -289,7 +289,7 @@ export default function TasksPage() {
                                     <div className="flex items-start justify-between gap-2 mb-3">
                                         <div className="flex items-center gap-2.5">
                                             <span className={`w-9 h-9 rounded-xl text-white font-extrabold text-xs flex items-center justify-center shadow-sm ${
-                                                unlocked ? task.color : 'bg-slate-400'
+                                                unlocked ? task.color : 'bg-slate-600'
                                             }`}>
                                                 {task.id}
                                             </span>
@@ -297,7 +297,7 @@ export default function TasksPage() {
                                                 <h3 className={`text-sm font-bold leading-tight ${unlocked ? 'text-slate-900' : 'text-slate-600'}`}>
                                                     {task.title}
                                                 </h3>
-                                                <span className="text-[10px] text-slate-400 font-mono">Task #{task.id}</span>
+                                                <span className="text-[10px] text-slate-600 font-mono">Task #{task.id}</span>
                                             </div>
                                         </div>
 
@@ -327,7 +327,7 @@ export default function TasksPage() {
                                                     e.stopPropagation();
                                                     openUnlockModal(task.id, unlocked ? 'lock' : 'unlock');
                                                 }}
-                                                className="w-6 h-6 rounded-md hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-amber-700 transition-colors"
+                                                className="w-6 h-6 rounded-md hover:bg-slate-200 flex items-center justify-center text-slate-600 hover:text-amber-700 transition-colors"
                                                 title={unlocked ? 'Lock Task (Admin)' : 'Unlock Task (Admin)'}
                                             >
                                                 {unlocked ? <Lock size={12} /> : <KeyRound size={12} />}
@@ -342,7 +342,7 @@ export default function TasksPage() {
 
                                     {/* Topics Covered */}
                                     <div className="bg-white/90 rounded-lg p-2 border border-slate-200/80 mb-4">
-                                        <span className="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-wider">Tags & Attributes</span>
+                                        <span className="text-[10px] font-bold text-slate-600 block mb-1 uppercase tracking-wider">Tags & Attributes</span>
                                         <div className="flex flex-wrap gap-1">
                                             {task.topics.split(',').map(item => {
                                                 const trimmed = item.trim();
@@ -383,7 +383,7 @@ export default function TasksPage() {
                                             <Link 
                                                 href={`/html/tasks/${task.id}/compiler`}
                                                 onClick={() => recordTaskOpen(task.id)}
-                                                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-sm hover:shadow transition-all"
+                                                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-700 to-amber-700 hover:from-orange-800 hover:to-amber-800 shadow-sm hover:shadow transition-all"
                                                 title="Code project in live compiler with AI evaluation"
                                             >
                                                 <Code2 size={13} />
@@ -395,7 +395,7 @@ export default function TasksPage() {
                                             onClick={() => openUnlockModal(task.id, 'unlock')}
                                             className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold text-slate-500 bg-slate-200/80 hover:bg-slate-200 border border-slate-300 transition-all cursor-pointer"
                                         >
-                                            <Lock size={13} className="text-slate-400" />
+                                            <Lock size={13} className="text-slate-600" />
                                             <span>Locked by Instructor (Tap to Unlock)</span>
                                         </button>
                                     )}

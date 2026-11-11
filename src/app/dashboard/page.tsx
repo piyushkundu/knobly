@@ -170,7 +170,7 @@ export default function DashboardPage() {
                             </div>
                             <div>
                                 <div className="text-xl font-black" style={{ color: '#0f172a' }}>{s.value}</div>
-                                <div className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#94a3b8' }}>{s.label}</div>
+                                <div className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#475569' }}>{s.label}</div>
                             </div>
                         </div>
                     ))}
@@ -189,9 +189,9 @@ export default function DashboardPage() {
                             <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%)' }} />
                         </div>
                     </div>
-                    <div className="flex justify-between text-[10px] mt-1.5 font-medium" style={{ color: '#94a3b8' }}>
+                    <div className="flex justify-between text-[10px] mt-1.5 font-medium" style={{ color: '#475569' }}>
                         <span>{d.currentRank.icon} {d.currentRank.name}</span>
-                        <span style={{ color: d.pointsToNextRank > 0 ? '#94a3b8' : '#10b981' }}>
+                        <span style={{ color: d.pointsToNextRank > 0 ? '#475569' : '#10b981' }}>
                             {d.nextRank ? `${d.pointsToNextRank} pts to ${d.nextRank.icon} ${d.nextRank.name}` : '🎉 Max Rank Achieved!'}
                         </span>
                     </div>
@@ -235,16 +235,16 @@ export default function DashboardPage() {
                         <div className="p-5 pt-3">
                             <div className="min-h-[120px] max-h-[420px] overflow-y-auto space-y-3 pr-1">
                                 {d.isLoadingMain ? (
-                                    <div className="flex items-center justify-center py-12 text-[12px] font-semibold" style={{ color: '#94a3b8' }}><Loader2 size={16} className="animate-spin mr-2" />Loading tests…</div>
+                                    <div className="flex items-center justify-center py-12 text-[12px] font-semibold" style={{ color: '#475569' }}><Loader2 size={16} className="animate-spin mr-2" />Loading tests…</div>
                                 ) : !d.user ? (
                                     <div className="flex flex-col items-center justify-center py-12 text-center">
-                                        <div className="h-14 w-14 rounded-2xl flex items-center justify-center mb-3" style={{ background: '#f1f5f9' }}><Lock size={20} style={{ color: '#94a3b8' }} /></div>
-                                        <p className="text-sm font-semibold" style={{ color: '#64748b' }}>Login to see your tests</p>
+                                        <div className="h-14 w-14 rounded-2xl flex items-center justify-center mb-3" style={{ background: '#f1f5f9' }}><Lock size={20} style={{ color: '#475569' }} /></div>
+                                        <p className="text-sm font-semibold" style={{ color: '#475569' }}>Login to see your tests</p>
                                     </div>
                                 ) : d.availableTests.length === 0 && d.lockedTests.length === 0 && d.simpleTests.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center py-12 text-center">
-                                        <div className="h-14 w-14 rounded-2xl flex items-center justify-center mb-3" style={{ background: '#f1f5f9' }}><BookOpen size={20} style={{ color: '#94a3b8' }} /></div>
-                                        <p className="text-sm font-semibold" style={{ color: '#64748b' }}>No tests configured yet</p>
+                                        <div className="h-14 w-14 rounded-2xl flex items-center justify-center mb-3" style={{ background: '#f1f5f9' }}><BookOpen size={20} style={{ color: '#475569' }} /></div>
+                                        <p className="text-sm font-semibold" style={{ color: '#475569' }}>No tests configured yet</p>
                                     </div>
                                 ) : (
                                     <>
@@ -252,11 +252,11 @@ export default function DashboardPage() {
                                             <TestCard key={test.id} test={test} attempted={d.attemptedTestIds.has(test.id)} onStart={() => window.location.href = `/test/${test.id}`} />
                                         ))}
                                         {filterBySubject(d.lockedTests).map(test => (
-                                            <div key={test.id} className="rounded-xl px-4 py-3 flex items-center gap-3 opacity-60" style={{ background: '#f8fafc', border: '1px dashed #d1d5db' }}>
-                                                <Lock size={14} style={{ color: '#94a3b8' }} />
+                                            <div key={test.id} className="rounded-xl px-4 py-3 flex items-center gap-3" style={{ background: '#f8fafc', border: '1px dashed #d1d5db' }}>
+                                                <Lock size={14} style={{ color: '#475569' }} />
                                                 <div className="flex-1 min-w-0">
-                                                    <h4 className="text-[12px] font-semibold truncate" style={{ color: '#64748b' }}>{test.title}</h4>
-                                                    <p className="text-[10px] font-medium" style={{ color: '#94a3b8' }}>🔒 Unlock at Level {test.level_no || 1}</p>
+                                                    <h4 className="text-[12px] font-semibold truncate" style={{ color: '#475569' }}>{test.title}</h4>
+                                                    <p className="text-[10px] font-medium" style={{ color: '#475569' }}>🔒 Unlock at Level {test.level_no || 1}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -271,7 +271,7 @@ export default function DashboardPage() {
                                                                     <h4 className="text-[13px] font-bold truncate" style={{ color: '#0f172a' }}>{test.title}</h4>
                                                                     {test.category && <span className="px-2 py-0.5 rounded-full text-[8px] font-bold uppercase" style={{ background: '#eef2ff', color: '#6366f1' }}>{test.category}</span>}
                                                                 </div>
-                                                                <div className="mt-2 flex items-center gap-3 text-[10px] font-semibold" style={{ color: '#94a3b8' }}>
+                                                                <div className="mt-2 flex items-center gap-3 text-[10px] font-semibold" style={{ color: '#475569' }}>
                                                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Clock size={10} />{test.duration_minutes}m</span>
                                                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Target size={10} />{test.questions?.length || 0}Q</span>
                                                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#ecfdf5', color: '#10b981' }}><Zap size={10} />{test.total_points}pts</span>
@@ -286,7 +286,7 @@ export default function DashboardPage() {
                                                     </div>
                                                 ))}
                                                 {filterBySubject(d.simpleTests.filter(t => t.is_active)).length === 0 && (
-                                                    <div className="text-center py-8 text-[11px] font-medium" style={{ color: '#94a3b8' }}>No tests for this subject.</div>
+                                                    <div className="text-center py-8 text-[11px] font-medium" style={{ color: '#475569' }}>No tests for this subject.</div>
                                                 )}
                                             </>
                                         )}
@@ -311,7 +311,7 @@ export default function DashboardPage() {
                             <div className="p-4">
                                 {d.liveTests.length === 0 ? (
                                     <div className="text-center py-4">
-                                        <p className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>No live tests right now</p>
+                                                    <p className="text-[11px] font-medium" style={{ color: '#475569' }}>No live tests right now</p>
                                     </div>
                                 ) : (
                                     <div className="space-y-2 max-h-44 overflow-y-auto">
@@ -319,7 +319,7 @@ export default function DashboardPage() {
                                             <div key={test.id} className="rounded-xl px-4 py-3 flex items-center justify-between" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
                                                 <div>
                                                     <h4 className="text-[12px] font-bold" style={{ color: '#0f172a' }}>{test.title}</h4>
-                                                    <div className="text-[9px] mt-0.5 font-medium" style={{ color: '#94a3b8' }}>{d.formatDateTime(test.live_start)} – {d.formatDateTime(test.live_end)}</div>
+                                                    <div className="text-[9px] mt-0.5 font-medium" style={{ color: '#475569' }}>{d.formatDateTime(test.live_start)} – {d.formatDateTime(test.live_end)}</div>
                                                 </div>
                                                 <Link href={`/test/${test.id}`} className="px-4 py-1.5 rounded-xl text-[10px] font-bold text-white transition-all hover:shadow-lg" style={{ background: '#10b981' }}>
                                                     <Play size={10} className="inline mr-1" />Join
@@ -349,7 +349,7 @@ export default function DashboardPage() {
                                 {d.leaderboard.length === 0 ? (
                                     <div className="text-center py-6">
                                         <span className="text-2xl mb-2 block">🏆</span>
-                                        <p className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>No rankings yet — be the first!</p>
+                                        <p className="text-[11px] font-medium" style={{ color: '#475569' }}>No rankings yet — be the first!</p>
                                     </div>
                                 ) : (
                                     <div className="space-y-2 max-h-72 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
@@ -395,7 +395,7 @@ export default function DashboardPage() {
                                                                     : idx === 1 ? 'linear-gradient(135deg, #10b981, #059669)'
                                                                     : idx === 2 ? 'linear-gradient(135deg, #0ea5e9, #0284c7)'
                                                                     : isTop3 ? `linear-gradient(135deg, ${rowRank.color}, ${rowRank.color}cc)` : '#e2e8f0',
-                                                                color: isTop3 ? '#fff' : '#64748b',
+                                                                color: isTop3 ? '#fff' : '#475569',
                                                                 boxShadow: idx === 0 ? '0 2px 8px rgba(236,72,153,0.5)'
                                                                     : idx === 1 ? '0 2px 6px rgba(16,185,129,0.4)'
                                                                     : idx === 2 ? '0 2px 6px rgba(14,165,233,0.4)'
@@ -450,7 +450,7 @@ export default function DashboardPage() {
                         {d.attemptHistory.length === 0 && d.mySimpleResults.length === 0 ? (
                             <div className="text-center py-8">
                                 <span className="text-3xl mb-2 block">📝</span>
-                                <p className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>No attempts yet. Complete a test to see results!</p>
+                                <p className="text-[11px] font-medium" style={{ color: '#475569' }}>No attempts yet. Complete a test to see results!</p>
                             </div>
                         ) : (
                             <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
@@ -480,7 +480,7 @@ export default function DashboardPage() {
                                                     <div className="flex items-center gap-2.5 mt-1">
                                                         <span className="text-[9px] font-bold" style={{ color: accColor }}>{acc.toFixed ? acc.toFixed(0) : acc}% accuracy</span>
                                                         <span className="h-1 w-1 rounded-full" style={{ background: '#cbd5e1' }}></span>
-                                                        <span className="text-[9px] font-medium" style={{ color: '#94a3b8' }}>{d.formatDateTime(row.submitted_at || row.started_at)}</span>
+                                                        <span className="text-[9px] font-medium" style={{ color: '#475569' }}>{d.formatDateTime(row.submitted_at || row.started_at)}</span>
                                                     </div>
                                                 </div>
                                                 <Link href={`/review/${row.id}`} className="px-4 py-2 rounded-xl text-[10px] font-bold flex items-center gap-1.5 transition-all hover:shadow-lg hover:scale-[1.05] flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 3px 10px rgba(99,102,241,0.3)', color: '#ffffff' }}>
@@ -535,8 +535,8 @@ export default function DashboardPage() {
                                                 <span className="text-lg">{r.icon}</span>
                                             </td>
                                             <td className="px-3 py-2.5 font-bold" style={{ color: r.color }}>{r.name}</td>
-                                            <td className="px-3 py-2.5 font-semibold" style={{ color: '#64748b' }}>{r.pts} pts</td>
-                                            <td className="px-3 py-2.5 font-medium hidden sm:table-cell" style={{ color: '#94a3b8' }}>{r.note}</td>
+                                            <td className="px-3 py-2.5 font-semibold" style={{ color: '#475569' }}>{r.pts} pts</td>
+                                            <td className="px-3 py-2.5 font-medium hidden sm:table-cell" style={{ color: '#475569' }}>{r.note}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -568,9 +568,9 @@ export default function DashboardPage() {
 
             {/* ── FOOTER ── */}
             <footer style={{ background: '#ffffff', borderTop: '1px solid #e8ecf1' }}>
-                <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between text-[10px] font-semibold" style={{ color: '#94a3b8' }}>
+                <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between text-[10px] font-semibold" style={{ color: '#475569' }}>
                     <span>© Knobly Web · Powered by knobly</span>
-                    <Link href="/" className="flex items-center gap-1 transition-all hover:text-indigo-500" style={{ color: '#64748b' }}>
+                    <Link href="/" className="flex items-center gap-1 transition-all hover:text-indigo-500" style={{ color: '#475569' }}>
                         <ArrowLeft size={10} /> Back to Home
                     </Link>
                 </div>
@@ -593,11 +593,11 @@ function TestCard({ test, attempted, onStart }: { test: any; attempted?: boolean
                         <div className="flex items-center gap-1.5 flex-shrink-0">
                             {attempted && <span className="px-2 py-0.5 rounded-full text-[8px] font-bold" style={{ background: '#ecfdf5', color: '#059669' }}>Attempted ✓</span>}
                             {test.mode === 'PRACTICE'
-                                ? <span className="px-2 py-0.5 rounded-full text-[8px] font-bold" style={{ background: '#f1f5f9', color: '#64748b' }}>Practice</span>
+                                ? <span className="px-2 py-0.5 rounded-full text-[8px] font-bold" style={{ background: '#f1f5f9', color: '#475569' }}>Practice</span>
                                 : <span className="px-2 py-0.5 rounded-full text-[8px] font-bold flex items-center gap-1 text-white" style={{ background: '#ef4444' }}><span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: '#fff' }} />LIVE</span>}
                         </div>
                     </div>
-                    <div className="mt-2 flex items-center gap-2 text-[10px] font-semibold" style={{ color: '#94a3b8' }}>
+                    <div className="mt-2 flex items-center gap-2 text-[10px] font-semibold" style={{ color: '#475569' }}>
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Clock size={10} />{test.duration_minutes}m</span>
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Target size={10} />{test.total_marks || test.total_points || 0}Q</span>
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#ecfdf5', color: '#10b981' }}><Zap size={10} />{test.xp_reward || test.total_marks || 0} pts</span>
@@ -605,7 +605,7 @@ function TestCard({ test, attempted, onStart }: { test: any; attempted?: boolean
                 </div>
             </div>
             <div className="px-4 pb-3 flex items-center justify-between" style={{ borderTop: '1px solid #f5f5f5' }}>
-                <span className="text-[9px] truncate font-medium" style={{ color: '#94a3b8' }}>{test.category || test.level_title || 'Level test'}</span>
+                <span className="text-[9px] truncate font-medium" style={{ color: '#475569' }}>{test.category || test.level_title || 'Level test'}</span>
                 <button onClick={onStart} className="px-5 py-2 rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 transition-all hover:shadow-xl hover:scale-[1.03]" style={{ background: attempted ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: attempted ? '0 4px 14px rgba(245,158,11,0.35)' : '0 4px 14px rgba(99,102,241,0.35)', color: '#ffffff' }}>
                     <Play size={12} style={{ color: '#ffffff' }} />{attempted ? 'Try Again' : 'Start'}
                 </button>

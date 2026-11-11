@@ -13,7 +13,7 @@
   --accent-warning: #fbbf24;
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-muted: #a1a1aa;
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
   --border-color: rgba(255, 255, 255, 0.1);
@@ -41,11 +41,11 @@ html.light .python-lab-root {
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --bg-tertiary: #f1f5f9;
-  --accent-primary: #6366f1;
-  --accent-secondary: #0891b2;
-  --accent-success: #10b981;
-  --accent-error: #ef4444;
-  --accent-warning: #f59e0b;
+  --accent-primary: #4f46e5;
+  --accent-secondary: #0e7490;
+  --accent-success: #047857;
+  --accent-error: #b91c1c;
+  --accent-warning: #92400e;
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #64748b;
@@ -119,10 +119,6 @@ html.light .python-lab-root {
   animation: py-gradient-shift 3s ease infinite;
 }
 
-html.light .python-lab-root .bg-gradient-to-r {
-  background-image: linear-gradient(to right, #6366f1, #8b5cf6) !important;
-  color: white !important;
-}
 
 .error-line-highlight {
   background-color: var(--error-bg) !important;

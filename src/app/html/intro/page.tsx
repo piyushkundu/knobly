@@ -35,7 +35,7 @@ function CodeBlock({ code, title = 'index.html' }: { code: string; title?: strin
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
                         <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
                     </div>
-                    <span className="text-[10px] text-gray-500 font-mono ml-1">{title}</span>
+                    <span className="text-[10px] text-gray-400 font-mono ml-1">{title}</span>
                 </div>
                 <button
                     onClick={handleCopy}
@@ -143,7 +143,7 @@ export default function HtmlIntro() {
                                     router.push('/html');
                                 }
                             }}
-                            className="text-gray-400 hover:text-gray-900 transition-colors p-1 rounded-lg hover:bg-gray-100"
+                            className="text-gray-600 hover:text-gray-900 transition-colors p-1 rounded-lg hover:bg-gray-100"
                             title="Go Back"
                         >
                             <ArrowLeft size={18} />
@@ -156,7 +156,7 @@ export default function HtmlIntro() {
                                 <h1 className="text-xs sm:text-sm font-bold text-gray-900">
                                     {isHindi ? 'HTML का परिचय' : 'Introduction to HTML'}
                                 </h1>
-                                <span className="text-[9px] text-gray-400 uppercase tracking-wider">HTML Course</span>
+                                <span className="text-[9px] text-gray-600 uppercase tracking-wider">HTML Course</span>
                             </div>
                         </div>
                     </div>
@@ -183,7 +183,7 @@ export default function HtmlIntro() {
                             <span>{isHindi ? 'कम्पाइलर' : 'Compiler'}</span>
                         </Link>
 
-                        <Link href="/" className="text-gray-400 hover:text-gray-900 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                        <Link href="/" className="text-gray-600 hover:text-gray-900 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
                             <Home size={16} />
                         </Link>
                     </div>
@@ -242,7 +242,7 @@ export default function HtmlIntro() {
                                 <strong>HTML (HyperText Markup Language)</strong> वेब पेज बनाने के लिए उपयोग की जाने वाली एक मानक मार्कअप भाषा है। यह एक श्रृंखला में मौजूद <strong>elements</strong> का उपयोग करके वेब पेज की संरचना का वर्णन करती है, जो ब्राउज़र को बताती है कि सामग्री को कैसे प्रदर्शित किया जाए।
                             </p>
                             <p>
-                                <span className="font-bold text-orange-600">Hyper Text</span> शब्द का अर्थ है विभिन्न वेब पेजों को एक साथ link करने की क्षमता, जबकि <span className="font-bold text-orange-600">Markup Language</span> का मतलब है कि यह text के भीतर elements को चिह्नित करने के लिए <strong>tags</strong> का उपयोग करती है।
+                                <span className="font-bold text-orange-700">Hyper Text</span> शब्द का अर्थ है विभिन्न वेब पेजों को एक साथ link करने की क्षमता, जबकि <span className="font-bold text-orange-700">Markup Language</span> का मतलब है कि यह text के भीतर elements को चिह्नित करने के लिए <strong>tags</strong> का उपयोग करती है।
                             </p>
                             <p>
                                 HTML को <strong>Tim Berners-Lee</strong> ने <strong>1991</strong> में विकसित किया था। इसका नवीनतम मानक <strong>HTML5</strong> है, जिसने कई नई सुविधाएं जैसे सेमेंटिक तत्व, ऑडियो/वीडियो सपोर्ट और कैनवस प्रदान किए हैं।
@@ -256,7 +256,7 @@ export default function HtmlIntro() {
                                     <li>HTML वेब पेज की <strong>संरचना (Structure)</strong> को परिभाषित करती है</li>
                                     <li>HTML में कई <strong>elements और tags</strong> होते हैं</li>
                                     <li>HTML तत्व ब्राउज़र को बताते हैं कि सामग्री को <strong>कैसे दिखाना</strong> है</li>
-                                    <li>HTML फाइल का एक्सटेंशन <code className="px-1.5 py-0.5 rounded bg-gray-100 text-red-600 text-xs border border-gray-200">.html</code> या <code className="px-1.5 py-0.5 rounded bg-gray-100 text-red-600 text-xs border border-gray-200">.htm</code> होता है</li>
+                                    <li>HTML फाइल का एक्सटेंशन <code className="px-1.5 py-0.5 rounded bg-gray-100 text-red-700 text-xs border border-gray-200">.html</code> या <code className="px-1.5 py-0.5 rounded bg-gray-100 text-red-700 text-xs border border-gray-200">.htm</code> होता है</li>
                                     <li>HTML को Notepad, VS Code आदि किसी भी साधारण टेक्स्ट एडिटर में लिखा जा सकता है</li>
                                 </ul>
                             </InfoCard>
@@ -267,7 +267,7 @@ export default function HtmlIntro() {
                                 <strong>HTML (HyperText Markup Language)</strong> is the standard markup language used to create and design web pages. It describes the structure of a web page using a series of elements, which tell the browser how to display the content.
                             </p>
                             <p>
-                                The term <strong className="text-orange-600">HyperText</strong> refers to the ability to link various web pages together, while <strong className="text-orange-600">Markup Language</strong> indicates that it uses tags to mark elements within the text.
+                                The term <strong className="text-orange-700">HyperText</strong> refers to the ability to link various web pages together, while <strong className="text-orange-700">Markup Language</strong> indicates that it uses tags to mark elements within the text.
                             </p>
                             <p>
                                 HTML was created by <strong>Tim Berners-Lee</strong> in <strong>1991</strong>. The latest version is <strong>HTML5</strong>, which introduced many new features like semantic elements, audio/video support, canvas, and more.
@@ -281,7 +281,7 @@ export default function HtmlIntro() {
                                     <li>HTML describes the <strong>structure</strong> of a Web page</li>
                                     <li>HTML consists of a series of <strong>elements</strong></li>
                                     <li>HTML elements tell the browser <strong>how to display</strong> the content</li>
-                                    <li>HTML file extension is <code className="px-1.5 py-0.5 rounded bg-gray-100 text-red-600 text-xs border border-gray-200">.html</code> or <code className="px-1.5 py-0.5 rounded bg-gray-100 text-red-600 text-xs border border-gray-200">.htm</code></li>
+                                    <li>HTML file extension is <code className="px-1.5 py-0.5 rounded bg-gray-100 text-red-700 text-xs border border-gray-200">.html</code> or <code className="px-1.5 py-0.5 rounded bg-gray-100 text-red-700 text-xs border border-gray-200">.htm</code></li>
                                     <li>HTML can be created and edited using any text editor like Notepad, VS Code, Sublime Text, etc.</li>
                                 </ul>
                             </InfoCard>
@@ -445,7 +445,7 @@ export default function HtmlIntro() {
                                 ['<p>', 'Defines a paragraph of text.'],
                             ]).map(([tag, desc], i) => (
                                 <div key={i} className="flex gap-2 items-start">
-                                    <code className="text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-orange-50 text-orange-600 border border-orange-200 shrink-0 font-mono">
+                                    <code className="text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-200 shrink-0 font-mono">
                                         {tag}
                                     </code>
                                     <span className="text-xs text-gray-700">{desc}</span>
@@ -531,7 +531,7 @@ export default function HtmlIntro() {
                                 ].map(([attr, desc, used], i) => (
                                     <tr key={i} className={`${i % 2 ? 'bg-gray-50/50' : 'bg-white'} hover:bg-orange-50/30 transition-colors`}>
                                         <td className="py-2 px-3 border-b border-gray-100 font-mono">
-                                            <code className="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-red-50 text-red-600 border border-red-100">{attr}</code>
+                                            <code className="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-red-50 text-red-700 border border-red-100">{attr}</code>
                                         </td>
                                         <td className="py-2 px-3 border-b border-gray-100 text-gray-700">{desc}</td>
                                         <td className="py-2 px-3 border-b border-gray-100 text-gray-500 font-mono text-[11px]">{used}</td>
@@ -571,7 +571,7 @@ export default function HtmlIntro() {
                             ['<textarea>', isHindi ? 'बहु-पंक्ति टेक्स्ट इनपुट बॉक्स' : 'Multi-line text input field'],
                         ].map(([tag, desc], i) => (
                             <div key={i} className="bg-gray-50 hover:bg-orange-50/50 border border-gray-100 hover:border-orange-200 rounded-xl p-3 transition-colors group">
-                                <code className="text-[11px] font-semibold text-orange-600 font-mono">{tag}</code>
+                                <code className="text-[11px] font-semibold text-orange-700 font-mono">{tag}</code>
                                 <p className="text-[10px] sm:text-[11px] text-gray-500 mt-1 group-hover:text-gray-700 leading-snug">{desc}</p>
                             </div>
                         ))}
@@ -676,7 +676,7 @@ export default function HtmlIntro() {
                                 ['<figure>', isHindi ? 'चित्र और उसका कैप्शन' : 'Illustrated figure with caption'],
                             ].map(([tag, desc], i) => (
                                 <div key={i} className="flex items-center gap-1.5">
-                                    <code className="text-orange-600 text-[11px] font-semibold font-mono">{tag}</code>
+                                    <code className="text-orange-700 text-[11px] font-semibold font-mono">{tag}</code>
                                     <span className="text-gray-600">— {desc}</span>
                                 </div>
                             ))}
@@ -685,10 +685,10 @@ export default function HtmlIntro() {
 
                     <InfoCard title={isHindi ? 'नेटिव मल्टीमीडिया तत्व (Native Multimedia)' : 'Native Multimedia Elements'} color="purple">
                         <div className="space-y-1.5 text-xs">
-                            <div><code className="text-orange-600 font-mono font-semibold">&lt;audio&gt;</code> <span className="text-gray-600">— {isHindi ? 'बिना किसी प्लगइन के ऑडियो फाइल प्ले करने के लिए' : 'Play audio directly in the browser'}</span></div>
-                            <div><code className="text-orange-600 font-mono font-semibold">&lt;video&gt;</code> <span className="text-gray-600">— {isHindi ? 'सीधे वीडियो फाइल चलाने के लिए' : 'Play video files natively without third-party plugins'}</span></div>
-                            <div><code className="text-orange-600 font-mono font-semibold">&lt;canvas&gt;</code> <span className="text-gray-600">— {isHindi ? 'JavaScript द्वारा 2D/3D ग्राफिक्स और गेम्स बनाने के लिए' : 'Draw dynamic 2D/3D graphics with JavaScript'}</span></div>
-                            <div><code className="text-orange-600 font-mono font-semibold">&lt;svg&gt;</code> <span className="text-gray-600">— {isHindi ? 'स्केलेबल वेक्टर ग्राफिक्स प्रदर्शित करने के लिए' : 'Render crisp scalable vector graphics at any screen size'}</span></div>
+                            <div><code className="text-orange-700 font-mono font-semibold">&lt;audio&gt;</code> <span className="text-gray-600">— {isHindi ? 'बिना किसी प्लगइन के ऑडियो फाइल प्ले करने के लिए' : 'Play audio directly in the browser'}</span></div>
+                            <div><code className="text-orange-700 font-mono font-semibold">&lt;video&gt;</code> <span className="text-gray-600">— {isHindi ? 'सीधे वीडियो फाइल चलाने के लिए' : 'Play video files natively without third-party plugins'}</span></div>
+                            <div><code className="text-orange-700 font-mono font-semibold">&lt;canvas&gt;</code> <span className="text-gray-600">— {isHindi ? 'JavaScript द्वारा 2D/3D ग्राफिक्स और गेम्स बनाने के लिए' : 'Draw dynamic 2D/3D graphics with JavaScript'}</span></div>
+                            <div><code className="text-orange-700 font-mono font-semibold">&lt;svg&gt;</code> <span className="text-gray-600">— {isHindi ? 'स्केलेबल वेक्टर ग्राफिक्स प्रदर्शित करने के लिए' : 'Render crisp scalable vector graphics at any screen size'}</span></div>
                         </div>
                     </InfoCard>
 
@@ -728,7 +728,7 @@ export default function HtmlIntro() {
                                 sub: isHindi ? 'संरचना और सामग्री' : 'Structure & Content',
                                 desc: isHindi ? 'पेज पर क्या होगा (हेडिंग, पैराग्राफ, इमेज, लिंक, टेबल)' : 'Defines what appears on the page — headings, paragraphs, images, links, forms',
                                 color: 'bg-orange-50 border-orange-200',
-                                titleColor: 'text-orange-600',
+                                titleColor: 'text-orange-700',
                             },
                             {
                                 emoji: '🎨',
@@ -744,14 +744,14 @@ export default function HtmlIntro() {
                                 sub: isHindi ? 'व्यवहार और अन्तरक्रियाशीलता' : 'Behavior & Logic',
                                 desc: isHindi ? 'पेज पर क्या होगा (क्लिक इवेंट्स, फॉर्म वैलिडेशन, डायनामिक कंटेंट)' : 'Defines what happens — click events, validation, animations, API requests',
                                 color: 'bg-amber-50 border-amber-200',
-                                titleColor: 'text-amber-600',
+                                titleColor: 'text-amber-700',
                             },
                         ].map((tech) => (
                             <div key={tech.name} className={`rounded-2xl border p-5 text-center ${tech.color} hover:shadow-md transition-shadow`}>
                                 <div className="text-3xl mb-2">{tech.emoji}</div>
                                 <h4 className={`text-sm font-extrabold ${tech.titleColor} mb-0.5`}>{tech.name}</h4>
                                 <p className="text-[11px] text-gray-600 font-medium">{tech.sub}</p>
-                                <p className="text-[11px] text-gray-500 mt-2 leading-relaxed">{tech.desc}</p>
+                                <p className="text-[11px] text-gray-600 mt-2 leading-relaxed">{tech.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -771,7 +771,7 @@ export default function HtmlIntro() {
                 {/* Next Steps: Link to Elements Page */}
                 <Link
                     href="/html/elements"
-                    className="group flex items-center justify-between bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-5 sm:p-6 shadow-lg shadow-orange-500/20 hover:shadow-xl hover:scale-[1.01] transition-all mb-4 text-white"
+                    className="group flex items-center justify-between bg-gradient-to-r from-orange-700 via-red-700 to-pink-700 rounded-2xl p-5 sm:p-6 shadow-lg shadow-orange-500/20 hover:from-orange-800 hover:via-red-800 hover:to-pink-800 hover:shadow-xl hover:scale-[1.01] transition-all mb-4 text-white"
                 >
                     <div>
                         <span className="text-[10px] font-bold text-orange-200 uppercase tracking-wider">

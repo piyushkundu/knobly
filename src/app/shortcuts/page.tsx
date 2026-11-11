@@ -134,7 +134,7 @@ export default function ShortcutsPage() {
     })).filter(g => g.shortcuts.length > 0);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a0a1a] to-[#0f172a] overflow-y-auto">
+        <div className="min-h-screen text-slate-100 bg-gradient-to-b from-[#0a0a1a] to-[#0f172a] overflow-y-auto">
             <header className="sticky top-0 z-50 bg-[#0a0a1a]/90 backdrop-blur-xl border-b border-white/5">
                 <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
                     <div>
@@ -167,7 +167,7 @@ export default function ShortcutsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {filteredGroups.map((group) => (
                         <div key={group.title} className="glass-panel rounded-2xl overflow-hidden border border-white/5">
-                            <div className={`bg-gradient-to-r ${group.gradient} px-5 py-3 flex items-center gap-2`}>
+                            <div className={`theme-fixed bg-gradient-to-r ${group.gradient} px-5 py-3 flex items-center gap-2`}>
                                 <i className={`${group.icon} text-white text-lg`} />
                                 <h2 className="text-sm font-bold text-white">{group.title}</h2>
                                 <span className="ml-auto text-[10px] text-white/70 font-bold">{group.shortcuts.length} shortcuts</span>

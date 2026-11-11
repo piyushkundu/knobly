@@ -12,7 +12,7 @@ function CB({ code, lang = 'python' }: { code: string; lang?: string }) {
             <div className="flex items-center justify-between px-4 py-1.5" style={{ background: '#0f172a', borderBottom: '1px solid #334155' }}>
                 <div className="flex items-center gap-2">
                     <div className="flex gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-400/60" /><span className="w-2.5 h-2.5 rounded-full bg-yellow-400/60" /><span className="w-2.5 h-2.5 rounded-full bg-green-400/60" /></div>
-                    <span className="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-500">{lang}</span>
+                    <span className="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-600">{lang}</span>
                 </div>
                 <button onClick={copy} className="text-xs flex items-center gap-1 transition-colors" style={{ color: c ? '#34d399' : '#64748b' }}>{c ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}</button>
             </div>
@@ -245,7 +245,7 @@ export default function ControlStatements() {
                                     <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-sm" style={{ background: item.tc }}>{i + 1}</div>
                                     <div className="flex-1">
                                         <span className="text-sm font-bold" style={{ color: item.tc }}>{item.label}</span>
-                                        <p className="text-[11px] mt-0.5" style={{ color: '#94a3b8' }}>{item.desc}</p>
+                                        <p className="text-[11px] mt-0.5" style={{ color: '#475569' }}>{item.desc}</p>
                                     </div>
                                     <ExternalLink size={16} style={{ color: item.tc }} className="group-hover:translate-x-0.5 transition-transform" />
                                 </a>

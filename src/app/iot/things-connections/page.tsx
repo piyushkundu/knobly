@@ -42,7 +42,7 @@ export default function IoTThingsConnections() {
     const [activeSection, setActiveSection] = useState('control-system');
 
     return (
-        <div className="min-h-screen bg-white relative">
+        <div className="min-h-screen bg-white text-slate-800 relative">
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 via-white to-indigo-50/30" />
             </div>
@@ -240,13 +240,13 @@ export default function IoTThingsConnections() {
                                 
                                 {/* Comparator (Circle) */}
                                 <div className="w-12 h-12 rounded-full border-4 border-emerald-500 bg-white flex items-center justify-center relative z-10 shadow-sm">
-                                    <span className="text-emerald-600 font-bold text-xl">⨯</span>
+                                    <span className="text-emerald-700 font-bold text-xl">⨯</span>
                                 </div>
 
                                 {/* Arrow */}
                                 <div className="w-10 h-1 bg-gray-400 relative z-10">
                                     <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 border-t-2 border-r-2 border-gray-400 rotate-45 transform origin-center translate-x-[2px]"></div>
-                                    <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs text-gray-500 font-bold">Error</span>
+                                    <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs text-gray-800 font-bold">Error</span>
                                 </div>
 
                                 {/* Controller Block */}
@@ -379,38 +379,38 @@ export default function IoTThingsConnections() {
                         {/* Detail sections for each layer */}
                         <div className="space-y-4">
                             <div className="p-4 rounded-xl border border-purple-200 bg-purple-50">
-                                <h5 className="font-bold text-purple-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs">1</span> Physical Layer</h5>
+                                <h5 className="font-bold text-purple-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-purple-700 text-white flex items-center justify-center text-xs">1</span> Physical Layer</h5>
                                 <p className="text-xs text-purple-800 mb-2">Ye OSI model ki sabse lowest layer hoti hai. Is layer ka kaam data ko electrical signals, radio signals ya optical signals me convert karke transmit karna hota hai.</p>
                                 <p className="text-[11px] font-semibold text-purple-600 bg-white inline-block px-2 py-1 rounded border border-purple-100">👉 Devices: Hub, Cable, Connector</p>
                             </div>
                             <div className="p-4 rounded-xl border border-blue-200 bg-blue-50">
-                                <h5 className="font-bold text-blue-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs">2</span> Data Link Layer</h5>
+                                <h5 className="font-bold text-blue-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs">2</span> Data Link Layer</h5>
                                 <p className="text-xs text-blue-800 mb-2">Ye layer error-free data transfer provide karti hai. Iska kaam: Data framing, Error detection, MAC addressing.</p>
                                 <p className="text-[11px] font-semibold text-blue-600 bg-white inline-block px-2 py-1 rounded border border-blue-100">👉 Device: Switch</p>
                             </div>
                             <div className="p-4 rounded-xl border border-cyan-200 bg-cyan-50">
-                                <h5 className="font-bold text-cyan-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center text-xs">3</span> Network Layer</h5>
+                                <h5 className="font-bold text-cyan-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-cyan-700 text-white flex items-center justify-center text-xs">3</span> Network Layer</h5>
                                 <p className="text-xs text-cyan-800 mb-2">Ye layer source se destination tak data ka route decide karti hai. Is layer me IP addressing aur routing ka kaam hota hai.</p>
                                 <div className="flex gap-2">
-                                    <p className="text-[11px] font-semibold text-cyan-600 bg-white inline-block px-2 py-1 rounded border border-cyan-100">👉 Protocols: IPv4, IPv6</p>
-                                    <p className="text-[11px] font-semibold text-cyan-600 bg-white inline-block px-2 py-1 rounded border border-cyan-100">👉 Device: Router</p>
+                                    <p className="text-[11px] font-semibold text-cyan-700 bg-white inline-block px-2 py-1 rounded border border-cyan-100">👉 Protocols: IPv4, IPv6</p>
+                                    <p className="text-[11px] font-semibold text-cyan-700 bg-white inline-block px-2 py-1 rounded border border-cyan-100">👉 Device: Router</p>
                                 </div>
                             </div>
                             <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50">
-                                <h5 className="font-bold text-emerald-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">4</span> Transport Layer</h5>
+                                <h5 className="font-bold text-emerald-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs">4</span> Transport Layer</h5>
                                 <p className="text-xs text-emerald-800 mb-2">Ye layer end-to-end communication provide karti hai. Iska kaam: Data delivery, Error control, Flow control.</p>
-                                <p className="text-[11px] font-semibold text-emerald-600 bg-white inline-block px-2 py-1 rounded border border-emerald-100">👉 Protocols: TCP, UDP</p>
+                                <p className="text-[11px] font-semibold text-emerald-700 bg-white inline-block px-2 py-1 rounded border border-emerald-100">👉 Protocols: TCP, UDP</p>
                             </div>
                             <div className="p-4 rounded-xl border border-yellow-200 bg-yellow-50">
-                                <h5 className="font-bold text-yellow-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-yellow-500 text-white flex items-center justify-center text-xs">5</span> Session Layer</h5>
+                                <h5 className="font-bold text-yellow-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-yellow-700 text-white flex items-center justify-center text-xs">5</span> Session Layer</h5>
                                 <p className="text-xs text-yellow-800">Ye layer communication sessions ko establish, manage aur terminate karti hai. Yani devices ke beech connection ko maintain karti hai.</p>
                             </div>
                             <div className="p-4 rounded-xl border border-orange-200 bg-orange-50">
-                                <h5 className="font-bold text-orange-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs">6</span> Presentation Layer</h5>
+                                <h5 className="font-bold text-orange-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-orange-700 text-white flex items-center justify-center text-xs">6</span> Presentation Layer</h5>
                                 <p className="text-xs text-orange-800 mb-2">Ye layer data ko readable format me convert karti hai. Iska kaam: Encryption, Decryption, Data formatting.</p>
                             </div>
                             <div className="p-4 rounded-xl border border-red-200 bg-red-50">
-                                <h5 className="font-bold text-red-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs">7</span> Application Layer</h5>
+                                <h5 className="font-bold text-red-700 flex items-center gap-2 mb-2"><span className="w-6 h-6 rounded-full bg-red-700 text-white flex items-center justify-center text-xs">7</span> Application Layer</h5>
                                 <p className="text-xs text-red-800 mb-2">Ye topmost layer hoti hai jahan user directly interact karta hai. Ye layer network services provide karti hai.</p>
                                 <p className="text-[11px] font-semibold text-red-600 bg-white inline-block px-2 py-1 rounded border border-red-100">👉 Examples: HTTP, FTP, SMTP</p>
                             </div>
@@ -447,12 +447,12 @@ export default function IoTThingsConnections() {
                                 <div className="p-4 rounded-xl border border-pink-200 bg-pink-50">
                                     <h5 className="font-bold text-pink-700 text-sm mb-1">1. Application Layer</h5>
                                     <p className="text-xs text-pink-800 mb-1">Ye layer application, presentation aur session layer ka combined form hoti hai. User ko network services provide karti hai.</p>
-                                    <p className="text-[10px] font-bold text-pink-600">👉 Protocols: HTTP, FTP, SMTP</p>
+                                    <p className="text-[10px] font-bold text-pink-700">👉 Protocols: HTTP, FTP, SMTP</p>
                                 </div>
                                 <div className="p-4 rounded-xl border border-fuchsia-200 bg-fuchsia-50">
                                     <h5 className="font-bold text-fuchsia-700 text-sm mb-1">2. Transport Layer</h5>
                                     <p className="text-xs text-fuchsia-800 mb-1">Ye layer reliable communication provide karti hai.</p>
-                                    <p className="text-[10px] font-bold text-fuchsia-600">👉 Protocols: TCP, UDP</p>
+                                    <p className="text-[10px] font-bold text-fuchsia-700">👉 Protocols: TCP, UDP</p>
                                 </div>
                                 <div className="p-4 rounded-xl border border-purple-200 bg-purple-50">
                                     <h5 className="font-bold text-purple-700 text-sm mb-1">3. Internet Layer</h5>
@@ -509,7 +509,7 @@ export default function IoTThingsConnections() {
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-teal-200 flex flex-col items-center">
                                 <div className="flex items-center gap-4 w-full max-w-sm justify-between">
                                     <div className="flex flex-col items-center">
-                                        <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 font-bold mb-2">A</div>
+                                        <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center text-teal-700 font-bold mb-2">A</div>
                                     </div>
                                     <div className="flex-1 flex flex-col gap-2">
                                         <div className="w-full h-1 bg-teal-500 relative">
@@ -518,10 +518,10 @@ export default function IoTThingsConnections() {
                                         <div className="w-full h-1 bg-slate-300 relative border-b border-dashed border-slate-400">
                                             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 border-b-2 border-l-2 border-slate-400 rotate-45 transform origin-center translate-x-[-2px]"></div>
                                         </div>
-                                        <span className="text-[10px] text-center text-teal-600 font-bold">One direction at a time</span>
+                                        <span className="text-[10px] text-center text-teal-700 font-bold">One direction at a time</span>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 font-bold mb-2">B</div>
+                                        <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center text-teal-700 font-bold mb-2">B</div>
                                     </div>
                                 </div>
                                 <div className="mt-4 flex gap-2">
@@ -538,7 +538,7 @@ export default function IoTThingsConnections() {
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-200 flex flex-col items-center">
                                 <div className="flex items-center gap-4 w-full max-w-sm justify-between">
                                     <div className="flex flex-col items-center">
-                                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold mb-2">A</div>
+                                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold mb-2">A</div>
                                     </div>
                                     <div className="flex-1 flex flex-col gap-2">
                                         <div className="w-full h-1 bg-blue-500 relative">
@@ -550,7 +550,7 @@ export default function IoTThingsConnections() {
                                         <span className="text-[10px] text-center text-blue-600 font-bold">Simultaneously</span>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold mb-2">B</div>
+                                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold mb-2">B</div>
                                     </div>
                                 </div>
                                 <div className="mt-4 flex gap-2">
@@ -597,7 +597,7 @@ export default function IoTThingsConnections() {
                         <div className="mt-8 mb-6 p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
                             <div className="flex flex-col md:flex-row gap-6 items-center">
                                 <div className="flex-1">
-                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs">1</span> Twisted Pair Cable</h4>
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs">1</span> Twisted Pair Cable</h4>
                                     <p className="text-sm text-gray-600 mb-3">Ye data transmission ka sabse common aur sasta medium hota hai. Isme do copper wires hoti hain jinko plastic cover se insulated kiya jata hai aur dono wires ko aapas me <strong>twist kiya jata hai</strong>.</p>
                                     <IB type="tip">Twisting ka main purpose <strong>noise aur interference ko kam karna</strong> hota hai.</IB>
                                     
@@ -629,7 +629,7 @@ export default function IoTThingsConnections() {
                         <div className="mb-6 p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
                             <div className="flex flex-col md:flex-row-reverse gap-6 items-center">
                                 <div className="flex-1">
-                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs">2</span> Coaxial Cable</h4>
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-orange-700 text-white flex items-center justify-center text-xs">2</span> Coaxial Cable</h4>
                                     <p className="text-sm text-gray-600 mb-3">Iska use heavy signals aur video signals ko transmit karne ke liye kiya jata hai. Jahan twisted pair proper signal transfer nahi kar pati, wahan coaxial cable use hoti hai.</p>
                                     
                                     <div className="bg-orange-50 p-3 rounded-lg border border-orange-100 mb-4 text-sm text-orange-900">
@@ -668,7 +668,7 @@ export default function IoTThingsConnections() {
                         <div className="p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
                             <div className="flex flex-col md:flex-row gap-6 items-center">
                                 <div className="flex-1">
-                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center text-xs">3</span> Fiber Optics Cable</h4>
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-cyan-700 text-white flex items-center justify-center text-xs">3</span> Fiber Optics Cable</h4>
                                     <p className="text-sm text-gray-600 mb-3">Ye <strong>sabse fast</strong> transmission medium mana jata hai. Is cable me digital data ko light signals ke form me transmit kiya jata hai (Electrical signal ki jagah light ka use).</p>
                                     
                                     <div className="bg-cyan-50 p-3 rounded-lg border border-cyan-100 mb-4">
@@ -748,7 +748,7 @@ export default function IoTThingsConnections() {
                         <div className="mb-6 p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
                             <div className="flex flex-col md:flex-row-reverse gap-6 items-center">
                                 <div className="flex-1">
-                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center text-xs">2</span> Microwave</h4>
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-pink-700 text-white flex items-center justify-center text-xs">2</span> Microwave</h4>
                                     <p className="text-sm text-gray-600 mb-3">Microwave waves mainly long distance communication ke liye use hoti hain. Ye <strong>direct line-of-sight communication</strong> follow karti hain, isliye towers ko face-to-face hona zaruri hai.</p>
                                     <IB type="note">Inki wavelength 1 meter se 1 millimeter ke beech hoti hai.</IB>
                                     
@@ -771,7 +771,7 @@ export default function IoTThingsConnections() {
                         <div className="p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
                             <div className="flex flex-col md:flex-row gap-6 items-center">
                                 <div className="flex-1">
-                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs">3</span> Infrared Waves</h4>
+                                    <h4 className="font-black text-gray-800 text-xl mb-2 flex items-center gap-2"><span className="w-6 h-6 rounded-full bg-red-700 text-white flex items-center justify-center text-xs">3</span> Infrared Waves</h4>
                                     <p className="text-sm text-gray-600 mb-3">Infrared waves ka use <strong>short-range communication</strong> ke liye kiya jata hai. Ye waves solid objects (jaise walls) ke through pass nahi ho sakti.</p>
                                     
                                     <div className="mt-4">

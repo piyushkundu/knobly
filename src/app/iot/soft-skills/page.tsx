@@ -56,7 +56,7 @@ export default function SoftSkillsPage() {
     const [activeSection, setActiveSection] = useState('soft-skills-intro');
 
     return (
-        <div className="min-h-screen bg-white relative">
+        <div className="min-h-screen bg-white text-slate-800 relative">
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-pink-50/50 via-white to-fuchsia-50/30" />
             </div>
@@ -623,7 +623,7 @@ export default function SoftSkillsPage() {
                                     'व्यक्ति सकारात्मक बना रहता है।',
                                     'Productivity बढ़ती है।'
                                 ].map((item, i) => (
-                                    <div key={i} className="flex gap-2 items-center text-xs text-gray-700 font-semibold bg-gray-50 p-2 rounded-lg border border-gray-100"><CheckCircle2 size={14} className="text-green-500 flex-shrink-0" /> {item}</div>
+                                    <div key={i} className="flex gap-2 items-center text-xs text-gray-700 font-semibold bg-gray-50 p-2 rounded-lg border border-gray-100"><CheckCircle2 size={14} className="text-green-700 flex-shrink-0" /> {item}</div>
                                 ))}
                             </div>
                         </div>

@@ -235,25 +235,14 @@ body.light-mode .search-shell input {
 }
 
 body.light-mode .search-shell input::placeholder {
-  color: #94a3b8 !important;
+  color: #475569 !important;
 }
 
 body.light-mode .search-shell-icon {
   color: #94a3b8 !important;
 }
 
-body.light-mode input,
-body.light-mode select,
-body.light-mode textarea {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  color: #1e293b !important;
-  border: 1px solid rgba(148, 163, 184, 0.3) !important;
-}
 
-body.light-mode input::placeholder,
-body.light-mode textarea::placeholder {
-  color: #94a3b8 !important;
-}
 
 body.light-mode .knobly-header-style {
   color: #0f172a !important;
@@ -266,13 +255,13 @@ body.light-mode #knobly-logo {
 }
 
 body.light-mode .tab-btn-active {
-  color: #0284c7 !important;
+  color: #0369a1 !important;
   border-color: #0284c7 !important;
 }
 
 body.light-mode .nav-btn.is-active {
   background: rgba(56, 189, 248, 0.12) !important;
-  color: #0284c7 !important;
+  color: #0369a1 !important;
   box-shadow: 0 4px 12px rgba(56, 189, 248, 0.12) !important;
   border-color: rgba(56, 189, 248, 0.4) !important;
 }
@@ -292,7 +281,7 @@ body.light-mode .video-active {
 }
 
 body.light-mode .apps-filter-btn-active {
-  color: #0284c7 !important;
+  color: #0369a1 !important;
   border-color: #0284c7 !important;
 }
 
@@ -323,35 +312,35 @@ body.light-mode .app-icon-tile {
 }
 
 /* Light mode: app card text visibility */
-body.light-mode .glass-card h3 {
+body.light-mode .glass-card h3:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #334155 !important;
 }
 
-body.light-mode .glass-card:hover h3 {
-  color: #0284c7 !important;
+body.light-mode .glass-card:hover h3:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #0369a1 !important;
 }
 
-body.light-mode .glass-card p {
-  color: #94a3b8 !important;
+body.light-mode .glass-card p:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #475569 !important;
 }
 
 /* Light mode: header icon buttons */
-body.light-mode button[class*="border-white/10"] {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) button[class*="border-white/10"]:not(:where(.theme-fixed, .theme-fixed *)) {
   border-color: rgba(148, 163, 184, 0.25) !important;
   background: rgba(255, 255, 255, 0.7) !important;
 }
 
-body.light-mode button[class*="border-white/10"]:hover {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) button[class*="border-white/10"]:hover:not(:where(.theme-fixed, .theme-fixed *)) {
   background: rgba(255, 255, 255, 0.95) !important;
 }
 
-body.light-mode button[class*="border-white/10"] i {
-  color: #64748b !important;
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) button[class*="border-white/10"] i:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #475569 !important;
 }
 
 /* Light mode: nav sidebar buttons */
 body.light-mode .nav-btn {
-  color: #64748b !important;
+  color: #475569 !important;
 }
 
 body.light-mode .nav-btn:hover {
@@ -359,49 +348,37 @@ body.light-mode .nav-btn:hover {
 }
 
 /* Light mode: sidebar clock panel */
-body.light-mode [class*="text-cyan-400"] {
-  color: #0284c7 !important;
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) [class*="text-cyan-400"]:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #0369a1 !important;
 }
 
 /* Light mode: right sidebar panels */
-body.light-mode [class*="border-white/5"] {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) [class*="border-white/5"]:not(:where(.theme-fixed, .theme-fixed *)) {
   border-color: rgba(148, 163, 184, 0.12) !important;
 }
 
 /* Light mode: KnoblyAI CTA */
-body.light-mode [class*="hover:bg-purple-500/5"]:hover {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) [class*="hover:bg-purple-500/5"]:hover:not(:where(.theme-fixed, .theme-fixed *)) {
   background: rgba(139, 92, 246, 0.06) !important;
 }
 
 /* Light mode: right sidebar clock gradient */
-body.light-mode .glass-panel [class*="bg-gradient-to-br"] {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.06), transparent) !important;
-}
 
 /* Light mode: sidebar text readability */
-body.light-mode .glass-panel .text-4xl,
-body.light-mode .glass-panel .text-3xl,
-body.light-mode .glass-panel .text-2xl {
-  color: #1e293b !important;
-}
-
-body.light-mode .glass-panel .text-lg {
-  color: #334155 !important;
-}
 
 /* Light mode: right sidebar section titles */
-body.light-mode [class*="text-gray-400"] {
-  color: #64748b !important;
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) [class*="text-gray-400"]:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #475569 !important;
 }
 
 /* Light mode: right sidebar YouTube section */
 body.light-mode .glass-panel h3[class*="text-gray-400"] {
-  color: #64748b !important;
+  color: #475569 !important;
 }
 
 /* Light mode: nav sidebar background */
-body.light-mode aside [class*="bg-black/40"],
-body.light-mode aside [class*="bg-black/60"] {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) aside [class*="bg-black/40"]:not(:where(.theme-fixed, .theme-fixed *)),
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) aside [class*="bg-black/60"]:not(:where(.theme-fixed, .theme-fixed *)) {
   background: rgba(255, 255, 255, 0.6) !important;
 }
 
@@ -430,18 +407,21 @@ body.light-mode ::-webkit-scrollbar-thumb:hover {
   color: #000;
 }
 
-/* INPUT & SELECT STYLES */
-input,
-select,
-textarea {
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: #9ca3af !important;
+/* Paired defaults sit below component utilities so editors and fixed-color forms
+   can choose their own foreground/background without fighting !important. */
+@layer base {
+  input, select, textarea {
+    background-color: #0f172a;
+    color: #f8fafc;
+    border: 1px solid #64748b;
+  }
+  input::placeholder, textarea::placeholder { color: #94a3b8; opacity: 1; }
+  body.light-mode :is(input, select, textarea) {
+    background-color: #ffffff;
+    color: #0f172a;
+    border-color: #94a3b8;
+  }
+  body.light-mode :is(input, textarea)::placeholder { color: #475569; }
 }
 
 /* SEARCH INPUT BORDER FIX */
@@ -1103,31 +1083,31 @@ body.light-mode .devicon-fix {
   opacity: 1 !important;
 }
 
-body.light-mode .text-gray-100 {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-gray-100:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #0f172a !important;
   font-weight: 600 !important;
 }
 
-body.light-mode .text-gray-200 {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-gray-200:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #1e293b !important;
   font-weight: 700 !important;
 }
 
-body.light-mode .text-gray-300 {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-gray-300:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #334155 !important;
   font-weight: 600 !important;
 }
 
-body.light-mode .text-gray-400 {
-  color: #64748b !important;
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-gray-400:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #475569 !important;
   font-weight: 500 !important;
 }
 
-body.light-mode .text-gray-500 {
-  color: #94a3b8 !important;
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-gray-500:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #475569 !important;
 }
 
-body.light-mode .text-white {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-white:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #0f172a !important;
 }
 
@@ -1136,12 +1116,12 @@ body.light-mode .knobly-header-style {
   text-shadow: none !important;
 }
 
-body.light-mode .glass-card h3 {
+body.light-mode .glass-card h3:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #0f172a !important;
   font-weight: 700 !important;
 }
 
-body.light-mode .bg-white\/5 {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .bg-white\/5:not(:where(.theme-fixed, .theme-fixed *)) {
   background-color: rgba(255, 255, 255, 0.6) !important;
   border: 1px solid #cbd5e1 !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -1159,7 +1139,7 @@ body.light-mode .search-shell:focus-within {
 }
 
 body.light-mode .search-shell-icon {
-  color: #64748b !important;
+  color: #475569 !important;
 }
 
 body.light-mode .nav-btn {
@@ -1168,12 +1148,12 @@ body.light-mode .nav-btn {
 
 body.light-mode .nav-btn:hover {
   background: #e2e8f0;
-  color: #0284c7;
+  color: #0369a1;
 }
 
 body.light-mode .nav-btn.is-active {
   background: #e0f2fe;
-  color: #0284c7;
+  color: #0369a1;
   border: 1px solid #bae6fd;
   box-shadow: none;
 }
@@ -1199,6 +1179,16 @@ body.light-mode .app-icon-tile {
   box-shadow: 0 4px 10px -4px rgba(15, 23, 42, 0.2) !important;
 }
 
+body.light-mode .app-card .app-color-icon {
+  filter: brightness(0.78) saturate(1.08) drop-shadow(0 1px 2px rgba(15, 23, 42, 0.2)) !important;
+}
+
+body.light-mode .app-card .app-type-label,
+body.light-mode .app-card .app-saved-label,
+body.light-mode .app-card .ph-lock-simple {
+  color: #475569 !important;
+}
+
 body.light-mode .mobile-dock {
   background: rgba(255, 255, 255, 0.95) !important;
   border-top: 1px solid #e2e8f0 !important;
@@ -1206,12 +1196,12 @@ body.light-mode .mobile-dock {
 }
 
 body.light-mode .tab-btn-active {
-  color: #0284c7 !important;
+  color: #0369a1 !important;
   border-color: #0284c7;
 }
 
 body.light-mode .apps-filter-btn-active {
-  color: #0284c7 !important;
+  color: #0369a1 !important;
   border-color: #0284c7;
 }
 
@@ -1232,18 +1222,7 @@ body.light-mode #knobly-logo {
 }
 
 /* ── LIGHT MODE INPUT/SELECT/TEXTAREA ── */
-body.light-mode input,
-body.light-mode select,
-body.light-mode textarea {
-  background-color: #ffffff !important;
-  color: #1e293b !important;
-  border: 1px solid #cbd5e1 !important;
-}
 
-body.light-mode input::placeholder,
-body.light-mode textarea::placeholder {
-  color: #64748b !important;
-}
 
 /* ── LIGHT MODE SEARCH SHELL INPUT (override the above) ── */
 body.light-mode .search-shell input {
@@ -1255,7 +1234,7 @@ body.light-mode .search-shell input {
 }
 
 body.light-mode .search-shell input::placeholder {
-  color: #94a3b8 !important;
+  color: #475569 !important;
 }
 
 /* ── LIGHT MODE SETTINGS TAB ── */
@@ -1370,24 +1349,17 @@ body.light-mode .ctx-separator {
 }
 
 /* ── LIGHT MODE MODAL BACKGROUNDS ── */
-body.light-mode .fixed>div[class*="bg-"] {
+/* Explicit neutral panels may switch theme; colored panels and backdrops keep their colors. */
+body.light-mode .theme-panel {
   background-color: #ffffff !important;
   border-color: #cbd5e1 !important;
-  color: #0f172a !important;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+  color: #0f172a;
 }
 
-body.light-mode .fixed input,
-body.light-mode .fixed select,
-body.light-mode .fixed textarea {
-  background-color: #f1f5f9 !important;
-  color: #0f172a !important;
-  border-color: #cbd5e1 !important;
-}
 
 /* ── LIGHT MODE NOTES AREA ── */
 body.light-mode .notes-area,
-body.light-mode textarea[class*="bg-black"] {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) textarea[class*="bg-black"]:not(:where(.theme-fixed, .theme-fixed *)) {
   background: #f8fafc !important;
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
@@ -1395,58 +1367,58 @@ body.light-mode textarea[class*="bg-black"] {
 }
 
 /* ── LIGHT MODE BORDER OVERRIDES ── */
-body.light-mode [class*="border-white"] {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) [class*="border-white"]:not(:where(.theme-fixed, .theme-fixed *)) {
   border-color: #e2e8f0 !important;
 }
 
 /* ── LIGHT MODE BLACK BG OVERRIDES ── */
-body.light-mode [class*="bg-black"] {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) [class*="bg-black"]:not(:where(.theme-fixed, .theme-fixed *)) {
   background-color: rgba(241, 245, 249, 0.8) !important;
 }
 
 /* ── LIGHT MODE GRADIENT TEXT FIX ── */
-body.light-mode .from-cyan-400 {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .bg-clip-text.from-cyan-400:not(:where(.theme-fixed, .theme-fixed *)) {
   --tw-gradient-from: #0891b2 !important;
 }
 
-body.light-mode .to-blue-500 {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .bg-clip-text.to-blue-500:not(:where(.theme-fixed, .theme-fixed *)) {
   --tw-gradient-to: #2563eb !important;
 }
 
 /* ── LIGHT MODE CYAN TEXT/BORDER ADJUSTMENTS ── */
-body.light-mode .text-cyan-400 {
-  color: #0891b2 !important;
-}
-
-body.light-mode .text-cyan-300 {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-cyan-400:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #0e7490 !important;
 }
 
-body.light-mode [class*="border-cyan"] {
-  border-color: #0891b2 !important;
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-cyan-300:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #0e7490 !important;
+}
+
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) [class*="border-cyan"]:not(:where(.theme-fixed, .theme-fixed *)) {
+  border-color: #0e7490 !important;
 }
 
 /* ── LIGHT MODE RED TEXT (for YouTube) ── */
-body.light-mode .text-red-400 {
-  color: #dc2626 !important;
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-red-400:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #b91c1c !important;
 }
 
-body.light-mode .text-red-500 {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-red-500:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #b91c1c !important;
 }
 
 /* ── LIGHT MODE EMERALD TEXT ── */
-body.light-mode .text-emerald-400 {
-  color: #059669 !important;
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-emerald-400:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #047857 !important;
 }
 
-body.light-mode .text-emerald-200 {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-emerald-200:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #047857 !important;
 }
 
 /* ── LIGHT MODE YELLOW TEXT ── */
-body.light-mode .text-yellow-400 {
-  color: #d97706 !important;
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-yellow-400:not(:where(.theme-fixed, .theme-fixed *)) {
+  color: #92400e !important;
 }
 
 /* ── LIGHT MODE MOBILE DOCK (exact match) ── */
@@ -1479,20 +1451,20 @@ body.light-mode div:where(.swal2-container) div:where(.swal2-popup) {
 }
 
 /* ── LIGHT MODE HOVER FIX FOR WHITE TEXT ELEMENTS ── */
-body.light-mode [class*="hover\:text-white"]:hover {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) [class*="hover\:text-white"]:hover:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #0f172a !important;
 }
 
-body.light-mode [class*="hover\:bg-white"]:hover {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) [class*="hover\:bg-white"]:hover:not(:where(.theme-fixed, .theme-fixed *)) {
   background-color: rgba(226, 232, 240, 0.5) !important;
 }
 
-body.light-mode [class*="hover\:border-white"]:hover {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) [class*="hover\:border-white"]:hover:not(:where(.theme-fixed, .theme-fixed *)) {
   border-color: #cbd5e1 !important;
 }
 
 /* ── LIGHT MODE STAT CARD FIX ── */
-body.light-mode .text-xl.font-bold.text-white {
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-xl.font-bold.text-white:not(:where(.theme-fixed, .theme-fixed *)) {
   color: #0f172a !important;
 }
 
@@ -1567,3 +1539,17 @@ body.light-mode .typing-cursor-active {
     box-shadow: 0 2px 4px rgba(2, 132, 199, 0.08);
   }
 }
+/* Theme compatibility is opt-in. Use theme-fixed for a colored surface whose
+   explicit foreground/background must stay paired in both themes. */
+.theme-adaptive, .theme-panel { color: #f8fafc; }
+body.light-mode :is(.theme-adaptive, .theme-panel) { color: #0f172a; }
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel)
+:is(.text-blue-300, .text-blue-400):not(:where(.theme-fixed, .theme-fixed *)) { color: #1d4ed8; }
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel)
+:is(.text-emerald-300):not(:where(.theme-fixed, .theme-fixed *)) { color: #047857; }
+body.light-mode :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel)
+:is(.text-yellow-300):not(:where(.theme-fixed, .theme-fixed *)) { color: #854d0e; }
+
+
+/* Muted labels on the dark dashboard/login panels remain readable. */
+body:not(.light-mode) :is(.theme-adaptive, .glass-panel, .glass-card, .theme-panel) .text-gray-500:not(:where(.theme-fixed, .theme-fixed *)) { color: #94a3b8; }

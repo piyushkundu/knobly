@@ -6,6 +6,7 @@
   --bg-secondary: #181926;
   --bg-tertiary: #202234;
   --accent-primary: #f97316;
+  --action-bg: #c2410c;
   --accent-secondary: #06b6d4;
   --accent-js: #eab308;
   --accent-success: #10b981;
@@ -13,7 +14,7 @@
   --accent-warning: #f59e0b;
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-muted: #a1a1aa;
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
   --border-color: rgba(255, 255, 255, 0.1);
@@ -41,12 +42,12 @@ html.light .web-compiler-root {
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --bg-tertiary: #f1f5f9;
-  --accent-primary: #ea580c;
-  --accent-secondary: #0284c7;
-  --accent-js: #ca8a04;
-  --accent-success: #059669;
-  --accent-error: #dc2626;
-  --accent-warning: #d97706;
+  --accent-primary: #c2410c;
+  --accent-secondary: #0369a1;
+  --accent-js: #854d0e;
+  --accent-success: #047857;
+  --accent-error: #b91c1c;
+  --accent-warning: #92400e;
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #64748b;

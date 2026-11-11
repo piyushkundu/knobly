@@ -130,7 +130,7 @@ export function WebSavedProjects({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsSavingNew(!isSavingNew)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[var(--accent-primary)] text-white hover:opacity-90 shadow-sm transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[var(--action-bg)] text-white hover:opacity-90 shadow-sm transition-all"
             >
               <Plus size={14} />
               <span>Save Current</span>
@@ -189,7 +189,7 @@ export function WebSavedProjects({
               </button>
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-white hover:opacity-90"
+                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-700 text-white hover:opacity-90"
               >
                 Save Project
               </button>
@@ -216,7 +216,7 @@ export function WebSavedProjects({
                 onClick={() => setSelectedFolder('all')}
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition-colors ${
                   selectedFolder === 'all'
-                    ? 'bg-[var(--accent-primary)] text-white'
+                    ? 'bg-[var(--action-bg)] text-white'
                     : 'text-[var(--text-secondary)] bg-[var(--card-bg)] border border-[var(--border-color)]'
                 }`}
               >
@@ -228,7 +228,7 @@ export function WebSavedProjects({
                   onClick={() => setSelectedFolder(f)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition-colors ${
                     selectedFolder === f
-                      ? 'bg-[var(--accent-primary)] text-white'
+                      ? 'bg-[var(--action-bg)] text-white'
                       : 'text-[var(--text-secondary)] bg-[var(--card-bg)] border border-[var(--border-color)]'
                   }`}
                 >
@@ -292,7 +292,7 @@ export function WebSavedProjects({
                       onLoadProject(proj);
                       onClose();
                     }}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-[var(--accent-primary)] text-white hover:opacity-90 shadow-sm transition-opacity"
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-[var(--action-bg)] text-white hover:opacity-90 shadow-sm transition-opacity"
                   >
                     Open
                   </button>

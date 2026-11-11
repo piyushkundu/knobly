@@ -192,7 +192,7 @@ const features = [
 
 export default function PythonPage() {
     return (
-        <div className="min-h-screen bg-white relative overflow-x-hidden">
+        <div className="min-h-screen bg-white text-slate-800 relative overflow-x-hidden">
             {/* Animated Jungle Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 {/* Gradient Background */}
@@ -259,7 +259,7 @@ export default function PythonPage() {
 
                 {/* Decorative Jungle Elements */}
                 <div className="absolute top-40 left-10 w-20 h-20 opacity-[0.06] animate-float">
-                    <Leaf className="w-full h-full text-emerald-600" />
+                    <Leaf className="w-full h-full text-emerald-700" />
                 </div>
                 <div className="absolute bottom-60 right-10 w-16 h-16 opacity-[0.05] animate-float-delayed">
                     <TreePine className="w-full h-full text-emerald-700" />
@@ -289,7 +289,7 @@ export default function PythonPage() {
                                     <h1 className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                                         Python
                                     </h1>
-                                    <p className="text-[10px] text-gray-400 -mt-0.5">Programming</p>
+                                    <p className="text-[10px] text-gray-500 -mt-0.5">Programming</p>
                                 </div>
                             </div>
                         </div>
@@ -299,7 +299,7 @@ export default function PythonPage() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/80 transition-all duration-200"
+                                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-emerald-700 hover:bg-emerald-50/80 transition-all duration-200"
                                 >
                                     {link.icon}
                                     <span>{link.label}</span>
@@ -312,7 +312,7 @@ export default function PythonPage() {
                                 <Leaf size={12} />
                                 <span>Python</span>
                             </div>
-                            <Link href="/" className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 text-gray-600 hover:bg-emerald-100 hover:text-emerald-600 transition-colors">
+                            <Link href="/" className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 text-gray-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors">
                                 <Home size={18} />
                             </Link>
                         </div>
@@ -389,7 +389,7 @@ export default function PythonPage() {
                                 <Play size={18} fill="currentColor" />
                                 Start Learning
                             </Link>
-                            <Link href="#chapters" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-gray-700 font-bold border-2 border-gray-200 hover:border-emerald-300 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all duration-300">
+                            <Link href="#chapters" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-gray-700 font-bold border-2 border-gray-200 hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50/50 transition-all duration-300">
                                 <Compass size={18} />
                                 Explore Chapters
                             </Link>
@@ -435,12 +435,12 @@ export default function PythonPage() {
                                         ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200 scale-110'
                                         : topic.current
                                             ? 'bg-amber-400 text-white shadow-lg shadow-amber-200 scale-110 ring-4 ring-amber-100 animate-pulse'
-                                            : 'bg-gray-100 text-gray-400'
+                                            : 'bg-gray-100 text-gray-600'
                                         }`}>
                                         {topic.completed ? <CheckCircle2 size={28} /> : topic.locked ? <Lock size={24} /> : topic.icon}
                                     </div>
                                     <span className="text-xs font-bold text-center text-gray-700 line-clamp-1 px-1">{topic.title}</span>
-                                    <span className="text-[10px] text-gray-400 mt-0.5">Ch. {topic.chapter}</span>
+                                    <span className="text-[10px] text-gray-500 mt-0.5">Ch. {topic.chapter}</span>
                                 </div>
                             ))}
                         </div>
@@ -465,12 +465,12 @@ export default function PythonPage() {
                                     }`}>
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <span className="text-xs font-semibold text-gray-400">Chapter {topic.chapter}</span>
+                                            <span className="text-xs font-semibold text-gray-600">Chapter {topic.chapter}</span>
                                             <h4 className="font-bold text-gray-900">{topic.title}</h4>
                                         </div>
                                         {topic.completed && <CheckCircle2 size={20} className="text-emerald-500" />}
                                         {topic.current && <Star size={20} className="text-amber-500 fill-amber-500" />}
-                                        {topic.locked && <Lock size={20} className="text-gray-400" />}
+                                        {topic.locked && <Lock size={20} className="text-gray-600" />}
                                     </div>
                                 </div>
                             </div>
@@ -487,7 +487,7 @@ export default function PythonPage() {
                             </div>
                             <h3 className="text-2xl font-bold text-gray-900">Course Chapters</h3>
                         </div>
-                        <Link href="/python/all-chapters" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 hover:gap-2 transition-all">
+                        <Link href="/python/all-chapters" className="text-sm font-semibold text-emerald-700 hover:text-emerald-700 flex items-center gap-1 hover:gap-2 transition-all">
                             View All <ChevronRight size={16} />
                         </Link>
                     </div>
@@ -524,10 +524,10 @@ export default function PythonPage() {
                                             {topic.icon}
                                         </div>
                                         <div className="flex flex-col items-end gap-1">
-                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Ch. {topic.chapter}</span>
+                                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Ch. {topic.chapter}</span>
                                             {topic.completed && <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold">Done</span>}
                                             {topic.current && <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold animate-pulse">Current</span>}
-                                            {topic.locked && <Lock size={16} className="text-gray-400" />}
+                                            {topic.locked && <Lock size={16} className="text-gray-600" />}
                                         </div>
                                     </div>
 
@@ -553,11 +553,11 @@ export default function PythonPage() {
                                     {!topic.locked && (
                                         <div className="space-y-2">
                                             <div className="flex justify-between text-xs">
-                                                <span className={`font-semibold ${topic.completed ? 'text-emerald-600' : topic.current ? 'text-amber-600' : 'text-gray-500'
+                                                <span className={`font-semibold ${topic.completed ? 'text-emerald-700' : topic.current ? 'text-amber-700' : 'text-gray-500'
                                                     }`}>
                                                     {topic.completed ? 'Completed' : topic.current ? 'In Progress' : 'Not Started'}
                                                 </span>
-                                                <span className="text-gray-400">
+                                                <span className="text-gray-500">
                                                     {topic.completed ? '100%' : topic.current ? '45%' : '0%'}
                                                 </span>
                                             </div>
@@ -576,7 +576,7 @@ export default function PythonPage() {
                                     )}
 
                                     {topic.locked && (
-                                        <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 rounded-xl px-3 py-2.5">
+                                        <div className="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-xl px-3 py-2.5">
                                             <Lock size={12} />
                                             <span>Complete previous chapters</span>
                                         </div>
@@ -584,7 +584,7 @@ export default function PythonPage() {
 
                                     {/* Hover Arrow */}
                                     {!topic.locked && (
-                                        <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 opacity-0 group-hover:opacity-100 group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+                                        <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 opacity-0 group-hover:opacity-100 group-hover:bg-emerald-100 group-hover:text-emerald-700 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
                                             <ChevronRight size={20} />
                                         </div>
                                     )}
@@ -610,8 +610,8 @@ export default function PythonPage() {
                         <div className="relative flex flex-col md:flex-row items-center gap-6 p-6 md:p-10">
                             <div className="w-full md:w-56 h-36 rounded-2xl overflow-hidden border-2 border-amber-200 shadow-xl transform group-hover:scale-105 group-hover:rotate-1 transition-all duration-500 bg-white">
                                 <div className="w-full h-full bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center relative">
-                                    <PenLine size={56} className="text-amber-600" />
-                                    <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-white text-xs font-bold">PDF</div>
+                                    <PenLine size={56} className="text-amber-700" />
+                                    <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-amber-700 flex items-center justify-center text-white text-xs font-bold">PDF</div>
                                 </div>
                             </div>
 
@@ -649,7 +649,7 @@ export default function PythonPage() {
                                 </div>
                             </div>
 
-                            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+                            <div className="flex-shrink-0 w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
                                 <ChevronRight size={28} />
                             </div>
                         </div>
@@ -683,7 +683,7 @@ export default function PythonPage() {
                         <h3 className="text-2xl md:text-3xl font-black text-white mb-4">Ready to Start Your Python Journey?</h3>
                         <p className="text-emerald-100 mb-6 max-w-2xl mx-auto">Join thousands of students who have mastered Python through our interactive course. Start learning today!</p>
                         <div className="flex flex-wrap justify-center gap-4">
-                            <Link href="/python/fundamentals" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-emerald-600 font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                            <Link href="/python/fundamentals" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-emerald-700 font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
                                 <Play size={18} fill="currentColor" />
                                 Start Learning Now
                             </Link>

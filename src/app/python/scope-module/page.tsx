@@ -22,7 +22,7 @@ function CB({ code }: { code: string }) {
                         <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                         <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
                     </div>
-                    <span className="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-400">python</span>
+                    <span className="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-600">python</span>
                 </div>
                 <button onClick={copy} className="text-xs flex items-center gap-1 transition-colors" style={{ color: c ? '#34d399' : '#64748b' }}>
                     {c ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
@@ -280,15 +280,15 @@ export default function ScopeModulePage() {
                             <h4 className="text-sm font-bold text-slate-800 mb-4 text-center">📊 Scope Visualization</h4>
                             <div className="relative p-6 rounded-xl mx-auto max-w-md" style={{ background: '#ecfdf5', border: '2px dashed #34d399' }}>
                                 <span className="absolute -top-3 left-4 px-2 text-xs font-bold text-emerald-700 bg-white rounded">Global Scope</span>
-                                <code className="text-xs text-emerald-700 block mb-3">x = 10 &nbsp;&nbsp;<span className="text-emerald-500"># global variable</span></code>
+                                <code className="text-xs text-emerald-700 block mb-3">x = 10 &nbsp;&nbsp;<span className="text-emerald-700"># global variable</span></code>
                                 <div className="p-4 rounded-lg" style={{ background: '#f5f3ff', border: '2px dashed #a78bfa' }}>
                                     <span className="absolute left-8" style={{ marginTop: '-0.75rem' }}><span className="px-2 text-xs font-bold text-violet-700 bg-white rounded">Local Scope (function)</span></span>
-                                    <code className="text-xs text-violet-700 block mt-2">y = 20 &nbsp;&nbsp;<span className="text-violet-500"># local variable</span></code>
-                                    <code className="text-xs text-violet-700 block">print(x) &nbsp;<span className="text-violet-500"># ✅ access global</span></code>
-                                    <code className="text-xs text-violet-700 block">print(y) &nbsp;<span className="text-violet-500"># ✅ access local</span></code>
+                                    <code className="text-xs text-violet-700 block mt-2">y = 20 &nbsp;&nbsp;<span className="text-violet-600"># local variable</span></code>
+                                    <code className="text-xs text-violet-700 block">print(x) &nbsp;<span className="text-violet-600"># ✅ access global</span></code>
+                                    <code className="text-xs text-violet-700 block">print(y) &nbsp;<span className="text-violet-600"># ✅ access local</span></code>
                                 </div>
-                                <code className="text-xs text-emerald-700 block mt-3">print(x) &nbsp;<span className="text-emerald-500"># ✅ access global</span></code>
-                                <code className="text-xs text-red-500 block">print(y) &nbsp;<span className="text-red-400"># ❌ Error! local variable</span></code>
+                                <code className="text-xs text-emerald-700 block mt-3">print(x) &nbsp;<span className="text-emerald-700"># ✅ access global</span></code>
+                                <code className="text-xs text-red-500 block">print(y) &nbsp;<span className="text-red-700"># ❌ Error! local variable</span></code>
                             </div>
                         </div>
                     </Sec>
@@ -418,11 +418,11 @@ Outside function: Global X`} />
                             <h4 className="text-sm font-bold text-rose-800 mb-3 text-center">🔍 LEGB Search Flow</h4>
                             <div className="flex flex-col items-center gap-2">
                                 <div className="px-6 py-2 rounded-lg text-white text-sm font-bold" style={{ background: '#8b5cf6' }}>1️⃣ Local — sabse pehle local variable check</div>
-                                <span className="text-lg text-slate-400">↓</span>
+                                <span className="text-lg text-slate-600">↓</span>
                                 <div className="px-6 py-2 rounded-lg text-white text-sm font-bold" style={{ background: '#ec4899' }}>2️⃣ Enclosing — phir enclosing block check</div>
-                                <span className="text-lg text-slate-400">↓</span>
+                                <span className="text-lg text-slate-600">↓</span>
                                 <div className="px-6 py-2 rounded-lg text-white text-sm font-bold" style={{ background: '#059669' }}>3️⃣ Global — main program me check</div>
-                                <span className="text-lg text-slate-400">↓</span>
+                                <span className="text-lg text-slate-600">↓</span>
                                 <div className="px-6 py-2 rounded-lg text-white text-sm font-bold" style={{ background: '#f59e0b' }}>4️⃣ Built-in — pre-defined function check</div>
                             </div>
                         </div>
@@ -532,7 +532,7 @@ k after function = 25`} />
                         <p><code className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded font-mono text-xs">global</code> keyword ka use karke kisi bhi function ke andar ke variable ko <strong>global variable</strong> banaya ja sakta hai। Isse function ke andar se global variable ko modify kiya ja sakta hai।</p>
 
                         <div className="mt-4 mb-2">
-                            <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Syntax</span>
+                            <span className="text-[10px] font-bold uppercase text-slate-600 tracking-wider">Syntax</span>
                         </div>
                         <CB code={`global <variable name>`} />
 
@@ -687,11 +687,11 @@ def m(a, b):
                         <MC name="Step 2: Importing Module" desc="import function ka use karke module ko load karo" color="#8b5cf6">
                             <p className="text-sm text-slate-600 mb-3"><code>import</code> keyword ka use karke module ko import kiya jata hai।</p>
                             <div className="mt-2 mb-2">
-                                <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Syntax</span>
+                                <span className="text-[10px] font-bold uppercase text-slate-600 tracking-wider">Syntax</span>
                             </div>
                             <CB code={`import <module name>`} />
                             <div className="mb-2">
-                                <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Example</span>
+                                <span className="text-[10px] font-bold uppercase text-slate-600 tracking-wider">Example</span>
                             </div>
                             <CB code={`import write`} />
                         </MC>
@@ -1006,7 +1006,7 @@ Grade: A`} />
                                     <div className="text-slate-800 font-medium text-[15px] leading-relaxed pt-2">{q}</div>
                                     <button
                                         onClick={() => { const ev = new CustomEvent('toggle-knobly-ai'); window.dispatchEvent(ev); }}
-                                        className="ml-auto w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-emerald-100 hover:text-emerald-600 transition-colors"
+                                        className="ml-auto w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full bg-slate-50 text-slate-600 hover:bg-emerald-100 hover:text-emerald-600 transition-colors"
                                         title="Ask AI to Explain"
                                     >
                                         <Sparkles size={16} />

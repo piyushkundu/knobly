@@ -83,7 +83,7 @@ const handwrittenNotes = [
 
 export default function HandwrittenNotesPage() {
     return (
-        <div className="min-h-screen bg-white relative overflow-x-hidden">
+        <div className="min-h-screen bg-white text-slate-800 relative overflow-x-hidden">
             {/* Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-amber-50/40 via-white to-orange-50/30" />
@@ -131,7 +131,7 @@ export default function HandwrittenNotesPage() {
                                 </div>
                                 <div>
                                     <h1 className="text-lg font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Handwritten Notes</h1>
-                                    <p className="text-[10px] text-gray-400 -mt-0.5">IoT — M4-R5 Exam Notes</p>
+                                    <p className="text-[10px] text-gray-500 -mt-0.5">IoT — M4-R5 Exam Notes</p>
                                 </div>
                             </div>
                         </div>
@@ -264,7 +264,7 @@ export default function HandwrittenNotesPage() {
                                             <PenTool size={28} />
                                         </div>
                                         <div className="flex flex-col items-end gap-2">
-                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Chapter {note.chapter}</span>
+                                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Chapter {note.chapter}</span>
                                             <span className="px-3 py-1 rounded-full text-[11px] font-bold border" style={{ backgroundColor: note.bgColor, color: note.color, borderColor: note.borderColor }}>
                                                 Handwritten
                                             </span>
@@ -277,7 +277,7 @@ export default function HandwrittenNotesPage() {
 
                                     {/* Topics covered */}
                                     <div className="mb-5">
-                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Topics Covered</p>
+                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Topics Covered</p>
                                         <div className="flex flex-wrap gap-2">
                                             {note.topics.map((topic, i) => (
                                                 <span key={i} className="px-3 py-1 rounded-lg bg-gray-50 text-gray-600 text-xs font-medium border border-gray-100">

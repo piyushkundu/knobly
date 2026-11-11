@@ -106,7 +106,7 @@ function AnimatedCPU() {
 
                         <div className="bg-slate-700/50 border border-slate-600 rounded-xl p-2 text-center relative overflow-hidden group">
                             <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <span className="text-purple-400 text-xs font-bold block">Memory Unit (MU)</span>
+                            <span className="text-purple-300 text-xs font-bold block">Memory Unit (MU)</span>
                             <span className="text-slate-400 text-[9px]">Temporary Store</span>
                         </div>
                     </div>
@@ -433,7 +433,7 @@ export default function OLevelChapter1() {
                 <aside className={`\${tocOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:sticky top-[76px] left-0 z-40 w-64 lg:w-60 xl:w-72 h-[calc(100vh-76px)] overflow-y-auto transition-transform duration-300 flex-shrink-0 bg-white/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-4 lg:p-0 border-r border-slate-200 lg:border-none shadow-2xl lg:shadow-none`}>
                     <div className="sticky top-0 bg-white lg:bg-transparent pb-4 z-10 mb-4 border-b border-slate-200/60 lg:border-none">
                         <div className="flex items-center gap-2 px-2">
-                            <BookOpen size={16} className="text-slate-400" />
+                            <BookOpen size={16} className="text-slate-600" />
                             <h3 className="text-xs font-black uppercase tracking-widest text-slate-500">Chapter Index</h3>
                         </div>
                     </div>
@@ -450,7 +450,7 @@ export default function OLevelChapter1() {
                                     color: activeSection === item.id ? item.color : '#64748b' 
                                 }}
                             >
-                                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors" style={{ background: activeSection === item.id ? item.color : '#f1f5f9', color: activeSection === item.id ? '#fff' : '#94a3b8' }}>
+                                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors" style={{ background: activeSection === item.id ? item.color : '#f1f5f9', color: activeSection === item.id ? '#fff' : '#475569' }}>
                                     {item.icon}
                                 </div>
                                 {item.label}
@@ -513,7 +513,7 @@ export default function OLevelChapter1() {
                             <div className="p-5 rounded-2xl bg-amber-50 border border-amber-100/50 hover:shadow-md transition-shadow">
                                 <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-3"><Zap size={20} /></div>
                                 <h4 className="font-bold text-amber-900 mb-2">1. Speed (Gati)</h4>
-                                <p className="text-sm text-amber-800/80">Computer millions of instructions per second (MIPS) execute kar sakta hai. Jo calculation insaan ko mahino lag sakte hain, computer usay microseconds mein kar deta hai.</p>
+                                <p className="text-sm text-amber-800">Computer millions of instructions per second (MIPS) execute kar sakta hai. Jo calculation insaan ko mahino lag sakte hain, computer usay microseconds mein kar deta hai.</p>
                             </div>
                             <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-100/50 hover:shadow-md transition-shadow">
                                 <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3"><CheckCircle size={20} /></div>
@@ -545,7 +545,7 @@ export default function OLevelChapter1() {
                             <div className="p-6 rounded-[2rem] bg-orange-50/50 border border-orange-100 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-orange-200/50 rounded-bl-full group-hover:scale-125 transition-transform" />
                                 <h3 className="text-xl font-black text-orange-900 mb-3 flex items-center gap-3">
-                                    <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-lg text-sm">Type 1</span> Analog Computer
+                                    <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-lg text-sm">Type 1</span> Analog Computer
                                 </h3>
                                 <p className="text-orange-900/80 leading-relaxed max-w-2xl">
                                     Ye computers physical quantities (jaise temperature, pressure, speed, voltage) ko mapne ke liye use hote hain. Inka data continuous hota hai. Result graphs ya meter format mein milta hai.
@@ -557,7 +557,7 @@ export default function OLevelChapter1() {
                             <div className="p-6 rounded-[2rem] bg-blue-50/50 border border-blue-100 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-blue-200/50 rounded-bl-full group-hover:scale-125 transition-transform" />
                                 <h3 className="text-xl font-black text-blue-900 mb-3 flex items-center gap-3">
-                                    <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-lg text-sm">Type 2</span> Digital Computer
+                                    <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm">Type 2</span> Digital Computer
                                 </h3>
                                 <p className="text-blue-900/80 leading-relaxed mb-6">
                                     Aajkal hum jo computer use karte hain wo digital hain. Ye data ko discrete form (0 aur 1 / binary) mein process karte hain. Inki speed aur accuracy analog se bahut jyada hoti hai. Inhe size aur power ke hisab se 4 bhago mein divide kiya gaya hai:
@@ -588,7 +588,7 @@ export default function OLevelChapter1() {
                             <div className="p-6 rounded-[2rem] bg-teal-50/50 border border-teal-100 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-teal-200/50 rounded-bl-full group-hover:scale-125 transition-transform" />
                                 <h3 className="text-xl font-black text-teal-900 mb-3 flex items-center gap-3">
-                                    <span className="bg-teal-100 text-teal-600 px-3 py-1 rounded-lg text-sm">Type 3</span> Hybrid Computer
+                                    <span className="bg-teal-100 text-teal-700 px-3 py-1 rounded-lg text-sm">Type 3</span> Hybrid Computer
                                 </h3>
                                 <p className="text-teal-900/80 leading-relaxed max-w-2xl">
                                     Ye computers <strong>Analog + Digital</strong> dono ki qualities se milkar bante hain. Ye analog signals ko accept karke unhe digital mein convert kar dete hain taaki processing aur display aasan ho.
@@ -607,13 +607,13 @@ export default function OLevelChapter1() {
 
                         <div className="grid md:grid-cols-3 gap-5 mt-6">
                             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 border-t-4 border-t-cyan-500">
-                                <h4 className="font-bold text-cyan-600 text-lg mb-2">1. Control Unit (CU)</h4>
+                                <h4 className="font-bold text-cyan-700 text-lg mb-2">1. Control Unit (CU)</h4>
                                 <p className="text-sm text-slate-600 leading-relaxed">
                                     Computer ka "Manager". Ye khud calculation nahi karta, balki memory se instructions lata hai (fetch), unko decode karta hai, aur baaki components (ALU, I/O devices) ko command deta hai ki kya karna hai.
                                 </p>
                             </div>
                             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 border-t-4 border-t-emerald-500">
-                                <h4 className="font-bold text-emerald-600 text-lg mb-2">2. ALU</h4>
+                                <h4 className="font-bold text-emerald-700 text-lg mb-2">2. ALU</h4>
                                 <p className="text-sm text-slate-600 leading-relaxed">
                                     <strong>Arithmetic Logic Unit.</strong> Actual calculations yahi hoti hain.<br/>
                                     - <span className="font-semibold text-slate-700">Arithmetic:</span> (+, -, *, /)<br/>
@@ -909,7 +909,7 @@ export default function OLevelChapter1() {
                                     <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b from-slate-300 to-slate-200 group-hover:from-blue-400 group-hover:to-cyan-400 transition-colors" />
                                     
                                     <div className="w-16 shrink-0 text-center md:text-left ml-2 md:ml-0">
-                                        <span className="block text-4xl font-black text-slate-200 group-hover:text-blue-100 transition-colors">0{i+1}</span>
+                                        <span className="block text-4xl font-black text-slate-500 group-hover:text-blue-100 transition-colors">0{i+1}</span>
                                     </div>
                                     
                                     <div className="flex-1 min-w-0">
@@ -918,9 +918,9 @@ export default function OLevelChapter1() {
                                             <span className="text-xs bg-slate-100 text-slate-600 font-bold px-2 py-1 rounded border border-slate-200">{g.years}</span>
                                         </div>
                                         <div className="grid md:grid-cols-2 gap-x-4 gap-y-2 mb-3">
-                                            <div className="text-sm font-medium"><span className="text-slate-400 font-bold">Tech:</span> <span className="text-blue-600 font-bold">{g.tech}</span></div>
-                                            <div className="text-sm font-medium"><span className="text-slate-400 font-bold">Language:</span> <span className="text-slate-700">{g.lang}</span></div>
-                                            <div className="text-sm font-medium"><span className="text-slate-400 font-bold">Input/Memory:</span> <span className="text-slate-700">{g.input}</span></div>
+                                            <div className="text-sm font-medium"><span className="text-slate-500 font-bold">Tech:</span> <span className="text-blue-600 font-bold">{g.tech}</span></div>
+                                            <div className="text-sm font-medium"><span className="text-slate-500 font-bold">Language:</span> <span className="text-slate-700">{g.lang}</span></div>
+                                            <div className="text-sm font-medium"><span className="text-slate-500 font-bold">Input/Memory:</span> <span className="text-slate-700">{g.input}</span></div>
                                         </div>
                                         <p className="text-sm text-slate-600 mb-3 bg-slate-50 p-2 rounded-lg italic">"{g.desc}"</p>
                                         <p className="text-xs font-medium"><span className="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded mr-1">Examples:</span> <span className="text-slate-600">{g.ex}</span></p>
@@ -1003,7 +1003,7 @@ export default function OLevelChapter1() {
                     <div className="flex justify-end mb-16">
                         <Link href="/it-tools" className="flex items-center gap-4 bg-white hover:bg-slate-50 border border-slate-200 p-4 rounded-2xl shadow-sm transition-all hover:shadow-md group">
                             <div className="text-right">
-                                <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-1">Back to Index</p>
+                                <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-1">Back to Index</p>
                                 <p className="font-bold text-blue-600 group-hover:text-blue-700">IT Tools & Network Basics</p>
                             </div>
                             <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center group-hover:bg-blue-100 transition-colors">

@@ -185,7 +185,7 @@ export function WebAIAssistant({
                 onClick={() => onLanguageChange('en')}
                 className={`px-2 py-0.5 rounded-md text-[11px] font-bold transition-colors ${
                   language === 'en'
-                    ? 'bg-[var(--accent-primary)] text-white'
+                    ? 'bg-[var(--action-bg)] text-white'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -195,7 +195,7 @@ export function WebAIAssistant({
                 onClick={() => onLanguageChange('hi')}
                 className={`px-2 py-0.5 rounded-md text-[11px] font-bold transition-colors ${
                   language === 'hi'
-                    ? 'bg-[var(--accent-primary)] text-white'
+                    ? 'bg-[var(--action-bg)] text-white'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -267,7 +267,7 @@ export function WebAIAssistant({
                   <button
                     onClick={() => handleGenerate()}
                     disabled={isLoading || !prompt.trim()}
-                    className="absolute right-2.5 bottom-3 px-4 py-1.5 rounded-xl text-xs font-bold bg-[var(--accent-primary)] text-white hover:opacity-90 disabled:opacity-40 transition-all flex items-center gap-1.5 shadow-md shadow-orange-500/20"
+                    className="absolute right-2.5 bottom-3 px-4 py-1.5 rounded-xl text-xs font-bold bg-[var(--action-bg)] text-white hover:opacity-90 disabled:opacity-40 transition-all flex items-center gap-1.5 shadow-md shadow-orange-500/20"
                   >
                     {isLoading ? (
                       <Loader2 size={13} className="animate-spin" />
@@ -326,7 +326,7 @@ export function WebAIAssistant({
                       </button>
                       <button
                         onClick={() => handleApply(generatedResult)}
-                        className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-white hover:opacity-90 shadow-sm transition-opacity"
+                        className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-emerald-700 text-white hover:opacity-90 shadow-sm transition-opacity"
                       >
                         <span>Apply to Editor</span>
                         <ArrowRight size={12} />
@@ -357,7 +357,7 @@ export function WebAIAssistant({
                 <button
                   onClick={handleExplain}
                   disabled={isLoading}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[var(--accent-primary)] text-white hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[var(--action-bg)] text-white hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-1.5"
                 >
                   {isLoading ? (
                     <Loader2 size={13} className="animate-spin" />
@@ -440,7 +440,7 @@ export function WebAIAssistant({
                         </span>
                         <button
                           onClick={() => handleApply(explanationResult.corrected_code)}
-                          className="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-white hover:opacity-90"
+                          className="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-700 text-white hover:opacity-90"
                         >
                           Apply Fix to Editor
                         </button>

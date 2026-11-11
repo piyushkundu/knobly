@@ -30,7 +30,7 @@ export default function HtmlNotesPage() {
                                     router.push('/html');
                                 }
                             }}
-                            className="text-gray-400 hover:text-gray-900 transition-colors p-1.5 rounded-lg hover:bg-gray-100"
+                            className="text-gray-600 hover:text-gray-900 transition-colors p-1.5 rounded-lg hover:bg-gray-100"
                             title="Go Back"
                         >
                             <ArrowLeft size={18} />
@@ -42,7 +42,7 @@ export default function HtmlNotesPage() {
                                     Coming Soon
                                 </span>
                             </div>
-                            <span className="text-[9px] text-gray-400 uppercase tracking-wider">
+                            <span className="text-[9px] text-gray-600 uppercase tracking-wider">
                                 O-Level M2-R5 Web Design
                             </span>
                         </div>
@@ -61,7 +61,7 @@ export default function HtmlNotesPage() {
                         ))}
                         <Link 
                             href="/" 
-                            className="text-gray-400 hover:text-gray-900 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                            className="text-gray-600 hover:text-gray-900 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
                         >
                             <Home size={16} />
                         </Link>

@@ -558,7 +558,7 @@ export default function HomePage() {
 
   return (
     <div
-      className={`wallpaper-${wallpaper} h-screen w-screen overflow-hidden flex flex-col lg:flex-row gap-4 lg:gap-6 pt-3 px-3 pb-14 lg:p-6 relative select-none`}
+      className={`theme-adaptive wallpaper-${wallpaper} h-screen w-screen overflow-hidden flex flex-col lg:flex-row gap-4 lg:gap-6 pt-3 px-3 pb-14 lg:p-6 relative select-none`}
       onClick={closeAllContextMenus}
       onContextMenu={handleGlobalRightClick}
     >
@@ -829,12 +829,12 @@ export default function HomePage() {
 
               {/* System Notifications */}
               <div className={`p-3 border-t ${isDark ? 'border-white/5' : 'border-gray-100'}`}>
-                <div className={`text-[9px] font-bold uppercase tracking-widest mb-2 px-1 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>System</div>
+                <div className={`text-[9px] font-bold uppercase tracking-widest mb-2 px-1 ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>System</div>
                 <div className={`flex items-start gap-3 px-3 py-2 rounded-xl border ${isDark ? 'bg-cyan-500/5 border-cyan-500/10' : 'bg-cyan-50 border-cyan-100'}`}>
-                  <i className="ph-fill ph-info text-cyan-500 text-base mt-0.5" />
+                  <i className={`ph-fill ph-info ${isDark ? 'text-cyan-400' : 'text-cyan-700'} text-base mt-0.5`} />
                   <div>
                     <div className={`text-xs font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Welcome to Knobly Web!</div>
-                    <div className={`text-[10px] mt-0.5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Explore courses, practice MCQs, and learn with KnoblyAI assistant.</div>
+                    <div className={`text-[10px] mt-0.5 ${isDark ? 'text-gray-400' : 'text-gray-700'}`}>Explore courses, practice MCQs, and learn with KnoblyAI assistant.</div>
                   </div>
                 </div>
               </div>
@@ -909,7 +909,7 @@ export default function HomePage() {
                             placeholder="Enter a name to display in greeting" />
                         </label>
                         <button onClick={saveUserName}
-                          className="self-start mt-1 px-3 py-1.5 rounded-xl bg-slate-700 text-white text-[10px] font-bold uppercase tracking-[0.18em] hover:bg-slate-600 transition-all">
+                          className="theme-fixed self-start mt-1 px-3 py-1.5 rounded-xl bg-slate-700 text-white text-[10px] font-bold uppercase tracking-[0.18em] hover:bg-slate-600 transition-all">
                           Save Guest Name
                         </button>
                       </div>
@@ -920,7 +920,7 @@ export default function HomePage() {
                             {user.photoURL ? (
                               <img src={user.photoURL} className="w-full h-full object-cover" alt="" />
                             ) : (
-                              <div className="w-full h-full bg-cyan-900 flex items-center justify-center text-cyan-200 font-bold text-xl">
+                              <div className="w-full h-full theme-fixed bg-cyan-900 flex items-center justify-center text-cyan-200 font-bold text-xl">
                                 {user.email?.[0]?.toUpperCase() || 'U'}
                               </div>
                             )}
@@ -947,7 +947,7 @@ export default function HomePage() {
                           </div>
                           {existingUserId ? (
                             <div className="flex flex-col gap-2">
-                              <div className="flex items-center gap-2 bg-emerald-900/20 border border-emerald-500/20 p-3 rounded-lg">
+                              <div className="theme-fixed flex items-center gap-2 bg-emerald-900/20 border border-emerald-500/20 p-3 rounded-lg">
                                 <i className="ph-bold ph-check-circle text-emerald-400 text-lg" />
                                 <div>
                                   <div className="text-emerald-300 text-xs font-bold">User ID Active</div>
@@ -1048,16 +1048,16 @@ export default function HomePage() {
                       <div className="flex items-center justify-between">
                         <h3 className="text-base font-extrabold text-slate-800 tracking-tight">Manage Your Apps</h3>
                         <div className="flex items-center gap-2 text-[11px]">
-                          <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 font-bold border border-emerald-200">{allAppsList.filter(a => !hiddenAppsSet.has(a.id || a.name)).length} visible</span>
-                          <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 font-bold border border-slate-200">{allAppsList.filter(a => hiddenAppsSet.has(a.id || a.name)).length} hidden</span>
+                          <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">{allAppsList.filter(a => !hiddenAppsSet.has(a.id || a.name)).length} visible</span>
+                          <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-bold border border-slate-200">{allAppsList.filter(a => hiddenAppsSet.has(a.id || a.name)).length} hidden</span>
                         </div>
                       </div>
-                      <p className="text-xs text-slate-400 mt-1">Control which apps appear on your dashboard.</p>
+                      <p className="text-xs text-slate-600 mt-1">Control which apps appear on your dashboard.</p>
                     </div>
 
                     <div className="flex-1 overflow-y-auto custom-scroll -mx-1 px-1">
                       {isAdmin && (
-                        <div className="mb-5 p-4 rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-600 text-white shadow-lg shadow-indigo-200">
+                        <div className="mb-5 p-4 rounded-2xl theme-fixed bg-gradient-to-r from-violet-700 to-indigo-700 text-white shadow-lg shadow-indigo-200">
                           <div className="flex items-center gap-2 mb-3">
                             <svg className="w-5 h-5 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                             <span className="font-bold text-sm tracking-wide">Admin Panel</span>
@@ -1097,8 +1097,8 @@ export default function HomePage() {
                                   </div>
                                   
                                   {/* App Name & Type */}
-                                  <h4 className={`font-bold text-sm mt-3 truncate w-full text-center transition-colors ${isHidden ? 'text-slate-400' : 'text-slate-800'}`}>{app.name}</h4>
-                                  <span className={`text-[11px] font-medium mt-0.5 transition-colors ${isHidden ? 'text-slate-300' : 'text-slate-400'}`}>{app.type}</span>
+                                  <h4 className={`font-bold text-sm mt-3 truncate w-full text-center transition-colors ${isHidden ? 'text-slate-600' : 'text-slate-800'}`}>{app.name}</h4>
+                                  <span className={`text-[11px] font-medium mt-0.5 transition-colors ${isHidden ? 'text-slate-600' : 'text-slate-500'}`}>{app.type}</span>
                                   
                                   {/* Toggle */}
                                   <div className={`mt-3 relative w-[44px] h-[26px] rounded-full shrink-0 transition-all duration-300 ${isHidden ? 'bg-slate-200' : 'bg-gradient-to-r from-emerald-400 to-teal-500 shadow-[0_2px_10px_rgba(16,185,129,0.4)]'}`}>
@@ -1235,7 +1235,7 @@ export default function HomePage() {
                     className={`video-item p-2 rounded-lg cursor-pointer flex items-start gap-3 active-press ${currentVideo.id === video.id ? 'video-active' : ''}`}>
                     <div className="w-20 h-12 bg-gray-800 rounded overflow-hidden shrink-0 relative group">
                       <img src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-transparent">
+                      <div className="absolute inset-0 flex items-center justify-center theme-fixed bg-black/70 group-hover:bg-black/50">
                         <i className="ph-fill ph-play text-white text-xs" />
                       </div>
                     </div>
@@ -1250,7 +1250,7 @@ export default function HomePage() {
             <a href="https://youtube.com/@knobly1" target="_blank" rel="noopener noreferrer"
               className="glass-panel w-full yt-cta rounded-[22px] p-3 flex items-center justify-between group transition-all shrink-0 hover:bg-red-500/5 active-press">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                <div className="w-9 h-9 rounded-full theme-fixed bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
                   <i className="ph-fill ph-youtube-logo text-lg" />
                 </div>
                 <div className="font-bold text-[11px] text-gray-200">Knobly Web</div>
@@ -1456,7 +1456,7 @@ export default function HomePage() {
                 className={`video-item p-2 rounded-lg cursor-pointer flex items-start gap-3 active-press ${currentVideo.id === video.id ? 'video-active' : ''}`}>
                 <div className="w-20 h-12 bg-gray-800 rounded overflow-hidden shrink-0 relative group">
                   <img src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="" />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-transparent">
+                  <div className="absolute inset-0 flex items-center justify-center theme-fixed bg-black/70 group-hover:bg-black/50">
                     <i className="ph-fill ph-play text-white text-xs" />
                   </div>
                 </div>
@@ -1540,7 +1540,7 @@ export default function HomePage() {
             className="fixed inset-0 z-[100] flex items-center justify-center"
           >
             {/* Backdrop */}
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={() => setShowTopicExplainer(false)} />
+            <div className="theme-fixed absolute inset-0 bg-black/70 backdrop-blur-md" onClick={() => setShowTopicExplainer(false)} />
             <motion.div
               initial={{ scale: 0.92, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -1732,8 +1732,8 @@ export default function HomePage() {
       {/* ══════ NOTES MODAL ══════ */}
       {showNotesModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowNotesModal(false)} />
-          <div className="pointer-events-auto relative w-[90%] max-w-lg bg-[#0f172a] border border-white/10 rounded-3xl p-6 shadow-2xl z-50">
+          <div className="theme-fixed absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowNotesModal(false)} />
+          <div className="theme-panel pointer-events-auto relative w-[90%] max-w-lg bg-[#0f172a] border border-white/10 rounded-3xl p-6 shadow-2xl z-50">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-white uppercase tracking-wider">Quick Notes</h3>
               <button onClick={() => setShowNotesModal(false)} className="text-gray-400 hover:text-white"><i className="ph-bold ph-x text-xl" /></button>

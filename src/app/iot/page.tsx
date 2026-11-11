@@ -104,7 +104,7 @@ const features = [
 
 export default function IoTPage() {
     return (
-        <div className="min-h-screen bg-white relative overflow-x-hidden">
+        <div className="min-h-screen bg-white text-slate-800 relative overflow-x-hidden">
             {/* IoT Circuit Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-50/50 via-white to-blue-50/30" />
@@ -159,20 +159,20 @@ export default function IoTPage() {
                                 </div>
                                 <div>
                                     <h1 className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">Internet of Things</h1>
-                                    <p className="text-[10px] text-gray-400 -mt-0.5">O-Level — Module 4 (M4-R5)</p>
+                                    <p className="text-[10px] text-gray-500 -mt-0.5">O-Level — Module 4 (M4-R5)</p>
                                 </div>
                             </div>
                         </div>
                         <nav className="hidden md:flex items-center gap-1">
                             {[{ label: 'Home', href: '/' }, { label: 'Dashboard', href: '/dashboard' }, { label: 'Python', href: '/python' }, { label: 'MCQ', href: '/mcq' }].map(l => (
-                                <Link key={l.href} href={l.href} className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-cyan-600 hover:bg-cyan-50/80 transition-all duration-200">{l.label}</Link>
+                                <Link key={l.href} href={l.href} className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-cyan-700 hover:bg-cyan-50/80 transition-all duration-200">{l.label}</Link>
                             ))}
                         </nav>
                         <div className="flex items-center gap-3">
                             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-100 text-cyan-700 text-xs font-semibold border border-cyan-200">
                                 <Wifi size={12} /><span>IoT</span>
                             </div>
-                            <Link href="/" className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 text-gray-600 hover:bg-cyan-100 hover:text-cyan-600 transition-colors">
+                            <Link href="/" className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 text-gray-600 hover:bg-cyan-100 hover:text-cyan-700 transition-colors">
                                 <Home size={18} />
                             </Link>
                         </div>
@@ -238,7 +238,7 @@ export default function IoTPage() {
                             <Link href="/iot/introduction" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-lg shadow-cyan-200 hover:shadow-xl hover:scale-105 hover:-translate-y-0.5 transition-all duration-300">
                                 <Play size={18} fill="currentColor" />Start Learning
                             </Link>
-                            <Link href="#chapters" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-gray-700 font-bold border-2 border-gray-200 hover:border-cyan-300 hover:text-cyan-600 hover:bg-cyan-50/50 transition-all duration-300">
+                            <Link href="#chapters" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-gray-700 font-bold border-2 border-gray-200 hover:border-cyan-300 hover:text-cyan-700 hover:bg-cyan-50/50 transition-all duration-300">
                                 <Compass size={18} />Explore Chapters
                             </Link>
                         </div>
@@ -273,25 +273,25 @@ export default function IoTPage() {
                                             {topic.icon}
                                         </div>
                                         <div className="flex flex-col items-end gap-1">
-                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Ch. {topic.chapter}</span>
+                                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Ch. {topic.chapter}</span>
                                             {topic.completed && <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold">Done</span>}
                                             {topic.current && <span className="px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-700 text-[10px] font-bold animate-pulse">Current</span>}
-                                            {topic.locked && <Lock size={16} className="text-gray-400" />}
+                                            {topic.locked && <Lock size={16} className="text-gray-600" />}
                                         </div>
                                     </div>
                                     <h4 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-cyan-700 transition-colors">{topic.title}</h4>
                                     <p className="text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed">{topic.desc}</p>
                                     <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
-                                        <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg"><Play size={12} className="text-cyan-500" />{topic.lessons} Lessons</span>
-                                        <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg"><Clock size={12} className="text-orange-500" />{topic.duration}</span>
+                                        <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg"><Play size={12} className="text-cyan-700" />{topic.lessons} Lessons</span>
+                                        <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg"><Clock size={12} className="text-orange-700" />{topic.duration}</span>
                                     </div>
                                     {!topic.locked && (
                                         <div className="space-y-2">
                                             <div className="flex justify-between text-xs">
-                                                <span className={`font-semibold ${topic.completed ? 'text-emerald-600' : topic.current ? 'text-cyan-600' : 'text-gray-500'}`}>
+                                                <span className={`font-semibold ${topic.completed ? 'text-emerald-700' : topic.current ? 'text-cyan-700' : 'text-gray-500'}`}>
                                                     {topic.completed ? 'Completed' : topic.current ? 'In Progress' : 'Not Started'}
                                                 </span>
-                                                <span className="text-gray-400">{topic.completed ? '100%' : topic.current ? '15%' : '0%'}</span>
+                                                <span className="text-gray-500">{topic.completed ? '100%' : topic.current ? '15%' : '0%'}</span>
                                             </div>
                                             <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
                                                 <div className={`h-full rounded-full transition-all duration-1000 ${topic.completed ? 'bg-emerald-500' : topic.current ? 'bg-gradient-to-r from-cyan-400 to-blue-500' : 'bg-gray-300'}`} style={{ width: topic.completed ? '100%' : topic.current ? '15%' : '0%' }} />
@@ -299,12 +299,12 @@ export default function IoTPage() {
                                         </div>
                                     )}
                                     {topic.locked && (
-                                        <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 rounded-xl px-3 py-2.5">
+                                        <div className="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-xl px-3 py-2.5">
                                             <Lock size={12} /><span>Complete previous chapters</span>
                                         </div>
                                     )}
                                     {!topic.locked && (
-                                        <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 opacity-0 group-hover:opacity-100 group-hover:bg-cyan-100 group-hover:text-cyan-600 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+                                        <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 opacity-0 group-hover:opacity-100 group-hover:bg-cyan-100 group-hover:text-cyan-700 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
                                             <ChevronRight size={20} />
                                         </div>
                                     )}
@@ -326,7 +326,7 @@ export default function IoTPage() {
                         <div className="flex-1 text-center md:text-left">
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
                                 <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-[11px] font-bold uppercase tracking-wider border border-amber-200">New ✨</span>
-                                <span className="px-3 py-1 rounded-full bg-red-50 text-red-600 text-[11px] font-bold uppercase tracking-wider border border-red-200">PDF Notes</span>
+                                <span className="px-3 py-1 rounded-full bg-red-50 text-red-700 text-[11px] font-bold uppercase tracking-wider border border-red-200">PDF Notes</span>
                             </div>
                             <h3 className="text-2xl md:text-3xl font-black text-gray-900 mb-2 group-hover:text-amber-700 transition-colors">
                                 📝 Handwritten Notes — Chapter 1 & 2
@@ -366,7 +366,7 @@ export default function IoTPage() {
                     <div className="relative z-10">
                         <h3 className="text-2xl md:text-3xl font-black text-white mb-4">Ready to Explore the IoT World? 🌐</h3>
                         <p className="text-cyan-100 mb-6 max-w-2xl mx-auto">Smart devices, sensors aur connected world ko samjho — O-Level IoT course shuru karo aaj hi!</p>
-                        <Link href="/iot/introduction" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-cyan-600 font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                        <Link href="/iot/introduction" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-cyan-700 font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
                             <Play size={18} fill="currentColor" />Start Chapter 1
                         </Link>
                     </div>
