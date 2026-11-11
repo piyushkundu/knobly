@@ -497,7 +497,7 @@ export default function KnoblyAI() {
     const isTestPage = pathname?.startsWith('/test/');
     const isPythonLabPage = pathname === '/python-lab' || pathname === '/c-lab';
     const isCompilerPage = pathname?.includes('/compiler') || pathname?.startsWith('/html/tasks');
-    if (isTestPage || isPythonLabPage || isCompilerPage) return null;
+    const isHiddenPage = Boolean(isTestPage || isPythonLabPage || isCompilerPage);
 
     const [open, setOpen] = useState(false);
     const [minimized, setMinimized] = useState(false);
@@ -543,11 +543,12 @@ export default function KnoblyAI() {
     // ── Theme detection ──
     useEffect(() => {
         const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+        if (isHiddenPage) return;
         check();
         const obs = new MutationObserver(check);
         obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
         return () => obs.disconnect();
-    }, []);
+    }, [isHiddenPage]);
     const T = isDark ? DARK : LIGHT;
 
     // ── Click outside ──
@@ -558,37 +559,44 @@ export default function KnoblyAI() {
                 !triggerWrapRef.current.contains(e.target as Node))
                 setOpen(false);
         };
+        if (isHiddenPage) return;
         if (open) document.addEventListener('mousedown', handler);
         return () => document.removeEventListener('mousedown', handler);
-    }, [open]);
+    }, [open, isHiddenPage]);
 
     // ── Focus input ──
     useEffect(() => {
-        if (open && !minimized) setTimeout(() => inputRef.current?.focus(), 320);
-    }, [open, minimized]);
+        if (isHiddenPage || !open || minimized) return;
+        const timeout = setTimeout(() => inputRef.current?.focus(), 320);
+        return () => clearTimeout(timeout);
+    }, [open, minimized, isHiddenPage]);
 
     // ── Scroll to bottom ──
     useEffect(() => {
         const lastMsg = messages[messages.length - 1];
+        if (isHiddenPage) return;
         if (loading || (lastMsg && lastMsg.role === 'user')) {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [messages, loading]);
+    }, [messages, loading, isHiddenPage]);
 
     // ── External toggle ──
     useEffect(() => {
         const h = () => setOpen(p => !p);
+        if (isHiddenPage) return;
         window.addEventListener('toggle-knobly-ai', h);
         return () => window.removeEventListener('toggle-knobly-ai', h);
-    }, []);
+    }, [isHiddenPage]);
 
     // Peak Behavior & Bubble Cycle
     useEffect(() => {
-        if (open) return;
+        if (open || isHiddenPage) return;
         
         let msgTimeout: NodeJS.Timeout;
         let swapTimeout: NodeJS.Timeout;
         let hideTimeout: NodeJS.Timeout;
+        let fadeTimeout: NodeJS.Timeout;
+        let peekTimeout: NodeJS.Timeout;
 
         const cycle = () => {
             setIsPeekMode(false); // Pop out completely
@@ -602,7 +610,7 @@ export default function KnoblyAI() {
             // 2 seconds AFTER "Hi" is visible (2.5s total), swap to Ask me anything
             swapTimeout = setTimeout(() => {
                 setBubbleVis(false); // Fade out briefly
-                setTimeout(() => {
+                fadeTimeout = setTimeout(() => {
                     setBubbleIdx(1); // Set to "Ask me anything"
                     setBubbleVis(true);
                 }, 300); // 300ms fade duration
@@ -611,7 +619,7 @@ export default function KnoblyAI() {
             // Stay fully out for 10 seconds total, then hide again
             hideTimeout = setTimeout(() => {
                 setBubbleVis(false); // Hide message bubble completely
-                setTimeout(() => setIsPeekMode(true), 400); // Slide robot fully out of view
+                peekTimeout = setTimeout(() => setIsPeekMode(true), 400); // Slide robot fully out of view
             }, 10000);
         };
 
@@ -627,8 +635,10 @@ export default function KnoblyAI() {
             clearTimeout(msgTimeout); 
             clearTimeout(swapTimeout);
             clearTimeout(hideTimeout); 
+            clearTimeout(fadeTimeout);
+            clearTimeout(peekTimeout);
         };
-    }, [open]);
+    }, [open, isHiddenPage]);
 
     const handleClick = useCallback(() => {
         playClickSound();
@@ -692,6 +702,9 @@ export default function KnoblyAI() {
             setLoading(false);
         }
     }, [input, loading, messages, navigateTo]);
+
+    // Every render must call the same Hooks, including routes that hide the AI.
+    if (isHiddenPage) return null;
 
     const onKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }

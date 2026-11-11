@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
@@ -206,7 +206,6 @@ export default function HomePage() {
   const [contextApp, setContextApp] = useState<KnoblyApp | null>(null);
 
   // ── Uptime ──
-  const bootTimeRef = useRef(Date.now());
   const [uptimeString, setUptimeString] = useState('Just now');
 
   // ── Mobile detect ──
@@ -267,8 +266,9 @@ export default function HomePage() {
 
   // ── Uptime tracker ──
   useEffect(() => {
+    const bootTime = Date.now();
     const interval = setInterval(() => {
-      const diffSec = Math.floor((Date.now() - bootTimeRef.current) / 1000);
+      const diffSec = Math.floor((Date.now() - bootTime) / 1000);
       const hours = Math.floor(diffSec / 3600);
       const minutes = Math.floor((diffSec % 3600) / 60);
       if (hours === 0 && minutes === 0) setUptimeString('Just now');
@@ -285,11 +285,15 @@ export default function HomePage() {
 
   // ── Fetch weather ──
   useEffect(() => {
+    let disposed = false;
+    let weatherInterval: ReturnType<typeof setInterval> | undefined;
+
     const fetchWeather = async (lat?: number, lon?: number) => {
       try {
         const url = lat && lon ? `/api/weather?lat=${lat}&lon=${lon}` : '/api/weather';
         const res = await fetch(url);
         const data = await res.json();
+        if (disposed) return;
         if (data.temp != null) {
           setWeatherTemp(`${data.temp}°C`);
           setWeatherCity(data.city || '');
@@ -305,30 +309,34 @@ export default function HomePage() {
       } catch { /* silently ignore */ }
     };
 
+    const startWeatherRefresh = (lat?: number, lon?: number) => {
+      if (disposed) return;
+      void fetchWeather(lat, lon);
+      weatherInterval = setInterval(() => {
+        if (!disposed) void fetchWeather(lat, lon);
+      }, 600000);
+    };
+
     // Try browser geolocation for accurate location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          fetchWeather(pos.coords.latitude, pos.coords.longitude);
-          // Refresh every 10 min with same location
-          const id = setInterval(() => fetchWeather(pos.coords.latitude, pos.coords.longitude), 600000);
-          (window as any).__weatherInterval = id;
+          startWeatherRefresh(pos.coords.latitude, pos.coords.longitude);
         },
         () => {
           // Permission denied → fallback to IP-based
-          fetchWeather();
-          const id = setInterval(() => fetchWeather(), 600000);
-          (window as any).__weatherInterval = id;
+          startWeatherRefresh();
         },
         { timeout: 5000 }
       );
     } else {
-      fetchWeather();
-      const id = setInterval(() => fetchWeather(), 600000);
-      (window as any).__weatherInterval = id;
+      startWeatherRefresh();
     }
 
-    return () => clearInterval((window as any).__weatherInterval);
+    return () => {
+      disposed = true;
+      if (weatherInterval) clearInterval(weatherInterval);
+    };
   }, []);
 
   // ── Load global apps from Firestore (one-time fetch) ──
