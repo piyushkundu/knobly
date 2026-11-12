@@ -23,6 +23,9 @@ const SIDEBAR_ITEMS = [
     { id: 'anchor-tag', label: '<a> Anchor Tag' },
     { id: 'list-tags', label: 'List Tags & Nested Lists' },
     { id: 'table-tag', label: 'Table Tag and Attributes' },
+    { id: 'frameset-tag', label: '<frameset> Tag and Attributes' },
+    { id: 'frame-tag', label: '<frame> Tag and Attributes' },
+    { id: 'nested-frames', label: 'Nested Frames' },
     { id: 'form-tag', label: 'Form Tag and Elements' },
     { id: 'div-span', label: '<div> and <span> Tags' },
     { id: 'semantic', label: 'HTML5 Semantic Elements' },
@@ -44,7 +47,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
     );
 }
 
-function Code({ code }: { code: string }) {
+function Code({ code, filename = 'index.html', runnable = true }: { code: string; filename?: string; runnable?: boolean }) {
     const [copied, setCopied] = useState(false);
     const handleCopy = () => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2000); };
     return (
@@ -56,10 +59,10 @@ function Code({ code }: { code: string }) {
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
                         <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
                     </div>
-                    <span className="text-[10px] text-gray-400 font-mono ml-1">index.html</span>
+                    <span className="text-[10px] text-gray-400 font-mono ml-1">{filename}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                    <Link
+                    {runnable && <Link
                         href="/html/compiler?from=/html/elements"
                         onClick={() => {
                             try {
@@ -72,7 +75,7 @@ function Code({ code }: { code: string }) {
                     >
                         <Play size={10} fill="currentColor" />
                         <span>Run</span>
-                    </Link>
+                    </Link>}
                     <button onClick={handleCopy} className="text-[10px] px-2.5 py-1 rounded-md font-semibold transition-all" style={{ background: copied ? '#166534' : '#313244', color: copied ? '#86efac' : '#a6adc8' }}>
                         {copied ? '✓ Copied' : 'Copy'}
                     </button>
@@ -89,6 +92,25 @@ function AttrTable({ rows }: { rows: [string, string][] }) {
             <table className="w-full text-xs sm:text-sm">
                 <thead><tr className="bg-gradient-to-r from-blue-50 to-indigo-50"><th className="text-left py-2.5 px-3 text-blue-700 font-bold text-xs border-b border-blue-100">Attribute</th><th className="text-left py-2.5 px-3 text-blue-700 font-bold text-xs border-b border-blue-100">Description</th></tr></thead>
                 <tbody>{rows.map(([a, d], i) => (<tr key={i} className={`${i % 2 ? 'bg-gray-50/50' : 'bg-white'} hover:bg-blue-50/30 transition-colors`}><td className="py-2.5 px-3 border-b border-gray-50"><code className="text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-100">{a}</code></td><td className="py-2.5 px-3 border-b border-gray-50 text-gray-600">{d}</td></tr>))}</tbody>
+            </table>
+        </div>
+    );
+}
+
+function AttributeValues({ rows }: { rows: [string, string, string][] }) {
+    return (
+        <div className="overflow-x-auto my-4 rounded-xl border border-gray-200">
+            <table className="w-full text-xs sm:text-sm text-left">
+                <thead className="bg-blue-50 text-blue-800">
+                    <tr>{['Attribute', 'Values / Example', 'Meaning'].map(label => <th key={label} scope="col" className="p-3 border-b border-blue-100">{label}</th>)}</tr>
+                </thead>
+                <tbody>{rows.map(([attribute, value, description]) => (
+                    <tr key={attribute} className="odd:bg-white even:bg-slate-50">
+                        <th scope="row" className="p-3 border-b border-gray-100 font-mono text-red-700">{attribute}</th>
+                        <td className="p-3 border-b border-gray-100 font-mono text-slate-800">{value}</td>
+                        <td className="p-3 border-b border-gray-100 text-slate-600">{description}</td>
+                    </tr>
+                ))}</tbody>
             </table>
         </div>
     );
@@ -180,7 +202,7 @@ export default function HtmlElements() {
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-1.5">Elements, Tags, and Attributes</h1>
                     <p className="text-blue-200 text-xs sm:text-sm mb-4">Complete reference for HTML elements — live practice tasks appear as each tag group is completed.</p>
                     <div className="flex flex-wrap gap-2">
-                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">23 Chapters</span>
+                        <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">{SIDEBAR_ITEMS.length} Chapters</span>
                         <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">50+ Code Examples</span>
                         <span className="px-2.5 py-1 rounded-full bg-white/15 text-white text-[10px] font-semibold backdrop-blur-sm">15 Hands-on Tasks</span>
                     </div>
@@ -1249,51 +1271,266 @@ It stretches the text so each line has equal width.</p>`} />
                 </div>
             </Section>
 
-            {/* 18 - FORM TAG: Milestone for Task 8 */}
-            <Section id="form-tag" title="18. Form Tag and Elements">
-                <p>The <code className="bg-gray-100 px-1 rounded">&lt;form&gt;</code> tag collects user input.</p>
-                <Code code={`<form action="/submit" method="POST">
-    <label>Name:</label><br>
-    <input type="text" name="name" placeholder="Enter name" 
-           size="30" maxlength="50"><br><br>
-
-    <label>Password:</label><br>
-    <input type="password" name="password"><br><br>
-
-    <label>Email:</label><br>
-    <input type="email" name="email"><br><br>
-
-    <p>Gender:</p>
-    <input type="radio" name="gender" value="male"> Male
-    <input type="radio" name="gender" value="female"> Female
-
-    <p>Hobbies:</p>
-    <input type="checkbox" value="coding"> Coding
-    <input type="checkbox" value="reading"> Reading
-
-    <br><br><label>Course:</label>
-    <select name="course">
-        <option value="">-- Select --</option>
-        <option value="olevel">O-Level</option>
-        <option value="ccc">CCC</option>
-    </select>
-
-    <br><br><label>Message:</label><br>
-    <textarea rows="4" cols="40"></textarea>
-
-    <br><br>
-    <input type="file"><br><br>
-    <input type="color" value="#22d3ee">
-    <input type="range" min="1" max="10">
-    <br><br>
-    <input type="submit" value="Submit">
-    <input type="reset" value="Reset">
-</form>`} />
-                <AttrTable rows={[
-                    ['action', 'URL where form data is sent'],
-                    ['method', 'GET (in URL) or POST (in body)'],
-                    ['enctype', 'Encoding type (for file uploads)'],
+            <Section id="frameset-tag" title="18. <frameset> Tag and Attributes">
+                <p><strong>Frame aur frameset:</strong> Ek browser window mein multiple HTML documents ko alag areas mein dikhane ke liye purane HTML mein frames use hote the. <code>&lt;frameset&gt;</code> layout banata hai aur <code>&lt;frame&gt;</code> har area ka document select karta hai.</p>
+                <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-950">
+                    <strong>Legacy / syllabus topic:</strong> <code>&lt;frameset&gt;</code>, <code>&lt;frame&gt;</code> aur <code>&lt;noframes&gt;</code> HTML5 mein obsolete hain. Inhe purane examples aur exam syllabus samajhne ke liye padhein. Naye layouts mein CSS Grid/Flexbox aur document embedding ke liye <code>&lt;iframe&gt;</code> use karein.
+                </div>
+                <p><code>&lt;frameset&gt;...&lt;/frameset&gt;</code> ek container tag hai. Frameset document mein yeh normal <code>&lt;body&gt;</code> ki jagah aata hai; frame ke andar load hone wali child files mein normal <code>&lt;body&gt;</code> hota hai.</p>
+                <AttributeValues rows={[
+                    ['rows', '"50%,50%" | "100,*" | "*,2*"', 'Horizontal rows: upar aur neeche frames. Values height set karti hain.'],
+                    ['cols', '"30%,70%" | "200,*" | "*,*"', 'Vertical columns: left aur right frames. Values width set karti hain.'],
+                    ['border (legacy extension)', '"0" | "5"', 'Kuch purane browsers mein frames ke beech border ki thickness. Yeh standard HTML 4 frameset attribute nahi tha; support browser par depend karta tha.'],
                 ]} />
+                <h3 className="text-base font-bold text-slate-900">Rows, columns aur size values</h3>
+                <p>Comma-separated har value ek area batati hai. <code>100</code> = 100 pixels, <code>50%</code> = aadhi available size, <code>*</code> = remaining space. <code>*,*</code> equal parts aur <code>*,2*</code> remaining space ka 1:2 ratio banata hai.</p>
+                <Code runnable={false} filename="frameset.html — rows" code={`<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
+  "https://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head><title>Two horizontal frames</title></head>
+<frameset rows="50%,50%">
+  <frame src="first.html" title="First page">
+  <frame src="secondpage.html" title="Second page">
+</frameset>
+</html>`} />
+                <Code runnable={false} filename="frameset.html — columns" code={`<!-- Same structure; use cols instead of rows for left/right areas. -->
+<frameset cols="*,*">
+  <frame src="first.html" title="Left page">
+  <frame src="secondpage.html" title="Right page">
+</frameset>`} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center text-xs font-semibold text-slate-800">
+                    <div className="rounded-xl border border-slate-300 overflow-hidden"><p className="bg-slate-100 p-2 font-mono">rows=&quot;*,*&quot;</p><div className="bg-blue-50 p-5 border-b border-slate-300">First page — top</div><div className="bg-emerald-50 p-5">Second page — bottom</div></div>
+                    <div className="rounded-xl border border-slate-300 overflow-hidden"><p className="bg-slate-100 p-2 font-mono">cols=&quot;*,*&quot;</p><div className="grid grid-cols-2"><div className="bg-blue-50 p-5 border-r border-slate-300">First page — left</div><div className="bg-emerald-50 p-5">Second page — right</div></div></div>
+                </div>
+                <QuickPractice title="Run a multi-file frameset">
+                    Copy-only examples: <code>frameset.html</code>, <code>first.html</code>, <code>secondpage.html</code> aur <code>third.html</code> ko ek folder mein save karein, phir <code>frameset.html</code> browser mein kholein. Relative <code>src</code> filenames usi folder se load honge; single-buffer Web Compiler in child files ko automatically create nahi karta.
+                </QuickPractice>
+            </Section>
+
+            <Section id="frame-tag" title="19. <frame> Tag and Attributes">
+                <p><code>&lt;frame&gt;</code> ek empty tag hai: iska closing tag nahi hota. Yeh <code>&lt;frameset&gt;</code> ka child hota hai. <code>src</code> se us frame mein dikhne wali HTML file ya URL set hoti hai.</p>
+                <AttributeValues rows={[
+                    ['src', '"first.html"', 'Frame ke andar load hone wale document ka path/URL.'],
+                    ['name', '"contentFrame"', 'Frame ka naam; anchor ka target isi naam par document khol sakta hai.'],
+                    ['title', '"Course content"', 'Frame ke purpose ka readable description.'],
+                    ['frameborder', '"0" | "1"', '0 = frame border hide, 1 = border show (legacy HTML attribute).'],
+                    ['noresize', 'Boolean: noresize', 'Present hone par user frame boundary drag karke resize nahi kar sakta. noresize="false" bhi present maana jaata hai.'],
+                    ['scrolling', '"yes" | "no" | "auto"', 'yes = scrollbars request, no = scrollbars hide, auto = zaroorat par; default auto. no se content cut sakta hai.'],
+                    ['marginwidth / marginheight', '"10" / "15"', 'Frame document ke horizontal / vertical margins, pixels mein.'],
+                ]} />
+                <Code runnable={false} filename="frameset.html — frame controls" code={`<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
+  "https://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head><title>Frame attributes</title></head>
+<frameset rows="*,*">
+  <frame src="first.html" name="menuFrame" title="Menu"
+         frameborder="0" noresize scrolling="no">
+  <frame src="secondpage.html" name="contentFrame" title="Content"
+         frameborder="0" scrolling="auto" marginwidth="10" marginheight="15">
+</frameset>
+</html>`} />
+                <p>Notebook ka <code>&lt;frameset border=&quot;0&quot;&gt;</code> kuch legacy browsers ka extension hai. Standard HTML 4 frame control <code>frameborder=&quot;0&quot;</code> hai; upar har frame par diya gaya hai.</p>
+                <h3 className="text-base font-bold text-slate-900">Child pages: har file alag save karein</h3>
+                <Code filename="first.html" runnable={false} code={`<!DOCTYPE html>
+<html><head><title>First page</title></head>
+<body>
+  <h1>First page</h1>
+  <a href="third.html" target="contentFrame">Open third page in content frame</a>
+</body></html>`} />
+                <Code filename="secondpage.html" runnable={false} code={`<!DOCTYPE html>
+<html><head><title>Second page</title></head>
+<body><h1>Second page</h1><p>This is the content area.</p></body></html>`} />
+                <Code filename="third.html" runnable={false} code={`<!DOCTYPE html>
+<html><head><title>Third page</title></head>
+<body><h1>Third page</h1><p>Another independent HTML document.</p></body></html>`} />
+                <QuickPractice title="Frame attribute check">Pehle <code>scrolling=&quot;auto&quot;</code> aur <code>scrolling=&quot;no&quot;</code> compare karein. Phir <code>noresize</code> remove karke frame boundary drag karne ka difference dekhein, agar browser legacy frames support karta hai.</QuickPractice>
+            </Section>
+
+            <Section id="nested-frames" title="20. Nested Frames">
+                <p>Ek <code>&lt;frameset&gt;</code> ke andar doosra <code>&lt;frameset&gt;</code> rakhna <strong>nested frames</strong> kehlata hai. Outer set overall window divide karta hai; inner set sirf apne allotted area ko divide karta hai.</p>
+                <Code runnable={false} filename="frameset.html — nested layout" code={`<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
+  "https://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head><title>Nested frames example</title></head>
+<frameset rows="*,*">
+  <frame src="first.html" title="Top page">
+  <frameset cols="*,*">
+    <frame src="secondpage.html" name="contentFrame" title="Bottom left page">
+    <frame src="third.html" title="Bottom right page">
+  </frameset>
+</frameset>
+</html>`} />
+                <div className="rounded-xl border border-slate-300 overflow-hidden text-center text-xs font-semibold text-slate-800">
+                    <div className="bg-blue-50 p-5 border-b border-slate-300">First page — full top row</div>
+                    <div className="grid grid-cols-2"><div className="bg-emerald-50 p-5 border-r border-slate-300">Second page — bottom left</div><div className="bg-violet-50 p-5">Third page — bottom right</div></div>
+                </div>
+                <ol className="list-decimal pl-5 space-y-1"><li>Outer <code>rows=&quot;*,*&quot;</code> do equal-height rows banata hai.</li><li>Top row mein <code>first.html</code> load hoti hai.</li><li>Bottom row ka inner <code>cols=&quot;*,*&quot;</code> us area ko do columns mein baantta hai.</li><li>Inner frameset ko outer frameset se pehle close karein. Child HTML files normal body use karti hain.</li></ol>
+                <p className="text-xs text-slate-600">Reference: <a href="https://www.w3.org/TR/html401/present/frames.html" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline">W3C HTML 4.01: Frames, attributes and nested frame sets</a>.</p>
+            </Section>
+
+            {/* Form topic retains its original anchor and Task 8 link. */}
+            <Section id="form-tag" title="21. Form Tag, Attributes and Elements">
+                <p><code>&lt;form&gt;...&lt;/form&gt;</code> ek container tag hai jo user input collect karta hai. Iske andar <code>input</code>, <code>textarea</code>, <code>button</code>, <code>fieldset</code>, <code>legend</code>, <code>select</code> aur <code>option</code> use hote hain. <code>&lt;input&gt;</code> empty tag hai; baaki listed controls ke closing tags hote hain.</p>
+                <h3 className="text-base font-bold text-slate-900">A. Form attributes aur unki values</h3>
+                <AttributeValues rows={[
+                    ['name', '"registrationForm"', 'Form ka naam/identifier. Yeh apne aap screen par heading nahi dikhata; heading ya legend alag likhein.'],
+                    ['action', '"/submit" | "https://example.com/register"', 'Submit hone par data receive karne wale endpoint ka URL. Backend banana alag step hai.'],
+                    ['method', '"get" | "post" (also "dialog")', 'get data ko URL query mein bhejta hai (default); post request body mein. dialog sirf dialog form ke liye hai.'],
+                    ['enctype', '"application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain"', 'POST data encoding; file uploads ke liye multipart/form-data. Default application/x-www-form-urlencoded.'],
+                    ['target', '"_self" | "_blank" | frame name', 'Submission response kis browsing area mein khulega. Default _self.'],
+                    ['autocomplete', '"on" | "off"', 'Browser autofill preference; browser har situation mein isse follow kare yeh guaranteed nahi.'],
+                    ['novalidate', 'Boolean: novalidate', 'Submission par browser ki built-in form validation skip karta hai.'],
+                ]} />
+                <Code runnable={false} filename="Form syntax — backend required" code={`<form name="registrationForm" action="/submit" method="post">
+  <!-- Put named form controls here -->
+</form>`} />
+                <p><strong>GET vs POST:</strong> Search/filter jaise requests ke liye GET useful hai. Password ya private data URL mein na bhejein. POST bhi apne aap encryption nahi karta; real submissions ke liye HTTPS aur server-side validation chahiye. Neeche ke runnable demos submission ko page par hi rok dete hain.</p>
+
+                <h3 className="text-base font-bold text-slate-900">B. Input attributes: type, name aur value</h3>
+                <AttributeValues rows={[
+                    ['type', '"text", "radio", "checkbox", "date", "password", "file", "number", "time", "tel", "email", "submit", "reset"', 'Input control ka type select karta hai; default text. Har type ka example neeche hai.'],
+                    ['name', '"firstName" | "language"', 'Submitted data ka key. Normal data controls mein name missing ho to unka value submission mein nahi aata.'],
+                    ['value', '"Piyush" | "html" | "Log in"', 'Initial text, radio/checkbox ka submitted value, ya submit/reset button ka label; meaning type par depend karta hai. File input ko arbitrary value nahi de sakte.'],
+                    ['id', '"first-name"', 'Unique control ID; label ka for isi ID se match karein.'],
+                    ['placeholder', '"Enter your name"', 'Empty input ka hint; visible label ka replacement nahi.'],
+                    ['size / maxlength', '"30" / "50"', 'Supported text controls ki visible character width / maximum input length.'],
+                    ['required', 'Boolean: required', 'Supported field ko browser validation mein required banata hai.'],
+                    ['checked', 'Boolean: checked', 'Radio/checkbox ko initially selected karta hai. Unchecked radio/checkbox submit nahi hote.'],
+                    ['min / max / step', '"1" / "100" / "1"', 'Number, range, date ya time control ki supported limits aur increments.'],
+                    ['accept / multiple', '".pdf,image/*" / multiple', 'File picker hint / multiple files selection. Actual upload validate karna server ka kaam hai.'],
+                    ['readonly / disabled', 'Boolean attributes', 'readonly supported text field edit hone se rokta hai; disabled control focus/submit nahi hota.'],
+                ]} />
+                {[
+                    ['text', 'First name aur Last name', 'Single-line text field. value se initial text set hota hai.', '<label for="first-name">First name:</label>\n<input id="first-name" type="text" name="firstName" value="Piyush"><br>\n<label for="last-name">Last name:</label>\n<input id="last-name" type="text" name="lastName" placeholder="Enter last name">'],
+                    ['radio', 'Choose your favourite web language', 'Ek group se ek choice: sab radio controls ka same name, lekin alag value rakhein.', '<p>Choose your favourite web language:</p>\n<label><input type="radio" name="language" value="html" checked> HTML</label><br>\n<label><input type="radio" name="language" value="css"> CSS</label><br>\n<label><input type="radio" name="language" value="js"> JavaScript</label>'],
+                    ['checkbox', 'Select your skills', 'Multiple independent choices select kar sakte hain.', '<label><input type="checkbox" name="skills" value="software"> I am a software developer</label><br>\n<label><input type="checkbox" name="skills" value="design"> I am a graphic designer</label>'],
+                    ['date', 'Date of birth', 'Date picker ka display browser/locale par depend karta hai; submitted value YYYY-MM-DD hoti hai.', '<label>Date of birth: <input type="date" name="dob" value="2000-01-15"></label>'],
+                    ['password', 'Password field', 'Typed characters mask hote hain. Yeh masking encryption nahi hai; demo mein real password na daalein.', '<label>Demo password: <input type="password" name="password" autocomplete="new-password" minlength="8"></label>'],
+                    ['file', 'Choose a document', 'File picker kholta hai. Actual upload ke liye POST, multipart/form-data aur backend chahiye.', '<label>Document: <input type="file" name="document" accept=".pdf,image/*"></label>'],
+                    ['number', 'Enter your age', 'Numeric entry; min, max aur step limits set karte hain.', '<label>Age: <input type="number" name="age" min="1" max="120" step="1" value="18"></label>'],
+                    ['time', 'Choose a time', 'Time control; default submitted value hours:minutes hoti hai, seconds bhi ho sakte hain.', '<label>Time: <input type="time" name="meetingTime" value="10:30"></label>'],
+                    ['tel', 'Telephone number', 'Telephone entry / mobile keypad hint; tel apne aap phone-number format validate nahi karta.', '<label>Phone no.: <input type="tel" name="phone" placeholder="Enter phone number"></label>'],
+                    ['email', 'Email address', 'Browser email syntax check karta hai; address exist karta hai ya nahi, yeh verify nahi karta.', '<label>Email: <input type="email" name="email" placeholder="student@example.com" required></label>'],
+                    ['submit', 'Submit button', 'Containing form submit karta hai. value button par dikhne wala text hai; yeh sirf demo hai, real login nahi.', '<input type="submit" value="Log in">'],
+                    ['reset', 'Reset button', 'Form ke controls ko initial/default values par laata hai; har field ko blank karna zaroori nahi.', '<label>Name: <input type="text" name="student" value="Student"></label>\n<input type="reset" value="Reset">'],
+                    ['color', 'Choose a color', 'Color picker. Existing guide ka color input bhi yahan available hai.', '<label>Favorite color: <input type="color" name="color" value="#2563eb"></label>'],
+                    ['range', 'Choose a level', 'Slider min aur max ke beech value select karta hai.', '<label>Level: <input type="range" name="level" min="1" max="10" value="5"></label>'],
+                ].map(([type, title, description, example]) => (
+                    <div key={type} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <h4 className="font-bold text-slate-900"><code>type=&quot;{type}&quot;</code> — {title}</h4>
+                        <p className="mt-2 text-slate-600">{description}</p>
+                        <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('demo-status').textContent = 'Demo only: no data was sent.';">\n${example}\n<p id="demo-status" role="status"></p>\n</form>`} />
+                    </div>
+                ))}
+
+                <h3 className="text-base font-bold text-slate-900">C. Textarea: multi-line input</h3>
+                <p><code>&lt;textarea&gt;...&lt;/textarea&gt;</code> address, feedback ya message jaise multiple lines ke liye hai. Initial text opening aur closing tags ke beech likhein; <code>value</code> HTML attribute use nahi hota.</p>
+                <AttributeValues rows={[
+                    ['name / id', '"address" / "address-field"', 'Submission key aur label association.'],
+                    ['rows / cols', '"3" / "30"', 'Visible line count / character columns; CSS bhi rendered size badal sakti hai.'],
+                    ['placeholder / maxlength', '"Enter address" / "500"', 'Hint text aur maximum characters.'],
+                    ['required / readonly / disabled', 'Boolean attributes', 'Validation aur editing/submission behavior control karte hain.'],
+                ]} />
+                <Code code={`<label for="address-field">Address:</label><br>
+<textarea name="address" id="address-field" cols="30" rows="3"
+  placeholder="Enter your address">Delhi</textarea>`} />
+
+                <h3 className="text-base font-bold text-slate-900">D. Fieldset aur Legend</h3>
+                <p><code>&lt;fieldset&gt;</code> related form controls ko group karta hai aur normally unke around border dikhata hai. Iska pehla <code>&lt;legend&gt;</code> group ka caption/title deta hai.</p>
+                <Code code={`<form onsubmit="event.preventDefault()">
+  <fieldset>
+    <legend>Application form</legend>
+    <label>Name: <input type="text" name="name"></label><br>
+    <label>Email: <input type="email" name="email"></label>
+  </fieldset>
+</form>`} />
+                <AttributeValues rows={[
+                    ['fieldset: disabled', 'Boolean: disabled', 'Group ke controls ko disable karta hai (first legend ke andar controls iska exception hain).'],
+                    ['fieldset: name / form', '"personalInfo" / "registration"', 'Group ka naam / associated form ki ID.'],
+                    ['legend', '<legend>Application form</legend>', 'Group heading element; iska separate value attribute nahi hota.'],
+                ]} />
+
+                <h3 className="text-base font-bold text-slate-900">E. Select aur Option: dropdown list</h3>
+                <p><code>&lt;select&gt;</code> selection list banata hai; andar ke <code>&lt;option&gt;</code> choices dete hain. Screen par option ka text aur submission mein uska <code>value</code> jaata hai.</p>
+                <AttributeValues rows={[
+                    ['select: name / id', '"language" / "language-list"', 'Submission key / associated label ID.'],
+                    ['select: multiple / size', 'multiple / "4"', 'Multiple selections allow karna / visible option rows.'],
+                    ['select: required / disabled', 'Boolean attributes', 'Selection validation / control disable karna.'],
+                    ['option: value', '"html" | "css" | "js" | "php"', 'Chosen option ka submitted value. Empty value placeholder ke liye useful hai.'],
+                    ['option: selected / disabled', 'Boolean attributes', 'Initial selection / unselectable choice.'],
+                ]} />
+                <Code code={`<label for="language-list">Select your language:</label>
+<select name="language" id="language-list" required>
+  <option value="" selected disabled>Select your language</option>
+  <option value="html">HTML</option>
+  <option value="css">CSS</option>
+  <option value="js">JavaScript</option>
+  <option value="php">PHP</option>
+</select>`} />
+
+                <h3 className="text-base font-bold text-slate-900">F. Button: submit, reset aur normal action</h3>
+                <p><code>&lt;button&gt;Log in&lt;/button&gt;</code> mein button label tags ke beech hota hai. Form ke andar missing <code>type</code> normally submit karta hai; accidental submission rokne ke liye normal actions par <code>type=&quot;button&quot;</code> likhein.</p>
+                <AttributeValues rows={[
+                    ['type', '"submit" | "reset" | "button"', 'Form submit / defaults restore / normal button (behavior JS se).'],
+                    ['name / value', '"action" / "login"', 'Clicked submit button ka name/value data mein include ho sakta hai. Visible label button content hota hai.'],
+                    ['disabled', 'Boolean: disabled', 'Button interaction disable karta hai.'],
+                ]} />
+                <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('button-status').textContent = 'Demo submitted locally.';">
+  <input type="text" name="student" value="Student">
+  <button type="submit" name="action" value="login">Log in</button>
+  <button type="reset">Reset</button>
+  <button type="button" onclick="document.getElementById('button-status').textContent = 'Normal button clicked.';">Check</button>
+  <p id="button-status" role="status"></p>
+</form>`} />
+
+                <h3 className="text-base font-bold text-slate-900">G. Complete Application Form — local practice</h3>
+                <Code code={`<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Application Form Demo</title></head>
+<body>
+<h1>Student Application Form</h1>
+<!-- Demo only: submission is stopped; no account is created or data uploaded. -->
+<form id="registration" name="registrationForm" method="post" enctype="multipart/form-data"
+  onsubmit="event.preventDefault(); document.getElementById('form-result').textContent = 'Demo complete — no data was sent.';">
+  <fieldset>
+    <legend>Personal information</legend>
+    <label>First name: <input type="text" name="firstName" value="Piyush" required></label><br><br>
+    <label>Last name: <input type="text" name="lastName" required></label><br><br>
+    <label>Date of birth: <input type="date" name="dob"></label><br><br>
+    <label>Age: <input type="number" name="age" min="1" max="120"></label><br><br>
+    <label>Email: <input type="email" name="email" required></label><br><br>
+    <label>Phone: <input type="tel" name="phone"></label><br><br>
+    <label>Demo password: <input type="password" name="password" minlength="8" autocomplete="new-password"></label>
+  </fieldset>
+  <fieldset>
+    <legend>Learning preferences</legend>
+    <p>Favourite web language:</p>
+    <label><input type="radio" name="language" value="html" checked> HTML</label>
+    <label><input type="radio" name="language" value="css"> CSS</label>
+    <label><input type="radio" name="language" value="js"> JavaScript</label>
+    <p>Skills:</p>
+    <label><input type="checkbox" name="skills" value="software"> Software developer</label>
+    <label><input type="checkbox" name="skills" value="design"> Graphic designer</label><br><br>
+    <label>Course: <select name="course" required>
+      <option value="" selected disabled>Select a course</option>
+      <option value="html">HTML</option><option value="css">CSS</option>
+      <option value="js">JavaScript</option><option value="php">PHP</option>
+    </select></label><br><br>
+    <label>Meeting time: <input type="time" name="meetingTime"></label><br><br>
+    <label>Address:<br><textarea name="address" rows="3" cols="30" placeholder="Your address"></textarea></label><br><br>
+    <label>Document: <input type="file" name="document" accept=".pdf,image/*"></label><br><br>
+    <label>Color: <input type="color" name="color" value="#2563eb"></label>
+    <label>Level: <input type="range" name="level" min="1" max="10" value="5"></label>
+  </fieldset>
+  <input type="submit" value="Submit application">
+  <input type="reset" value="Reset">
+  <button type="button" onclick="document.getElementById('form-result').textContent = 'Fill the fields, then Submit.';">Help</button>
+  <p id="form-result" role="status"></p>
+</form>
+</body>
+</html>`} />
+                <QuickPractice title="Form values check">First name edit karke Reset dabayein: initial <code>Piyush</code> wapas aayega. Radio group se sirf ek language aur checkboxes se dono skills select karke dekhein. Submit demo message dikhata hai; real login, file upload ya server save nahi karta.</QuickPractice>
+                <p className="text-xs text-slate-600">Reference: <a href="https://html.spec.whatwg.org/multipage/forms.html" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline">HTML Standard: forms and form controls</a>.</p>
 
                 {/* TASK 8: Placed right after Form tags completion! */}
                 <PracticeTaskCard
@@ -1306,7 +1543,7 @@ It stretches the text so each line has equal width.</p>`} />
             </Section>
 
             {/* 19 */}
-            <Section id="div-span" title="19. <div> and <span> Tags">
+            <Section id="div-span" title="22. <div> and <span> Tags">
                 <p><code className="bg-gray-100 px-1 rounded">&lt;div&gt;</code> is a block-level container. <code className="bg-gray-100 px-1 rounded">&lt;span&gt;</code> is an inline container.</p>
                 <Code code={`<!-- div - Block level -->
 <div style="background:#eee; padding:20px; margin:10px 0;">
@@ -1335,7 +1572,7 @@ Computer Science</span>.</p>`} />
             </Section>
 
             {/* 20 - SEMANTIC HTML5: Milestone for Task 11 */}
-            <Section id="semantic" title="20. HTML5 Semantic Elements">
+            <Section id="semantic" title="23. HTML5 Semantic Elements">
                 <p>Semantic elements describe their meaning clearly, helping browsers and search engines understand page structure.</p>
                 <Code code={`<header>
     <nav>
@@ -1383,7 +1620,7 @@ Computer Science</span>.</p>`} />
             </Section>
 
             {/* 21 - AUDIO & VIDEO: Milestone for Task 9 & 5.4 */}
-            <Section id="audio-video" title="21. Audio and Video Tags">
+            <Section id="audio-video" title="24. Audio and Video Tags">
                 <p>HTML5 supports audio and video directly.</p>
                 <Code code={`<!-- Audio -->
 <audio controls>
@@ -1432,7 +1669,7 @@ Computer Science</span>.</p>`} />
             </Section>
 
             {/* 22 */}
-            <Section id="iframe-tag" title="22. <iframe> Tag">
+            <Section id="iframe-tag" title="25. <iframe> Tag">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;iframe&gt;</code> tag embeds another HTML page within the current page.</p>
                 <Code code={`<!-- Embed a webpage -->
 <iframe src="https://www.example.com" 
@@ -1454,7 +1691,7 @@ Computer Science</span>.</p>`} />
             </Section>
 
             {/* 23 - ENTITIES & CAPSTONE: Milestone for Task 10 */}
-            <Section id="entities" title="23. HTML Entities & Capstone Project">
+            <Section id="entities" title="26. HTML Entities & Capstone Project">
                 <p>Reserved characters in HTML must be displayed using entities.</p>
                 <div className="overflow-x-auto my-3">
                     <table className="w-full text-xs sm:text-sm border border-gray-200 rounded-lg overflow-hidden">
