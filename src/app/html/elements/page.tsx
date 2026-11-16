@@ -30,6 +30,7 @@ const SIDEBAR_ITEMS = [
     { id: 'div-span', label: '<div> and <span> Tags' },
     { id: 'semantic', label: 'HTML5 Semantic Elements' },
     { id: 'audio-video', label: 'Audio and Video Tags' },
+    { id: 'form-validation', label: 'HTML5 Form Validation' },
     { id: 'iframe-tag', label: '<iframe> Tag' },
     { id: 'entities', label: 'HTML Entities & Capstone' },
 ];
@@ -1621,33 +1622,71 @@ Computer Science</span>.</p>`} />
 
             {/* 21 - AUDIO & VIDEO: Milestone for Task 9 & 5.4 */}
             <Section id="audio-video" title="24. Audio and Video Tags">
-                <p>HTML5 supports audio and video directly.</p>
-                <Code code={`<!-- Audio -->
-<audio controls>
-    <source src="song.mp3" type="audio/mpeg">
-    Browser does not support audio.
+                <p><strong>HTML5 media:</strong> <code>&lt;audio&gt;</code> sound aur <code>&lt;video&gt;</code> moving pictures/sound embed karta hai. Dono container tags hain: closing tag zaroor likhein. Media file ka path direct <code>src</code> par ya child <code>&lt;source&gt;</code> par de sakte hain.</p>
+                <h3 className="text-base font-bold text-slate-900">A. Audio tag — sound on a web page</h3>
+                <p>MP3, Ogg aur WAV common formats hain. Browser support file format ke saath codec par bhi depend karta hai. <code>&lt;source&gt;</code> ek empty tag hai; multiple sources mein browser supported candidate choose karta hai.</p>
+                <Code runnable={false} filename="audio example — save media beside HTML" code={`<audio controls loop preload="metadata">
+  <source src="audio.mp3" type="audio/mpeg">
+  <source src="audio.ogg" type="audio/ogg">
+  Your browser does not support HTML audio.
+  <a href="audio.mp3">Download the audio</a>
 </audio>
 
-<!-- Video -->
-<video width="640" height="360" controls poster="thumb.jpg">
-    <source src="video.mp4" type="video/mp4">
-    Browser does not support video.
+<!-- Alternative: one file directly on the audio element -->
+<audio src="audio.mp3" controls></audio>`} />
+                <AttributeValues rows={[
+                    ['controls', 'Boolean: controls', 'Browser ke play/pause, seek, volume jaise controls show karta hai.'],
+                    ['autoplay', 'Boolean: autoplay', 'Playback automatically start karne ki request. Browser policy, user interaction aur iframe permissions ke kaaran block ho sakti hai.'],
+                    ['loop', 'Boolean: loop', 'Media finish hone par shuru se dobara play karta hai.'],
+                    ['muted', 'Boolean: muted', 'Playback initially bina sound ke start hota hai.'],
+                    ['src', '"audio.mp3" | full media URL', 'Media file ka address; source children use karein to parent src omit karein.'],
+                    ['preload', '"none" | "metadata" | "auto"', 'Browser ko loading hint: pehle load na kare / duration jaisi info / zyada data buffer kar sakta hai. Yeh guarantee nahi hai.'],
+                    ['source: type', '"audio/mpeg" | "audio/ogg" | "audio/wav"', 'Source file ka MIME type; MP3 ke liye audio/mpeg. Yeh file convert nahi karta.'],
+                ]} />
+                <QuickPractice title="Boolean attributes">HTML mein <code>controls=&quot;false&quot;</code> se controls off nahi hote: attribute present hone par on maana jaata hai. Off karne ke liye attribute hataayein. Yeh rule <code>autoplay</code>, <code>loop</code> aur <code>muted</code> par bhi apply hota hai.</QuickPractice>
+
+                <h3 className="text-base font-bold text-slate-900">B. Video tag — size, poster and playback</h3>
+                <p>MP4, WebM aur Ogg video containers hain. <code>width</code> aur <code>height</code> player ka display size dete hain; CSS se responsive size bhi set kar sakte hain. <code>poster</code> playback shuru hone se pehle image dikhata hai.</p>
+                <Code runnable={false} filename="video example — local files required" code={`<video width="320" height="240" controls poster="thumbnail.jpg" preload="metadata">
+  <source src="video.mp4" type="video/mp4">
+  <source src="video.webm" type="video/webm">
+  Your browser does not support HTML video.
+  <a href="video.mp4">Download the video</a>
 </video>
 
-<!-- YouTube Embed -->
-<iframe width="560" height="315" 
-    src="https://www.youtube.com/embed/VIDEO_ID"
-    allowfullscreen></iframe>`} />
-                <div className="bg-indigo-50 rounded-lg p-4 border border-indigo-200 my-3">
-                    <h4 className="text-sm font-bold text-indigo-700 mb-2">Attributes:</h4>
-                    <div className="space-y-1 text-xs text-gray-700">
-                        <div><code className="bg-white px-1 rounded text-red-600">controls</code> — Show play/pause buttons</div>
-                        <div><code className="bg-white px-1 rounded text-red-600">autoplay</code> — Auto-start playing</div>
-                        <div><code className="bg-white px-1 rounded text-red-600">loop</code> — Repeat playback</div>
-                        <div><code className="bg-white px-1 rounded text-red-600">muted</code> — Start muted</div>
-                        <div><code className="bg-white px-1 rounded text-red-600">poster</code> — Video thumbnail image</div>
-                    </div>
-                </div>
+<!-- Autoplay is a request; muted inline video is more likely to be allowed. -->
+<video src="video.mp4" width="320" height="240" autoplay muted loop playsinline></video>`} />
+                <AttributeValues rows={[
+                    ['controls / autoplay / loop / muted', 'Boolean attributes', 'Audio ki tarah controls, auto-start request, repeat aur initial mute.'],
+                    ['src', '"video.mp4"', 'Video file ka path ya direct media URL.'],
+                    ['width / height', '"320" / "240"', 'Player dimensions in CSS pixels. Responsive CSS example: width:100%; max-width:640px; height:auto.'],
+                    ['poster', '"thumbnail.jpg"', 'Video ka preview/cover image URL. Yeh sirf video ke liye hai.'],
+                    ['preload', '"none" | "metadata" | "auto"', 'Media loading hint, audio ki tarah.'],
+                    ['playsinline', 'Boolean: playsinline', 'Mobile par video ko page ke player mein hi play karne ka hint.'],
+                    ['source: type', '"video/mp4" | "video/webm" | "video/ogg"', 'File/codec selection mein browser ki madad karta hai.'],
+                ]} />
+                <h3 className="text-base font-bold text-slate-900">C. Working media examples</h3>
+                <p>Local examples ke liye actual audio/video files HTML ke saath save karein. Neeche runnable example public MDN CC0 sample URLs use karta hai; internet chahiye. Audio/video khud play karne ke liye Play dabayein.</p>
+                <Code code={`<h2>Audio demo</h2>
+<audio controls preload="none">
+  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3" type="audio/mpeg">
+  Audio is not supported.
+</audio>
+
+<h2>Video demo</h2>
+<video controls preload="none" playsinline width="320" height="240"
+  style="max-width:100%;height:auto;">
+  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+  Video is not supported.
+</video>`} />
+                <h3 className="text-base font-bold text-slate-900">D. Captions, fallback and troubleshooting</h3>
+                <Code runnable={false} filename="video with captions — media and VTT file required" code={`<video controls width="640" height="360">
+  <source src="lesson.mp4" type="video/mp4">
+  <track kind="captions" src="captions-en.vtt" srclang="en" label="English" default>
+  Your browser does not support video.
+</video>`} />
+                <ul className="list-disc pl-5 space-y-2"><li><code>&lt;track&gt;</code> captions/subtitles ke liye WebVTT file use karta hai. Cross-origin caption files ko appropriate CORS support chahiye.</li><li>Fallback text un browsers ke liye hai jo media element support nahi karte; modern browser mein missing file ki error par yeh text dikhna guaranteed nahi.</li><li>File path, capitalization, MIME type, codec aur network connection check karein. <code>src</code> ko YouTube watch-page URL na dein; iframe embedding agle chapters mein hai.</li><li>Autoplay na chale to controls se manual Play try karein. <code>muted</code> ke saath bhi autoplay guaranteed nahi hai.</li></ul>
+                <p className="text-xs text-slate-600">Reference: <a className="text-blue-700 underline" href="https://html.spec.whatwg.org/multipage/media.html" target="_blank" rel="noopener noreferrer">HTML Standard: audio, video and media attributes</a>. Runnable sample media: MDN interactive examples (CC0).</p>
 
                 {/* TASK 9 & 5.4: Placed right after Audio & Video completion! */}
                 <div className="space-y-3">
@@ -1669,7 +1708,112 @@ Computer Science</span>.</p>`} />
             </Section>
 
             {/* 22 */}
-            <Section id="iframe-tag" title="25. <iframe> Tag">
+            <Section id="form-validation" title="25. HTML5 Form Validation">
+                <p>HTML5 validation browser ko form submit hone se pehle input rules check karne deta hai. Invalid field par browser message dikhata hai aur normal submission rok deta hai. Is chapter ke demos valid hone par bhi <code>event.preventDefault()</code> use karte hain: input kahin send nahi hota.</p>
+                <h3 className="text-base font-bold text-slate-900">A. Required attribute</h3>
+                <p><code>required</code> ek Boolean attribute hai. Applicable field empty ho to browser normal form submission rokta hai. <code>required=&quot;false&quot;</code> bhi present attribute hai; optional banane ke liye attribute remove karein.</p>
+                <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('required-result').textContent = 'Valid demo: no data sent.';">
+  <label>Enter your name: <input type="text" name="student" required></label>
+  <input type="submit" value="Check name">
+  <p id="required-result" role="status"></p>
+</form>`} />
+                <QuickPractice title="Try required validation">Pehle blank field ke saath Submit karein; browser validation message aayega. Phir name type karke Submit karein; local success message dikhega.</QuickPractice>
+
+                <h3 className="text-base font-bold text-slate-900">B. Pattern attribute — allowed text and length</h3>
+                <p><code>pattern</code> ek regular expression hai jo poori input value se match hota hai. Yeh <code>text</code>, <code>search</code>, <code>url</code>, <code>tel</code>, <code>email</code> aur <code>password</code> par apply hota hai; <code>number</code> par nahi. Empty optional field pattern se reject nahi hoti; blank bhi rokna ho to <code>required</code> lagayein.</p>
+                <AttributeValues rows={[
+                    ['[A-Za-z]', 'One English letter', 'Uppercase A–Z ya lowercase a–z. Character class ke andar comma mat add karein; comma bhi allowed character ban jaayega.'],
+                    ['[0-9]', 'One digit', '0 se 9 tak ek digit.'],
+                    ['{1,5} / {10}', '1–5 repetitions / exactly 10', 'Braces min/max count define karte hain; {10} ka matlab maximum 10 nahi, exactly 10 hai.'],
+                    ['+', 'One or more', 'Kam se kam ek character; regex mein fixed upper count nahi.'],
+                    ['title', '"Use 1 to 5 digits"', 'Browser ko extra format hint; exact validation message/browser language vary kar sakti hai. Visible help text bhi dein.'],
+                ]} />
+                <p>Modern HTML patterns Unicode <code>v</code> mode use karte hain. Character class mein literal hyphen ko <code>\-</code> likhein. Neeche handwritten patterns ki intent ko correct syntax aur correct total lengths ke saath diya gaya hai.</p>
+                {[
+                    { label: 'Only alphabets, maximum 5 characters', pattern: '[A-Za-z]{1,5}', valid: 'Hello', invalid: 'Hello1', help: 'Use 1 to 5 English letters.' },
+                    { label: 'Letters or digits, minimum 1 character', pattern: '[A-Za-z0-9]+', valid: 'HTML5', invalid: 'HTML 5', help: 'Use one or more English letters or digits; no spaces.' },
+                    { label: 'Only numbers, maximum 10 digits', pattern: '[0-9]{1,10}', valid: '12345', invalid: '12345678901', help: 'Use 1 to 10 digits. This accepts leading zeros.' },
+                    { label: 'Exactly 10 digits', pattern: '[0-9]{10}', valid: '0123456789', invalid: '12345', help: 'Use exactly 10 digits. This is a length rule, not phone-number ownership verification.' },
+                    { label: 'Alphabets with no fixed upper count', pattern: '[A-Za-z]+', valid: 'LearningHTML', invalid: 'HTML5', help: 'Use one or more English letters. No fixed maximum is set by this pattern.' },
+                    { label: 'Letters, numbers, underscore, @ and hyphen', pattern: '[A-Za-z0-9_@\\-]+', valid: 'student_1@web-site', invalid: 'student!', help: 'Use letters, digits, underscore, @ or hyphen; no spaces.' },
+                    { label: 'Username: first letter, total 1–25 characters', pattern: '[A-Za-z][A-Za-z0-9_\\-]{0,24}', valid: 'Piyush_1', invalid: '1Piyush', help: 'Start with an English letter; then use letters, digits, underscore or hyphen. Total length: 1 to 25.' },
+                ].map(({ label, pattern, valid, invalid, help }, index) => (
+                    <div key={pattern} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <h4 className="font-bold text-slate-900">{index + 1}. {label}</h4>
+                        <p className="mt-2 text-xs text-slate-700">Valid: <code>{valid}</code> · Invalid: <code>{invalid}</code></p>
+                        <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('pattern-result').textContent = 'Pattern matched: no data sent.';">\n  <label for="pattern-input">${label}</label>\n  <p id="pattern-help">${help}</p>\n  <input id="pattern-input" name="practice" type="text" required\n    pattern="${pattern}" title="${help}" aria-describedby="pattern-help">\n  <button type="submit">Check pattern</button>\n  <p id="pattern-result" role="status"></p>\n</form>`} />
+                    </div>
+                ))}
+                <p>Username pattern mein pehla <code>[A-Za-z]</code> already ek character hai. Uske baad <code>{'{0,24}'}</code> se total 1–25 characters bante hain; <code>{'{1,25}'}</code> likhne par total 2–26 ho jaate.</p>
+
+                <h3 className="text-base font-bold text-slate-900">C. Title and Autofocus</h3>
+                <p><code>title</code> format ka extra hint hai. <code>autofocus</code> page/dialog load par field ko focus dene ki request karta hai; value validate nahi karta. Ek document mein sirf ek intended autofocus target rakhein. Guide khud focus nahi badalta; Run example kholne par try karein.</p>
+                <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('focus-result').textContent = 'Valid: no data sent.';">
+  <label for="digits">Enter 1 to 5 digits:</label>
+  <input id="digits" name="digits" type="text" required autofocus
+    pattern="[0-9]{1,5}" title="Only 1 to 5 digits are allowed">
+  <input type="submit" value="Validate">
+  <p id="focus-result" role="status"></p>
+</form>`} />
+
+                <h3 className="text-base font-bold text-slate-900">D. Email and multiple email addresses</h3>
+                <p><code>type=&quot;email&quot;</code> browser se address syntax check karwata hai. <code>multiple</code> lagane par comma-separated addresses allowed hain. Isse inbox exist/own karna verify nahi hota; built-in browser syntax aur real email verification alag cheezein hain.</p>
+                <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('email-result').textContent = 'Email syntax is valid; no email was sent.';">
+  <label for="emails">Email addresses (separate with commas):</label>
+  <input id="emails" type="email" name="emails" multiple required
+    placeholder="first@example.com, second@example.com">
+  <button type="submit">Check emails</button>
+  <p id="email-result" role="status"></p>
+</form>`} />
+
+                <h3 className="text-base font-bold text-slate-900">E. Number: min, max and step</h3>
+                <p><code>min</code> lower limit, <code>max</code> upper limit aur <code>step</code> valid increment define karte hain. Number ka default step 1 hai; decimals ke liye <code>step=&quot;0.1&quot;</code> ya <code>step=&quot;any&quot;</code> use karein. <code>pattern</code> aur <code>maxlength</code> ki jagah number ke numeric rules use karein.</p>
+                <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('number-result').textContent = 'Quantity is valid: no data sent.';">
+  <label>Enter quantity (1 to 10, steps of 0.1):
+    <input type="number" name="quantity" min="1" max="10" step="0.1" required>
+  </label>
+  <input type="submit" value="Check quantity">
+  <p id="number-result" role="status"></p>
+</form>`} />
+                <QuickPractice title="Number rule check">Try <code>1.5</code> (valid), <code>0.9</code> / <code>10.1</code> (outside bounds), aur <code>1.55</code> (step mismatch). Valid steps min=1 se count hote hain.</QuickPractice>
+
+                <h3 className="text-base font-bold text-slate-900">F. Date: calendar input with limits</h3>
+                <p><code>type=&quot;date&quot;</code> date picker de sakta hai; display locale/browser par depend karta hai. HTML <code>value</code>, <code>min</code> aur <code>max</code> ka format <code>YYYY-MM-DD</code> hota hai.</p>
+                <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('date-result').textContent = 'Date is in the sample year: no data sent.';">
+  <label>Choose a date in 2026:
+    <input type="date" name="practiceDate" min="2026-01-01" max="2026-12-31" required>
+  </label>
+  <button type="submit">Check date</button>
+  <p id="date-result" role="status"></p>
+</form>`} />
+
+                <h3 className="text-base font-bold text-slate-900">G. Range: slider, limits and steps</h3>
+                <p><code>type=&quot;range&quot;</code> slider deta hai. Limits omit karne par default range 0–100 aur step 1 hai. Iska value browser bounds/step ke mutabik adjust karta hai; <code>required</code> range par apply nahi hota, kyunki slider ka default value hota hai.</p>
+                <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('range-result').textContent = 'Range selected locally: ' + this.elements.level.value;">
+  <label for="level">Select range (1 to 50, steps of 2):</label>
+  <input id="level" type="range" name="level" min="1" max="50" step="2" value="1"
+    oninput="document.getElementById('range-value').textContent = this.value;">
+  <output id="range-value" for="level">1</output>
+  <button type="submit">Show selection</button>
+  <p id="range-result" role="status"></p>
+</form>`} />
+                <p>Yahan min=1 aur step=2 se values 1, 3, 5, …, 49 hoti hain. Max=50 upper bound hai; 50 step sequence mein nahi aata.</p>
+
+                <h3 className="text-base font-bold text-slate-900">H. Validation summary and testing</h3>
+                <AttributeValues rows={[
+                    ['required', 'Boolean', 'Supported control empty ho to normal submission block.'],
+                    ['pattern / title', 'Regex / readable format hint', 'Text format rules aur helpful instructions.'],
+                    ['minlength / maxlength', '"3" / "25"', 'Supported text controls ki length rules; minlength user edits par check hota hai aur optional empty input ko required nahi banata.'],
+                    ['min / max / step', '"1" / "10" / "0.1"', 'Applicable numeric/date/time controls ki limits aur valid steps.'],
+                    ['type="email" / multiple', 'Email syntax / comma-separated list', 'Browser address format validation; delivery/ownership verification nahi.'],
+                    ['autofocus', 'Boolean', 'Focus behavior, validation rule nahi.'],
+                    ['novalidate / formnovalidate', 'Boolean', 'Form / specific submit button se native submit validation bypass kar sakte hain.'],
+                ]} />
+                <QuickPractice title="Important behavior">Normal Submit ya <code>requestSubmit()</code> validation chalata hai. JavaScript <code>form.submit()</code> validation bypass karta hai. Real application mein browser checks ke saath backend par bhi validation zaroor karein. In practice snippets mein koi backend call nahi hoti.</QuickPractice>
+                <p className="text-xs text-slate-600">Reference: <a className="text-blue-700 underline" href="https://html.spec.whatwg.org/multipage/input.html" target="_blank" rel="noopener noreferrer">HTML Standard: input types, pattern and constraints</a>.</p>
+            </Section>
+
+            <Section id="iframe-tag" title="26. <iframe> Tag">
                 <p>The <code className="bg-gray-100 px-1 rounded">&lt;iframe&gt;</code> tag embeds another HTML page within the current page.</p>
                 <Code code={`<!-- Embed a webpage -->
 <iframe src="https://www.example.com" 
@@ -1691,7 +1835,7 @@ Computer Science</span>.</p>`} />
             </Section>
 
             {/* 23 - ENTITIES & CAPSTONE: Milestone for Task 10 */}
-            <Section id="entities" title="26. HTML Entities & Capstone Project">
+            <Section id="entities" title="27. HTML Entities & Capstone Project">
                 <p>Reserved characters in HTML must be displayed using entities.</p>
                 <div className="overflow-x-auto my-3">
                     <table className="w-full text-xs sm:text-sm border border-gray-200 rounded-lg overflow-hidden">

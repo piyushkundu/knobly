@@ -38,8 +38,8 @@ function nodes(tree, predicate) {
 test('new chapters follow tables; original anchors and practice tasks remain', () => {
     const tree = guide();
     const items = tree.props.items;
-    assert.equal(items.length, 26);
-    assert.equal(new Set(items.map(item => item.id)).size, 26);
+    assert.equal(items.length, 27);
+    assert.equal(new Set(items.map(item => item.id)).size, 27);
     assert.deepEqual(Array.from(items.slice(16, 21), item => item.id), ['table-tag', 'frameset-tag', 'frame-tag', 'nested-frames', 'form-tag']);
     const sections = nodes(tree, node => node.type?.name === 'Section');
     assert.deepEqual(sections.map(node => node.props.id), Array.from(items, item => item.id));
@@ -90,4 +90,69 @@ test('attribute tables render three columns with explanatory values and frame/fo
     assert.ok(html.includes('name'));
     assert.ok(html.includes('action'));
     assert.ok(html.includes('method'));
+});
+
+test('media and validation precede iframe without changing existing section anchors', () => {
+    const tree = guide();
+    const items = Array.from(tree.props.items, item => item.id);
+    const index = items.indexOf('audio-video');
+    assert.deepEqual(items.slice(index), ['audio-video', 'form-validation', 'iframe-tag', 'entities']);
+    const media = nodes(tree, node => node.props?.id === 'audio-video')[0];
+    const examples = nodes(media, node => node.type?.name === 'Code');
+    const snippets = examples.map(node => node.props.code).join('\n');
+    assert.match(snippets, /type="audio\/mpeg"/);
+    assert.match(snippets, /type="video\/mp4"/);
+    assert.match(snippets, /<track kind="captions"/);
+    assert.doesNotMatch(snippets, /<iframe/);
+    assert.equal(examples.filter(node => node.props.runnable !== false).length, 1);
+    assert.match(examples.find(node => node.props.runnable !== false).props.code, /preload="none"/);
+});
+
+test('every lesson pattern compiles with the HTML Unicode v flag and enforces its promised boundary', () => {
+    const validation = nodes(guide(), node => node.props?.id === 'form-validation')[0];
+    const snippets = nodes(validation, node => node.type?.name === 'Code').map(node => node.props.code).join('\n');
+    const patterns = [...snippets.matchAll(/pattern="([^"]+)"/g)].map(match => match[1]);
+    assert.equal(patterns.length, 8);
+    const cases = [
+        ['[A-Za-z]{1,5}', ['a', 'Hello'], ['', 'abcdef', 'A,B', 'abc1']],
+        ['[A-Za-z0-9]+', ['a', 'HTML5'], ['', 'a,b', 'HTML 5']],
+        ['[0-9]{1,10}', ['0', '0123456789'], ['', '12345678901', '1a']],
+        ['[0-9]{10}', ['0123456789'], ['12345', '12345678901']],
+        ['[A-Za-z]+', ['a', 'LearningHTML'], ['', 'HTML5', 'a,b']],
+        ['[A-Za-z0-9_@\\-]+', ['student_1@web-site'], ['student!', 'a b', 'a,b']],
+        ['[A-Za-z][A-Za-z0-9_\\-]{0,24}', ['A', 'Piyush_1', 'A'.repeat(25)], ['1Piyush', 'A'.repeat(26), 'a,b']],
+        ['[0-9]{1,5}', ['0', '12345'], ['', '123456', '1.5']],
+    ];
+    for (const [pattern, valid, invalid] of cases) {
+        assert.ok(patterns.includes(pattern), `Missing runnable pattern: ${pattern}`);
+        const regex = new RegExp(`^(?:${pattern})$`, 'v');
+        valid.forEach(value => assert.ok(regex.test(value), `${pattern} should accept ${value}`));
+        invalid.forEach(value => assert.equal(regex.test(value), false, `${pattern} should reject ${value}`));
+    }
+});
+
+test('validation demos prevent submission, keep native constraints enabled and cover the supplied input rules', () => {
+    const validation = nodes(guide(), node => node.props?.id === 'form-validation')[0];
+    const snippets = nodes(validation, node => node.type?.name === 'Code').map(node => node.props.code);
+    for (const code of snippets) {
+        const form = code.match(/<form\b([^>]*)>/);
+        assert.ok(form);
+        assert.doesNotMatch(form[1], /\bnovalidate\b/);
+        assert.doesNotMatch(code, /\bformnovalidate\b/);
+        const handler = form[1].match(/onsubmit="([^"]+)"/)?.[1];
+        assert.ok(handler);
+        let prevented = false;
+        vm.runInNewContext(handler, {
+            event: { preventDefault() { prevented = true; } },
+            document: { getElementById() { return {}; } },
+            elements: { level: { value: '7' } },
+        });
+        assert.equal(prevented, true);
+    }
+    const code = snippets.join('\n');
+    assert.match(code, /type="email"[^>]*multiple required/);
+    assert.match(code, /type="number"[^>]*min="1" max="10" step="0\.1" required/);
+    assert.match(code, /type="range"[^>]*min="1" max="50" step="2"/);
+    assert.match(code, /type="date"[^>]*min="2026-01-01" max="2026-12-31" required/);
+    assert.match(code, /required autofocus/);
 });
