@@ -120,7 +120,7 @@ test('every lesson pattern compiles with the HTML Unicode v flag and enforces it
         ['[0-9]{10}', ['0123456789'], ['12345', '12345678901']],
         ['[A-Za-z]+', ['a', 'LearningHTML'], ['', 'HTML5', 'a,b']],
         ['[A-Za-z0-9_@\\-]+', ['student_1@web-site'], ['student!', 'a b', 'a,b']],
-        ['[A-Za-z][A-Za-z0-9_\\-]{0,24}', ['A', 'Piyush_1', 'A'.repeat(25)], ['1Piyush', 'A'.repeat(26), 'a,b']],
+        ['[A-Za-z][A-Za-z0-9_\\-]{0,24}', ['A', 'Student_1', 'A'.repeat(25)], ['1Student', 'A'.repeat(26), 'a,b']],
         ['[0-9]{1,5}', ['0', '12345'], ['', '123456', '1.5']],
     ];
     for (const [pattern, valid, invalid] of cases) {
@@ -155,4 +155,24 @@ test('validation demos prevent submission, keep native constraints enabled and c
     assert.match(code, /type="range"[^>]*min="1" max="50" step="2"/);
     assert.match(code, /type="date"[^>]*min="2026-01-01" max="2026-12-31" required/);
     assert.match(code, /required autofocus/);
+});
+
+test('patterns appear immediately below each heading and examples use generic names', () => {
+    const tree = guide();
+    const validation = nodes(tree, node => node.props?.id === 'form-validation')[0];
+    const cards = nodes(validation, node => node.type === 'div' && Array.isArray(node.props.children) && node.props.children[0]?.type === 'h4');
+    assert.equal(cards.length, 7);
+    for (const card of cards) {
+        const display = card.props.children[1];
+        assert.equal(display.type.name, 'PatternDisplay');
+        const snippet = nodes(card, node => node.type?.name === 'Code')[0].props.code;
+        assert.ok(snippet.includes(`pattern="${display.props.pattern}"`));
+        const html = renderToStaticMarkup(display);
+        assert.ok(html.includes('aria-label="HTML pattern"'));
+        assert.ok(html.includes('break-all'));
+        assert.ok(html.includes('text-blue-800'));
+    }
+    assert.equal(nodes(validation, node => node.type?.name === 'PatternDisplay').length, 8);
+    const source = readFileSync(new URL('../src/app/html/elements/page.tsx', import.meta.url), 'utf8');
+    assert.doesNotMatch(source, /piyush/i);
 });

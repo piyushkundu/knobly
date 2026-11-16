@@ -98,6 +98,15 @@ function AttrTable({ rows }: { rows: [string, string][] }) {
     );
 }
 
+function PatternDisplay({ pattern }: { pattern: string }) {
+    return (
+        <div className="my-3 rounded-lg border border-blue-200 bg-white p-3 sm:p-4">
+            <p className="mb-1 text-xs font-bold uppercase tracking-wide text-slate-600">Pattern</p>
+            <code aria-label="HTML pattern" className="block whitespace-pre-wrap break-all font-mono text-sm sm:text-base font-semibold text-blue-800">{`pattern="${pattern}"`}</code>
+        </div>
+    );
+}
+
 function AttributeValues({ rows }: { rows: [string, string, string][] }) {
     return (
         <div className="overflow-x-auto my-4 rounded-xl border border-gray-200">
@@ -433,7 +442,7 @@ It stretches the text so each line has equal width.</p>`} />
 
 <!-- 
     Multi-line comment:
-    Author: Piyush
+    Author: Student
     Date: 2025
     Purpose: Student profile page
 -->
@@ -1391,7 +1400,7 @@ It stretches the text so each line has equal width.</p>`} />
                 <AttributeValues rows={[
                     ['type', '"text", "radio", "checkbox", "date", "password", "file", "number", "time", "tel", "email", "submit", "reset"', 'Input control ka type select karta hai; default text. Har type ka example neeche hai.'],
                     ['name', '"firstName" | "language"', 'Submitted data ka key. Normal data controls mein name missing ho to unka value submission mein nahi aata.'],
-                    ['value', '"Piyush" | "html" | "Log in"', 'Initial text, radio/checkbox ka submitted value, ya submit/reset button ka label; meaning type par depend karta hai. File input ko arbitrary value nahi de sakte.'],
+                    ['value', '"Student" | "html" | "Log in"', 'Initial text, radio/checkbox ka submitted value, ya submit/reset button ka label; meaning type par depend karta hai. File input ko arbitrary value nahi de sakte.'],
                     ['id', '"first-name"', 'Unique control ID; label ka for isi ID se match karein.'],
                     ['placeholder', '"Enter your name"', 'Empty input ka hint; visible label ka replacement nahi.'],
                     ['size / maxlength', '"30" / "50"', 'Supported text controls ki visible character width / maximum input length.'],
@@ -1402,7 +1411,7 @@ It stretches the text so each line has equal width.</p>`} />
                     ['readonly / disabled', 'Boolean attributes', 'readonly supported text field edit hone se rokta hai; disabled control focus/submit nahi hota.'],
                 ]} />
                 {[
-                    ['text', 'First name aur Last name', 'Single-line text field. value se initial text set hota hai.', '<label for="first-name">First name:</label>\n<input id="first-name" type="text" name="firstName" value="Piyush"><br>\n<label for="last-name">Last name:</label>\n<input id="last-name" type="text" name="lastName" placeholder="Enter last name">'],
+                    ['text', 'First name aur Last name', 'Single-line text field. value se initial text set hota hai.', '<label for="first-name">First name:</label>\n<input id="first-name" type="text" name="firstName" value="Student"><br>\n<label for="last-name">Last name:</label>\n<input id="last-name" type="text" name="lastName" placeholder="Enter last name">'],
                     ['radio', 'Choose your favourite web language', 'Ek group se ek choice: sab radio controls ka same name, lekin alag value rakhein.', '<p>Choose your favourite web language:</p>\n<label><input type="radio" name="language" value="html" checked> HTML</label><br>\n<label><input type="radio" name="language" value="css"> CSS</label><br>\n<label><input type="radio" name="language" value="js"> JavaScript</label>'],
                     ['checkbox', 'Select your skills', 'Multiple independent choices select kar sakte hain.', '<label><input type="checkbox" name="skills" value="software"> I am a software developer</label><br>\n<label><input type="checkbox" name="skills" value="design"> I am a graphic designer</label>'],
                     ['date', 'Date of birth', 'Date picker ka display browser/locale par depend karta hai; submitted value YYYY-MM-DD hoti hai.', '<label>Date of birth: <input type="date" name="dob" value="2000-01-15"></label>'],
@@ -1495,7 +1504,7 @@ It stretches the text so each line has equal width.</p>`} />
   onsubmit="event.preventDefault(); document.getElementById('form-result').textContent = 'Demo complete — no data was sent.';">
   <fieldset>
     <legend>Personal information</legend>
-    <label>First name: <input type="text" name="firstName" value="Piyush" required></label><br><br>
+    <label>First name: <input type="text" name="firstName" value="Student" required></label><br><br>
     <label>Last name: <input type="text" name="lastName" required></label><br><br>
     <label>Date of birth: <input type="date" name="dob"></label><br><br>
     <label>Age: <input type="number" name="age" min="1" max="120"></label><br><br>
@@ -1530,7 +1539,7 @@ It stretches the text so each line has equal width.</p>`} />
 </form>
 </body>
 </html>`} />
-                <QuickPractice title="Form values check">First name edit karke Reset dabayein: initial <code>Piyush</code> wapas aayega. Radio group se sirf ek language aur checkboxes se dono skills select karke dekhein. Submit demo message dikhata hai; real login, file upload ya server save nahi karta.</QuickPractice>
+                <QuickPractice title="Form values check">First name edit karke Reset dabayein: initial <code>Student</code> wapas aayega. Radio group se sirf ek language aur checkboxes se dono skills select karke dekhein. Submit demo message dikhata hai; real login, file upload ya server save nahi karta.</QuickPractice>
                 <p className="text-xs text-slate-600">Reference: <a href="https://html.spec.whatwg.org/multipage/forms.html" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline">HTML Standard: forms and form controls</a>.</p>
 
                 {/* TASK 8: Placed right after Form tags completion! */}
@@ -1736,10 +1745,11 @@ Computer Science</span>.</p>`} />
                     { label: 'Exactly 10 digits', pattern: '[0-9]{10}', valid: '0123456789', invalid: '12345', help: 'Use exactly 10 digits. This is a length rule, not phone-number ownership verification.' },
                     { label: 'Alphabets with no fixed upper count', pattern: '[A-Za-z]+', valid: 'LearningHTML', invalid: 'HTML5', help: 'Use one or more English letters. No fixed maximum is set by this pattern.' },
                     { label: 'Letters, numbers, underscore, @ and hyphen', pattern: '[A-Za-z0-9_@\\-]+', valid: 'student_1@web-site', invalid: 'student!', help: 'Use letters, digits, underscore, @ or hyphen; no spaces.' },
-                    { label: 'Username: first letter, total 1–25 characters', pattern: '[A-Za-z][A-Za-z0-9_\\-]{0,24}', valid: 'Piyush_1', invalid: '1Piyush', help: 'Start with an English letter; then use letters, digits, underscore or hyphen. Total length: 1 to 25.' },
+                    { label: 'Username: first letter, total 1–25 characters', pattern: '[A-Za-z][A-Za-z0-9_\\-]{0,24}', valid: 'Student_1', invalid: '1Student', help: 'Start with an English letter; then use letters, digits, underscore or hyphen. Total length: 1 to 25.' },
                 ].map(({ label, pattern, valid, invalid, help }, index) => (
                     <div key={pattern} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                         <h4 className="font-bold text-slate-900">{index + 1}. {label}</h4>
+                        <PatternDisplay pattern={pattern} />
                         <p className="mt-2 text-xs text-slate-700">Valid: <code>{valid}</code> · Invalid: <code>{invalid}</code></p>
                         <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('pattern-result').textContent = 'Pattern matched: no data sent.';">\n  <label for="pattern-input">${label}</label>\n  <p id="pattern-help">${help}</p>\n  <input id="pattern-input" name="practice" type="text" required\n    pattern="${pattern}" title="${help}" aria-describedby="pattern-help">\n  <button type="submit">Check pattern</button>\n  <p id="pattern-result" role="status"></p>\n</form>`} />
                     </div>
@@ -1747,6 +1757,7 @@ Computer Science</span>.</p>`} />
                 <p>Username pattern mein pehla <code>[A-Za-z]</code> already ek character hai. Uske baad <code>{'{0,24}'}</code> se total 1–25 characters bante hain; <code>{'{1,25}'}</code> likhne par total 2–26 ho jaate.</p>
 
                 <h3 className="text-base font-bold text-slate-900">C. Title and Autofocus</h3>
+                <PatternDisplay pattern="[0-9]{1,5}" />
                 <p><code>title</code> format ka extra hint hai. <code>autofocus</code> page/dialog load par field ko focus dene ki request karta hai; value validate nahi karta. Ek document mein sirf ek intended autofocus target rakhein. Guide khud focus nahi badalta; Run example kholne par try karein.</p>
                 <Code code={`<form onsubmit="event.preventDefault(); document.getElementById('focus-result').textContent = 'Valid: no data sent.';">
   <label for="digits">Enter 1 to 5 digits:</label>
