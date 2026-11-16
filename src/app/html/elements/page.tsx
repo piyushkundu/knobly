@@ -1832,6 +1832,12 @@ Computer Science</span>.</p>`} />
                 <QuickPractice title="iFrame Target Check">
                     Use <code className="bg-white px-1 rounded">target=&quot;myframe&quot;</code> on an anchor tag to open links directly inside an embedded iframe!
                 </QuickPractice>
+                <h3 className="text-base font-bold text-slate-900">YouTube video embed</h3>
+                <p>YouTube watch-page URL ko <code>&lt;video src&gt;</code> mein na dein. Share → Embed se iframe URL lein; neeche <code>VIDEO_ID</code> ko actual video ID se replace karein.</p>
+                <Code runnable={false} filename="YouTube embed — replace VIDEO_ID" code={`<iframe width="560" height="315"
+  src="https://www.youtube.com/embed/VIDEO_ID"
+  title="YouTube lesson video"
+  allowfullscreen></iframe>`} />
             </Section>
 
             {/* 23 - ENTITIES & CAPSTONE: Milestone for Task 10 */}
