@@ -54,15 +54,15 @@ function Code({ code, filename = 'index.html', runnable = true }: { code: string
     return (
         <div className="rounded-xl overflow-hidden my-4 shadow-sm border border-gray-800/20 select-text" style={{ background: '#1e1e2e' }}>
             <div className="flex items-center justify-between px-3 py-2" style={{ background: '#181825' }}>
-                <div className="flex items-center gap-1.5">
-                    <div className="flex gap-1">
+                <div className="flex items-center gap-1.5 min-w-0">
+                    <div className="flex gap-1 shrink-0">
                         <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
                         <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
                     </div>
-                    <span className="text-[10px] text-gray-400 font-mono ml-1">{filename}</span>
+                    <span className="text-[10px] text-gray-400 font-mono ml-1 truncate" title={filename}>{filename}</span>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                     {runnable && <Link
                         href="/html/compiler?from=/html/elements"
                         onClick={() => {
