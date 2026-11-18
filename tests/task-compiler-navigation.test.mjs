@@ -31,11 +31,17 @@ function compiler() {
     };
     const Editor = () => null;
     const PracticeTools = () => null;
+    const practiceHelpers = {};
+    vm.runInNewContext(ts.transpileModule(readFileSync(new URL('../src/lib/task-practice.ts', import.meta.url), 'utf8'), {
+        compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022},
+    }).outputText, {exports: practiceHelpers, Date, URL});
     const deps = {
         react,
         'react/jsx-runtime': jsxRuntime,
         '@monaco-editor/react': {default: Editor},
         '@/components/html/TaskPracticeTools': {default: PracticeTools},
+        '@/components/html/TaskCompilerNewBadge': {default: () => null},
+        '@/lib/task-practice': practiceHelpers,
         'next/navigation': {useRouter: () => ({push() {}, back() {}})},
         'next/link': {default: () => null},
         'lucide-react': new Proxy({}, {get: () => () => null}),
@@ -122,9 +128,13 @@ test('Exam remains default; switching Practice on and off retains the same unsav
     tree = app.render('11');
     assert.equal(tools().props.mode, 'practice');
     assert.equal(editor().props.options.formatOnPaste, true);
-    assert.equal(editor().props.value, '<h1>Keep this draft</h1>');
+    assert.ok(editor().props.value.endsWith('<h1>Keep this draft</h1>'));
+    assert.match(editor().props.value, /<!-- Practice mode:/);
+    tools().props.onModeChange('practice');
+    tree = app.render('11');
+    assert.equal((editor().props.value.match(/<!-- Practice mode:/g) || []).length, 1);
     tools().props.onModeChange('exam');
     tree = app.render('11');
-    assert.equal(editor().props.value, '<h1>Keep this draft</h1>');
+    assert.ok(editor().props.value.endsWith('<h1>Keep this draft</h1>'));
     assert.equal(editor().props.options.tabCompletion, 'off');
 });

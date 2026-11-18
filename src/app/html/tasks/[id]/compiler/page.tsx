@@ -6,13 +6,14 @@ import type { editor } from 'monaco-editor';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TaskPracticeTools, { type TaskEditorApi } from '@/components/html/TaskPracticeTools';
-import type { TaskEditorMode } from '@/lib/task-practice';
+import { withPracticeHelp, taskDownloadFilename, type TaskEditorMode } from '@/lib/task-practice';
+import TaskCompilerNewBadge from '@/components/html/TaskCompilerNewBadge';
 import {
     ArrowLeft, Play, Send, Award, CheckCircle2, XCircle, AlertCircle,
     Code2, Eye, RefreshCw, Trophy, Star, Target, TrendingUp,
     Zap, ChevronRight, X, BarChart3, Tag, Lightbulb, ThumbsUp,
     ChevronDown, FileCode, Loader2, ExternalLink, Columns, Sun, Moon,
-    Maximize2, Minimize2, ZoomIn, ZoomOut
+    Maximize2, Minimize2, ZoomIn, ZoomOut, Download
 } from 'lucide-react';
 
 const KNOWN_HTML_ATTRIBUTES = new Set([
@@ -650,6 +651,34 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
         }
     };
 
+    const changeCompilerMode = (mode: TaskEditorMode) => {
+        setCompilerMode(mode);
+        if (mode !== 'practice') return;
+        const currentEditor = editorRef.current;
+        const model = currentEditor?.getModel();
+        if (currentEditor && model) {
+            const current = model.getValue();
+            const next = withPracticeHelp(current);
+            if (next === current) return;
+            currentEditor.pushUndoStop();
+            currentEditor.executeEdits('practice-help', [{ range: { startLineNumber: 1, startColumn: 1, endLineNumber: 1, endColumn: 1 }, text: next.slice(0, next.length - current.length) }]);
+            currentEditor.pushUndoStop();
+        } else {
+            setCode(current => withPracticeHelp(current));
+        }
+    };
+
+    const handleDownload = () => {
+        const url = URL.createObjectURL(new Blob([code], { type: 'text/html;charset=utf-8' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = taskDownloadFilename(id);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+
     if (!task) {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
@@ -723,7 +752,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                         <ArrowLeft size={18} />
                     </button>
 
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center shadow-sm text-white shrink-0">
+                    <div className="hidden sm:flex w-8 h-8 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 items-center justify-center shadow-sm text-white shrink-0">
                         <FileCode size={16} />
                     </div>
 
@@ -851,6 +880,10 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                         {isWhite ? <Moon size={14} /> : <Sun size={14} color="#fcd34d" />}
                     </button>
 
+                    <button type="button" onClick={handleDownload} disabled={!code.trim()} aria-label="Download HTML code" title="Download current code as an HTML file" className="relative inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-bold shadow-xs disabled:cursor-not-allowed disabled:opacity-50" style={{ backgroundColor: isWhite ? '#eff6ff' : '#172554', borderColor: isWhite ? '#bfdbfe' : '#1e40af', color: isWhite ? '#1d4ed8' : '#bfdbfe' }}>
+                        <Download size={13} /><span className="hidden sm:inline">Download</span><span className="absolute -right-1 -top-1 inline-flex"><TaskCompilerNewBadge feature="download" /></span>
+                    </button>
+
                     {/* Run Button */}
                     <button
                         onClick={handleRun}
@@ -885,8 +918,6 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                 </div>
             </header>
 
-            <TaskPracticeTools mode={compilerMode} onModeChange={setCompilerMode} api={editorApi} isWhite={isWhite} onSave={saveTaskDraft} />
-
             {/* ═══════════ TASK INFO & TARGET BANNER ═══════════ */}
             {showTaskInfo && (
                 <div
@@ -919,7 +950,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex min-w-0 max-w-full basis-full items-center gap-2 sm:basis-auto">
                         {/* Required Tags & Attributes Pills */}
                         <div className="flex items-center gap-2.5 flex-wrap">
                             {tagsList.length > 0 && (
@@ -1030,12 +1061,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                     >
                         
                         {/* Editor Header Bar */}
-                        <div
-                            style={!isWhite ? { backgroundColor: '#131b2e', borderColor: '#1e293b' } : {}}
-                            className={`px-3 py-2 flex items-center justify-between border-b ${
-                                isWhite ? 'bg-slate-50 border-slate-200' : 'bg-[#141b2d] border-slate-800'
-                            }`}
-                        >
+                        <TaskPracticeTools mode={compilerMode} onModeChange={changeCompilerMode} api={editorApi} isWhite={isWhite} onSave={saveTaskDraft} onClear={handleReset} leading={
                             <div className="flex items-center gap-2">
                                 <span className="w-2 h-2 rounded-full bg-orange-500"></span>
                                 <span
@@ -1046,14 +1072,14 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                 </span>
                                 <span
                                     style={!isWhite ? { backgroundColor: '#1e293b', color: '#cbd5e1', borderColor: '#334155' } : {}}
-                                    className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-medium ${
+                                    className={`hidden lg:inline text-[10px] px-2 py-0.5 rounded-full font-mono font-medium ${
                                         isWhite ? 'bg-white text-slate-500 border border-slate-200' : 'bg-slate-800 text-slate-300 border border-slate-700'
                                     }`}
                                 >
                                     {lineCount} lines
                                 </span>
                             </div>
-
+                        } trailing={
                             <div className="flex items-center gap-1.5 sm:gap-2">
                                 {/* Font Zoom Controls */}
                                 <div
@@ -1102,21 +1128,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                     </button>
                                 </div>
 
-                                <button
-                                    onClick={handleReset}
-                                    style={!isWhite ? { color: '#cbd5e1' } : {}}
-                                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
-                                        isWhite
-                                            ? 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/60'
-                                            : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                                    }`}
-                                    title="Reset Code"
-                                >
-                                    <RefreshCw size={11} />
-                                    <span className="hidden sm:inline">Reset</span>
-                                </button>
                             </div>
-                        </div>
+                        } />
 
                         {/* Editor Code Area (Monaco Editor with Custom Highlighting) */}
                         <div
@@ -1188,7 +1201,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                         {/* Preview Header with 3 Tab Switchers */}
                         <div
                             style={!isWhite ? { backgroundColor: '#131b2e', borderColor: '#1e293b' } : {}}
-                            className={`px-3 py-1.5 flex items-center justify-between border-b gap-2 ${
+                            className={`px-3 py-1.5 flex min-w-0 flex-wrap sm:flex-nowrap items-center justify-between border-b gap-2 ${
                                 isWhite ? 'bg-slate-100/80 border-slate-200' : 'bg-[#141b2d] border-slate-800'
                             }`}
                         >

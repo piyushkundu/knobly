@@ -16,7 +16,7 @@ function load(file) {
     return exports;
 }
 const { closingTagFor, emmetAt, practiceSuggestions, installPracticeEditor } = load('../src/lib/task-practice-editor.ts');
-const { isPracticeNew, PRACTICE_LAUNCHED_AT, PRACTICE_NEW_UNTIL, PRACTICE_MEDIA, mediaExample } = load('../src/lib/task-practice.ts');
+const { isPracticeNew, PRACTICE_LAUNCHED_AT, PRACTICE_NEW_UNTIL, PRACTICE_MEDIA, mediaExample, isDownloadNew, DOWNLOAD_LAUNCHED_AT, DOWNLOAD_NEW_UNTIL, withPracticeHelp, taskDownloadFilename } = load('../src/lib/task-practice.ts');
 const { PRACTICE_SHORTCUTS, shortcutBinding, installPracticeShortcuts } = load('../src/lib/task-practice-shortcuts.ts');
 const keyEnum = /enum KeyCode\s*\{([\s\S]*?)\n\s*\}/.exec(readFileSync(new URL('../node_modules/monaco-editor/monaco.d.ts', import.meta.url), 'utf8'))[1];
 const KeyCode = Object.fromEntries([...keyEnum.matchAll(/(\w+)\s*=\s*(\d+)/g)].map(match => [match[1], Number(match[2])]));
@@ -68,6 +68,25 @@ test('NEW window expires exactly 72 hours after launch for everyone', () => {
     assert.equal(isPracticeNew(PRACTICE_NEW_UNTIL - 1), true);
     assert.equal(isPracticeNew(PRACTICE_NEW_UNTIL), false);
     assert.equal(PRACTICE_NEW_UNTIL - PRACTICE_LAUNCHED_AT, 72 * 60 * 60 * 1000);
+    assert.equal(isDownloadNew(DOWNLOAD_LAUNCHED_AT - 1), false);
+    assert.equal(isDownloadNew(DOWNLOAD_LAUNCHED_AT), true);
+    assert.equal(isDownloadNew(DOWNLOAD_NEW_UNTIL - 1), true);
+    assert.equal(isDownloadNew(DOWNLOAD_NEW_UNTIL), false);
+    assert.equal(DOWNLOAD_NEW_UNTIL - DOWNLOAD_LAUNCHED_AT, 72 * 60 * 60 * 1000);
+});
+
+test('Practice help is an idempotent HTML comment and preserves the entire existing draft', () => {
+    for (const original of ['', '<!DOCTYPE html>\n<html><body>Hello</body></html>', '<p>नमस्ते &amp; hello</p>']) {
+        const updated = withPracticeHelp(original);
+        assert.ok(updated.endsWith(original));
+        assert.ok(updated.startsWith('<!-- Practice mode:'));
+        assert.ok(updated.indexOf('-->') < updated.indexOf(original) || original === '');
+        assert.equal(withPracticeHelp(updated), updated);
+    }
+    assert.equal(taskDownloadFilename('11'), 'task-11.html');
+    assert.equal(taskDownloadFilename('5.4'), 'task-5.4.html');
+    assert.equal(taskDownloadFilename('test-1'), 'task-test-1.html');
+    assert.ok(!taskDownloadFilename('../test/file').includes('/'));
 });
 
 test('sample assets exist locally and copied snippets use absolute URLs inside srcDoc', () => {
