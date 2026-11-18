@@ -30,10 +30,12 @@ function compiler() {
         useCallback(callback) { cell('callback'); return callback; },
     };
     const Editor = () => null;
+    const PracticeTools = () => null;
     const deps = {
         react,
         'react/jsx-runtime': jsxRuntime,
         '@monaco-editor/react': {default: Editor},
+        '@/components/html/TaskPracticeTools': {default: PracticeTools},
         'next/navigation': {useRouter: () => ({push() {}, back() {}})},
         'next/link': {default: () => null},
         'lucide-react': new Proxy({}, {get: () => () => null}),
@@ -59,6 +61,7 @@ function compiler() {
     });
     return {
         Editor,
+        PracticeTools,
         render(id) {
             cursor = 0;
             const tree = exports.default({params: {id}});
@@ -105,4 +108,23 @@ test('missing → valid → another valid task keeps hook order and updates topi
     const second = app.render('2');
     assert.deepEqual(badges(second), ['<b>', '<i>', '<u>', '<pre>', '<br>', '<center>', '<h1>', '<h2>', '<hr>']);
     assert.match(text(second), /Basic HTML Tags/);
+});
+
+test('Exam remains default; switching Practice on and off retains the same unsaved draft and editor', () => {
+    const app = compiler();
+    let tree = app.render('11');
+    const tools = () => nodes(tree, node => node.type === app.PracticeTools)[0];
+    const editor = () => nodes(tree, node => node.type === app.Editor)[0];
+    assert.equal(tools().props.mode, 'exam');
+    assert.equal(editor().props.options.formatOnPaste, false);
+    editor().props.onChange('<h1>Keep this draft</h1>');
+    tools().props.onModeChange('practice');
+    tree = app.render('11');
+    assert.equal(tools().props.mode, 'practice');
+    assert.equal(editor().props.options.formatOnPaste, true);
+    assert.equal(editor().props.value, '<h1>Keep this draft</h1>');
+    tools().props.onModeChange('exam');
+    tree = app.render('11');
+    assert.equal(editor().props.value, '<h1>Keep this draft</h1>');
+    assert.equal(editor().props.options.tabCompletion, 'off');
 });

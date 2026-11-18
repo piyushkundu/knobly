@@ -5,6 +5,8 @@ import Editor, { BeforeMount, OnMount } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import TaskPracticeTools, { type TaskEditorApi } from '@/components/html/TaskPracticeTools';
+import type { TaskEditorMode } from '@/lib/task-practice';
 import {
     ArrowLeft, Play, Send, Award, CheckCircle2, XCircle, AlertCircle,
     Code2, Eye, RefreshCw, Trophy, Star, Target, TrendingUp,
@@ -244,6 +246,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
     const task = TASKS[id];
 
     const [code, setCode] = useState('');
+    const [compilerMode, setCompilerMode] = useState<TaskEditorMode>('exam');
+    const [editorApi, setEditorApi] = useState<TaskEditorApi | null>(null);
     const [activeView, setActiveView] = useState<'editor' | 'preview' | 'split'>('split');
     
     // Right panel mode: 'preview' (student live code) | 'target' (reference task iframe) | 'compare' (split both)
@@ -529,6 +533,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
 
     const handleEditorMount: OnMount = (editor, monaco) => {
         editorRef.current = editor;
+        setEditorApi({ editor, monaco });
 
         // Ctrl+Enter to Run
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
@@ -858,6 +863,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                 </div>
             </header>
 
+            <TaskPracticeTools mode={compilerMode} onModeChange={setCompilerMode} api={editorApi} isWhite={isWhite} />
+
             {/* ═══════════ TASK INFO & TARGET BANNER ═══════════ */}
             {showTaskInfo && (
                 <div
@@ -1120,6 +1127,23 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                     suggestOnTriggerCharacters: true,
                                     acceptSuggestionOnEnter: 'on',
                                     quickSuggestions: true,
+                                    ...(compilerMode === 'practice' ? {
+                                        tabCompletion: 'on' as const,
+                                        autoClosingBrackets: 'always' as const,
+                                        autoClosingQuotes: 'always' as const,
+                                        autoSurround: 'languageDefined' as const,
+                                        autoIndent: 'full' as const,
+                                        formatOnPaste: true,
+                                        linkedEditing: true,
+                                    } : {
+                                        tabCompletion: 'off' as const,
+                                        autoClosingBrackets: 'languageDefined' as const,
+                                        autoClosingQuotes: 'languageDefined' as const,
+                                        autoSurround: 'languageDefined' as const,
+                                        autoIndent: 'full' as const,
+                                        formatOnPaste: false,
+                                        linkedEditing: false,
+                                    }),
                                 }}
                             />
                         </div>
