@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
     ArrowLeft, Home, FileText, Sparkles, Code2, Layers, 
-    Clock, BookOpen, PenTool, ArrowRight, Download
+    BookOpen, PenTool, ExternalLink
 } from 'lucide-react';
 
 const quickLinks = [
@@ -13,6 +13,8 @@ const quickLinks = [
     { label: 'Elements', href: '/html/elements', icon: <Layers size={13} /> },
     { label: 'Practice Tasks', href: '/html/tasks', icon: <FileText size={13} /> },
 ];
+
+const HTML_NOTES_URL = 'https://drive.google.com/file/d/1tEpMU-0Bxa4-bXMuNsZ319PtMcXEDprK/view?usp=drivesdk';
 
 export default function HtmlNotesPage() {
     const router = useRouter();
@@ -39,7 +41,7 @@ export default function HtmlNotesPage() {
                             <div className="flex items-center gap-2">
                                 <h1 className="text-xs sm:text-sm font-bold text-gray-900">HTML Handwritten Notes</h1>
                                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
-                                    Coming Soon
+                                    Available Now
                                 </span>
                             </div>
                             <span className="text-[9px] text-gray-600 uppercase tracking-wider">
@@ -69,7 +71,7 @@ export default function HtmlNotesPage() {
                 </div>
             </header>
 
-            {/* ── Coming Soon Main Showcase ── */}
+            {/* ── Handwritten Notes ── */}
             <main className="max-w-4xl mx-auto px-4 py-16 md:py-24">
                 <div className="relative overflow-hidden bg-white rounded-3xl border border-purple-100 shadow-xl shadow-purple-500/5 p-8 md:p-14 text-center">
                     {/* Background Glows */}
@@ -95,16 +97,27 @@ export default function HtmlNotesPage() {
 
                     {/* Title */}
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
-                        Coming Soon!
+                        HTML Handwritten Notes
                     </h2>
                     <p className="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-orange-600 bg-clip-text text-transparent mb-4">
-                        जल्द आ रहा है — हस्तलिखित सचित्र स्टडी नोट्स
+                        HTML के हस्तलिखित नोट्स अब उपलब्ध हैं
                     </p>
 
                     {/* Subtitle / Desc */}
                     <p className="max-w-xl mx-auto text-sm sm:text-base text-slate-600 leading-relaxed mb-8">
-                        Complete handwritten notes for HTML & Web Publishing (NIELIT O-Level M2-R5) are currently being curated and crafted with visual diagrams, tag summaries, exam tips, and quick revision sheets. They will be available here soon for free!
+                        Read the HTML & Web Publishing handwritten notes for NIELIT O-Level M2-R5. Open the PDF in Google Drive to study and revise at your own pace.
                     </p>
+
+                    <div className="mb-8">
+                        <a href={HTML_NOTES_URL} target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-sm shadow-lg shadow-purple-500/25 hover:shadow-xl hover:scale-105 transition-all focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-600"
+                            style={{ color: '#ffffff' }}>
+                            <BookOpen size={18} />
+                            <span>Open Handwritten Notes</span>
+                            <ExternalLink size={15} />
+                        </a>
+                        <p className="mt-3 text-xs text-slate-500">PDF · Opens in Google Drive in a new tab</p>
+                    </div>
 
                     {/* Feature Highlights Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto mb-10 text-left">
