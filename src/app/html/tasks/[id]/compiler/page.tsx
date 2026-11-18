@@ -1280,7 +1280,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                 className="relative inline-flex shrink-0 items-center gap-1.5 rounded-lg border px-2 py-1.5 text-[11px] font-semibold"
                                 style={{ color: isWhite ? '#334155' : '#e2e8f0', borderColor: isWhite ? '#cbd5e1' : '#334155', backgroundColor: isWhite ? '#ffffff' : '#1e293b' }}>
                                 <Maximize2 size={12} />
-                                <span className="2xl:hidden">Fullscreen</span>
+                                <span className="2xl:hidden">{previewMode === 'target' ? 'Target' : previewMode === 'compare' ? 'Compare' : 'Preview'} fullscreen</span>
                                 <span className="hidden 2xl:inline">Open {previewMode === 'target' ? 'target' : previewMode === 'compare' ? 'compare' : 'preview'} fullscreen</span>
                                 <span className="absolute -right-1 -top-1 inline-flex"><TaskCompilerNewBadge feature="fullscreen" /></span>
                             </button>
