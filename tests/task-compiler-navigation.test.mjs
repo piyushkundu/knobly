@@ -138,3 +138,22 @@ test('Exam remains default; switching Practice on and off retains the same unsav
     assert.ok(editor().props.value.endsWith('<h1>Keep this draft</h1>'));
     assert.equal(editor().props.options.tabCompletion, 'off');
 });
+
+test('Practice insertion updates the controlled draft before Monaco change listeners attach', () => {
+    const app = compiler();
+    let tree = app.render('11');
+    let value = '<p>Existing draft</p>';
+    const mountedEditor = {
+        getModel: () => ({getValue: () => value}),
+        pushUndoStop() {},
+        executeEdits(source, edits) { value = edits[0].text + value; },
+    };
+    nodes(tree, node => node.type === app.Editor)[0].props.onMount(mountedEditor, {});
+    tree = app.render('11');
+    nodes(tree, node => node.type === app.PracticeTools)[0].props.onModeChange('practice');
+    tree = app.render('11');
+    const controlledValue = nodes(tree, node => node.type === app.Editor)[0].props.value;
+    assert.equal(controlledValue, value);
+    assert.ok(controlledValue.startsWith('<!-- Practice mode:'));
+    assert.ok(controlledValue.endsWith('<p>Existing draft</p>'));
+});

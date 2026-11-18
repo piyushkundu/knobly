@@ -663,6 +663,9 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
             currentEditor.pushUndoStop();
             currentEditor.executeEdits('practice-help', [{ range: { startLineNumber: 1, startColumn: 1, endLineNumber: 1, endColumn: 1 }, text: next.slice(0, next.length - current.length) }]);
             currentEditor.pushUndoStop();
+            // Keep the controlled value in sync even if Monaco's change listener
+            // has not attached yet during its first mount.
+            setCode(next);
         } else {
             setCode(current => withPracticeHelp(current));
         }
