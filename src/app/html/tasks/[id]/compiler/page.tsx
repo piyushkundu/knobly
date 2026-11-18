@@ -1135,6 +1135,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                         autoIndent: 'full' as const,
                                         formatOnPaste: true,
                                         linkedEditing: true,
+                                        wordBasedSuggestions: 'off' as const,
+                                        snippetSuggestions: 'top' as const,
                                     } : {
                                         tabCompletion: 'off' as const,
                                         autoClosingBrackets: 'languageDefined' as const,
@@ -1143,6 +1145,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                         autoIndent: 'full' as const,
                                         formatOnPaste: false,
                                         linkedEditing: false,
+                                        wordBasedSuggestions: 'matchingDocuments' as const,
+                                        snippetSuggestions: 'inline' as const,
                                     }),
                                 }}
                             />

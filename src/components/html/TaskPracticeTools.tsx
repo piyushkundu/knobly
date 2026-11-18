@@ -10,7 +10,7 @@ export interface TaskEditorApi {
 }
 
 const SHORTCUTS = [
-    ['! or html:5 → Tab', 'HTML page structure'],
+    ['!, html or html:5 → Tab', 'HTML page structure'],
     ['ul>li*3 → Tab', 'Expand nested / repeated tags'],
     ['div.card → Tab', 'Tag with a class'],
     ['Tab / Shift+Tab', 'Next / previous snippet field, or indent / outdent'],
@@ -35,6 +35,7 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite }: 
     const [panel, setPanel] = useState<'shortcuts' | 'media' | null>(null);
     const [status, setStatus] = useState('');
     const [copyStatus, setCopyStatus] = useState('');
+    const [ready, setReady] = useState(false);
 
     useEffect(() => {
         const now = Date.now();
@@ -45,6 +46,7 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite }: 
     }, []);
 
     useEffect(() => {
+        setReady(false);
         if (mode !== 'practice' || !api) return;
         let cancelled = false;
         let dispose: (() => void) | undefined;
@@ -52,7 +54,8 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite }: 
         import('@/lib/task-practice-editor').then(({ installPracticeEditor }) => {
             if (cancelled || api.editor.getModel() === null) return;
             dispose = installPracticeEditor(api.editor, api.monaco);
-            setStatus('Try ! then Tab · Tags close automatically');
+            setReady(true);
+            setStatus('Type ! or html, then Tab / Enter · Suggestions and closing tags are on');
         }).catch(() => {
             if (!cancelled) setStatus('Shortcuts could not load. Switch to Exam and back to retry; your code is kept.');
         });
@@ -84,7 +87,7 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite }: 
                 <div role="group" aria-label="Editor mode" className="flex flex-wrap gap-1 rounded-xl border p-1" style={{ borderColor: palette.borderColor }}>
                     {(['exam', 'practice'] as const).map(value => (
                         <button key={value} type="button" aria-pressed={mode === value}
-                            onClick={() => onModeChange(value)}
+                            onClick={() => { onModeChange(value); api?.editor.focus(); }}
                             className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-bold focus-visible:outline-2 focus-visible:outline-blue-500"
                             style={mode === value ? { backgroundColor: '#1d4ed8', color: '#ffffff' } : { color: palette.color }}>
                             {value === 'exam' ? 'Exam mode' : 'Practice mode'}
@@ -96,6 +99,8 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite }: 
                     {mode === 'exam' ? 'Original editor · Your code stays when you switch modes.' : status || 'VS Code-style HTML editing · Your code stays when you switch modes.'}
                 </p>
                 {mode === 'practice' && <>
+                    <button type="button" className={button} style={palette} disabled={!ready} onClick={() => { api?.editor.focus(); api?.editor.getAction('knobly.practice.emmet')?.run(); }}>Expand</button>
+                    <button type="button" className={button} style={palette} disabled={!ready} onClick={() => api?.editor.getAction('knobly.practice.structure')?.run()}>HTML structure</button>
                     <button type="button" className={button} style={palette} onClick={() => api?.editor.getAction('editor.action.formatDocument')?.run()} disabled={!api}>Format</button>
                     <button type="button" className={button} style={palette} aria-expanded={panel === 'shortcuts'} aria-controls="practice-shortcuts" onClick={() => setPanel(panel === 'shortcuts' ? null : 'shortcuts')}>Shortcuts</button>
                     <button type="button" className={button} style={palette} aria-expanded={panel === 'media'} aria-controls="practice-media" onClick={() => setPanel(panel === 'media' ? null : 'media')}>Sample media</button>

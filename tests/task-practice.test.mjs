@@ -14,11 +14,11 @@ function load(file) {
     vm.runInNewContext(code, { exports, require, URL, Date });
     return exports;
 }
-const { closingTagFor, emmetAt, installPracticeEditor } = load('../src/lib/task-practice-editor.ts');
+const { closingTagFor, emmetAt, practiceSuggestions, installPracticeEditor } = load('../src/lib/task-practice-editor.ts');
 const { isPracticeNew, PRACTICE_LAUNCHED_AT, PRACTICE_NEW_UNTIL, PRACTICE_MEDIA, mediaExample } = load('../src/lib/task-practice.ts');
 
 test('real Emmet expands HTML boilerplate, classes, nesting, repetition, and snippet placeholders', () => {
-    for (const abbreviation of ['!', 'html:5']) {
+    for (const abbreviation of ['!', 'html', 'html:5']) {
         const result = emmetAt(abbreviation, abbreviation.length + 1);
         assert.match(result.snippet, /<!DOCTYPE html>/);
         assert.match(result.snippet, /<body>/);
@@ -77,7 +77,7 @@ test('sample assets exist locally and copied snippets use absolute URLs inside s
 
 test('practice listeners and Tab action are disposed when returning to Exam; no document replacement', () => {
     const listeners = new Map(), disposed = [];
-    let context = false, value = '!', cursor = { lineNumber: 1, column: 2 }, action, inserted, closing;
+    let context = false, value = '!', cursor = { lineNumber: 1, column: 2 }, action, inserted, closing, provider;
     const range = class { constructor(...args) { this.args = args; } };
     const subscribe = name => callback => {
         listeners.set(name, callback);
@@ -93,8 +93,14 @@ test('practice listeners and Tab action are disposed when returning to Exam; no 
         trigger() {}, setSelection() {}, getContribution: () => ({ insert(s) { inserted = s; } }),
         executeEdits(source, edits) { closing = edits[0].text; }, setPosition() {},
     };
-    const dispose = installPracticeEditor(editor, { Range: range, KeyCode: { Tab: 2 } });
+    const monaco = { Range: range, KeyCode: { Tab: 2 }, languages: {
+        CompletionItemKind: { Snippet: 27, Property: 9, Field: 4 }, CompletionItemInsertTextRule: { InsertAsSnippet: 4 },
+        registerCompletionItemProvider(language, p) { assert.equal(language, 'html'); provider = p; return { dispose() { disposed.push('provider'); } }; },
+    } };
+    const dispose = installPracticeEditor(editor, monaco);
     assert.equal(context, true);
+    assert.equal(provider.provideCompletionItems({}, cursor).suggestions.length, 0, 'Other editors must not receive practice suggestions');
+    assert.match(provider.provideCompletionItems(model, cursor).suggestions[0].insertText, /<!DOCTYPE html>/);
     action.run();
     assert.match(inserted, /<!DOCTYPE html>/);
     value = '<div>'; cursor = { lineNumber: 1, column: 6 };
@@ -103,7 +109,22 @@ test('practice listeners and Tab action are disposed when returning to Exam; no 
     dispose();
     assert.equal(context, false);
     assert.equal(listeners.size, 0);
-    assert.equal(disposed.length, 5);
+    assert.equal(disposed.length, 7);
     dispose(); // cleanup is idempotent after editor disposal
-    assert.equal(disposed.length, 5);
+    assert.equal(disposed.length, 7);
+});
+
+test('practice supplies genuine Emmet, HTML tag and attribute suggestions without the HTML worker', () => {
+    const monaco = { Range: class { constructor(...args) { this.args = args; } }, languages: {
+        CompletionItemKind: { Snippet: 27, Property: 9, Field: 4 }, CompletionItemInsertTextRule: { InsertAsSnippet: 4 },
+    } };
+    const suggestions = (line, beforeLine = '') => practiceSuggestions({ getLineContent: () => line, getValueInRange: () => beforeLine }, { lineNumber: 1, column: line.length + 1 }, monaco);
+    for (const text of ['!', 'html']) assert.match(suggestions(text)[0].insertText, /<!DOCTYPE html>/);
+    assert.match(suggestions('ul>li*3')[0].insertText, /<li>/);
+    assert.ok(suggestions('<sec').some(item => item.label === 'section — HTML tag' && item.insertText.includes('</section>')));
+    assert.ok(suggestions('<img s').some(item => item.label === 'src — HTML attribute' && item.insertText === 'src="${1}"'));
+    assert.ok(suggestions('<video con').some(item => item.insertText === 'controls'));
+    assert.equal(suggestions('div', '<!-- ').length, 0);
+    assert.equal(suggestions('div', '<script>const x = ').length, 0);
+    assert.equal(suggestions('<img alt="s').length, 0);
 });
