@@ -18,6 +18,32 @@ function load(file) {
 const { closingTagFor, emmetAt, practiceSuggestions, installPracticeEditor } = load('../src/lib/task-practice-editor.ts');
 const { isPracticeNew, PRACTICE_LAUNCHED_AT, PRACTICE_NEW_UNTIL, PRACTICE_MEDIA, mediaExample, isDownloadNew, DOWNLOAD_LAUNCHED_AT, DOWNLOAD_NEW_UNTIL, withPracticeHelp, taskDownloadFilename } = load('../src/lib/task-practice.ts');
 const { PRACTICE_SHORTCUTS, shortcutBinding, installPracticeShortcuts } = load('../src/lib/task-practice-shortcuts.ts');
+const { createPracticeHelpSession, PRACTICE_HELP_IDLE_MS, PRACTICE_HELP_SESSION_KEY } = load('../src/lib/task-practice.ts');
+
+test('help dismissal survives reload and active use; returns only after one idle hour', () => {
+    const data = new Map([['unrelated-account-key', 'unchanged']]);
+    const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) };
+    const start = 1_000_000;
+    const first = createPracticeHelpSession(storage);
+    assert.equal(first.offer(start), true);
+    assert.equal(first.offer(start + 1), false);
+    // Deleting the code comment does not clear this browser-local offer state.
+    const reloaded = createPracticeHelpSession(storage);
+    assert.equal(reloaded.offer(start + 60_000), false);
+    assert.equal(reloaded.activity(start + 3_000_000), false);
+    assert.equal(reloaded.offer(start + PRACTICE_HELP_IDLE_MS), false, 'Active work extends the idle window');
+    assert.equal(reloaded.activity(start + 3_000_000 + PRACTICE_HELP_IDLE_MS - 1), false);
+    const resumedAt = start + 3_000_000 + PRACTICE_HELP_IDLE_MS - 1 + PRACTICE_HELP_IDLE_MS;
+    assert.equal(reloaded.activity(resumedAt), true);
+    assert.equal(reloaded.offer(resumedAt), true);
+    assert.equal(reloaded.offer(resumedAt + 1), false);
+    assert.equal(data.get('unrelated-account-key'), 'unchanged');
+    assert.deepEqual([...data.keys()], ['unrelated-account-key', PRACTICE_HELP_SESSION_KEY]);
+    const blocked = createPracticeHelpSession({ getItem() { throw Error('blocked'); }, setItem() { throw Error('blocked'); } });
+    assert.equal(blocked.offer(start), true);
+    assert.equal(blocked.offer(start + 1), false);
+    assert.equal(blocked.offer(start + PRACTICE_HELP_IDLE_MS), true);
+});
 const keyEnum = /enum KeyCode\s*\{([\s\S]*?)\n\s*\}/.exec(readFileSync(new URL('../node_modules/monaco-editor/monaco.d.ts', import.meta.url), 'utf8'))[1];
 const KeyCode = Object.fromEntries([...keyEnum.matchAll(/(\w+)\s*=\s*(\d+)/g)].map(match => [match[1], Number(match[2])]));
 const KeyMod = { CtrlCmd: 2048, Alt: 512, Shift: 1024, chord: (first, second) => first | (second << 16) };

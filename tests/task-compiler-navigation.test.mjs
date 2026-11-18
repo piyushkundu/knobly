@@ -11,7 +11,7 @@ function compiler() {
     const cells = [], kinds = [];
     const storage = new Map([['knobly_task_code_1', '{"code":"<p>Saved</p>","lastActive":1}']]);
     const beforeStorage = [...storage];
-    let cursor = 0, expectedCount;
+    let cursor = 0, expectedCount, rendering = false;
     function cell(kind, initialize) {
         const index = cursor++;
         if (index in kinds) assert.equal(kinds[index], kind, 'Hook type changed');
@@ -31,6 +31,7 @@ function compiler() {
     };
     const Editor = () => null;
     const PracticeTools = () => null;
+    const FullscreenPreview = () => null;
     const practiceHelpers = {};
     vm.runInNewContext(ts.transpileModule(readFileSync(new URL('../src/lib/task-practice.ts', import.meta.url), 'utf8'), {
         compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022},
@@ -41,6 +42,7 @@ function compiler() {
         '@monaco-editor/react': {default: Editor},
         '@/components/html/TaskPracticeTools': {default: PracticeTools},
         '@/components/html/TaskCompilerNewBadge': {default: () => null},
+        '@/components/html/TaskFullscreenPreview': {default: FullscreenPreview},
         '@/lib/task-practice': practiceHelpers,
         'next/navigation': {useRouter: () => ({push() {}, back() {}})},
         'next/link': {default: () => null},
@@ -56,24 +58,34 @@ function compiler() {
         require(name) { assert.ok(Object.hasOwn(deps, name), name); return deps[name]; },
         localStorage: {
             getItem: key => storage.get(key) ?? null,
-            setItem() { throw new Error('Unexpected render-time storage write'); },
+            setItem(key, value) {
+                assert.equal(rendering, false, 'Unexpected render-time storage write');
+                assert.equal(key, 'knobly_task_practice_help_session_v1');
+                storage.set(key, value);
+            },
             removeItem() { throw new Error('Unexpected render-time storage deletion'); },
         },
         window: {},
         Date: class extends Date {
-            static now() { throw new Error('Unexpected render-time clock read'); }
+            static now() {
+                assert.equal(rendering, false, 'Unexpected render-time clock read');
+                return 123456789;
+            }
         },
         console,
     });
     return {
         Editor,
         PracticeTools,
+        FullscreenPreview,
         render(id) {
             cursor = 0;
-            const tree = exports.default({params: {id}});
+            rendering = true;
+            let tree;
+            try { tree = exports.default({params: {id}}); } finally { rendering = false; }
             if (expectedCount === undefined) expectedCount = cursor;
             else assert.equal(cursor, expectedCount, 'Route change altered the number of hooks');
-            assert.deepEqual([...storage], beforeStorage);
+            assert.deepEqual([...storage].filter(([key]) => key !== 'knobly_task_practice_help_session_v1'), beforeStorage);
             return tree;
         },
     };
@@ -103,6 +115,37 @@ test('retained compiler renders valid → missing → valid routes with stable h
     assert.match(text(missing), /Task Not Found/);
     assert.equal(nodes(missing, node => node.type === app.Editor).length, 0);
     assert.equal(nodes(app.render('1'), node => node.type === app.Editor)[0].props.value, '<p>Unsaved student work</p>');
+});
+
+test('deleted help stays deleted while switching modes and fullscreen follows the selected output', () => {
+    const app = compiler();
+    let tree = app.render('11');
+    const tools = () => nodes(tree, node => node.type === app.PracticeTools)[0];
+    tools().props.onModeChange('practice');
+    tree = app.render('11');
+    nodes(tree, node => node.type === app.Editor)[0].props.onChange('<h1>Only my code</h1>');
+    tools().props.onModeChange('exam');
+    tools().props.onModeChange('practice');
+    tree = app.render('11');
+    assert.equal(nodes(tree, node => node.type === app.Editor)[0].props.value, '<h1>Only my code</h1>');
+    for (const [tab, mode] of [['My Preview', 'preview'], ['Target Task', 'target'], ['Compare', 'compare']]) {
+        const tabButtons = nodes(tree, node => node.type === 'button' && text(node) === tab);
+        assert.equal(tabButtons.length, 1, 'No duplicate top-level target/compare buttons');
+        tabButtons[0].props.onClick();
+        tree = app.render('11');
+        nodes(tree, node => node.props?.['aria-label'] === `Open ${mode} fullscreen`)[0].props.onClick();
+        tree = app.render('11');
+        const modal = nodes(tree, node => node.type === app.FullscreenPreview)[0];
+        assert.equal(modal.props.mode, mode);
+        assert.equal(modal.props.targetSrc, '/html-tasks/task11.html');
+        modal.props.onClose();
+        tree = app.render('11');
+    }
+    const toggle = nodes(tree, node => node.props?.role === 'switch' && node.props?.['aria-label'] === 'Auto Run')[0];
+    assert.equal(toggle.props['aria-checked'], false);
+    toggle.props.onClick();
+    tree = app.render('11');
+    assert.equal(nodes(tree, node => node.props?.role === 'switch')[0].props['aria-checked'], true);
 });
 
 test('missing → valid → another valid task keeps hook order and updates topic badges', () => {

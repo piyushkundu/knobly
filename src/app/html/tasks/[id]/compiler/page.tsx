@@ -6,13 +6,14 @@ import type { editor } from 'monaco-editor';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TaskPracticeTools, { type TaskEditorApi } from '@/components/html/TaskPracticeTools';
-import { withPracticeHelp, taskDownloadFilename, type TaskEditorMode } from '@/lib/task-practice';
+import { withPracticeHelp, createPracticeHelpSession, taskDownloadFilename, type TaskEditorMode } from '@/lib/task-practice';
 import TaskCompilerNewBadge from '@/components/html/TaskCompilerNewBadge';
+import TaskFullscreenPreview from '@/components/html/TaskFullscreenPreview';
 import {
     ArrowLeft, Play, Send, Award, CheckCircle2, XCircle, AlertCircle,
     Code2, Eye, RefreshCw, Trophy, Star, Target, TrendingUp,
     Zap, ChevronRight, X, BarChart3, Tag, Lightbulb, ThumbsUp,
-    ChevronDown, FileCode, Loader2, ExternalLink, Columns, Sun, Moon,
+    ChevronDown, FileCode, Loader2, Columns, Sun, Moon,
     Maximize2, Minimize2, ZoomIn, ZoomOut, Download
 } from 'lucide-react';
 
@@ -260,6 +261,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
 
     const [previewHtml, setPreviewHtml] = useState('');
     const [previewKey, setPreviewKey] = useState(0);
+    const [autoRun, setAutoRun] = useState(false);
 
     const processedPreviewHtml = useMemo(() => {
         return preparePreviewHtml(previewHtml);
@@ -270,7 +272,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
     const [evalError, setEvalError] = useState('');
     const [showTaskInfo, setShowTaskInfo] = useState(true);
     const [lineCount, setLineCount] = useState(1);
-    const [targetModalOpen, setTargetModalOpen] = useState(false);
+    const [fullscreenMode, setFullscreenMode] = useState<'preview' | 'target' | 'compare' | null>(null);
 
     // Code Editor Font Size / Zoom (10px to 24px, default: 13px)
     const [fontSize, setFontSize] = useState<number>(() => {
@@ -287,6 +289,8 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const handleRunRef = useRef<(() => void) | null>(null);
     const iframeRef = useRef<HTMLIFrameElement>(null);
+    const helpSessionRef = useRef<ReturnType<typeof createPracticeHelpSession> | null>(null);
+    const resumeHelpRef = useRef<(() => void) | null>(null);
 
     // Record task as opened for progress tracking
     useEffect(() => {
@@ -445,6 +449,16 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
             setPreviewMode('preview');
         }
     }, [code, previewMode]);
+
+    // Debounce typing without changing the selected reference/compare tab.
+    useEffect(() => {
+        if (!autoRun) return;
+        const timer = setTimeout(() => {
+            setPreviewHtml(code);
+            setPreviewKey(key => key + 1);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [autoRun, code]);
 
     useEffect(() => {
         handleRunRef.current = handleRun;
@@ -651,9 +665,17 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
         }
     };
 
-    const changeCompilerMode = (mode: TaskEditorMode) => {
-        setCompilerMode(mode);
-        if (mode !== 'practice') return;
+    const getHelpSession = useCallback(() => {
+        if (!helpSessionRef.current) {
+            let storage: Storage | null = null;
+            try { storage = localStorage; } catch {}
+            helpSessionRef.current = createPracticeHelpSession(storage);
+        }
+        return helpSessionRef.current;
+    }, []);
+
+    const offerPracticeHelp = useCallback(() => {
+        if (!getHelpSession().offer(Date.now())) return;
         const currentEditor = editorRef.current;
         const model = currentEditor?.getModel();
         if (currentEditor && model) {
@@ -669,6 +691,30 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
         } else {
             setCode(current => withPracticeHelp(current));
         }
+    }, [getHelpSession]);
+
+    useEffect(() => {
+        resumeHelpRef.current = compilerMode === 'practice' ? offerPracticeHelp : null;
+    }, [compilerMode, offerPracticeHelp]);
+
+    useEffect(() => {
+        const activity = () => {
+            if (document.visibilityState === 'hidden') return;
+            if (getHelpSession().activity(Date.now())) resumeHelpRef.current?.();
+        };
+        activity();
+        const events = ['keydown', 'pointerdown', 'pointermove', 'wheel', 'focus'] as const;
+        events.forEach(event => window.addEventListener(event, activity, { passive: true }));
+        document.addEventListener('visibilitychange', activity);
+        return () => {
+            events.forEach(event => window.removeEventListener(event, activity));
+            document.removeEventListener('visibilitychange', activity);
+        };
+    }, [getHelpSession]);
+
+    const changeCompilerMode = (mode: TaskEditorMode) => {
+        setCompilerMode(mode);
+        if (mode === 'practice') offerPracticeHelp();
     };
 
     const handleDownload = () => {
@@ -787,50 +833,6 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                 {/* Right: Actions */}
                 <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     
-                    {/* View Target Task Quick Button */}
-                    <button
-                        onClick={() => {
-                            if (activeView === 'editor') setActiveView('split');
-                            setPreviewMode(previewMode === 'target' ? 'preview' : 'target');
-                        }}
-                        style={previewMode === 'target' ? { backgroundColor: '#f97316', color: '#ffffff' } : !isWhite ? { color: '#fdba74' } : {}}
-                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs ${
-                            previewMode === 'target'
-                                ? 'bg-orange-500 text-white shadow-orange-500/20'
-                                : isWhite
-                                    ? 'bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100'
-                                    : 'bg-orange-500/15 text-orange-300 border border-orange-500/40 hover:bg-orange-500/25'
-                        }`}
-                        title="Toggle Target Project Output"
-                    >
-                        <Target size={13} color={previewMode === 'target' ? '#ffffff' : !isWhite ? '#fdba74' : undefined} className={previewMode === 'target' ? 'animate-pulse' : ''} />
-                        <span style={previewMode === 'target' ? { color: '#ffffff' } : !isWhite ? { color: '#fdba74' } : {}} className="hidden md:inline">
-                            {previewMode === 'target' ? 'Showing Target' : 'View Target Task'}
-                        </span>
-                    </button>
-
-                    {/* Compare Button */}
-                    <button
-                        onClick={() => {
-                            if (activeView === 'editor') setActiveView('split');
-                            setPreviewMode(previewMode === 'compare' ? 'preview' : 'compare');
-                        }}
-                        style={previewMode === 'compare' ? { backgroundColor: '#4f46e5', color: '#ffffff' } : !isWhite ? { color: '#f1f5f9' } : {}}
-                        className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs ${
-                            previewMode === 'compare'
-                                ? 'bg-indigo-600 text-white shadow-indigo-600/20'
-                                : isWhite
-                                    ? 'bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200'
-                                    : 'bg-slate-800 text-slate-200 border border-slate-700 hover:bg-slate-700 hover:text-white'
-                        }`}
-                        title="Compare Target Output & Your Output Side-by-Side"
-                    >
-                        <Columns size={13} color={previewMode === 'compare' || !isWhite ? '#ffffff' : undefined} />
-                        <span style={previewMode === 'compare' || !isWhite ? { color: '#ffffff' } : {}} className="hidden lg:inline">
-                            Compare
-                        </span>
-                    </button>
-
                     {/* View Switcher: Editor / Split / Preview */}
                     <div className={`hidden md:flex rounded-xl p-0.5 border ${
                         isWhite ? 'bg-slate-100 border-slate-200' : 'bg-slate-800/90 border-slate-700'
@@ -885,6 +887,14 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
 
                     <button type="button" onClick={handleDownload} disabled={!code.trim()} aria-label="Download HTML code" title="Download current code as an HTML file" className="relative inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-bold shadow-xs disabled:cursor-not-allowed disabled:opacity-50" style={{ backgroundColor: isWhite ? '#eff6ff' : '#172554', borderColor: isWhite ? '#bfdbfe' : '#1e40af', color: isWhite ? '#1d4ed8' : '#bfdbfe' }}>
                         <Download size={13} /><span className="hidden sm:inline">Download</span><span className="absolute -right-1 -top-1 inline-flex"><TaskCompilerNewBadge feature="download" /></span>
+                    </button>
+
+                    <button type="button" role="switch" aria-checked={autoRun} aria-label="Auto Run" onClick={() => setAutoRun(value => !value)} title="Automatically update your preview after typing"
+                        className="relative inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-bold shadow-xs"
+                        style={{ color: autoRun ? '#ffffff' : isWhite ? '#475569' : '#cbd5e1', backgroundColor: autoRun ? '#047857' : isWhite ? '#f8fafc' : '#1e293b', borderColor: autoRun ? '#047857' : isWhite ? '#cbd5e1' : '#475569' }}>
+                        <Zap size={12} /><span className="hidden sm:inline">Auto Run</span>
+                        <span className="text-[9px] uppercase">{autoRun ? 'On' : 'Off'}</span>
+                        <span className="absolute -right-1 -top-1 inline-flex"><TaskCompilerNewBadge feature="autoRun" /></span>
                     </button>
 
                     {/* Run Button */}
@@ -1011,7 +1021,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
 
                         {/* Open Modal Preview of Target */}
                         <button
-                            onClick={() => setTargetModalOpen(true)}
+                            onClick={() => setFullscreenMode('target')}
                             className={`p-1 rounded-md text-xs transition-colors flex items-center gap-1 ${
                                 isWhite
                                     ? 'text-orange-700 hover:bg-orange-100'
@@ -1264,24 +1274,16 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                 </button>
                             </div>
 
-                            {/* Right tools */}
-                            <div className="flex items-center gap-1">
-                                <a
-                                    href={`/html-tasks/${task.file}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    style={!isWhite ? { color: '#cbd5e1' } : {}}
-                                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
-                                        isWhite
-                                            ? 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/60'
-                                            : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                                    }`}
-                                    title="Open Target Task in New Tab"
-                                >
-                                    <ExternalLink size={11} />
-                                    <span className="hidden sm:inline">Open Target</span>
-                                </a>
-                            </div>
+                            <button type="button" onClick={() => setFullscreenMode(previewMode)}
+                                aria-label={`Open ${previewMode === 'target' ? 'target' : previewMode === 'compare' ? 'compare' : 'preview'} fullscreen`}
+                                title={`Open ${previewMode === 'target' ? 'target' : previewMode === 'compare' ? 'compare' : 'preview'} fullscreen`}
+                                className="relative inline-flex shrink-0 items-center gap-1.5 rounded-lg border px-2 py-1.5 text-[11px] font-semibold"
+                                style={{ color: isWhite ? '#334155' : '#e2e8f0', borderColor: isWhite ? '#cbd5e1' : '#334155', backgroundColor: isWhite ? '#ffffff' : '#1e293b' }}>
+                                <Maximize2 size={12} />
+                                <span className="2xl:hidden">Fullscreen</span>
+                                <span className="hidden 2xl:inline">Open {previewMode === 'target' ? 'target' : previewMode === 'compare' ? 'compare' : 'preview'} fullscreen</span>
+                                <span className="absolute -right-1 -top-1 inline-flex"><TaskCompilerNewBadge feature="fullscreen" /></span>
+                            </button>
                         </div>
 
                         {/* Preview Content Area */}
@@ -1398,87 +1400,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                 )}
             </main>
 
-            {/* ═══════════ TARGET TASK POPUP MODAL (FULL SCREEN REFERENCE) ═══════════ */}
-            {targetModalOpen && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
-                    onClick={() => setTargetModalOpen(false)}
-                >
-                    <div
-                        className="bg-white rounded-3xl border border-slate-200 w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl overflow-hidden"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Modal Header */}
-                        <div className="px-5 py-3.5 bg-gradient-to-r from-slate-900 to-slate-800 text-white flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold">
-                                    <Target size={16} />
-                                </div>
-                                <div>
-                                    <h3 className="text-sm font-bold">Target Reference — Task {id}: {task.title}</h3>
-                                    <p className="text-[11px] text-slate-300">Aapko aisa webpage design banana hai</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <a
-                                    href={`/html-tasks/${task.file}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
-                                    title="Open Fullscreen in New Tab"
-                                >
-                                    <ExternalLink size={15} />
-                                </a>
-                                <button
-                                    onClick={() => setTargetModalOpen(false)}
-                                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
-                                    title="Close"
-                                >
-                                    <X size={16} />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Modal Content */}
-                        <div className="flex-1 relative bg-white">
-                            <iframe
-                                src={`/html-tasks/${task.file}`}
-                                className="w-full h-full border-0"
-                                title="Target Task Modal Preview"
-                            />
-                        </div>
-
-                        {/* Modal Footer */}
-                        <div
-                            style={!isWhite ? { backgroundColor: '#131b2e', borderColor: '#1e293b', color: '#e2e8f0' } : {}}
-                            className={`p-3 border-t flex items-center justify-between text-xs ${
-                                isWhite ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-slate-900 border-slate-800 text-slate-300'
-                            }`}
-                        >
-                            <div className="flex items-center gap-2 flex-wrap">
-                                <span>Required:</span>
-                                {tagsList.map(t => (
-                                    <span key={t} className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-orange-100 text-orange-800 border border-orange-200">
-                                        &lt;{t}&gt;
-                                    </span>
-                                ))}
-                                {attrsList.map(a => (
-                                    <span key={a} className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-100 text-purple-800 border border-purple-200">
-                                        {a === 'radio' || a === 'checkbox' ? `type="${a}"` : `${a}=""`}
-                                    </span>
-                                ))}
-                            </div>
-                            <button
-                                onClick={() => setTargetModalOpen(false)}
-                                className="px-4 py-1.5 rounded-xl bg-orange-700 hover:bg-orange-600 text-white font-bold transition-all shadow-sm"
-                            >
-                                Start Coding Now →
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {fullscreenMode && <TaskFullscreenPreview mode={fullscreenMode} targetSrc={`/html-tasks/${task.file}`} previewHtml={processedPreviewHtml} previewKey={previewKey} onClose={() => setFullscreenMode(null)} />}
 
             {/* ═══════════ AI EVALUATION RESULT MODAL (CLEAN LIGHT DESIGN) ═══════════ */}
             {showResult && evaluation && (
