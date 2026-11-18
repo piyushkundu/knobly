@@ -248,6 +248,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
     const [code, setCode] = useState('');
     const [compilerMode, setCompilerMode] = useState<TaskEditorMode>('exam');
     const [editorApi, setEditorApi] = useState<TaskEditorApi | null>(null);
+    const [wordWrap, setWordWrap] = useState<'on' | 'off'>('on');
     const [activeView, setActiveView] = useState<'editor' | 'preview' | 'split'>('split');
     
     // Right panel mode: 'preview' (student live code) | 'target' (reference task iframe) | 'compare' (split both)
@@ -534,17 +535,30 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
     const handleEditorMount: OnMount = (editor, monaco) => {
         editorRef.current = editor;
         setEditorApi({ editor, monaco });
-
-        // Ctrl+Enter to Run
-        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-            handleRunRef.current?.();
-        });
-
-        // F5 to Run
-        editor.addCommand(monaco.KeyCode.F5, () => {
-            handleRunRef.current?.();
-        });
     };
+
+    useEffect(() => {
+        if (!editorApi) return;
+        const { editor, monaco } = editorApi;
+        const listener = editor.onDidChangeConfiguration(event => {
+            if (event.hasChanged(monaco.editor.EditorOption.wordWrap)) {
+                setWordWrap(editor.getRawOptions().wordWrap === 'off' ? 'off' : 'on');
+            }
+        });
+        return () => listener.dispose();
+    }, [editorApi]);
+
+    useEffect(() => {
+        if (!editorApi) return;
+        const { editor, monaco } = editorApi;
+        const binding = editor.addAction({
+            id: 'knobly.task.run', label: 'Run task preview',
+            keybindings: [monaco.KeyCode.F5, monaco.KeyMod.CtrlCmd | (compilerMode === 'practice' ? monaco.KeyMod.Alt : 0) | monaco.KeyCode.Enter],
+            precondition: 'editorTextFocus',
+            run: () => handleRunRef.current?.(),
+        });
+        return () => binding.dispose();
+    }, [editorApi, compilerMode]);
 
     const handleZoomIn = useCallback(() => {
         setFontSize(prev => {
@@ -578,14 +592,22 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
             } else if ((e.ctrlKey || e.metaKey) && e.key === '0') {
                 e.preventDefault();
                 handleZoomReset();
-            } else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            } else if (compilerMode === 'exam' && !e.defaultPrevented && !e.altKey && !e.shiftKey && (e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
                 handleRunRef.current?.();
             }
         };
         window.addEventListener('keydown', handleGlobalKeyDown);
         return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-    }, [handleZoomIn, handleZoomOut, handleZoomReset]);
+    }, [handleZoomIn, handleZoomOut, handleZoomReset, compilerMode]);
+
+    const saveTaskDraft = () => {
+        try {
+            localStorage.setItem(`knobly_task_code_${id}`, JSON.stringify({ code, lastActive: Date.now() }));
+            lastActiveRef.current = Date.now();
+            return true;
+        } catch { return false; }
+    };
 
     const handleSubmit = async () => {
         if (!code.trim()) {
@@ -834,7 +856,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                         onClick={handleRun}
                         style={{ color: '#ffffff' }}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 active:scale-95 transition-all shadow-sm hover:shadow"
-                        title="Run HTML Code (Ctrl+Enter)"
+                        title={compilerMode === 'practice' ? 'Run HTML Code (Ctrl+Alt+Enter or F5)' : 'Run HTML Code (Ctrl+Enter)'}
                     >
                         <Play size={12} fill="currentColor" />
                         <span>Run</span>
@@ -863,7 +885,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                 </div>
             </header>
 
-            <TaskPracticeTools mode={compilerMode} onModeChange={setCompilerMode} api={editorApi} isWhite={isWhite} />
+            <TaskPracticeTools mode={compilerMode} onModeChange={setCompilerMode} api={editorApi} isWhite={isWhite} onSave={saveTaskDraft} />
 
             {/* ═══════════ TASK INFO & TARGET BANNER ═══════════ */}
             {showTaskInfo && (
@@ -1116,7 +1138,7 @@ export default function TaskCompilerPage({ params }: { params: Promise<{ id: str
                                     fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace",
                                     minimap: { enabled: false },
                                     scrollBeyondLastLine: false,
-                                    wordWrap: 'on',
+                                    wordWrap,
                                     lineNumbers: 'on',
                                     renderLineHighlight: 'all',
                                     automaticLayout: true,

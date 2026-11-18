@@ -1,8 +1,22 @@
-import expand, { extract } from 'emmet';
+import { extract, parseMarkup, stringifyMarkup, resolveConfig, type MarkupNode } from 'emmet';
 import type * as Monaco from 'monaco-editor';
+import { installPracticeShortcuts } from './task-practice-shortcuts';
 
 const VOID_TAGS = new Set('area base br col embed hr img input link meta param source track wbr frame'.split(' '));
 const RAW_TAGS = new Set(['script', 'style', 'textarea', 'title']);
+const HTML_TAGS = ('a abbr address area article aside audio b base bdi bdo blockquote body br button canvas caption cite code col colgroup data datalist dd del details dfn dialog div dl dt em embed fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 head header hgroup hr html i iframe img input ins kbd label legend li link main map mark menu meta meter nav noscript object ol optgroup option output p picture pre progress q rp rt ruby s samp script search section select slot small source span strong style sub summary sup table tbody td template textarea tfoot th thead time title tr track u ul var video wbr ' +
+    // The course also teaches these legacy HTML elements.
+    'acronym applet basefont big center dir font frame frameset marquee noframes param strike tt').split(' ');
+const HTML_TAG_SET = new Set(HTML_TAGS);
+const HTML_ATTRIBUTES = ('accept accept-charset accesskey action align allow allowfullscreen alt as async autocapitalize autocomplete autofocus autoplay background bgcolor border cellpadding cellspacing charset checked cite class color cols colspan content contenteditable controls coords crossorigin data datetime decoding default defer dir disabled download draggable enctype enterkeyhint face fetchpriority for form formaction formenctype formmethod formnovalidate formtarget frameborder headers height hidden high href hreflang http-equiv id inert inputmode integrity is ismap kind label lang list loading loop low max maxlength media method min minlength multiple muted name noresize noshade novalidate open optimum pattern placeholder playsinline popover poster preload readonly referrerpolicy rel required reversed role rows rowspan sandbox scope scrolling selected shape size sizes slot span spellcheck src srcdoc srclang srcset start step style tabindex target title translate type usemap value width wrap xmlns ' +
+    'onabort onafterprint onbeforeprint onbeforeunload onblur oncanplay oncanplaythrough onchange onclick oncontextmenu oncopy oncuechange oncut ondblclick ondrag ondragend ondragenter ondragleave ondragover ondragstart ondrop ondurationchange onemptied onended onerror onfocus onhashchange oninput oninvalid onkeydown onkeypress onkeyup onload onloadeddata onloadedmetadata onloadstart onmousedown onmouseenter onmouseleave onmousemove onmouseout onmouseover onmouseup onmousewheel onoffline ononline onpagehide onpageshow onpaste onpause onplay onplaying onpopstate onprogress onratechange onreset onresize onscroll onsearch onseeked onseeking onselect onstalled onstorage onsubmit onsuspend ontimeupdate ontoggle onunload onvolumechange onwaiting onwheel').split(' ');
+const HTML_ATTRIBUTE_SET = new Set(HTML_ATTRIBUTES);
+
+function validHtmlTree(nodes: MarkupNode[]): boolean {
+    return nodes.every(node => (!node.name || HTML_TAG_SET.has(node.name.toLowerCase()))
+        && (node.attributes || []).every(attr => !!attr.name && (HTML_ATTRIBUTE_SET.has(attr.name.toLowerCase()) || /^(?:data|aria)-[a-z][\w.-]*$/i.test(attr.name)))
+        && validHtmlTree(node.children));
+}
 
 // Track HTML context so shortcuts never expand inside an attribute, comment,
 // script, stylesheet or raw-text element. No student code is executed here.
@@ -58,20 +72,21 @@ export function emmetAt(line: string, column: number, beforeLine = '') {
     const repeats = [...abbreviation.abbreviation.matchAll(/\*(\d+)/g)];
     if (repeats.reduce((count, match) => count * Number(match[1]), 1) > 100) return null;
     try {
-        const snippet = expand(abbreviation.abbreviation === 'html' ? 'html:5' : abbreviation.abbreviation, {
+        const config = resolveConfig({
             syntax: 'html', maxRepeat: 100,
             options: {
                 'output.indent': '    ',
                 'output.field': (index, placeholder) => `\${${index + 1}:${placeholder.replace(/[\\$}]/g, '\\$&')}}`,
             },
         });
+        const tree = parseMarkup(abbreviation.abbreviation === 'html' ? 'html:5' : abbreviation.abbreviation, config);
+        if (!tree.children.some(node => node.name) || !validHtmlTree(tree.children)) return null;
+        const snippet = stringifyMarkup(tree, config);
         if (!snippet || snippet.length > 20000) return null;
         return { ...abbreviation, snippet };
     } catch { return null; }
 }
 
-const HTML_TAGS = 'html head title body header nav main section article aside footer h1 h2 h3 p div span a img br hr ul ol li table caption tr th td form label input textarea button select option fieldset legend audio video source iframe details summary'.split(' ');
-const HTML_ATTRIBUTES = 'id class style title src href alt width height type name value placeholder required disabled checked controls autoplay loop muted poster target rel rows cols action method'.split(' ');
 const BOOLEAN_ATTRIBUTES = new Set('required disabled checked controls autoplay loop muted'.split(' '));
 
 export function practiceSuggestions(model: Monaco.editor.ITextModel, position: Monaco.Position, monaco: typeof Monaco): Monaco.languages.CompletionItem[] {
@@ -90,6 +105,18 @@ export function practiceSuggestions(model: Monaco.editor.ITextModel, position: M
             detail: 'Practice · Emmet · Press Tab or Enter to insert',
             documentation: { value: '```html\n' + active.snippet.replace(/\$\{\d+:([^}]*)\}/g, '$1') + '\n```' },
         });
+    }
+    if (!active) {
+        const partial = /(?:^|\s)([a-z][a-z0-9]*)$/i.exec(line.slice(0, position.column - 1));
+        if (partial && htmlContext(beforeLine + line.slice(0, position.column - 1 - partial[1].length)).text) {
+            for (const name of HTML_TAGS.filter(tag => tag.startsWith(partial[1].toLowerCase()))) {
+                const expanded = emmetAt(name, name.length + 1);
+                if (!expanded) continue;
+                suggestions.push({ label: `${name} — HTML tag`, kind: monaco.languages.CompletionItemKind.Snippet,
+                    insertText: expanded.snippet, insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    range: new monaco.Range(position.lineNumber, position.column - partial[1].length, position.lineNumber, position.column), filterText: name, sortText: '1' + name });
+            }
+        }
     }
     const openTag = /<([a-z][\w:-]*)?$/i.exec(before);
     if (openTag && htmlContext(before.slice(0, openTag.index)).text) {
@@ -128,8 +155,9 @@ export function practiceSuggestions(model: Monaco.editor.ITextModel, position: M
     return suggestions;
 }
 
-export function installPracticeEditor(editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco) {
+export function installPracticeEditor(editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco, actions: { showShortcuts?: () => void; save?: () => void } = {}) {
     const disposables: Monaco.IDisposable[] = [];
+    disposables.push(...installPracticeShortcuts(editor, monaco, actions));
     // The HTML worker does not provide Emmet completions for plain `!` / `html`.
     // Register a model-scoped provider, including basic HTML hints without a worker.
     disposables.push(monaco.languages.registerCompletionItemProvider('html', {

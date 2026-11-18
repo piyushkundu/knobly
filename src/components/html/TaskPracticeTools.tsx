@@ -1,41 +1,31 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type * as Monaco from 'monaco-editor';
 import { isPracticeNew, PRACTICE_NEW_UNTIL, PRACTICE_MEDIA, mediaExample, type TaskEditorMode } from '@/lib/task-practice';
+import { PRACTICE_SHORTCUTS } from '@/lib/task-practice-shortcuts';
 
 export interface TaskEditorApi {
     editor: Monaco.editor.IStandaloneCodeEditor;
     monaco: typeof Monaco;
 }
 
-const SHORTCUTS = [
-    ['!, html or html:5 → Tab', 'HTML page structure'],
-    ['ul>li*3 → Tab', 'Expand nested / repeated tags'],
-    ['div.card → Tab', 'Tag with a class'],
-    ['Tab / Shift+Tab', 'Next / previous snippet field, or indent / outdent'],
-    ['Ctrl+Space', 'Show suggestions'],
-    ['Ctrl+/', 'Toggle comment'],
-    ['Shift+Alt+F', 'Format HTML'],
-    ['Alt+↑ / ↓', 'Move a line'],
-    ['Shift+Alt+↑ / ↓', 'Duplicate a line'],
-    ['Ctrl+D / Alt+Click', 'Select next match / add a cursor'],
-    ['Ctrl+F / Ctrl+H', 'Find / replace'],
-    ['Ctrl+Z / Ctrl+Y', 'Undo / redo'],
-    ['Ctrl+Enter or F5', 'Run preview'],
-];
-
-export default function TaskPracticeTools({ mode, onModeChange, api, isWhite }: {
+export default function TaskPracticeTools({ mode, onModeChange, api, isWhite, onSave }: {
     mode: TaskEditorMode;
     onModeChange: (mode: TaskEditorMode) => void;
     api: TaskEditorApi | null;
     isWhite: boolean;
+    onSave: () => boolean;
 }) {
     const [isNew, setIsNew] = useState(false);
     const [panel, setPanel] = useState<'shortcuts' | 'media' | null>(null);
     const [status, setStatus] = useState('');
     const [copyStatus, setCopyStatus] = useState('');
     const [ready, setReady] = useState(false);
+    const [shortcutSearch, setShortcutSearch] = useState('');
+    const [saveStatus, setSaveStatus] = useState('');
+    const saveRef = useRef(onSave);
+    useEffect(() => { saveRef.current = onSave; }, [onSave]);
 
     useEffect(() => {
         const now = Date.now();
@@ -53,7 +43,10 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite }: 
         setStatus('Loading practice shortcuts…');
         import('@/lib/task-practice-editor').then(({ installPracticeEditor }) => {
             if (cancelled || api.editor.getModel() === null) return;
-            dispose = installPracticeEditor(api.editor, api.monaco);
+            dispose = installPracticeEditor(api.editor, api.monaco, {
+                showShortcuts: () => setPanel('shortcuts'),
+                save: () => setSaveStatus(saveRef.current() ? 'Task draft saved.' : 'Draft could not be saved in this browser.'),
+            });
             setReady(true);
             setStatus('Type ! or html, then Tab / Enter · Suggestions and closing tags are on');
         }).catch(() => {
@@ -67,6 +60,11 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite }: 
         const timer = setTimeout(() => setCopyStatus(''), 3000);
         return () => clearTimeout(timer);
     }, [copyStatus]);
+    useEffect(() => {
+        if (!saveStatus) return;
+        const timer = setTimeout(() => setSaveStatus(''), 3000);
+        return () => clearTimeout(timer);
+    }, [saveStatus]);
 
     const copy = async (asset: typeof PRACTICE_MEDIA[number], example: boolean) => {
         const url = new URL(asset.path, window.location.origin).href;
@@ -106,13 +104,21 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite }: 
                     <button type="button" className={button} style={palette} aria-expanded={panel === 'media'} aria-controls="practice-media" onClick={() => setPanel(panel === 'media' ? null : 'media')}>Sample media</button>
                 </>}
             </div>
+            {mode === 'practice' && saveStatus && <p role="status" className="mt-2 text-xs">{saveStatus}</p>}
             {mode === 'practice' && panel === 'shortcuts' && (
                 <div id="practice-shortcuts" className="mt-3 rounded-xl border p-3" style={palette}>
                     <h2 className="mb-2 text-sm font-bold">Practice shortcuts</h2>
-                    <p className="mb-3 text-xs">Use these while the editor is focused. Press Escape to leave snippet fields. On Mac, use Command instead of Ctrl and Option instead of Alt. Browser and operating system shortcuts can take priority.</p>
-                    <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-2 xl:grid-cols-3">
-                        {SHORTCUTS.map(([key, meaning]) => <div key={key} className="text-xs"><dt className="font-mono font-bold">{key}</dt><dd className="mt-0.5" style={{ color: isWhite ? '#475569' : '#cbd5e1' }}>{meaning}</dd></div>)}
-                    </dl>
+                    <p className="mb-3 text-xs">Windows editing shortcuts while the code editor has focus. Ctrl+Enter inserts a line; Ctrl+Alt+Enter or F5 runs the preview. Press chord keys in sequence, for example Ctrl+K, then Ctrl+C. On Mac, Ctrl means Command and Alt means Option for these practice bindings.</p>
+                    <label className="block text-xs font-semibold">Search shortcuts
+                        <input type="search" value={shortcutSearch} onChange={event => setShortcutSearch(event.target.value)} placeholder="Search a key or action, e.g. duplicate, Ctrl+Enter" className="my-2 w-full rounded-lg border p-2 text-sm sm:max-w-lg" style={palette} />
+                    </label>
+                    <div className="max-h-72 overflow-auto">
+                        <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2 xl:grid-cols-3">
+                            {PRACTICE_SHORTCUTS.filter(item => `${item.keys} ${item.label} ${item.group}`.toLowerCase().includes(shortcutSearch.toLowerCase().trim())).map(item => <div key={item.keys} className="text-xs"><dt className="font-mono font-bold">{item.keys}</dt><dd className="mt-0.5" style={{ color: isWhite ? '#475569' : '#cbd5e1' }}>{item.label} <span className="text-[10px]">· {item.group}</span></dd></div>)}
+                        </dl>
+                    </div>
+                    <p className="mt-3 text-xs">This single-file HTML editor supports editing, search, selection, folding and preview. Desktop terminal, Git, extensions, multi-file Explorer and debugger commands need VS Code Desktop. Some browser / OS keys, such as closing a browser tab, take priority.</p>
+                    <a href="https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf" target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-xs underline" style={{ color: isWhite ? '#1d4ed8' : '#93c5fd' }}>Official VS Code shortcut reference</a>
                 </div>
             )}
             {mode === 'practice' && panel === 'media' && (
