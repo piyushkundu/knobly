@@ -1,0 +1,5 @@
+# Preserve archived teaching sources and the unchanged vendor stylesheet exactly.
+public/style-course/originals/* -text -diff
+public/style-course/w3.css -text -diff
+public/style-course/reference/*.html linguist-generated=true
+src/data/style-courses.generated.json linguist-generated=true

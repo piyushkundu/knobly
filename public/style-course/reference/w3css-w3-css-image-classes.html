@@ -1,0 +1,334 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style-course/w3.css"><style>
+        :root {
+            --primary-color: #2196F3;
+            --secondary-color: #4CAF50;
+            --background-light: #f4f4f4;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-light);
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+    .button-container {
+
+      width: 100%;
+      display: grid;
+      place-items: center;
+
+    }
+
+    .button-link {
+      text-decoration: none;
+    }
+
+    button {
+      position: relative;
+      width: 12rem;
+      height: 3.5rem;
+      background-color: white;
+      border: 4px solid white;
+      border-radius: 1rem;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: black;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    button .slide-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 3rem;
+      width: 25%;
+      background-color: #18465a;
+      border-radius: 0.75rem;
+      display: grid;
+      place-items: center;
+      transition: width 0.5s ease;
+      z-index: 10;
+    }
+
+    button:hover .slide-bg {
+      width: 100%;
+    }
+
+    button p {
+      position: absolute;
+      z-index: 20;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      margin: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    button:hover p {
+      opacity: 0;
+    }
+    .rotate-icon {
+  transform: rotate(180deg); /* Rotate 90 degrees */
+  transition: transform 0.3s ease; /* Optional smooth rotation effect */
+}
+
+.button-link:hover .rotate-icon {
+  transform: rotate(180deg); /* Rotate further on hover */
+}
+
+
+        :root {
+            --primary-color: #4a4a4a;
+            --secondary-color: #2196f3;
+            --accent-color: #00bcd4;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            text-transform: capitalize;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        /* Typing effect styles */
+        .logo-text .typing {
+            overflow: hidden;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .logo-text .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 25px;
+            background-color: var(--primary-color);
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .logo-container:hover .logo-text {
+            color: var(--secondary-color);
+        } .logo-container:hover .logo-text {
+            color: var(--secondary-color);
+        }
+
+        .logo-svg {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+            transition: transform 0.4s ease;
+        }
+
+        .logo-container:hover img {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        img {
+            transition: .5s;
+            width: 50px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin-left: 25px;
+            position: relative;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            position: relative;
+            padding: 5px 10px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a i {
+            margin-right: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background-color: var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover::before,
+        .nav-links a.active::before {
+            width: 100%;
+            left: 0;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .hamburger-bar {
+            width: 25px;
+            height: 3px;
+            background-color: var(--primary-color);
+            margin: 4px 0;
+            transition: 0.4s;
+        }
+
+        @media screen and (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                flex-direction: column;
+                background-color: white;
+                width: 100%;
+                height: 100%;
+                justify-content: center;
+                align-items: center;
+                transition: 0.3s;
+                z-index: 999;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .nav-links li {
+                margin: 20px 0;
+            }
+
+            .nav-links a {
+                font-size: 1.5rem;
+            }
+
+            .hamburger {
+                display: flex;
+                z-index: 1000;
+            }
+
+            .hamburger.active .bar:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+
+            .hamburger.active .bar:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active .bar:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+        }
+
+body{padding:16px;overflow-wrap:anywhere}img{max-width:100%}table{max-width:100%} .button-container{display:none}</style></head><body><h1 class="w3-center">W3.CSS Image Classes</h1><p class="w3-center">Learn how to style images using W3.CSS classes like <code>w3-round</code>, <code>w3-circle</code>, <code>w3-border</code>, and <code>w3-grayscale</code>.</p><div class="example-container">
+<h2>1. Rounded Corners (<code>w3-round</code>)</h2>
+<p>This class applies rounded corners to the image, giving it a smooth and modern look.</p>
+<img alt="Rounded Corners" class="w3-round" src="/practice-media/study.svg"/>
+</div><div class="example-container">
+<h2>2. Circle (<code>w3-circle</code>)</h2>
+<p>The <code>w3-circle</code> class creates a circular image. This is ideal for profile pictures or decorative elements.</p>
+<img alt="Circle Image" class="w3-circle" src="/practice-media/study.svg" style="width:150px; height:150px;"/>
+</div><div class="example-container">
+<h2>3. Bordered Image (<code>w3-border</code>)</h2>
+<p>Adds a simple border around the image, which enhances visibility and separates it from the background.</p>
+<img alt="Bordered Image" class="w3-border" src="/practice-media/study.svg" style="border-width: 3px;"/>
+</div><div class="example-container">
+<h2>4. Grayscale Image (<code>w3-grayscale</code>)</h2>
+<p>Converts the image to grayscale. This is useful for placeholders, subdued backgrounds, or stylish effects.</p>
+<img alt="Grayscale Image" class="w3-grayscale" src="/practice-media/study.svg"/>
+</div><div class="w3-container w3-padding-64">
+<h2>Image Text</h2>
+<p>Position content inside an image with the w3-display-<em>classes</em> - Note that we have added the w3-container class to get more padding:</p>
+<div class="w3-display-container w3-text-white">
+<img alt="Lights" src="/practice-media/study.svg" style="width:60%;height:400px"/>
+<div class="w3-display-topleft w3-container"><p>Top Left</p></div>
+<div class="w3-display-topright w3-container"><p>Top Right</p></div>
+<div class="w3-display-bottomleft w3-container"><p>Bottom Left</p></div>
+<div class="w3-display-bottomright w3-container"><p>Bottom Right</p></div>
+<div class="w3-display-left w3-container"><p>Left</p></div>
+<div class="w3-display-right w3-container"><p>Right</p></div>
+<div class="w3-display-middle w3-large">Middle</div>
+<div class="w3-display-topmiddle w3-container"><p>Top Middle</p></div>
+<div class="w3-display-bottommiddle w3-container"><p>Bottom Middle</p></div>
+</div>
+</div><script>document.addEventListener('click',function(e){var t=e.target.closest('[data-toggle]');if(t){var p=document.getElementById(t.dataset.toggle);if(p){if(p.classList.contains('w3-hide')){p.classList.remove('w3-hide');p.hidden=false}else{p.hidden=!p.hidden}}}var c=e.target.closest('[data-close]');if(c)c.parentElement.hidden=true});</script></body></html>

@@ -1,0 +1,135 @@
+{
+  "files": [
+    {
+      "file": "csspage.html",
+      "bytes": 18136,
+      "sha256": "aa7413ea228539b0b584d8e19e33df243be66b80559fa056b3fd29ca397db9c0",
+      "archive": "/style-course/originals/csspage.html.txt"
+    },
+    {
+      "file": "cssintro.html",
+      "bytes": 21732,
+      "sha256": "01ac4fb45f480e6a15d7240a98e4bd5a17abe31f1ab3b91b0ced758d1b93a319",
+      "archive": "/style-course/originals/cssintro.html.txt"
+    },
+    {
+      "file": "cssproperties.html",
+      "bytes": 57590,
+      "sha256": "e62be877407dc518b9d9605920dbdfc7a9d66e78652eba6bd9216965757bce72",
+      "archive": "/style-course/originals/cssproperties.html.txt"
+    },
+    {
+      "file": "w3css.html",
+      "bytes": 38746,
+      "sha256": "8162d5fbb110bae037079a68c13a01e2eeeeb0e5be70dc5c9e79469a0bb398f5",
+      "archive": "/style-course/originals/w3css.html.txt"
+    },
+    {
+      "file": "task1.html",
+      "bytes": 2307,
+      "sha256": "2b6a7d2e344c27f9adfe50f2d1488f05ec9719aab59e5ab405dcbaa4b903d923",
+      "archive": "/style-course/originals/task1.html.txt"
+    },
+    {
+      "file": "task2.html",
+      "bytes": 1778,
+      "sha256": "8e3598d8020a730fc7fad4b27ae2620a12ed61765566a3a6de6f06190d178d37",
+      "archive": "/style-course/originals/task2.html.txt"
+    },
+    {
+      "file": "task3.html",
+      "bytes": 3902,
+      "sha256": "e9c913312a448a67e719c3ea2f22efc75f8845f61d35d7254b1a0dbd6abd747d",
+      "archive": "/style-course/originals/task3.html.txt"
+    },
+    {
+      "file": "taskw3css.html",
+      "bytes": 2027,
+      "sha256": "b1ba61de61ef1e6b0057d7f9358da5f0d0765600a0d2e96a7f196f3ed17141c3",
+      "archive": "/style-course/originals/taskw3css.html.txt"
+    },
+    {
+      "file": "taskw3css1.html",
+      "bytes": 6585,
+      "sha256": "1266e80e68201cf2df6c52662d8ffbf75c23e4706178e716b5a288ef7ccd7646",
+      "archive": "/style-course/originals/taskw3css1.html.txt"
+    },
+    {
+      "file": "wp1.html",
+      "bytes": 35524,
+      "sha256": "cd1b3637e41da0b4af37f63b1c2cf63c98aaff4f161a76f2acd1f2f3069426a0",
+      "archive": "/style-course/originals/wp1.html.txt"
+    },
+    {
+      "file": "wp2.html",
+      "bytes": 35524,
+      "sha256": "cd1b3637e41da0b4af37f63b1c2cf63c98aaff4f161a76f2acd1f2f3069426a0",
+      "archive": "/style-course/originals/wp2.html.txt"
+    },
+    {
+      "file": "webdesigning_notes.html",
+      "bytes": 28487,
+      "sha256": "41779fb171bef701e3b66a5550609517cb03420a57e20703918ab606dde4105d",
+      "archive": "/style-course/originals/webdesigning_notes.html.txt"
+    }
+  ],
+  "inspected": [
+    "angularjs.html",
+    "cssintro.html",
+    "csspage.html",
+    "cssproperties.html",
+    "javascript.html",
+    "task1.html",
+    "task2.html",
+    "task3.html",
+    "taskw3css.html",
+    "taskw3css1.html",
+    "w3css.html",
+    "web.html",
+    "webdesigning.html",
+    "webdesigning_notes.html",
+    "wp1.html",
+    "wp2.html"
+  ],
+  "excludedNonCss": [
+    "angularjs.html",
+    "javascript.html",
+    "web.html",
+    "webdesigning.html"
+  ],
+  "quizDuplicates": [
+    "wp1.html",
+    "wp2.html"
+  ],
+  "counts": {
+    "css": {
+      "lessons": 22,
+      "examples": 75,
+      "tasks": 3,
+      "questions": 15
+    },
+    "w3css": {
+      "lessons": 19,
+      "examples": 3,
+      "tasks": 2,
+      "questions": 10
+    }
+  },
+  "notesSource": "webdesigning_notes.html",
+  "imageRepairs": [
+    "img_avatar5.png",
+    "img_avatar6.png",
+    "https://via.placeholder.com/200",
+    "custom-marker.png",
+    "marker.png",
+    "image.jpg",
+    "/api/placeholder/200/200"
+  ],
+  "technicalClarifications": [
+    "Cascade and specificity use origin, importance and layers.",
+    "CSS3 is modular, not a single 2011 release.",
+    "Panels add padding/margins; borders must be requested with border classes.",
+    "W3.CSS buttons are not rounded unless a rounding class is added.",
+    "Interactive collapse/close behaviour needs JavaScript."
+  ]
+}
