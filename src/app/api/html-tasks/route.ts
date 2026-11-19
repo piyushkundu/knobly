@@ -3,11 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { getAdminDb } from '@/lib/firebase-admin';
+import { isTaskAdminPassword } from '@/lib/task-admin-password';
 
 // Force dynamic — serverless function must always execute live and not be statically cached
 export const dynamic = 'force-dynamic';
 
-const ADMIN_PASSWORD = '85338533';
 const ALL_TASK_IDS = ['1', '2', '3', '4', '5', '5.0', '5.1', '5.2', '5.3', '5.4', '6', '7', '8', '9', '10', '11', 'test-1'];
 
 // Persistent in-memory cache across requests within the same warm lambda
@@ -199,7 +199,7 @@ export async function POST(req: NextRequest) {
         const { password, taskId, action } = body;
 
         // Verify password strictly on server side
-        if (String(password).trim() !== ADMIN_PASSWORD) {
+        if (!isTaskAdminPassword(password)) {
             return NextResponse.json({ error: 'Galat Password! (Incorrect admin password)' }, { status: 401 });
         }
 

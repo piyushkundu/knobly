@@ -2,7 +2,8 @@
 
 The existing dashboard links continue to use `/web-design/css` and
 `/web-design/w3css`. Each now has chapters, notes, quiz, tasks, and a compiler.
-There are no Firebase, authentication, API, billing, or existing draft-key changes.
+Login, user records, billing and existing draft keys are unchanged. CSS task
+controls use a separate instructor-managed setting, described below.
 
 ## Import inventory
 
@@ -48,7 +49,9 @@ updates the highlighted sidebar chapter and current URL using native history;
 it does not reload the document or mark lessons complete. Direct chapter links,
 section anchors, reduced-motion jumps and browser history remain supported.
 Chapter content is memoized so changing the active chapter does not rerender all
-lesson examples. Example/reference/practice IDs are namespaced per chapter.
+lesson examples. Example/reference IDs are namespaced per chapter.
+CSS Syntax and CSS Selectors now come before Priorities of CSS. The curriculum
+order is applied by `getStyleCourse`; the imported source and lesson IDs stay intact.
 
 The first seven CSS chapters add illustrated explanations and interactive labs:
 HTML/CSS roles with a style toggle, six history milestones, shared rules and
@@ -84,6 +87,15 @@ Then run `node scripts/scope-style-lessons.mjs` and
 Do not add unrelated files to the public archive.
 
 ## Student state
+
+CSS tasks start locked. `/api/css-tasks` stores instructor unlocks only in
+`app_settings/css_tasks`, using the same server-only password verifier as the
+existing HTML task API. Instructors can lock/unlock one task or all CSS tasks.
+Changes use a transaction and return errors if persistence fails. No unsigned
+cookie, browser cache or local file can grant access. Direct CSS task and task
+compiler routes check the current setting on the server before rendering their
+content; storage errors show the locked screen. The ordinary lesson compiler
+and W3.CSS tasks remain available. Existing HTML task settings are unchanged.
 
 Course completion uses `knobly_style_progress_v1:<course>`.
 Compiler drafts use `knobly_style_draft_v1:<course>:<task-or-lesson>` and contain

@@ -60,7 +60,7 @@ function Methods() {
     return <ChapterBlock title="Where do you write the CSS?">
         <p className="fy-lead">Teen methods same style apply kar sakte hain. Farq yeh hai ki CSS kahan rakhi hai aur usse kitne elements/pages share kar sakte hain.</p>
         <div className="fy-choice-tabs" role="group" aria-label="CSS insertion methods">{METHOD_EXAMPLES.map((item,index)=><button key={item.name} type="button" aria-pressed={selected===index} onClick={()=>setSelected(index)}><span>0{index+1}</span>{item.name}</button>)}</div><div className="fy-method-workspace"><div><h3>{method.name} CSS</h3><p>{method.where}</p><span className="fy-scope-badge"><Layers size={12}/>{method.scope}</span>{method.files.map(file=><Snippet key={file.label} label={file.label} code={file.code}/>)}</div><div className="fy-method-output"><span>EXPECTED OUTPUT</span><p>Learning CSS</p><small>Blue text · 20px font size</small><div><Lightbulb size={16}/>{method.hint}</div></div></div>
-        <div className="fy-warning"><strong>Common confusion</strong><p>External CSS hamesha low priority aur internal CSS hamesha high priority nahi hoti. Normal internal/external rules ke beech matching, specificity aur source order matter karte hain. Agle chapter mein cascade dekhein.</p></div>
+        <div className="fy-warning"><strong>Common confusion</strong><p>External CSS hamesha low priority aur internal CSS hamesha high priority nahi hoti. Normal internal/external rules ke beech matching, specificity aur source order matter karte hain. Selectors ke baad Priorities of CSS chapter mein cascade dekhein.</p></div>
     </ChapterBlock>;
 }
 
