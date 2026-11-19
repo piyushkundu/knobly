@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowRight, BookOpen, Code2, ExternalLink, FileText, Target } from 'lucide-react';
+import { ArrowRight, BookOpen, Code2, Target } from 'lucide-react';
 import { courseSummary, getStyleCourse } from '@/lib/style-courses';
 import { lessonDraft } from '@/lib/style-course-demo';
 import type { StyleCourseId } from '@/lib/style-course-types';
 import CourseShell from './CourseShell';
 import CourseHub from './CourseHub';
-import LessonReader from './LessonReader';
+import CourseReader from './CourseReader';
+import LockedNotes from './LockedNotes';
 import CourseQuiz from './CourseQuiz';
 import StylePlayground from './StylePlayground';
 
@@ -16,7 +17,7 @@ export function StyleHome({ id }: { id: StyleCourseId }) {
 export function StyleLessonPage({ id, slug }: { id: StyleCourseId; slug: string }) {
     const course = getStyleCourse(id), lesson = course.lessons.find(item => item.id === slug);
     if (!lesson) notFound();
-    return <CourseShell course={id}><LessonReader key={`${id}:${slug}`} course={courseSummary(id)} lesson={lesson} demo={lessonDraft(id,lesson)} /></CourseShell>;
+    return <CourseShell course={id}><CourseReader key={id} course={courseSummary(id)} initialId={slug} chapters={course.lessons.map(item=>({lesson:item,demo:lessonDraft(id,item)}))}/></CourseShell>;
 }
 export function StyleTasksPage({ id }: { id: StyleCourseId }) {
     const course = getStyleCourse(id), base = `/web-design/${id}`;
@@ -32,7 +33,7 @@ export function StyleTaskPage({ id, taskId }: { id: StyleCourseId; taskId: strin
 }
 export function StyleNotesPage({ id }: { id: StyleCourseId }) {
     const course = getStyleCourse(id);
-    return <CourseShell course={id}><main className="sc-main"><section className="sc-hero sc-notes"><FileText size={44} /><div className="sc-kicker">HANDWRITTEN STUDY MATERIAL</div><h1>{course.name} handwritten notes</h1><p>Revise the course using the handwritten notes from your Web Designing collection.</p><p className="sc-hindi">Notes padhein, important points revise karein aur compiler mein examples try karein.</p><div className="sc-actions"><a className="sc-primary" href={course.notesUrl} target="_blank" rel="noopener noreferrer">Open handwritten notes<ExternalLink size={16} /></a><Link className="sc-secondary" href={`/web-design/${id}`}>Browse lessons<BookOpen size={16} /></Link></div><small>The PDF opens in Google Drive in a new tab.</small></section></main></CourseShell>;
+    return <CourseShell course={id}><main className="sc-main"><div className="sc-kicker">{course.name} STUDY MATERIAL</div><LockedNotes full/><div className="sc-actions"><Link className="sc-primary" href={`/web-design/${id}/learn/${course.lessons[0].id}`}><BookOpen size={16}/>Continue with illustrated lessons</Link><Link className="sc-secondary" href={`/web-design/${id}`}>Course overview</Link></div></main></CourseShell>;
 }
 export function StyleQuizPage({ id }: { id: StyleCourseId }) {
     const course = getStyleCourse(id);

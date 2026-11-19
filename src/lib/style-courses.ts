@@ -7,7 +7,7 @@ export function getStyleCourse(id: StyleCourseId): StyleCourse {
 export function courseSummary(id: StyleCourseId): CourseSummary {
     const course = getStyleCourse(id);
     return {
-        id, name: course.name, description: course.description, notesUrl: course.notesUrl,
+        id, name: course.name, description: course.description, notesUrl: '',
         lessons: course.lessons.map(({ id, title, group }) => ({ id, title, group })),
         tasks: course.tasks.map(({ id, title, subtitle, skills }) => ({ id, title, subtitle, skills })),
         quizCount: course.quiz.length,

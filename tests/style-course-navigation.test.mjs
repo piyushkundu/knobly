@@ -87,6 +87,8 @@ test('lesson file tabs retain the supplied example and show its result in an iso
         './CourseProgress': { default: () => null, useCourseProgress: () => ({ completed: [lesson.id] }) },
         '@/lib/style-course-demo': { previewDocument },
         './VisualLessonLab': { default: () => null },
+        './FoundationLesson': { default: () => null },
+        './LockedNotes': { default: () => null },
     });
     const props = { course: { ...course, id: 'css' }, lesson, demo };
     let tree = render(props);
@@ -198,6 +200,7 @@ test('restored panel controls open inline-hidden content and reject elements out
     const render=harness('src/components/style-course/LessonReader.tsx',{
         'next/image':{default:()=>null}, './CourseProgress':{default:()=>null,useCourseProgress:()=>({completed:[]})},
         '@/lib/style-course-demo':{previewDocument}, './VisualLessonLab':{default:()=>null},
+        './FoundationLesson':{default:()=>null}, './LockedNotes':{default:()=>null},
     });
     const course={...data.w3css,id:'w3css'};
     const lesson=course.lessons.find(item=>item.id==='collapsible-panel');

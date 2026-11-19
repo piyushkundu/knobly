@@ -55,6 +55,8 @@ test('all 41 lessons render tables, nested examples and void elements without re
         './CourseProgress':{default:()=>null,useCourseProgress:()=>({completed:[]})},
         '@/lib/style-course-demo':{previewDocument},
         './VisualLessonLab':{default:()=>null},
+        './FoundationLesson':{default:()=>null},
+        './LockedNotes':{default:()=>null},
     });
     let count=0;
     for(const [id,course] of Object.entries(data))for(const lesson of course.lessons){

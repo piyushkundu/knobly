@@ -36,7 +36,27 @@ All 45 handwritten CSS PDF pages and 10 W3.CSS PDF pages were visually reviewed.
 float/clear, font variant, background attachment/repeat and worked layouts.
 Invalid notebook declarations are corrected and original archives stay intact.
 The notebook's final HTML validation pages link to the existing HTML curriculum.
-Each relevant lesson lists its handwritten PDF page numbers.
+The page-number mappings stay in the content audit. Handwritten notes are
+temporarily locked in the course UI: the notes route shows Coming Soon, the
+home module is disabled, and the client course summary supplies no PDF URL.
+Original source archives and their historical links are retained unchanged.
+
+## Continuous reading and foundations
+
+Each learning route renders the full course as one continuous document. Scrolling
+updates the highlighted sidebar chapter and current URL using native history;
+it does not reload the document or mark lessons complete. Direct chapter links,
+section anchors, reduced-motion jumps and browser history remain supported.
+Chapter content is memoized so changing the active chapter does not rerender all
+lesson examples. Example/reference/practice IDs are namespaced per chapter.
+
+The first seven CSS chapters add illustrated explanations and interactive labs:
+HTML/CSS roles with a style toggle, six history milestones, shared rules and
+responsive wrapping, three insertion methods, a controlled cascade lab, editable
+syntax, and 15 selector examples with matched-element highlighting. Hover and
+focus are separate states; pseudo-elements have a first-letter demonstration.
+Each foundation chapter also has a short knowledge check. Animations respect
+reduced-motion preferences. These labs use temporary state only.
 
 `docs/STYLE_LESSON_COVERAGE.json` records the audit: all 41 lesson IDs,
 797 original text leaves and 78 original code examples retained, with four

@@ -3,7 +3,7 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 import { ArrowRight, Braces, Eye, MousePointer2, SlidersHorizontal } from 'lucide-react';
 
 function Lab({ title, description, children }: { title:string; description:string; children:ReactNode }) {
-    return <section id="lesson-visual" className="sc-card vl-lab"><div className="vl-heading"><span><SlidersHorizontal size={19}/></span><div><small>LEARN BY SEEING</small><h2>{title}</h2></div><b><span/>Interactive</b></div><p className="vl-intro">{description}</p>{children}</section>;
+    return <section className="sc-card vl-lab"><div className="vl-heading"><span><SlidersHorizontal size={19}/></span><div><small>LEARN BY SEEING</small><h2>{title}</h2></div><b><span/>Interactive</b></div><p className="vl-intro">{description}</p>{children}</section>;
 }
 function Code({ children }: { children:string }) { return <pre className="vl-code"><code>{children}</code></pre>; }
 function Range({ label, value, min=0, max=40, change }: {label:string;value:number;min?:number;max?:number;change:(value:number)=>void}) {
