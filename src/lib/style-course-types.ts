@@ -3,7 +3,7 @@ export interface CourseNode { text?: string; code?: string; tag?: string; attrs?
 export interface StyleDraft { html: string; css: string }
 export interface StyleLesson {
     id: string; title: string; group: string; summary: string; remember: string; practice: string;
-    source: string; nodes: CourseNode[]; examples: string[]; visual?: string; demo?: StyleDraft;
+    source: string; nodes: CourseNode[]; examples: string[]; visual?: string; demo?: StyleDraft; notesPages?: number[];
 }
 export interface StyleTask {
     id: string; title: string; subtitle: string; source: string; steps: string[]; skills: string[];

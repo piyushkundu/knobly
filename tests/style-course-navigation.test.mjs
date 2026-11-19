@@ -19,7 +19,7 @@ function load(file, deps = {}) {
     return exports;
 }
 const { lessonDraft, previewDocument } = load('src/lib/style-course-demo.ts');
-function harness(file, deps = {}) {
+function harness(file, deps = {}, deep = false) {
     const states = [];
     let cursor = 0;
     const react = { ...React, useState(initial) {
@@ -28,7 +28,13 @@ function harness(file, deps = {}) {
         return [states[index], value => { states[index] = typeof value === 'function' ? value(states[index]) : value; }];
     } };
     const { default: Component } = load(file, { react, 'react/jsx-runtime': runtime, 'next/link': link, 'lucide-react': icons, ...deps });
-    return props => { cursor = 0; return Component(props); };
+    return props => { cursor = 0; const element=Component(props); return deep ? resolve(element) : element; };
+}
+function resolve(node) {
+    if (Array.isArray(node)) return node.map(resolve);
+    if (!React.isValidElement(node)) return node;
+    if (typeof node.type === 'function') return resolve(node.type(node.props));
+    return React.cloneElement(node, {}, resolve(node.props.children));
 }
 function walk(node, predicate) {
     if (Array.isArray(node)) return node.flatMap(child => walk(child, predicate));
@@ -80,6 +86,7 @@ test('lesson file tabs retain the supplied example and show its result in an iso
         'next/image': { default: () => null },
         './CourseProgress': { default: () => null, useCourseProgress: () => ({ completed: [lesson.id] }) },
         '@/lib/style-course-demo': { previewDocument },
+        './VisualLessonLab': { default: () => null },
     });
     const props = { course: { ...course, id: 'css' }, lesson, demo };
     let tree = render(props);
@@ -128,4 +135,86 @@ test('compact course navigation opens, closes after choosing a destination, and 
         assert.equal(compiler.props.href, `/web-design/${course}/compiler`);
         assert.match(compiler.props['aria-label'], /web compiler/);
     }
+});
+
+test('border controls change the drawing and the copyable CSS together, including no-border styles', () => {
+    const render=harness('src/components/style-course/VisualLessonLab.tsx',{},true);
+    const props={course:'css',lesson:'border-properties'};
+    let tree=render(props);
+    assert.equal(walk(tree,hasClass('vl-border-gallery'))[0].props.children.length,10);
+    const select=walk(tree,node=>node.type==='select')[0];
+    select.props.onChange({target:{value:'double'}});
+    input(tree,'Border width').props.onChange({target:{value:'12'}});
+    input(tree,'Corner radius').props.onChange({target:{value:'30'}});
+    tree=render(props);
+    const drawing=walk(tree,hasClass('vl-border-stage'))[0].props.children;
+    assert.equal(drawing.props.style.borderStyle,'double');
+    assert.equal(drawing.props.style.borderWidth,12);
+    assert.equal(drawing.props.style.borderRadius,30);
+    assert.match(text(walk(tree,hasClass('vl-code'))[0]),/border: 12px double/);
+    button(walk(tree,hasClass('vl-border-gallery'))[0],'hidden').props.onClick();
+    tree=render(props);
+    assert.equal(walk(tree,hasClass('vl-border-stage'))[0].props.children.props.style.borderStyle,'hidden');
+    assert.match(text(walk(tree,hasClass('vl-code'))[0]),/12px hidden/);
+});
+
+test('box width includes both padding and border sides while keeping margin outside', () => {
+    const render=harness('src/components/style-course/VisualLessonLab.tsx',{},true);
+    const props={course:'css',lesson:'css-box-model-comprehensive-guide'};
+    let tree=render(props);
+    input(tree,'Padding (inside)').props.onChange({target:{value:'30'}});
+    input(tree,'Border thickness').props.onChange({target:{value:'10'}});
+    input(tree,'Margin (outside)').props.onChange({target:{value:'40'}});
+    tree=render(props);
+    assert.match(text(walk(tree,hasClass('vl-maths'))[0]),/240px/);
+    assert.match(text(walk(tree,hasClass('vl-maths'))[0]),/80px of horizontal space outside/);
+    assert.equal(walk(tree,hasClass('vl-padding-layer'))[0].props.style.padding,30);
+    assert.equal(walk(tree,hasClass('vl-margin-layer'))[0].props.style.padding,40);
+    assert.match(text(walk(tree,hasClass('vl-code'))[0]),/padding: 30px/);
+});
+
+test('flex direction changes the displayed main axis and selector examples distinguish children from descendants', () => {
+    const flex=harness('src/components/style-course/VisualLessonLab.tsx',{},true);
+    const props={course:'css',lesson:'display-flex'};
+    let tree=flex(props);
+    walk(tree,node=>node.type==='select')[0].props.onChange({target:{value:'column'}});
+    tree=flex(props);
+    assert.match(text(walk(tree,hasClass('vl-axis'))[0]),/Main axis: vertical/);
+    assert.equal(walk(tree,hasClass('vl-flex-stage'))[0].props.style.flexDirection,'column');
+    assert.match(text(walk(tree,hasClass('vl-code'))[0]),/flex-direction: column/);
+    const selectors=harness('src/components/style-course/VisualLessonLab.tsx',{},true);
+    const selectorProps={course:'css',lesson:'css-selectors'};
+    tree=selectors(selectorProps);
+    assert.equal(walk(tree,hasClass('is-match')).length,2);
+    button(tree,'.card > p').props.onClick();
+    tree=selectors(selectorProps);
+    assert.equal(walk(tree,hasClass('is-match')).length,1);
+    assert.match(text(walk(tree,hasClass('is-match'))[0]),/Direct child/);
+    button(tree,'section + p').props.onClick();
+    assert.match(text(walk(selectors(selectorProps),hasClass('is-match'))[0]),/Following sibling/);
+});
+
+test('restored panel controls open inline-hidden content and reject elements outside their lesson', () => {
+    const render=harness('src/components/style-course/LessonReader.tsx',{
+        'next/image':{default:()=>null}, './CourseProgress':{default:()=>null,useCourseProgress:()=>({completed:[]})},
+        '@/lib/style-course-demo':{previewDocument}, './VisualLessonLab':{default:()=>null},
+    });
+    const course={...data.w3css,id:'w3css'};
+    const lesson=course.lessons.find(item=>item.id==='collapsible-panel');
+    const tree=render({course,lesson,demo:lessonDraft('w3css',lesson)});
+    const source=walk(tree,hasClass('sc-rich-source'))[0];
+    let active=true;
+    const panel={hidden:false,style:{display:'none'},classList:{contains:()=>false,remove(){}}};
+    const toggle={dataset:{lessonToggle:'demo-panel'},setAttribute(name,value){this[name]=value;}};
+    const target={closest(selector){return selector==='[data-lesson-toggle]'?toggle:null;}};
+    const currentTarget={contains:()=>active,querySelector(selector){assert.equal(selector,'[id="demo-panel"]');return panel;}};
+    source.props.onClick({target,currentTarget});
+    assert.equal(panel.style.display,'');
+    assert.equal(panel.hidden,false);
+    assert.equal(toggle['aria-expanded'],'true');
+    source.props.onClick({target,currentTarget});
+    assert.equal(panel.hidden,true);
+    active=false;
+    source.props.onClick({target,currentTarget});
+    assert.equal(panel.hidden,true);
 });

@@ -16,7 +16,7 @@ export function StyleHome({ id }: { id: StyleCourseId }) {
 export function StyleLessonPage({ id, slug }: { id: StyleCourseId; slug: string }) {
     const course = getStyleCourse(id), lesson = course.lessons.find(item => item.id === slug);
     if (!lesson) notFound();
-    return <CourseShell course={id}><LessonReader course={courseSummary(id)} lesson={lesson} demo={lessonDraft(id,lesson)} /></CourseShell>;
+    return <CourseShell course={id}><LessonReader key={`${id}:${slug}`} course={courseSummary(id)} lesson={lesson} demo={lessonDraft(id,lesson)} /></CourseShell>;
 }
 export function StyleTasksPage({ id }: { id: StyleCourseId }) {
     const course = getStyleCourse(id), base = `/web-design/${id}`;

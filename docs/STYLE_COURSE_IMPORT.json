@@ -104,13 +104,13 @@
   "counts": {
     "css": {
       "lessons": 22,
-      "examples": 75,
+      "examples": 110,
       "tasks": 3,
       "questions": 15
     },
     "w3css": {
       "lessons": 19,
-      "examples": 3,
+      "examples": 49,
       "tasks": 2,
       "questions": 10
     }

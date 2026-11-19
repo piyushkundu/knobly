@@ -1,0 +1,932 @@
+{
+  "baselineCommit": "eb64816ead5cc533745605e8ae22c71c4f4415c8",
+  "lessons": [
+    {
+      "course": "css",
+      "lesson": "what-is-css",
+      "originalTextLeaves": 10,
+      "originalExampleHashes": [],
+      "exampleCount": 0,
+      "styledNodes": 10,
+      "notesPages": [
+        1
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "evolution-of-css",
+      "originalTextLeaves": 9,
+      "originalExampleHashes": [],
+      "exampleCount": 0,
+      "styledNodes": 6,
+      "notesPages": []
+    },
+    {
+      "course": "css",
+      "lesson": "characteristics-of-css",
+      "originalTextLeaves": 9,
+      "originalExampleHashes": [],
+      "exampleCount": 0,
+      "styledNodes": 5,
+      "notesPages": [
+        1
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "three-ways-to-insert-css",
+      "originalTextLeaves": 14,
+      "originalExampleHashes": [
+        "f7a3452f7790b7fc08a7c31b0518dc6115d5c2c6e6bd2ad0344cf3d6393215ae",
+        "dfac221faf8d104a91bcb6bf1fa36a17cf710b5462649801cf386299ec0361d5",
+        "eba0cb47662861adcd89bd97e33517a44fdd078b0d144fe3e72875e91d51b5bd",
+        "676d84b7e837a1be0a6cd506d3607e48346d0f945cbda810fd0cc8a38dc0ca01"
+      ],
+      "exampleCount": 4,
+      "styledNodes": 8,
+      "notesPages": [
+        2,
+        3
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "priorities-of-css",
+      "originalTextLeaves": 12,
+      "originalExampleHashes": [
+        "804f0cf85ce2dd51c706ffd38e4d84fe29d57bb3ae9fdb1389d9b85375dbcdd6",
+        "7f6a6b7777f84921e5275383c668fcffacb032a7e10eff6e029bb702a5a44b13",
+        "80c4999da256173b97a98553cee0876ff888d57f6ef75c779f6ea95142b2bdf3",
+        "5b4c7b8ba661fc4d338a7185ea713b041c55973db901460266de9f0b0b3224d0",
+        "412a8b8222aa3f109e647d5ddef591fb81c93ad842561bc6d4ffc015a5497d1e"
+      ],
+      "exampleCount": 5,
+      "styledNodes": 7,
+      "notesPages": [
+        4
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "css-syntax",
+      "originalTextLeaves": 9,
+      "originalExampleHashes": [
+        "cec96b398ef4f9cffa1eb612f9d8f25a5905eaf66749f72f4bfae78c4e39bab0",
+        "e2f60201cd2760a59ce35e19652cb8037b1db647800b99219e1edb1937f1d43d",
+        "0bcb83ffd717640bea827c3181d6faee3824483abb7fcc633fc17a9616351ad9",
+        "79741bc81f18c599160f97a982b888e40a21df7ddf8efeb5f168d548553a15b8",
+        "cba79c8120873b51aac746ea5349b0b6938e90b476074b6d43b7d8f39bce9dd4"
+      ],
+      "exampleCount": 5,
+      "styledNodes": 5,
+      "notesPages": [
+        4
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "css-selectors",
+      "originalTextLeaves": 23,
+      "originalExampleHashes": [
+        "d728b841ade833d8782be4b010d92c43662577bf11e179f891914f12dedcefa0",
+        "7bbb07741c6a4ad73392794bd4d3d153a9cca54b249ecd491f11dac1f39406a3",
+        "8c20dcd3b46c948ef14bd4b39db23465c966bc0be485cdb85afa2b832f89749a",
+        "50b2338426485eb7181633e10967a9ed654f53114fa9033638749e5b3671a818",
+        "d8fb4eeccc2192885ff39429c98a4751d01e3272bc08ed3a3b5b2e4549d11f07",
+        "00df910393e974a9984825f4f6fa111246cc0d4c48a1c84a13aed70f3fb80d5e",
+        "b70b79961e10bb8fe0e16366f4bbd718c7be22d5deef336562c5dc824c417552",
+        "36ab2288778ed20e2facc7eab9fd13876ed699e78c2f92b281cae9a228b8806d",
+        "70a9c25945a5cfe89e67532821948bea0db018342d9180c079c925742ed395b7",
+        "47f25af1b9b2c28a61c08ece5902634fed632961c460a43e2243d1ffcb2ae584",
+        "7463a6d31861db9295de580d294b8779ba6191a7a14d7203f638d65bb5ecee09"
+      ],
+      "exampleCount": 13,
+      "styledNodes": 17,
+      "notesPages": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "border-properties",
+      "originalTextLeaves": 31,
+      "originalExampleHashes": [
+        "1997917a11b5fbf3935e8650a1e26a748e468932a75c55c593a03cc858ffe350",
+        "539a08269eef5603f6556d47b9841bb37cbbc3390a132ea6eeafc768b2284e8a",
+        "ed7aa219c35e1bd4780cfc86d8551b8e3b34dcf3ed36a976c5953d629d3b75fd",
+        "acd14fda3f390ffab7fc2ff1db211d538d7b3eb9dcf291a7bd216d138b19f314",
+        "c99beda02b7f9c3dfd282fd26f4b4441b76d820406e107500d89584b09a8042f",
+        "e080325e154c60b0d6772ddbf60024c87ea1bf2283b983a180e22d79220bc833",
+        "ed22ef72fe0e843ee2cf91f5f3e154a7fb6f6c06c258241cdbfb853bebdad31c",
+        "88e80d63dad242d76a11e61c96316a899c2b627d6f1c74b6a17c43c3a6c938b1",
+        "35be45ccbd168bd5b543e0cc96b31a72291dbb5ae807809aa45a9389f0e8fc8a",
+        "2d32fc82632747ae6201ab6a117a5a0a8b799162922a2f4d5a16db3364e7deee",
+        "9556a485834dd079c9887764b6253cb0de05687bfed79788c5bbe96b36f467e1",
+        "0ce3aabd1f8c9f73ae3caf6ca167a156f49258c710328c3f2a5561f8cb5e45c5",
+        "1ceb572300f76e43992dd9c2d0d1fdfcdd1b5c528dcbc35eee29df81cbe026a6",
+        "7383a06bf4625d5a3da3f8d7c7c0306abeb45c293fd78ba7588b899f70035e83",
+        "99149e929bab2e071f8a69f5d70632ea2f83fdd8b2f95d17f5c8d1221a7b4998",
+        "471c295148778e7f0a93d0eb6965d36cf9c89e1403a2c42646f0c54a6b70dacf"
+      ],
+      "exampleCount": 21,
+      "styledNodes": 35,
+      "notesPages": [
+        11,
+        12,
+        13,
+        26,
+        27
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "display-property",
+      "originalTextLeaves": 75,
+      "originalExampleHashes": [
+        "f346fd5727d2626951a67859e5f172a16fcb78b96d5e751aba3df6d5b0fb0e03",
+        "dacc3d0830ec28f39e7f645694869e188e6268bab2225eec2f05ec1899bcabd4",
+        "0823d7861dc9eb84da86d099366915e2ab6f902da348ab917be5c2deca8d31a8"
+      ],
+      "exampleCount": 5,
+      "styledNodes": 23,
+      "notesPages": [
+        13,
+        14,
+        15,
+        16,
+        28
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "display-flex",
+      "originalTextLeaves": 20,
+      "originalExampleHashes": [
+        "6a855b2b4e73b7284755ebd32cc714ac328f6b549d2f3eb3d8c8e9401f3996ab"
+      ],
+      "exampleCount": 4,
+      "styledNodes": 13,
+      "notesPages": [
+        16,
+        17,
+        18,
+        19,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "css-box-model-comprehensive-guide",
+      "originalTextLeaves": 6,
+      "originalExampleHashes": [
+        "d20835cbca18b9a0c5c7524d9db79656bd2a6af2ebffc284641cc39fe5b837c4"
+      ],
+      "exampleCount": 2,
+      "styledNodes": 9,
+      "notesPages": [
+        24,
+        25,
+        26,
+        27,
+        28
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "box-shadow",
+      "originalTextLeaves": 17,
+      "originalExampleHashes": [
+        "145f28e936c544d5cfee1bafc6ff24a9b95bb8b54c3623c946170c2a4fc8bcf2"
+      ],
+      "exampleCount": 2,
+      "styledNodes": 5,
+      "notesPages": [
+        33,
+        41,
+        42
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "box-sizing",
+      "originalTextLeaves": 15,
+      "originalExampleHashes": [
+        "4eb2bb082d61e1d8832477c32704d06afa2bdcfaf4f652bc201cf0d68002b517"
+      ],
+      "exampleCount": 1,
+      "styledNodes": 2,
+      "notesPages": []
+    },
+    {
+      "course": "css",
+      "lesson": "box-decoration-break",
+      "originalTextLeaves": 14,
+      "originalExampleHashes": [
+        "0cbac3270f2ffeaf1be689ba95932ae70684422eebfb58561016d2d686f13376"
+      ],
+      "exampleCount": 1,
+      "styledNodes": 1,
+      "notesPages": []
+    },
+    {
+      "course": "css",
+      "lesson": "list-styles",
+      "originalTextLeaves": 45,
+      "originalExampleHashes": [
+        "fa1cf05bb69143f2e275ea80e06386f7cd9a2c3dc64f1850008f8dfcc85ffe7b",
+        "780541cad264de1f23db98b6ef397560f6364707a7a21a031e8e6a5d4e0d77a8",
+        "87b1be15a31830b40c3d9b507c2944659f9ef1de4f63573c7496127e6c63b025",
+        "c895119321a83ec01acedb1d18443e461c4024a57f6e1a5a1fc3bc50e267c0fa",
+        "1c2b666b6a31d33802c471fbcdb2dd65c2080c4bd76d1ed7c0286d9c83cf3566"
+      ],
+      "exampleCount": 5,
+      "styledNodes": 16,
+      "notesPages": [
+        23,
+        24
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "text-properties",
+      "originalTextLeaves": 27,
+      "originalExampleHashes": [
+        "d45d2e74dbb22c0f827064d0711602898bcf4756467c63cff59d7560db42c311",
+        "747469cfdbfd018e6f46966138e410cc9af793f95f5f078f15fca260ac2e216c"
+      ],
+      "exampleCount": 11,
+      "styledNodes": 29,
+      "notesPages": [
+        20,
+        22,
+        23
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "font-properties",
+      "originalTextLeaves": 48,
+      "originalExampleHashes": [],
+      "exampleCount": 3,
+      "styledNodes": 24,
+      "notesPages": [
+        19,
+        20
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "background-properties",
+      "originalTextLeaves": 18,
+      "originalExampleHashes": [
+        "8af1675df70dab36ac627970fda846e78d0c4c26632898b84970ea4119ca4c32",
+        "34db9fa69a6d66d93b8f803232521bad57d23d8f231eed2ee764766c5f0dcafe",
+        "8333290d6e537c6dfe510aacb76ee9eb4cfea0ace61a954f73ba338dd26c16d8",
+        "f0abd301a4836a9f14b3626bc0ea39cc8360a6f9d92d103f57fb4305ffa6bdaf",
+        "9ca690db0365e4a59e6dda1c66924f936793d1add7d007b11bf672e910477cd2"
+      ],
+      "exampleCount": 14,
+      "styledNodes": 19,
+      "notesPages": [
+        20,
+        21,
+        35
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "css-position-properties",
+      "originalTextLeaves": 28,
+      "originalExampleHashes": [
+        "7d0ad05b9442a9a6b05908400a42f5fc0c72a78cb4b409615ac1490f6be0f572",
+        "801b1a02e6de9925a45d0f3ac079be2bbc81fd83ddb1434ee75e295183d0770c",
+        "87324b156416a19d6984c9ef91095739f67db75840ce3e8d4a6040e0c78253b1",
+        "838383c352de425232769b10184a931d73da9eca597d97a02f87d022dc8489f6",
+        "b730bf9d61969542347b15d6abaadcf53abbf66bc0f77eb298e2b2c7893a77d8"
+      ],
+      "exampleCount": 5,
+      "styledNodes": 7,
+      "notesPages": [
+        29,
+        30,
+        31,
+        32
+      ]
+    },
+    {
+      "course": "css",
+      "lesson": "css-table-properties",
+      "originalTextLeaves": 68,
+      "originalExampleHashes": [
+        "784f0f4d79814fdf1ce2e321a9116941c1244904871f73ae91ef3ae0696d771b",
+        "07c08bc4043b64abbcd10b87e9c5cff654fbdf75e164db58500954f2e4bef95f",
+        "79f5961359072ee7c388d31244e0123df3d2edde8ff9f97a4c202f79e702f69b",
+        "eb3d1112ead0d366bce4cbdb66c896a667061217428feff0481e3820e93331f5",
+        "504de71281be3f064f1b2683b58255e898f2484e37f601a3f8cc9ff93a000915"
+      ],
+      "exampleCount": 5,
+      "styledNodes": 4,
+      "notesPages": []
+    },
+    {
+      "course": "css",
+      "lesson": "grid-layout",
+      "originalTextLeaves": 0,
+      "originalExampleHashes": [
+        "30019011559582d30b3a48a8e2db915a2685a73ad66d4f84d901fefbf3ef901a",
+        "6f2874e5152b0e75451708d696e58a220ed3ec87751c1fd13def4cc616967d37"
+      ],
+      "exampleCount": 2,
+      "styledNodes": 0,
+      "notesPages": []
+    },
+    {
+      "course": "css",
+      "lesson": "responsive-design",
+      "originalTextLeaves": 0,
+      "originalExampleHashes": [
+        "30019011559582d30b3a48a8e2db915a2685a73ad66d4f84d901fefbf3ef901a",
+        "cd8b4957cea17d7ab01698fc1dd9b283c6b17d875991ece6cb7887286d50fe25"
+      ],
+      "exampleCount": 2,
+      "styledNodes": 0,
+      "notesPages": []
+    },
+    {
+      "course": "w3css",
+      "lesson": "what-is-a-web-framework",
+      "originalTextLeaves": 6,
+      "originalExampleHashes": [],
+      "exampleCount": 1,
+      "styledNodes": 7,
+      "notesPages": [
+        1
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "discover-w3-css-your-design-superpower",
+      "originalTextLeaves": 7,
+      "originalExampleHashes": [],
+      "exampleCount": 0,
+      "styledNodes": 14,
+      "notesPages": [
+        1
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "how-to-use-w3-css",
+      "originalTextLeaves": 7,
+      "originalExampleHashes": [
+        "993899daeafa4252614f092bb1119319633fe0430a702982c5cb97a2bf4aee74"
+      ],
+      "exampleCount": 4,
+      "styledNodes": 11,
+      "notesPages": [
+        1,
+        2,
+        4
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-classes-colors-and-hover-effects",
+      "originalTextLeaves": 26,
+      "originalExampleHashes": [],
+      "exampleCount": 4,
+      "styledNodes": 20,
+      "notesPages": [
+        2,
+        3
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-border-classes",
+      "originalTextLeaves": 46,
+      "originalExampleHashes": [],
+      "exampleCount": 4,
+      "styledNodes": 31,
+      "notesPages": [
+        3
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-font-size-classes",
+      "originalTextLeaves": 18,
+      "originalExampleHashes": [],
+      "exampleCount": 1,
+      "styledNodes": 7,
+      "notesPages": [
+        4
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-text-classes",
+      "originalTextLeaves": 20,
+      "originalExampleHashes": [],
+      "exampleCount": 1,
+      "styledNodes": 12,
+      "notesPages": [
+        5
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-table-classes",
+      "originalTextLeaves": 24,
+      "originalExampleHashes": [],
+      "exampleCount": 7,
+      "styledNodes": 19,
+      "notesPages": [
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-container",
+      "originalTextLeaves": 5,
+      "originalExampleHashes": [],
+      "exampleCount": 0,
+      "styledNodes": 3,
+      "notesPages": [
+        7
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-panel",
+      "originalTextLeaves": 5,
+      "originalExampleHashes": [],
+      "exampleCount": 1,
+      "styledNodes": 4,
+      "notesPages": [
+        7,
+        8
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-rounded-panel",
+      "originalTextLeaves": 7,
+      "originalExampleHashes": [],
+      "exampleCount": 1,
+      "styledNodes": 4,
+      "notesPages": [
+        7,
+        8
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-button",
+      "originalTextLeaves": 12,
+      "originalExampleHashes": [],
+      "exampleCount": 2,
+      "styledNodes": 10,
+      "notesPages": [
+        8
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-display-container",
+      "originalTextLeaves": 7,
+      "originalExampleHashes": [],
+      "exampleCount": 2,
+      "styledNodes": 8,
+      "notesPages": [
+        8
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "collapsible-panel",
+      "originalTextLeaves": 9,
+      "originalExampleHashes": [],
+      "exampleCount": 1,
+      "styledNodes": 9,
+      "notesPages": [
+        8
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-display-positions",
+      "originalTextLeaves": 10,
+      "originalExampleHashes": [],
+      "exampleCount": 1,
+      "styledNodes": 6,
+      "notesPages": [
+        8
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-lists",
+      "originalTextLeaves": 49,
+      "originalExampleHashes": [],
+      "exampleCount": 9,
+      "styledNodes": 44,
+      "notesPages": [
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "w3-css-image-classes",
+      "originalTextLeaves": 41,
+      "originalExampleHashes": [],
+      "exampleCount": 8,
+      "styledNodes": 33,
+      "notesPages": [
+        10
+      ]
+    },
+    {
+      "course": "w3css",
+      "lesson": "responsive-grid",
+      "originalTextLeaves": 0,
+      "originalExampleHashes": [
+        "eb5b83c303276ab5f8d7c34faaf6ee9e530726e887dab44a85e2fe0d8555c88b"
+      ],
+      "exampleCount": 1,
+      "styledNodes": 0,
+      "notesPages": []
+    },
+    {
+      "course": "w3css",
+      "lesson": "cards-and-animations",
+      "originalTextLeaves": 0,
+      "originalExampleHashes": [
+        "b9d775a6ebac74516fb35315584fd0fe6483257a9a53c906c34299ce33743dd4"
+      ],
+      "exampleCount": 1,
+      "styledNodes": 0,
+      "notesPages": []
+    }
+  ],
+  "clarifications": {
+    "Aligns items horizontally": "Aligns items along the main axis (set by flex-direction)",
+    "Aligns items vertically": "Aligns items along the cross axis",
+    "Fixed and sticky elements are positioned relative to the browser viewport.": "Fixed elements usually use the viewport; a transformed ancestor can create their containing block. Sticky uses its nearest scrolling ancestor and stays within its containing block.",
+    "Toggles between relative and fixed positioning based on scroll position.": "Stays in normal flow, then sticks to an inset within its scrolling container and containing block."
+  },
+  "missing": [],
+  "handwrittenCssProperties": [
+    "align-items",
+    "background",
+    "background-attachment",
+    "background-color",
+    "background-image",
+    "background-repeat",
+    "border",
+    "border-bottom",
+    "border-bottom-color",
+    "border-bottom-style",
+    "border-bottom-width",
+    "border-color",
+    "border-left",
+    "border-left-color",
+    "border-left-style",
+    "border-left-width",
+    "border-radius",
+    "border-right",
+    "border-right-color",
+    "border-right-style",
+    "border-right-width",
+    "border-style",
+    "border-top",
+    "border-top-color",
+    "border-top-style",
+    "border-top-width",
+    "border-width",
+    "bottom",
+    "clear",
+    "color",
+    "display",
+    "flex-direction",
+    "float",
+    "font",
+    "font-family",
+    "font-size",
+    "font-style",
+    "font-variant",
+    "font-weight",
+    "gap",
+    "height",
+    "justify-content",
+    "left",
+    "letter-spacing",
+    "line-height",
+    "list-style",
+    "list-style-image",
+    "list-style-position",
+    "list-style-type",
+    "margin",
+    "margin-bottom",
+    "margin-left",
+    "margin-right",
+    "margin-top",
+    "padding",
+    "padding-bottom",
+    "padding-left",
+    "padding-right",
+    "padding-top",
+    "position",
+    "right",
+    "text-align",
+    "text-decoration",
+    "text-indent",
+    "text-transform",
+    "top",
+    "transition",
+    "vertical-align",
+    "width",
+    "word-spacing"
+  ],
+  "notes": {
+    "css": {
+      "driveId": "1CVoM8VfnFLxc5tuTDcpjHWZAKUKaaDLA",
+      "pagesReviewed": 45,
+      "coverage": [
+        {
+          "pages": [
+            1
+          ],
+          "topics": "Introduction and characteristics",
+          "lessons": [
+            "what-is-css",
+            "characteristics-of-css"
+          ]
+        },
+        {
+          "pages": [
+            2,
+            3
+          ],
+          "topics": "Inline, internal, external CSS",
+          "lessons": [
+            "three-ways-to-insert-css"
+          ]
+        },
+        {
+          "pages": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "topics": "Syntax, cascade, selectors, multiple classes",
+          "lessons": [
+            "css-syntax",
+            "priorities-of-css",
+            "css-selectors"
+          ]
+        },
+        {
+          "pages": [
+            11,
+            12,
+            13,
+            26,
+            27
+          ],
+          "topics": "Borders and all side longhands",
+          "lessons": [
+            "border-properties"
+          ]
+        },
+        {
+          "pages": [
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            28
+          ],
+          "topics": "Display, navigation, dimensions, float and clear",
+          "lessons": [
+            "display-property",
+            "display-flex"
+          ]
+        },
+        {
+          "pages": [
+            19,
+            20
+          ],
+          "topics": "Font family, size, weight, variant and shorthand",
+          "lessons": [
+            "font-properties"
+          ]
+        },
+        {
+          "pages": [
+            20,
+            21,
+            35
+          ],
+          "topics": "Colour, backgrounds, repeat, attachment, gradients",
+          "lessons": [
+            "background-properties"
+          ]
+        },
+        {
+          "pages": [
+            22,
+            23
+          ],
+          "topics": "Text, spacing, vertical alignment and case",
+          "lessons": [
+            "text-properties"
+          ]
+        },
+        {
+          "pages": [
+            23,
+            24
+          ],
+          "topics": "List markers and shorthand",
+          "lessons": [
+            "list-styles"
+          ]
+        },
+        {
+          "pages": [
+            24,
+            25,
+            26
+          ],
+          "topics": "Margin and padding on all four sides",
+          "lessons": [
+            "css-box-model-comprehensive-guide"
+          ]
+        },
+        {
+          "pages": [
+            29,
+            30,
+            31,
+            32
+          ],
+          "topics": "All five positioning modes",
+          "lessons": [
+            "css-position-properties"
+          ]
+        },
+        {
+          "pages": [
+            33,
+            41,
+            42
+          ],
+          "topics": "Hover, transition and image gallery",
+          "lessons": [
+            "box-shadow",
+            "display-flex"
+          ]
+        },
+        {
+          "pages": [
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42
+          ],
+          "topics": "Form card, news layout and image gallery worked examples",
+          "lessons": [
+            "display-flex"
+          ]
+        },
+        {
+          "pages": [
+            43,
+            44,
+            45
+          ],
+          "topics": "HTML required and pattern validation",
+          "route": "/html/elements",
+          "crossLinkedFrom": "display-flex"
+        }
+      ]
+    },
+    "w3css": {
+      "driveId": "1CWZRb_lQCn65zLUSEbRnihxyebsOZ-NK",
+      "pagesReviewed": 10,
+      "coverage": [
+        {
+          "pages": [
+            1,
+            2
+          ],
+          "topics": "Framework setup, colours and hover",
+          "lessons": [
+            "how-to-use-w3-css",
+            "w3-css-classes-colors-and-hover-effects"
+          ]
+        },
+        {
+          "pages": [
+            3
+          ],
+          "topics": "All border sides, thick bars, hover borders",
+          "lessons": [
+            "w3-css-border-classes"
+          ]
+        },
+        {
+          "pages": [
+            4
+          ],
+          "topics": "Font sizes and custom overrides",
+          "lessons": [
+            "w3-css-font-size-classes",
+            "how-to-use-w3-css"
+          ]
+        },
+        {
+          "pages": [
+            5
+          ],
+          "topics": "Text alignment, spacing, opacity",
+          "lessons": [
+            "w3-css-text-classes"
+          ]
+        },
+        {
+          "pages": [
+            5,
+            6,
+            7
+          ],
+          "topics": "All table classes",
+          "lessons": [
+            "w3-css-table-classes"
+          ]
+        },
+        {
+          "pages": [
+            7,
+            8
+          ],
+          "topics": "Container, panel, rounded panel, buttons and display positions",
+          "lessons": [
+            "w3-css-container",
+            "w3-css-panel",
+            "w3-css-rounded-panel",
+            "w3-css-button",
+            "w3-css-display-container",
+            "w3-css-display-positions",
+            "collapsible-panel"
+          ]
+        },
+        {
+          "pages": [
+            8,
+            9,
+            10
+          ],
+          "topics": "Lists, close controls and image classes",
+          "lessons": [
+            "w3-css-lists",
+            "w3-css-image-classes"
+          ]
+        }
+      ]
+    }
+  }
+}

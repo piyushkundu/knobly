@@ -18,6 +18,32 @@ duplicate example variations. Navigation and decorative page chrome are replaced
 Missing sample images use the existing local practice assets. Modern clarifications
 cover CSS modules, cascade/specificity and W3.CSS panel/button behaviour.
 
+## Visual teaching and coverage
+
+Source classes and inline visual declarations are retained in the native lesson
+renderer. Border swatches, display examples, font samples, background pictures,
+box-model layers, tables and W3.CSS components appear directly beside their code.
+Original scripts are still discarded; known panel/list controls use a bounded
+React event handler. Source CSS and the pinned W3.CSS rules are scoped to the
+matching lesson container, including responsive selectors and animation names.
+
+Interactive labs cover border style/width/colour/radius, box-model measurements,
+Flexbox axes, selector matching, CSS syntax/methods and W3.CSS class changes.
+They use temporary component state and never touch saved compiler drafts.
+
+All 45 handwritten CSS PDF pages and 10 W3.CSS PDF pages were visually reviewed.
+`scripts/style_note_additions.py` adds the omitted explanations, longhands,
+float/clear, font variant, background attachment/repeat and worked layouts.
+Invalid notebook declarations are corrected and original archives stay intact.
+The notebook's final HTML validation pages link to the existing HTML curriculum.
+Each relevant lesson lists its handwritten PDF page numbers.
+
+`docs/STYLE_LESSON_COVERAGE.json` records the audit: all 41 lesson IDs,
+797 original text leaves and 78 original code examples retained, with four
+documented factual clarifications. It also maps all 55 PDF pages and checks
+70 CSS property names from the handwritten material. Existing tasks, quiz and
+student storage keys are unchanged.
+
 W3.CSS 4.15 is hosted locally to match the source course's version 4 examples.
 The custom-CSS AI Exploration target is kept unchanged as a reference; the worked
 solution demonstrates recreating it using framework classes and a small custom
@@ -33,6 +59,8 @@ stylesheet. Source scripts are never executed during import.
 - `public/style-course/reference`: sandboxed visual lesson references.
 
 Regenerate with `python scripts/import-style-courses.py --source <WebDesigning>`.
+Then run `node scripts/scope-style-lessons.mjs` and
+`python scripts/audit-style-lessons.py` (requires the recorded baseline commit).
 Do not add unrelated files to the public archive.
 
 ## Student state
@@ -52,3 +80,6 @@ popup permissions are withheld. Download creates an HTML file only on user actio
 - https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity
 - https://www.w3schools.com/w3css/w3css_panels.asp
 - https://www.w3schools.com/w3css/w3css_downloads.asp
+- https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position
+- https://www.w3.org/TR/CSS21/box.html#border-width-properties
+- https://www.w3schools.com/W3CSS/w3css_borders.asp

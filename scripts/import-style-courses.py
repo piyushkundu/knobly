@@ -32,11 +32,33 @@ def clean_code(node):
     return code.replace('image.jpg', '/practice-media/landscape.svg').replace('/api/placeholder/200/200', '/practice-media/landscape.svg')
 
 task_links = {'task1': '/web-design/css/tasks/ai-borders', 'task2': '/web-design/css/tasks/navigation-layout', 'task3': '/web-design/css/tasks/learning-journey', 'taskw3css': '/web-design/w3css/tasks/performance-table', 'taskw3css1': '/web-design/w3css/tasks/ai-exploration'}
+
+def local_image(value):
+    if value.startswith(('/practice-media/','/style-course/')): return value
+    return '/practice-media/study.svg' if 'avatar' in value else '/practice-media/landscape.svg'
+
+def pair_visual_code(node, result, prefix):
+    """Keep a W3.CSS demonstration and its actual HTML immediately together."""
+    if not prefix.startswith('w3css'): return result
+    classes=node.get('class',[])
+    if not classes or not any(c.startswith('w3-') for c in classes): return result
+    if node.get('onclick'): return result
+    is_leaf = node.name=='p' and len(node.get_text())<180
+    is_element = node.name in ['img','button','table','ul']
+    is_panel = node.name=='div' and not node.find(['h1','h2','h3','h4','table','ul','button','img']) and len(node.get_text())<350 and any(c in classes for c in ['w3-panel','w3-display-container'])
+    if not (is_leaf or is_element or is_panel): return result
+    example=BeautifulSoup(str(node),'html.parser')
+    for icon in example.select('i.fas,script'): icon.decompose()
+    for element in example.find_all(True):
+        for key in list(element.attrs):
+            if key.startswith('on'): del element[key]
+        if element.name=='img': element['src']=local_image(element.get('src',''))
+    return [{'tag':'div','attrs':{'class':'sc-paired-example'},'children':result+[{'code':str(example).strip()}]}]
 def mapped_link(href):
     name = href.split('/')[-1].removesuffix('.html')
     return task_links.get(name, href if href.startswith(('https://', '#', '/')) else '#')
 
-def nodes(node):
+def nodes(node, prefix='source'):
     if isinstance(node, Comment): return []
     if isinstance(node, NavigableString):
         value = re.sub(r'\s+', ' ', str(node))
@@ -48,20 +70,39 @@ def nodes(node):
             'The w3-panel class creates bordered content blocks':'The w3-panel class adds horizontal padding and vertical margins; add w3-border for bordered content blocks',
             'class creates bordered content blocks, making sections visually distinct and highlighted.':'class adds horizontal padding and vertical margins. Add w3-border when you want a border.',
             'styles buttons with padding, rounded corners, and hover effects':'styles buttons with padding and hover effects; add w3-round for rounded corners',
+            'Aligns items horizontally':'Aligns items along the main axis (set by flex-direction)',
+            'Aligns items vertically':'Aligns items along the cross axis',
+            'Fixed and sticky elements are positioned relative to the browser viewport.':'Fixed elements usually use the viewport; a transformed ancestor can create their containing block. Sticky uses its nearest scrolling ancestor and stays within its containing block.',
+            'Toggles between relative and fixed positioning based on scroll position.':'Stays in normal flow, then sticks to an inset within its scrolling container and containing block.',
         }.items(): value=value.replace(old,new)
         return [{'text': value}] if value.strip() else []
     if node.name in ['script', 'style', 'nav', 'svg', 'path', 'link', 'meta']: return []
     classes = node.get('class', [])
     if any(c in classes for c in ['code-block', 'code-example', 'code-snippet']) or node.name == 'pre':
         return [{'code': clean_code(node)}]
-    children = [item for child in node.children for item in nodes(child)]
-    if node.name == 'img': return [{'tag': 'img', 'attrs': {'src': '/practice-media/study.svg', 'alt': node.get('alt', 'Example image')}, 'children': []}]
-    allowed = {'h1','h2','h3','h4','p','div','span','ul','ol','li','table','thead','tbody','tr','th','td','strong','b','em','i','code','br','a','button','details','summary'}
+    children = [item for child in node.children for item in nodes(child, prefix)]
+    allowed = {'h1','h2','h3','h4','p','div','span','ul','ol','li','table','thead','tbody','tr','th','td','strong','b','em','i','code','br','a','button','details','summary','img'}
     tag = node.name if node.name in allowed else 'div'
-    if tag == 'button': tag = 'span'
-    attrs = {key: node[key] for key in ['colspan','rowspan'] if key in node.attrs}
+    if node.get('onclick') and 'display' in node['onclick'] and 'none' in node['onclick']: tag='button'
+    attrs = {key: node[key] for key in ['colspan','rowspan','tabindex'] if key in node.attrs}
+    if classes: attrs['class'] = ' '.join(classes)
+    if node.get('style'): attrs['style'] = node['style'].replace('image.jpg','/practice-media/landscape.svg')
+    if node.get('id'): attrs['id'] = prefix + '-' + slug(node['id'])
+    if tag in ['h1','h2','h3','h4']:
+        attrs['id'] = prefix + '-topic-' + str(len(node.find_all_previous(['h1','h2','h3','h4'])))
+    if tag == 'img':
+        attrs.update({'src': local_image(node.get('src','')), 'alt': node.get('alt', 'Example image')})
+        return pair_visual_code(node,[{'tag':'img','attrs':attrs,'children':[]}],prefix)
+    if tag == 'button':
+        action = node.get('onclick','')
+        match = re.search(r"togglePanel\(['\"]([^'\"]+)", action)
+        if match:
+            attrs['data-lesson-toggle'] = prefix + '-' + slug(match[1])
+        elif 'display' in action and 'none' in action:
+            attrs['data-lesson-close'] = 'true'
     if tag == 'a': attrs['href'] = mapped_link(node.get('href', '#'))
-    return [{'tag': tag, 'attrs': attrs, 'children': children}] if children or tag == 'br' else []
+    result=[{'tag': tag, 'attrs': attrs, 'children': children}] if children or tag == 'br' or classes or attrs.get('style') else []
+    return pair_visual_code(node,result,prefix) if result else []
 
 def example_codes(content):
     result = []
@@ -118,14 +159,31 @@ guides = {
 
 def guide_for(title, course):
  t=title.lower()
- for key, terms in [('history',['evolution']),('cascade',['priorit']),('methods',['ways to insert']),('selectors',['selector']),('border',['border']),('display',['display property','display:','use cases']),('flex',['flex']),('shadow',['shadow']),('sizing',['sizing']),('decoration',['decoration break']),('box',['box model']),('lists',['list styles']),('font',['font properties']),('background',['background properties']),('position',['position properties']),('tables',['css table properties']),('text',['text properties']),('framework',['framework','superpower','how to use'])]:
+ if course=='w3css':
+  lessons = [
+   ('border',('w3-border se border, w3-border-blue se colour aur w3-leftbar jaise classes se thick side border lagta hai.', 'w3-border-color ek family ka naam hai; actual class w3-border-red ya w3-border-blue hoti hai.', 'Ek panel par thin blue border aur doosre par thick green left bar banayein.')),
+   ('font size',('w3-small, w3-large, w3-xlarge aur w3-jumbo text ka size badalte hain. Ek hi text par classes compare karein.', 'Font size text ki height badalta hai; w3-wide letters ke beech spacing badhata hai.', 'Same heading ko teen size classes ke saath display karein.')),
+   ('text classes',('w3-left-align, w3-center aur w3-right-align text align karte hain; w3-wide letter spacing aur w3-opacity transparency badalti hai.', 'w3-center text alignment hai; w3-display-middle positioning class hai.', 'Ek paragraph ko centre align aur ek heading ko w3-wide dein.')),
+   ('table',('w3-table basic table, w3-striped alternate rows, w3-bordered row borders aur w3-hoverable row hover effect deta hai.', 'w3-table-all bordered/striped presentation combine karta hai. Horizontal scrolling ke liye w3-responsive wrapper use karein.', 'Ek report table ko striped, bordered aur hoverable banayein.')),
+   ('rounded',('w3-round, w3-round-large aur w3-round-xlarge panel ke corners round karte hain.', 'Roundness aur shadow alag effects hain; shadow ke liye w3-card use karein.', 'Same panel ko teen roundness classes mein compare karein.')),
+   ('collapsible',('Button par click karne se panel ki visibility JavaScript se toggle hoti hai. W3.CSS panel aur button ka design deta hai.', 'CSS class apne aap click behaviour nahi banati. Button ke saath toggle handler bhi chahiye.', 'Live example mein panel open/close karein, phir compiler mein uska text badlein.')),
+   ('display',('w3-display-container parent ko positioning context deta hai. Andar w3-display-topleft, w3-display-middle aur doosre position classes use karein.', 'Position classes ko display container ke andar lagayein aur container ko visible height dein.', 'Ek card ke top-left, centre aur bottom-right par text rakhein.')),
+   ('button',('w3-button padding aur hover styling deta hai. w3-blue se colour aur w3-round se rounded corners add karein.', 'Button ki appearance aur uska action alag hain. Action ke liye HTML form ya JavaScript chahiye.', 'Blue, green aur rounded buttons compare karein.')),
+   ('container',('w3-container consistent left aur right padding deta hai. Class ko heading ya paragraph ke wrapper par lagayein.', 'w3-panel mein horizontal padding ke saath top/bottom margin bhi hota hai.', 'Ek coloured banner ko container ke andar banayein.')),
+   ('panel',('w3-panel horizontal padding aur vertical margins ke saath content block banata hai. Colour ya border alag classes se add karein.', 'Panel par border automatically nahi aata; w3-border explicitly lagayein.', 'Do panels banayein: ek pale-blue, ek bordered.')),
+   ('lists',('w3-ul se list items ko consistent spacing aur separators milte hain. w3-border aur w3-hoverable se list ko customise karein.', 'Closable item hide karne ke liye button ke saath click behaviour chahiye.', 'List ke ek item ko close karein aur hover style compare karein.')),
+   ('image',('w3-round corners, w3-circle circular shape, w3-border boundary aur w3-grayscale grey colour effect deta hai.', 'Square image ya square crop par w3-circle ek circle banata hai. Opacity transparency hai, grayscale colour effect hai.', 'Same image ko normal, rounded, circular aur grayscale classes mein compare karein.')),
+  ]
+  for term,guide in lessons:
+   if term in t: return guide
+ for key, terms in [('history',['evolution']),('cascade',['priorit']),('methods',['ways to insert']),('selectors',['selector']),('border',['border']),('flex',['flex']),('display',['display property','display:','use cases']),('shadow',['shadow']),('sizing',['sizing']),('decoration',['decoration break']),('box',['box model']),('lists',['list styles']),('font',['font properties']),('background',['background properties']),('position',['position properties']),('tables',['css table properties']),('text',['text properties']),('framework',['framework','superpower','how to use'])]:
   if any(x in t for x in terms): return guides[key]
  return guides['w3' if course=='w3css' else 'basics']
 
 def make_lesson(course, name, fragments, title, group):
- content = [n for f in fragments for n in nodes(f)]
  ident = slug(title)
  ident = re.sub(r'^\d+-', '', ident)
+ content = [n for i,f in enumerate(fragments) for n in nodes(f,course+'-'+ident+'-'+str(i))]
  codes = example_codes(content)
  summary, remember, practice = guide_for(title,course)
  visual_page(fragments,name,course,course+'-'+ident+'.html')
@@ -152,7 +210,7 @@ for frag in doc.body.find_all('section',recursive=False):
  clean=re.sub(r'^\d+\.\s*','',title)
  existing=next((l for l in w3 if l['title']==clean),None)
  if existing:
-  existing['nodes'] += nodes(frag)
+  existing['nodes'] += nodes(frag,'w3css-'+existing['id']+'-variation-'+str(len(existing['nodes'])))
   existing['examples'] = example_codes(existing['nodes'])
   # Keep both source examples in the visual reference, too.
   previous=next(g for g in w3_fragments if g[0]==clean)
@@ -237,6 +295,10 @@ for name in relevant:
  raw=(source/name).read_bytes()
  (out/'originals'/(name+'.txt')).write_bytes(raw)
  manifest.append({'file':name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'archive':'/style-course/originals/'+name+'.txt'})
+
+from style_note_additions import extend_css_notes, extend_w3_notes
+extend_css_notes(css, nodes, example_codes)
+extend_w3_notes(w3, nodes, example_codes)
 
 data={'css':{'id':'css','name':'CSS','description':'Learn styling step by step: selectors, properties, layouts and complete practice projects.','notesUrl':'https://drive.google.com/file/d/1CVoM8VfnFLxc5tuTDcpjHWZAKUKaaDLA/view?usp=sharing','lessons':css,'tasks':tasks['css'],'quiz':css_questions},'w3css':{'id':'w3css','name':'W3.CSS','description':'Build responsive websites using ready-made classes, clear examples and complete practice tasks.','notesUrl':'https://drive.google.com/file/d/1CWZRb_lQCn65zLUSEbRnihxyebsOZ-NK/view?usp=sharing','lessons':w3,'tasks':tasks['w3css'],'quiz':w3_questions}}
 (root/'src/data/style-courses.generated.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
