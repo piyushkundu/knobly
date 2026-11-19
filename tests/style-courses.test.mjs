@@ -52,7 +52,8 @@ test('all 41 lessons render tables, nested examples and void elements without re
         'next/link':{default:({children,...props})=>React.createElement('a',props,children)},
         'next/image':{default:({unoptimized,...props})=>React.createElement('img',props)},
         'lucide-react':new Proxy({},{get:()=>()=>null}),
-        './CourseProgress':{default:()=>null},
+        './CourseProgress':{default:()=>null,useCourseProgress:()=>({completed:[]})},
+        '@/lib/style-course-demo':{previewDocument},
     });
     let count=0;
     for(const [id,course] of Object.entries(data))for(const lesson of course.lessons){
