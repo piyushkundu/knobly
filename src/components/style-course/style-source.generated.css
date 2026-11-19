@@ -293,7 +293,7 @@
                 transform: translateY(0);
             }
         }
-    
+
 
 
         .sc-site :where(.sc-rich-source.sc-source-cssproperties) {
@@ -672,7 +672,7 @@
         .sc-site :where(.sc-rich-source.sc-source-cssproperties) .table-demo > div {
             width: 48%;
         }
-  
+
 /* W3.CSS 4.15 December 2020 by Jan Egil and Borge Refsnes */
 .sc-site :where(.sc-rich-source.sc-source-w3css){box-sizing:border-box}.sc-site :where(.sc-rich-source.sc-source-w3css) *,
 .sc-site :where(.sc-rich-source.sc-source-w3css) *:before,
@@ -761,7 +761,7 @@
 .sc-site :where(.sc-rich-source.sc-source-w3css) .w3-button{border:none;display:inline-block;padding:8px 16px;vertical-align:middle;overflow:hidden;text-decoration:none;color:inherit;background-color:inherit;text-align:center;cursor:pointer;white-space:nowrap}
 .sc-site :where(.sc-rich-source.sc-source-w3css) .w3-btn:hover{box-shadow:0 8px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)}
 .sc-site :where(.sc-rich-source.sc-source-w3css) .w3-btn,
-.sc-site :where(.sc-rich-source.sc-source-w3css) .w3-button{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}   
+.sc-site :where(.sc-rich-source.sc-source-w3css) .w3-button{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 .sc-site :where(.sc-rich-source.sc-source-w3css) .w3-disabled,
 .sc-site :where(.sc-rich-source.sc-source-w3css) .w3-btn:disabled,
 .sc-site :where(.sc-rich-source.sc-source-w3css) .w3-button:disabled{cursor:not-allowed;opacity:0.3}.sc-site :where(.sc-rich-source.sc-source-w3css) .w3-disabled *,
@@ -849,7 +849,7 @@
 @media (max-width:1205px){.sc-site :where(.sc-rich-source.sc-source-w3css) .w3-auto{max-width:95%}}
 @media (max-width:600px){.sc-site :where(.sc-rich-source.sc-source-w3css) .w3-modal-content{margin:0 10px;width:auto!important}.sc-site :where(.sc-rich-source.sc-source-w3css) .w3-modal{padding-top:30px}
 .sc-site :where(.sc-rich-source.sc-source-w3css) .w3-dropdown-hover.w3-mobile .w3-dropdown-content,
-.sc-site :where(.sc-rich-source.sc-source-w3css) .w3-dropdown-click.w3-mobile .w3-dropdown-content{position:relative}	
+.sc-site :where(.sc-rich-source.sc-source-w3css) .w3-dropdown-click.w3-mobile .w3-dropdown-content{position:relative}
 .sc-site :where(.sc-rich-source.sc-source-w3css) .w3-hide-small{display:none!important}.sc-site :where(.sc-rich-source.sc-source-w3css) .w3-mobile{display:block;width:100%!important}.sc-site :where(.sc-rich-source.sc-source-w3css) .w3-bar-item.w3-mobile,
 .sc-site :where(.sc-rich-source.sc-source-w3css) .w3-dropdown-hover.w3-mobile,
 .sc-site :where(.sc-rich-source.sc-source-w3css) .w3-dropdown-click.w3-mobile{text-align:center}
@@ -1164,7 +1164,7 @@
   transform: rotate(180deg); /* Rotate 90 degrees */
   transition: transform 0.3s ease; /* Optional smooth rotation effect */
 }
-    
+
 
         .sc-site :where(.sc-rich-source.sc-source-w3css) {
             --primary-color: #4a4a4a;
@@ -1372,4 +1372,3 @@
                 transform: rotate(45deg) translate(-5px, -6px);
             }
         }
-        

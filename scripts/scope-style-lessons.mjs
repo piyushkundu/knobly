@@ -56,6 +56,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         parts.push(scopeLessonCss(framework + '\n' + styles, name));
     }
     const target = new URL('src/components/style-course/style-source.generated.css', root);
-    writeFileSync(target, parts.join('\n'));
+    writeFileSync(target, parts.join('\n').split('\n').map(line=>line.trimEnd()).join('\n').trimEnd()+'\n');
     console.log('Generated scoped source lesson styles:', fileURLToPath(target));
 }
