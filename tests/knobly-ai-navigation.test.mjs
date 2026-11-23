@@ -121,7 +121,7 @@ function widgetHarness(initialPath = '/') {
   };
 }
 
-for (const path of ['/html/tasks/1', '/html/tasks/1/compiler', '/html/compiler', '/python-lab', '/c-lab', '/test/example']) {
+for (const path of ['/html/tasks/1', '/html/tasks/1/compiler', '/html/compiler', '/python-lab', '/c-lab', '/test/example', '/practice']) {
   test(`home → ${path} → home preserves Hook order and hides the widget`, () => {
     const widget = widgetHarness();
     assert.ok(widget.render('/'));
