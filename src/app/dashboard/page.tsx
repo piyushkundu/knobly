@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import LoginModal from '@/components/auth/LoginModal';
 import { useDashboard } from './useDashboard';
+import DashboardTestList from './DashboardTestList';
 import {
     ArrowLeft, Home, Trophy, Clock, Target, Play, Lock, Unlock,
     BarChart3, Medal, Users, ChevronRight, Flame, Award, Eye,
@@ -21,14 +22,6 @@ export default function DashboardPage() {
     const d = useDashboard();
     const [activeSubject, setActiveSubject] = useState('all');
     const points = d.totalPoints;
-
-    const filterBySubject = (tests: any[]) => {
-        if (activeSubject === 'all') return tests;
-        return tests.filter((t: any) => {
-            const catName = (t.category || '').toLowerCase();
-            return catName === activeSubject.toLowerCase();
-        });
-    };
 
     // Build dynamic category tabs from Firestore
     const dynamicSubjects = [
@@ -247,50 +240,7 @@ export default function DashboardPage() {
                                         <p className="text-sm font-semibold" style={{ color: '#475569' }}>No tests configured yet</p>
                                     </div>
                                 ) : (
-                                    <>
-                                        {filterBySubject(d.availableTests).map(test => (
-                                            <TestCard key={test.id} test={test} attempted={d.attemptedTestIds.has(test.id)} onStart={() => window.location.href = `/test/${test.id}`} />
-                                        ))}
-                                        {filterBySubject(d.lockedTests).map(test => (
-                                            <div key={test.id} className="rounded-xl px-4 py-3 flex items-center gap-3" style={{ background: '#f8fafc', border: '1px dashed #d1d5db' }}>
-                                                <Lock size={14} style={{ color: '#475569' }} />
-                                                <div className="flex-1 min-w-0">
-                                                    <h4 className="text-[12px] font-semibold truncate" style={{ color: '#475569' }}>{test.title}</h4>
-                                                    <p className="text-[10px] font-medium" style={{ color: '#475569' }}>🔒 Unlock at Level {test.level_no || 1}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                        {d.availableTests.length === 0 && d.lockedTests.length === 0 && d.simpleTests.length > 0 && (
-                                            <>
-                                                {filterBySubject(d.simpleTests.filter(t => t.is_active)).map((test: any) => (
-                                                    <div key={test.id} className="rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5" style={{ background: '#ffffff', border: '1px solid #e8ecf1', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                                                        <div className="p-4 flex items-start gap-3">
-                                                            <div className="h-10 w-10 flex items-center justify-center rounded-xl text-[11px] font-black flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6366f1, #818cf8)', color: '#ffffff' }}>T</div>
-                                                            <div className="flex-1 min-w-0">
-                                                                <div className="flex items-center gap-2">
-                                                                    <h4 className="text-[13px] font-bold truncate" style={{ color: '#0f172a' }}>{test.title}</h4>
-                                                                    {test.category && <span className="px-2 py-0.5 rounded-full text-[8px] font-bold uppercase" style={{ background: '#eef2ff', color: '#6366f1' }}>{test.category}</span>}
-                                                                </div>
-                                                                <div className="mt-2 flex items-center gap-3 text-[10px] font-semibold" style={{ color: '#475569' }}>
-                                                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Clock size={10} />{test.duration_minutes}m</span>
-                                                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Target size={10} />{test.questions?.length || 0}Q</span>
-                                                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#ecfdf5', color: '#10b981' }}><Zap size={10} />{test.total_points}pts</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="px-4 pb-3 flex justify-end">
-                                                            <Link href={`/test/${test.id}`} className="px-5 py-2 rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 transition-all hover:shadow-xl hover:scale-[1.03]" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 14px rgba(99,102,241,0.35)', color: '#ffffff' }}>
-                                                                <Play size={12} style={{ color: '#ffffff' }} />Start Test
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                                {filterBySubject(d.simpleTests.filter(t => t.is_active)).length === 0 && (
-                                                    <div className="text-center py-8 text-[11px] font-medium" style={{ color: '#475569' }}>No tests for this subject.</div>
-                                                )}
-                                            </>
-                                        )}
-                                    </>
+                                    <DashboardTestList available={d.availableTests} locked={d.lockedTests} simple={d.simpleTests} subject={activeSubject} attempted={d.attemptedTestIds}/>
                                 )}
                             </div>
                         </div>
@@ -575,41 +525,6 @@ export default function DashboardPage() {
                     </Link>
                 </div>
             </footer>
-        </div>
-    );
-}
-
-/* ── Test Card ── */
-function TestCard({ test, attempted, onStart }: { test: any; attempted?: boolean; onStart: () => void }) {
-    return (
-        <div className="rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5" style={{ background: '#ffffff', border: attempted ? '1px solid #bbf7d0' : '1px solid #e8ecf1', boxShadow: attempted ? '0 2px 8px rgba(16,185,129,0.08)' : '0 2px 8px rgba(0,0,0,0.04)' }}>
-            <div className="p-4 flex items-start gap-3">
-                <div className="h-10 w-10 flex items-center justify-center rounded-xl text-[10px] font-black flex-shrink-0" style={{ background: attempted ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #6366f1, #818cf8)', boxShadow: attempted ? '0 4px 12px rgba(16,185,129,0.3)' : '0 4px 12px rgba(99,102,241,0.3)', color: '#ffffff' }}>
-                    {attempted ? '✓' : `Lv${test.level_no || 1}`}
-                </div>
-                <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                        <h4 className="text-[13px] font-bold truncate" style={{ color: '#0f172a' }}>{test.title}</h4>
-                        <div className="flex items-center gap-1.5 flex-shrink-0">
-                            {attempted && <span className="px-2 py-0.5 rounded-full text-[8px] font-bold" style={{ background: '#ecfdf5', color: '#059669' }}>Attempted ✓</span>}
-                            {test.mode === 'PRACTICE'
-                                ? <span className="px-2 py-0.5 rounded-full text-[8px] font-bold" style={{ background: '#f1f5f9', color: '#475569' }}>Practice</span>
-                                : <span className="px-2 py-0.5 rounded-full text-[8px] font-bold flex items-center gap-1 text-white" style={{ background: '#ef4444' }}><span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: '#fff' }} />LIVE</span>}
-                        </div>
-                    </div>
-                    <div className="mt-2 flex items-center gap-2 text-[10px] font-semibold" style={{ color: '#475569' }}>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Clock size={10} />{test.duration_minutes}m</span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#f1f5f9' }}><Target size={10} />{test.total_marks || test.total_points || 0}Q</span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{ background: '#ecfdf5', color: '#10b981' }}><Zap size={10} />{test.xp_reward || test.total_marks || 0} pts</span>
-                    </div>
-                </div>
-            </div>
-            <div className="px-4 pb-3 flex items-center justify-between" style={{ borderTop: '1px solid #f5f5f5' }}>
-                <span className="text-[9px] truncate font-medium" style={{ color: '#475569' }}>{test.category || test.level_title || 'Level test'}</span>
-                <button onClick={onStart} className="px-5 py-2 rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 transition-all hover:shadow-xl hover:scale-[1.03]" style={{ background: attempted ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: attempted ? '0 4px 14px rgba(245,158,11,0.35)' : '0 4px 14px rgba(99,102,241,0.35)', color: '#ffffff' }}>
-                    <Play size={12} style={{ color: '#ffffff' }} />{attempted ? 'Try Again' : 'Start'}
-                </button>
-            </div>
         </div>
     );
 }
