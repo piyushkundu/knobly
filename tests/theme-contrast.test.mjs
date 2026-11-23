@@ -71,7 +71,12 @@ test('student dashboard metadata stays readable on pale cards without dimming lo
     assert.doesNotMatch(studentDashboard, /style=\{\{[^}]*color:\s*'#64748b'/);
     assert.doesNotMatch(studentDashboard, /opacity-60/);
     assert.ok(contrastRatio('#475569', '#f1f5f9') >= 4.5);
-    assert.match(studentDashboard, /name: 'Silver', pts: '50', color: '#94a3b8'/);
+    const rankData = readFileSync(new URL('../src/app/dashboard/useDashboard.ts', import.meta.url), 'utf8');
+    const dashboardStyles = readFileSync(new URL('../src/app/dashboard/dashboard.module.css', import.meta.url), 'utf8');
+    assert.match(rankData, /name: 'Silver'[^}]*minPoints: 50[^}]*color: '#94a3b8'/);
+    assert.match(dashboardStyles, /\.caption\{[^}]*color:#746880/);
+    assert.ok(contrastRatio('#746880', '#ffffff') >= 4.5);
+    assert.ok(contrastRatio('#665d75', '#faf9fd') >= 4.5);
 });
 
 test('typing keyboard labels stay readable against their key and page surfaces', () => {

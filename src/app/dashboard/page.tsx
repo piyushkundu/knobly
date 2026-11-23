@@ -1,530 +1,120 @@
 'use client';
-
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { ArrowLeft, ArrowRight, Bookmark, BookOpen, CheckCircle2, ChevronRight, Flame, Globe, HelpCircle, Loader2, LogOut, Play, RotateCcw, Search, Sparkles, Target, TrendingUp, Trophy, Zap } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import LoginModal from '@/components/auth/LoginModal';
 import { useDashboard } from './useDashboard';
 import DashboardTestList from './DashboardTestList';
-import {
-    ArrowLeft, Home, Trophy, Clock, Target, Play, Lock, Unlock,
-    BarChart3, Medal, Users, ChevronRight, Flame, Award, Eye,
-    Radio, Zap, MapPin, CheckCircle, Compass, RefreshCw, X, ArrowRight,
-    LayoutDashboard, StickyNote, Code2, Brain, Keyboard, Loader2,
-    Monitor, Globe, Cpu, BookOpen, Crown, TrendingUp, Star, LogOut
-} from 'lucide-react';
+import { practiceRequest, useLearning } from '@/components/learning/useLearning';
+import ProgressChart from '@/components/learning/ProgressChart';
+import styles from './dashboard.module.css';
 
-
-
+const completed = (status?: string) => status === 'SUBMITTED' || status === 'AUTO_SUBMITTED';
+function Metric({ label, value, help, icon }: { label: string; value: string | number; help: string; icon: React.ReactNode }) {
+    return <div className={styles.metric}><div className={styles.metricIcon}>{icon}</div><div><strong>{value}</strong><span>{label}</span></div><details className={styles.metricHelp}><summary aria-label={'About ' + label}><HelpCircle size={14}/></summary><p>{help}</p></details></div>;
+}
 export default function DashboardPage() {
-    const router = useRouter();
-    const d = useDashboard();
-    const [activeSubject, setActiveSubject] = useState('all');
-    const points = d.totalPoints;
-
-    // Build dynamic category tabs from Firestore
-    const dynamicSubjects = [
-        { id: 'all', label: 'All', emoji: '📚', color: '#6366f1' },
-        ...d.categories.map((c: any) => ({ id: c.name, label: c.name, emoji: c.emoji || '📚', color: c.color || '#6366f1' })),
-    ];
-
-    // Auth Guard — if not logged in, show login
-    const { loading: authLoading, logout } = useAuth();
-    if (!authLoading && !d.user) {
-        return (
-            <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #6366f1 100%)' }}>
-                <LoginModal isOpen={true} onClose={() => router.push('/')} />
+    const d = useDashboard(), { user, loading: authLoading, logout } = useAuth(), learning = useLearning(user);
+    const [subject, setSubject] = useState('all'), [search, setSearch] = useState(''), [status, setStatus] = useState('all'), [duration, setDuration] = useState('all');
+    const [league, setLeague] = useState<'all' | 'week'>('all'), [analysing, setAnalysing] = useState(false), [analysisMessage, setAnalysisMessage] = useState(''), [actionError, setActionError] = useState('');
+    const [showHistory, setShowHistory] = useState(false);
+    if (authLoading) return <div className={styles.loading}><Loader2 className="animate-spin"/>Loading your learning space…</div>;
+    if (!user) return <LoginModal isOpen onClose={() => { window.location.href = '/'; }}/>;
+    const data = learning.data, firstName = (d.profile?.full_name || user.displayName || 'Student').split(' ')[0];
+    const tests = [...d.availableTests, ...d.lockedTests];
+    const matches = (test: { id: string; title: string; category?: string; duration_minutes?: number }) =>
+        (test.title + ' ' + (test.category || '')).toLowerCase().includes(search.trim().toLowerCase()) &&
+        (status === 'all' || (status === 'attempted' ? d.attemptedTestIds.has(test.id) : !d.attemptedTestIds.has(test.id))) &&
+        (duration === 'all' || (test.duration_minutes || 0) <= Number(duration));
+    const recent = d.attemptHistory.filter(a => completed(a.status));
+    const chart = recent.slice(0, 10).reverse().filter(row => row.total_marks > 0).map(row =>
+        ({ label: row.test_title, value: (row.score || 0) / row.total_marks * 100 }));
+    const resume = d.allAttempts.filter(attempt => {
+        const test = d.availableTests.find(test => test.id === attempt.test_id);
+        return attempt.status === 'IN_PROGRESS' && test?.mode === 'PRACTICE' &&
+            Date.parse(attempt.started_at || '') + test.duration_minutes * 60_000 > Date.now();
+    }).sort((a, b) => String(b.started_at).localeCompare(String(a.started_at)))[0];
+    const recommended = data?.topics.find(topic => topic.wrong > 0);
+    const goalDays = data?.completedDays.filter(day => day >= data.week && day <= data.day).length || 0;
+    const daily = data?.daily;
+    const dailyLabel = daily?.status === 'completed' ? 'Review today’s answers' : daily ? 'Continue Daily 10' : 'Start Daily 10';
+    const analyse = async () => {
+        setAnalysing(true); setActionError('');
+        try {
+            let remaining = 1, iterations = 0;
+            while (remaining > 0 && iterations++ < 100) {
+                const result = await practiceRequest<{ remaining: number; analysed: number }>(user, { action: 'sync' });
+                remaining = result.remaining;
+                setAnalysisMessage(result.analysed + ' completed tests analysed' + (remaining ? ' · ' + remaining + ' remaining' : ''));
+            }
+            await learning.refresh();
+        } catch (error) { setActionError(error instanceof Error ? error.message : 'Analysis could not finish. Please try again.'); }
+        finally { setAnalysing(false); }
+    };
+    const lessonLink = (category: string) => /web|html/i.test(category) ? '/html/elements' : /python/i.test(category) ? '/python' : /ccc/i.test(category) ? '/ccc' : '/it-tools';
+    return <div className={styles.page}>
+        <header className={styles.header}><Link href="/" className={styles.brand}><span>K.</span><div>KNOBLY<small>YOUR LEARNING SPACE</small></div></Link>
+            <nav><Link href="/"><Globe size={15}/>Home</Link><a href="#tests"><BookOpen size={15}/>Tests</a><a href="#progress"><TrendingUp size={15}/>Progress</a><Link href="/notes">Notes</Link></nav>
+            <button className={styles.logout} onClick={logout} aria-label="Log out"><LogOut size={16}/><span>Log out</span></button>
+        </header>
+        <main className={styles.container}>
+            <section className={styles.welcome}><div><span className={styles.eyebrow}>YOUR NEXT STEP STARTS HERE</span><h1>Welcome back, {firstName}<span>Let’s make today count.</span></h1><p>Practise a little. Understand your mistakes. See yourself improve.</p>
+                <div className={styles.heroActions}>{resume ? <Link href={'/test/' + resume.test_id + '?resume=' + resume.id}><Play size={15}/>Continue your practice</Link> : <Link href="/practice"><Sparkles size={15}/>Your daily practice</Link>}<a href="#tests">Explore tests<ArrowRight size={15}/></a></div>
+            </div><div className={styles.rank}><span className={styles.rankMedal}>{d.currentRank.icon}</span><div><small>YOUR EXAM RANK</small><strong>{d.currentRank.name}<b>{d.totalPoints} pts</b></strong><div className={styles.rankBar}><i style={{ width: d.rankProgressPercent + '%' }}/></div><p>{d.nextRank ? d.pointsToNextRank + ' points to ' + d.nextRank.name : 'Highest rank reached'}</p></div></div></section>
+            <div className={styles.metrics}>
+                <Metric label="Exam points" value={d.totalPoints} icon={<Zap size={20}/>} help="Points are awarded for correct answers on your first completed attempt at each exam. Retakes and Daily 10 do not add exam-rank points."/>
+                <Metric label="Tests completed" value={d.stats.testsCompleted} icon={<CheckCircle2 size={20}/>} help="Number of different tests you have submitted. Repeated attempts at the same test count once here."/>
+                <Metric label="First-attempt score" value={Math.round(d.stats.avgScore) + '%'} icon={<TrendingUp size={20}/>} help="Average score percentage from your first submitted attempt at each test. The progress chart below also shows later attempts."/>
+                <Metric label="Accuracy" value={Math.round(d.stats.avgAccuracy) + '%'} icon={<Target size={20}/>} help="Average recorded accuracy on first submitted attempts. Older imported records may store accuracy separately from the calculated score."/>
             </div>
-        );
-    }
-
-    if (authLoading) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center gap-3" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #6366f1 100%)' }}>
-                <div className="animate-spin h-8 w-8 rounded-full border-3 border-white/20 border-t-white"></div>
-                <span className="text-sm font-medium text-white/70">Loading...</span>
+            {(learning.error || actionError) && <div className={styles.error} role="alert">{actionError || learning.error}<button onClick={learning.refresh}>Retry</button></div>}
+            <div className={styles.featureGrid}>
+                <section className={styles.daily}><div className={styles.dailyCopy}><span className={styles.dailyPill}><Sparkles size={13}/>A LITTLE EVERY DAY</span><h2>Your daily 10.<br/><span>Small steps. Real progress.</span></h2><p>Questions from all active tests, with extra attention to the questions you’ve answered incorrectly.</p><Link href="/practice" className={styles.dailyButton}>{dailyLabel}<ArrowRight size={17}/></Link><small>{daily?.status === 'completed' ? daily.score + '/' + daily.total + ' correct today · saved for review' : daily ? daily.answered + '/' + daily.total + ' answered · pick up where you left off' : 'Mixed subjects · saves as you go · refreshes at midnight, India time'}</small></div><div className={styles.dailyArt} aria-hidden="true"><div>10<span>QUESTIONS</span></div><b>✦</b><i>✓</i></div></section>
+                <div className={styles.revisionCards} id="revision"><Link href="/practice?mode=wrong" className={styles.revision}><div className={styles.revisionIcon}><RotateCcw size={20}/></div><span>{data ? data.wrongCount : '—'}<small>questions to revisit</small></span><h3>Wrong Answers Notebook</h3><p>Turn past mistakes into your next improvement.</p><b>Revise mistakes<ArrowRight size={15}/></b></Link>
+                    <Link href="/practice?mode=bookmarks" className={styles.bookmarks}><Bookmark size={20}/><div><h3>Saved for later <span>{data?.bookmarks.length || 0}</span></h3><p>Your personal revision collection.</p></div><ChevronRight size={18}/></Link></div>
             </div>
-        );
-    }
-
-    return (
-        <div className="min-h-screen" style={{ background: '#f0f2f5' }}>
-
-            {/* ═══ PREMIUM HERO HEADER ═══ */}
-            {(() => {
-                const firstName = (d.profile?.full_name || d.user?.displayName || 'Champion').split(' ')[0];
-                const quotes = [
-                    `🔥 ${firstName}, champions are made when no one is watching!`,
-                    `💪 ${firstName}, your consistency today builds your success tomorrow!`,
-                    `🚀 ${firstName}, every test you take makes you stronger!`,
-                    `⚡ ${firstName}, legends aren't born — they're trained!`,
-                    `🌟 ${firstName}, your dedication is your superpower!`,
-                    `🎯 ${firstName}, aim high, work hard, and watch the magic happen!`,
-                ];
-                const quoteIndex = new Date().getDate() % quotes.length;
-                return (
-                    <div className="relative overflow-hidden" style={{ background: '#0f172a' }}>
-                        {/* Background image */}
-                        <div className="absolute inset-0" style={{ backgroundImage: 'url(/dashboard-hero-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.85 }} />
-                        {/* Dark overlay for text readability */}
-                        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(15,23,42,0.5) 0%, rgba(30,27,75,0.4) 40%, rgba(76,29,149,0.3) 70%, transparent 100%)' }} />
-                        {/* Bottom fade */}
-                        <div className="absolute bottom-0 left-0 right-0 h-20" style={{ background: 'linear-gradient(to top, #f0f2f5, transparent)' }} />
-
-                        {/* Top Nav */}
-                        <div className="relative max-w-6xl mx-auto px-4 pt-4 pb-2 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <Link href="/" className="h-8 w-8 rounded-lg flex items-center justify-center transition-all hover:scale-105" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)' }}>
-                                    <ArrowLeft size={14} style={{ color: 'rgba(255,255,255,0.8)' }} />
-                                </Link>
-                                <span className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.4)' }}>Home</span>
-                            </div>
-                            <div className="flex items-center gap-2.5">
-                                {d.user ? (
-                                    <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
-                                        <div className="hidden sm:block text-right">
-                                            <div className="text-[11px] font-semibold" style={{ color: '#ffffff' }}>{d.profile?.full_name || d.user.displayName || 'Student'}</div>
-                                            <div className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.5)' }}>{d.currentRank.icon} {d.currentRank.name} · {points} pts</div>
-                                        </div>
-                                        <div className="h-9 w-9 rounded-full flex items-center justify-center text-[11px] font-bold uppercase" style={{ background: `linear-gradient(135deg, ${d.currentRank.color}, ${d.currentRank.color}cc)`, color: '#fff', boxShadow: `0 0 15px ${d.currentRank.color}50`, border: '2px solid rgba(255,255,255,0.3)' }}>
-                                            {d.avatarInitials}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.6)' }}>Login to see dashboard</span>
-                                )}
-                                {d.user && (
-                                    <button onClick={logout} className="h-8 px-2.5 sm:px-3.5 rounded-lg flex items-center justify-center gap-1.5 transition-all hover:scale-105" style={{ background: '#ffffff', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 2px 10px rgba(0,0,0,0.2)' }} title="Logout">
-                                        <LogOut size={13} style={{ color: '#ef4444' }} />
-                                        <span className="hidden sm:inline text-[10px] font-bold" style={{ color: '#ef4444' }}>Logout</span>
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Hero Content — Left aligned */}
-                        <div className="relative max-w-6xl mx-auto px-4 pb-20 pt-6">
-                            <div className="flex flex-col sm:flex-row items-center sm:items-center gap-6">
-                                {/* Colorful Rank Badge */}
-                                <div className="relative flex-shrink-0">
-                                    {/* Animated glow */}
-                                    <div className="absolute -inset-4 rounded-3xl animate-pulse" style={{ background: `radial-gradient(circle, ${d.currentRank.color}30 0%, transparent 65%)` }} />
-                                    <div className="relative h-28 w-28 rounded-2xl flex flex-col items-center justify-center" style={{
-                                        background: `linear-gradient(145deg, ${d.currentRank.color}30, ${d.currentRank.color}15)`,
-                                        border: `2px solid ${d.currentRank.color}50`,
-                                        backdropFilter: 'blur(20px)',
-                                        boxShadow: `0 8px 32px rgba(0,0,0,0.3), 0 0 40px ${d.currentRank.color}30, inset 0 1px 0 rgba(255,255,255,0.15), inset 0 0 20px ${d.currentRank.color}10`,
-                                    }}>
-                                        <span className="text-5xl mb-1" style={{ filter: `drop-shadow(0 0 15px ${d.currentRank.color}70)` }}>{d.currentRank.icon}</span>
-                                        <span className="text-[9px] font-black uppercase tracking-[0.2em]" style={{ color: '#ffffff', textShadow: `0 0 10px ${d.currentRank.color}60` }}>{d.currentRank.name}</span>
-                                    </div>
-                                    {/* Points pill */}
-                                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[10px] font-black" style={{
-                                        background: `linear-gradient(135deg, ${d.currentRank.color}, ${d.currentRank.color}dd)`,
-                                        color: '#ffffff', whiteSpace: 'nowrap',
-                                        boxShadow: `0 4px 15px ${d.currentRank.color}50, 0 0 20px ${d.currentRank.color}30`,
-                                        border: '2px solid rgba(255,255,255,0.25)', letterSpacing: '0.05em',
-                                    }}>
-                                        🪙 {points} Points
-                                    </div>
-                                </div>
-
-                                {/* Text Content — Left */}
-                                <div className="sm:text-left text-center">
-                                    <h1 className="text-3xl sm:text-4xl font-black mb-2" style={{ color: '#ffffff', textShadow: '0 2px 30px rgba(139,92,246,0.3)', letterSpacing: '-0.02em' }}>
-                                        ✨ Test Journey
-                                    </h1>
-                                    <p className="text-[13px] font-medium mb-2" style={{ color: 'rgba(255,255,255,0.85)', maxWidth: 450, lineHeight: '1.6' }}>
-                                        {quotes[quoteIndex]}
-                                    </p>
-                                    <p className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                                        Earn points · Climb ranks · Become a legend
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            })()}
-
-            {/* ═══ FLOATING STATS CARDS ═══ */}
-            <div className="max-w-6xl mx-auto px-4 -mt-10 relative z-10 mb-6">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {[
-                        { label: '🪙 Points', value: points, icon: <Zap size={18} />, gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', shadow: 'rgba(245,158,11,0.3)' },
-                        { label: 'Tests Done', value: d.stats.testsCompleted, icon: <CheckCircle size={18} />, gradient: 'linear-gradient(135deg, #10b981, #059669)', shadow: 'rgba(16,185,129,0.3)' },
-                        { label: 'Avg Score', value: `${d.stats.avgScore.toFixed(0)}%`, icon: <TrendingUp size={18} />, gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)', shadow: 'rgba(99,102,241,0.3)' },
-                        { label: 'Accuracy', value: `${d.stats.avgAccuracy.toFixed(0)}%`, icon: <Target size={18} />, gradient: 'linear-gradient(135deg, #ec4899, #db2777)', shadow: 'rgba(236,72,153,0.3)' },
-                    ].map((s, i) => (
-                        <div key={i} className="rounded-2xl p-4 flex items-center gap-3 transition-all hover:scale-[1.03] hover:-translate-y-1" style={{ background: '#ffffff', boxShadow: `0 8px 30px ${s.shadow}, 0 2px 8px rgba(0,0,0,0.06)`, border: '1px solid rgba(255,255,255,0.8)' }}>
-                            <div className="h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: s.gradient, boxShadow: `0 4px 12px ${s.shadow}`, color: '#ffffff' }}>
-                                {s.icon}
-                            </div>
-                            <div>
-                                <div className="text-xl font-black" style={{ color: '#0f172a' }}>{s.value}</div>
-                                <div className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#475569' }}>{s.label}</div>
-                            </div>
-                        </div>
-                    ))}
+            <div className={styles.mainGrid}>
+                <div className={styles.mainColumn}>
+                    <section className={styles.card} id="tests"><div className={styles.sectionTitle}><div><span className={styles.eyebrow}>CHOOSE YOUR NEXT CHALLENGE</span><h2>Available tests <small>{tests.length || d.simpleTests.length}</small></h2></div><BookOpen size={22}/></div>
+                        <div className={styles.filters}><label className={styles.search}><Search size={16}/><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Search test or chapter…" aria-label="Search tests"/></label>
+                            <select aria-label="Attempt status" value={status} onChange={event => setStatus(event.target.value)}><option value="all">All attempts</option><option value="unattempted">Not attempted</option><option value="attempted">Attempted</option></select>
+                            <select aria-label="Maximum duration" value={duration} onChange={event => setDuration(event.target.value)}><option value="all">Any duration</option><option value="15">Up to 15 min</option><option value="30">Up to 30 min</option><option value="60">Up to 60 min</option></select></div>
+                        <div className={styles.subjects}><button aria-pressed={subject === 'all'} onClick={() => setSubject('all')}>📚 All</button>{d.categories.map((category: { id: string; name: string; emoji?: string }) => <button key={category.id} aria-pressed={subject === category.name} onClick={() => setSubject(category.name)}>{category.emoji || '📚'} {category.name}</button>)}</div>
+                        <div className={styles.testList}>{d.isLoadingMain ? <p className={styles.empty}><Loader2 size={17} className="animate-spin"/>Loading your tests…</p> :
+                            <DashboardTestList available={d.availableTests.filter(matches)} locked={d.lockedTests.filter(matches)} simple={tests.length ? [] : d.simpleTests.filter(matches)} subject={subject} attempted={d.attemptedTestIds} history={d.allAttempts}/>}</div>
+                    </section>
+                    <section className={styles.card} id="progress"><div className={styles.sectionTitle}><div><span className={styles.eyebrow}>SEE HOW FAR YOU’VE COME</span><h2>Your progress</h2></div><TrendingUp size={22}/></div><p className={styles.caption}>Score percentage on your last {chart.length || 'few'} completed tests, including retakes. Hover over a point for details.</p><ProgressChart entries={chart}/>
+                        <div className={styles.attempts}>{recent.slice(0, showHistory ? 20 : 5).map(row => <Link key={row.id} href={'/review/' + row.id}><div><strong>{row.test_title}</strong><small>{row.submitted_at ? new Date(row.submitted_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : ''}</small></div><b>{row.total_marks ? Math.round((row.score || 0) / row.total_marks * 100) + '%' : row.score + ' correct'}</b><ChevronRight size={15}/></Link>)}</div>
+                        {recent.length > 5 && <button className={styles.analyseButton} onClick={() => setShowHistory(!showHistory)}>{showHistory ? 'Show fewer attempts' : 'Show recent 20 attempts'}</button>}
+                        {Boolean(data?.recent.length) && <div className={styles.practiceHistory}><h3>Daily practice & revision</h3>{data?.recent.slice(0, 5).map(row => <div key={row.id}><span>{row.day} · {row.kind === 'daily' ? 'Daily 10' : row.kind === 'wrong' ? 'Mistake revision' : 'Saved questions'}</span><b>{row.status === 'completed' ? row.score + '/' + row.total : row.answered + '/' + row.total + ' answered'}</b></div>)}</div>}
+                    </section>
                 </div>
+                <aside className={styles.sidebar}>
+                    <section className={styles.card}><div className={styles.sectionTitle}><div><span className={styles.eyebrow}>FOCUS ON WHAT MATTERS</span><h2>Your next step</h2></div><Sparkles size={21}/></div>
+                        {recommended ? <><h3 className={styles.recommendTitle}>Revisit {recommended.topic}</h3><p className={styles.caption}>{recommended.accuracy}% accuracy across {recommended.seen} answered questions. A short revision can help.</p><Link className={styles.secondaryButton} href={lessonLink(recommended.category)}><BookOpen size={15}/>Open related course<ArrowRight size={15}/></Link></> :
+                            <p className={styles.caption}>Complete Daily 10 or analyse your completed tests to find the topics that need more attention.</p>}
+                        <button className={styles.analyseButton} disabled={analysing} onClick={analyse}>{analysing ? <Loader2 size={14} className="animate-spin"/> : <RotateCcw size={14}/>} {analysing ? 'Analysing your answers…' : data?.analysedAt ? 'Refresh learning analysis' : 'Analyse my completed tests'}</button>
+                        {analysisMessage && <p role="status" className={styles.caption}>{analysisMessage}</p>}
+                        <div className={styles.topics}>{data?.topics.map(topic => <div key={topic.testId + topic.topic}><div><span>{topic.topic}</span><b>{topic.accuracy}%</b></div><div className={styles.topicBar}><i style={{ width: topic.accuracy + '%', background: topic.accuracy < 50 ? '#ee977f' : topic.accuracy < 75 ? '#d8b15c' : '#57b99b' }}/></div></div>)}</div>
+                    </section>
+                    <section className={styles.card}><div className={styles.sectionTitle}><div><span className={styles.eyebrow}>BUILD A LEARNING HABIT</span><h2>Your weekly goal</h2></div><Flame size={22}/></div><div className={styles.goalCount}><strong>{goalDays}<small> / {data?.weeklyGoal || 3} days</small></strong><span><Flame size={14}/>{data?.streak || 0} day streak</span></div>
+                        <div className={styles.goalBar}><i style={{ width: Math.min(100, goalDays / (data?.weeklyGoal || 3) * 100) + '%' }}/></div><p className={styles.caption}>Finish Daily 10 on your chosen number of days this week.</p>
+                        <div className={styles.goalChoices}>{[3, 5, 7].map(goal => <button key={goal} aria-pressed={(data?.weeklyGoal || 3) === goal} onClick={async () => {
+                            try { await practiceRequest(user, { action: 'goal', weeklyGoal: goal }); await learning.refresh(); }
+                            catch (error) { setActionError(error instanceof Error ? error.message : 'Goal could not be saved'); }
+                        }}>{goal} days</button>)}</div>{goalDays >= (data?.weeklyGoal || 3) && <p className={styles.success}>🎉 Weekly goal complete. Keep going!</p>}
+                    </section>
+                    {d.liveTests.length > 0 && <section className={styles.card}><span className={styles.eyebrow}>LIVE & UPCOMING</span>{d.liveTests.map(test => <Link key={test.id} href={'/test/' + test.id} className={styles.live}><strong>{test.title}</strong><small>{d.formatDateTime(test.live_start)}</small><Play size={15}/></Link>)}</section>}
+                    <section className={styles.card}><div className={styles.sectionTitle}><div><span className={styles.eyebrow}>GROW TOGETHER</span><h2>Leaderboard</h2></div><Trophy size={22}/></div><div className={styles.leagueTabs}><button aria-pressed={league === 'all'} onClick={() => setLeague('all')}>Exam ranks</button><button aria-pressed={league === 'week'} onClick={() => setLeague('week')}>This week</button></div>
+                        <p className={styles.caption}>{league === 'all' ? 'Existing exam points and ranks.' : 'Daily 10 correct answers this week. One scored set per day; separate from exam points.'}</p>
+                        {league === 'all' ? d.leaderboard.slice(0, 10).map((row, i) => <div key={row.id} className={styles.leader}><b>{String(i + 1).padStart(2, '0')}</b><span>{row.full_name}<small>{d.getRankForPoints(row.total_xp || 0, i === 0 && row.total_xp >= 800).name}</small></span><strong>{row.total_xp || 0}<small>pts</small></strong></div>) :
+                            data?.weekly.length ? data.weekly.map((row, i) => <div key={row.id} className={styles.leader}><b>{i + 1}</b><span>{row.name}<small>{row.days.length} practice days</small></span><strong>{row.score}<small>correct</small></strong></div>) : <p className={styles.empty}>Complete Daily 10 to join this week’s league.</p>}
+                    </section>
+                    <details className={styles.card}><summary className={styles.recommendTitle}>How exam ranks work</summary><p className={styles.caption}>Correct answers on the first completed attempt earn exam points. Retakes and Daily 10 leave those points unchanged.</p>{d.RANKS.map(rank => <div key={rank.name} className={styles.leader}><b>{rank.icon}</b><span>{rank.name}</span><strong>{rank.minPoints}<small>points</small></strong></div>)}<p className={styles.caption}>Legend is reserved for the top-ranked student with at least 800 exam points.</p></details>
+                </aside>
             </div>
-
-            {/* ═══ RANK PROGRESS BAR ═══ */}
-            <div className="max-w-6xl mx-auto px-4 mb-6">
-                <div className="rounded-2xl p-5" style={{ background: '#ffffff', boxShadow: `0 2px 12px rgba(0,0,0,0.04), 0 0 20px ${d.currentRank.color}15, 0 0 40px ${d.currentRank.color}08`, border: `1px solid ${d.currentRank.color}20` }}>
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold flex items-center gap-1.5" style={{ color: '#0f172a' }}>{d.currentRank.icon} {d.currentRank.name} Rank</span>
-                        <span className="text-xs font-black" style={{ color: d.currentRank.color }}>{points} pts</span>
-                    </div>
-                    <div className="h-4 rounded-full overflow-hidden" style={{ background: '#f1f5f9' }} suppressHydrationWarning>
-                        <div suppressHydrationWarning className="h-full rounded-full transition-all duration-1000 relative" style={{ width: `${Math.max(d.rankProgressPercent, 2)}%`, background: `linear-gradient(90deg, ${d.currentRank.color}, ${d.currentRank.color}cc)`, boxShadow: `0 0 20px ${d.currentRank.color}40` }}>
-                            <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%)' }} />
-                        </div>
-                    </div>
-                    <div className="flex justify-between text-[10px] mt-1.5 font-medium" style={{ color: '#475569' }}>
-                        <span>{d.currentRank.icon} {d.currentRank.name}</span>
-                        <span style={{ color: d.pointsToNextRank > 0 ? '#475569' : '#10b981' }}>
-                            {d.nextRank ? `${d.pointsToNextRank} pts to ${d.nextRank.icon} ${d.nextRank.name}` : '🎉 Max Rank Achieved!'}
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            {/* ═══ MAIN CONTENT ═══ */}
-            <div className="max-w-6xl mx-auto px-4 pb-8">
-                <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5">
-
-                    {/* LEFT: Tests */}
-                    <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04), 0 0 20px rgba(99,102,241,0.08), 0 0 40px rgba(99,102,241,0.04)', border: '1px solid rgba(99,102,241,0.12)' }}>
-                        {/* Tests header */}
-                        <div className="p-5 pb-3">
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="h-8 w-8 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#ffffff' }}><Play size={14} /></div>
-                                <h2 className="text-base font-black" style={{ color: '#0f172a' }}>Available Tests</h2>
-                            </div>
-                            {/* Subject tabs */}
-                            <div className="flex flex-wrap gap-2 pb-1">
-                                {dynamicSubjects.map(sub => {
-                                    const isActive = activeSubject === sub.id;
-                                    return (
-                                        <button key={sub.id} onClick={() => setActiveSubject(sub.id)}
-                                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-[11px] font-bold transition-all hover:shadow-md"
-                                            style={{
-                                                background: isActive ? `linear-gradient(135deg, ${sub.color}, ${sub.color}dd)` : '#f8fafc',
-                                                border: isActive ? `1.5px solid ${sub.color}` : '1.5px solid #e2e8f0',
-                                                color: isActive ? '#ffffff' : '#475569',
-                                                boxShadow: isActive ? `0 4px 14px ${sub.color}35` : '0 1px 3px rgba(0,0,0,0.04)',
-                                                transform: isActive ? 'scale(1.03)' : 'scale(1)',
-                                            }}>
-                                            {sub.emoji} {sub.label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                        <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, #e2e8f0, transparent)' }} />
-                        {/* Tests list */}
-                        <div className="p-5 pt-3">
-                            <div className="min-h-[120px] max-h-[420px] overflow-y-auto space-y-3 pr-1">
-                                {d.isLoadingMain ? (
-                                    <div className="flex items-center justify-center py-12 text-[12px] font-semibold" style={{ color: '#475569' }}><Loader2 size={16} className="animate-spin mr-2" />Loading tests…</div>
-                                ) : !d.user ? (
-                                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                                        <div className="h-14 w-14 rounded-2xl flex items-center justify-center mb-3" style={{ background: '#f1f5f9' }}><Lock size={20} style={{ color: '#475569' }} /></div>
-                                        <p className="text-sm font-semibold" style={{ color: '#475569' }}>Login to see your tests</p>
-                                    </div>
-                                ) : d.availableTests.length === 0 && d.lockedTests.length === 0 && d.simpleTests.length === 0 ? (
-                                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                                        <div className="h-14 w-14 rounded-2xl flex items-center justify-center mb-3" style={{ background: '#f1f5f9' }}><BookOpen size={20} style={{ color: '#475569' }} /></div>
-                                        <p className="text-sm font-semibold" style={{ color: '#475569' }}>No tests configured yet</p>
-                                    </div>
-                                ) : (
-                                    <DashboardTestList available={d.availableTests} locked={d.lockedTests} simple={d.simpleTests} subject={activeSubject} attempted={d.attemptedTestIds}/>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* RIGHT Column */}
-                    <div className="flex flex-col gap-5">
-
-                        {/* Live & Upcoming */}
-                        <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04), 0 0 20px rgba(16,185,129,0.08), 0 0 40px rgba(16,185,129,0.04)', border: '1px solid rgba(16,185,129,0.15)' }}>
-                            <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #ecfdf5, #f0fdf4)', borderBottom: '1px solid #d1fae5' }}>
-                                <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#065f46' }}>
-                                    <span className="relative flex h-2.5 w-2.5"><span className="absolute inset-0 rounded-full animate-ping" style={{ background: '#10b981', opacity: 0.5 }} /><span className="h-2.5 w-2.5 rounded-full" style={{ background: '#10b981' }} /></span>
-                                    Live & Upcoming
-                                </h3>
-                                <span className="text-[9px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: '#10b981' }}>LIVE</span>
-                            </div>
-                            <div className="p-4">
-                                {d.liveTests.length === 0 ? (
-                                    <div className="text-center py-4">
-                                                    <p className="text-[11px] font-medium" style={{ color: '#475569' }}>No live tests right now</p>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-2 max-h-44 overflow-y-auto">
-                                        {d.liveTests.map(test => (
-                                            <div key={test.id} className="rounded-xl px-4 py-3 flex items-center justify-between" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
-                                                <div>
-                                                    <h4 className="text-[12px] font-bold" style={{ color: '#0f172a' }}>{test.title}</h4>
-                                                    <div className="text-[9px] mt-0.5 font-medium" style={{ color: '#475569' }}>{d.formatDateTime(test.live_start)} – {d.formatDateTime(test.live_end)}</div>
-                                                </div>
-                                                <Link href={`/test/${test.id}`} className="px-4 py-1.5 rounded-xl text-[10px] font-bold text-white transition-all hover:shadow-lg" style={{ background: '#10b981' }}>
-                                                    <Play size={10} className="inline mr-1" />Join
-                                                </Link>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Leaderboard */}
-                        <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.06), 0 0 25px rgba(245,158,11,0.1), 0 0 50px rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.15)' }}>
-                            {/* Header */}
-                            <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #fffbeb, #fef3c7, #fde68a)', borderBottom: '1px solid #fde68a' }}>
-                                <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#78350f' }}>
-                                    <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)', boxShadow: '0 2px 8px rgba(251,191,36,0.4)' }}>
-                                        <Trophy size={13} style={{ color: '#fff' }} />
-                                    </div>
-                                    Leaderboard
-                                </h3>
-                                <div className="flex items-center gap-1">
-                                    <span className="text-[9px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', boxShadow: '0 2px 6px rgba(245,158,11,0.3)' }}>🏆 TOP RANKS</span>
-                                </div>
-                            </div>
-                            <div className="p-3">
-                                {d.leaderboard.length === 0 ? (
-                                    <div className="text-center py-6">
-                                        <span className="text-2xl mb-2 block">🏆</span>
-                                        <p className="text-[11px] font-medium" style={{ color: '#475569' }}>No rankings yet — be the first!</p>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-2 max-h-72 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
-                                        {d.leaderboard.map((row, idx) => {
-                                            const isRowLegend = idx === 0 && (row.total_xp || 0) >= 800;
-                                            const rowRank = d.getRankForPoints(row.total_xp || 0, isRowLegend);
-                                            const isTop3 = idx < 3;
-                                            const pts = row.total_xp || 0;
-                                            return (
-                                                <div key={row.id} className="relative rounded-xl overflow-hidden transition-all hover:scale-[1.01] hover:shadow-md" style={{
-                                                    background: idx === 0
-                                                        ? 'linear-gradient(135deg, #fdf2f8, #fce7f3, #fbcfe8)'
-                                                        : idx === 1
-                                                        ? 'linear-gradient(135deg, #ecfdf5, #d1fae5, #a7f3d0)'
-                                                        : idx === 2
-                                                        ? 'linear-gradient(135deg, #f0f9ff, #e0f2fe, #bae6fd)'
-                                                        : '#fafbfc',
-                                                    border: idx === 0 ? '1.5px solid #ec4899'
-                                                        : idx === 1 ? '1.5px solid #10b981'
-                                                        : idx === 2 ? '1.5px solid #0ea5e9'
-                                                        : `1px solid ${rowRank.color}20`,
-                                                    boxShadow: idx === 0 ? '0 4px 20px rgba(236,72,153,0.2), 0 0 30px rgba(236,72,153,0.08)'
-                                                        : idx === 1 ? '0 4px 16px rgba(16,185,129,0.18), 0 0 25px rgba(16,185,129,0.06)'
-                                                        : idx === 2 ? '0 4px 16px rgba(14,165,233,0.18), 0 0 25px rgba(14,165,233,0.06)'
-                                                        : 'none',
-                                                }}>
-                                                    {/* Rank color accent bar */}
-                                                    <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: idx === 0 ? 'linear-gradient(180deg, #ec4899, #db2777)' : idx === 1 ? 'linear-gradient(180deg, #10b981, #059669)' : idx === 2 ? 'linear-gradient(180deg, #0ea5e9, #0284c7)' : `linear-gradient(180deg, ${rowRank.color}, ${rowRank.color}80)` }} />
-
-                                                    <div className="flex items-center gap-3 pl-4 pr-3 py-3">
-                                                        {/* Rank Position + Icon */}
-                                                        <div className="relative flex-shrink-0">
-                                                            <div className="h-10 w-10 rounded-xl flex items-center justify-center text-lg" style={{
-                                                                background: `linear-gradient(135deg, ${rowRank.color}20, ${rowRank.color}35)`,
-                                                                border: `1.5px solid ${rowRank.color}40`,
-                                                                boxShadow: isTop3 ? `0 0 12px ${rowRank.color}20` : 'none',
-                                                            }}>
-                                                                {rowRank.icon}
-                                                            </div>
-                                                            {/* Position badge */}
-                                                            <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full flex items-center justify-center text-[8px] font-black" style={{
-                                                                background: idx === 0 ? 'linear-gradient(135deg, #ec4899, #db2777)'
-                                                                    : idx === 1 ? 'linear-gradient(135deg, #10b981, #059669)'
-                                                                    : idx === 2 ? 'linear-gradient(135deg, #0ea5e9, #0284c7)'
-                                                                    : isTop3 ? `linear-gradient(135deg, ${rowRank.color}, ${rowRank.color}cc)` : '#e2e8f0',
-                                                                color: isTop3 ? '#fff' : '#475569',
-                                                                boxShadow: idx === 0 ? '0 2px 8px rgba(236,72,153,0.5)'
-                                                                    : idx === 1 ? '0 2px 6px rgba(16,185,129,0.4)'
-                                                                    : idx === 2 ? '0 2px 6px rgba(14,165,233,0.4)'
-                                                                    : isTop3 ? `0 2px 6px ${rowRank.color}40` : 'none',
-                                                                border: '2px solid #fff',
-                                                            }}>
-                                                                {idx + 1}
-                                                            </div>
-                                                        </div>
-
-                                                        {/* Name + Rank */}
-                                                        <div className="flex-1 min-w-0">
-                                                            <span className="text-[12px] font-bold truncate block" style={{ color: idx === 0 ? '#9d174d' : idx === 1 ? '#065f46' : idx === 2 ? '#075985' : '#0f172a' }}>{row.full_name || 'Player'}</span>
-                                                            <div className="flex items-center gap-2 mt-0.5">
-                                                                <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: idx === 0 ? '#ec4899' : idx === 1 ? '#10b981' : idx === 2 ? '#0ea5e9' : rowRank.color }}>
-                                                                    {idx === 0 ? '🥇 ' : idx === 1 ? '🥈 ' : idx === 2 ? '🥉 ' : ''}{rowRank.name}
-                                                                </span>
-                                                                <span className="h-1 w-1 rounded-full" style={{ background: '#cbd5e1' }}></span>
-                                                                <span className="text-[9px] font-bold" style={{ color: idx === 0 ? '#db2777' : idx === 1 ? '#059669' : idx === 2 ? '#0284c7' : '#f59e0b' }}>🪙 {pts}</span>
-                                                            </div>
-                                                        </div>
-
-                                                        {/* Rank # */}
-                                                        <div className="text-right flex-shrink-0">
-                                                            <span className="text-[10px] font-black" style={{ color: rowRank.color }}>#{row.track_rank}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* ═══ HISTORY ═══ */}
-                <div className="mt-5 rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.06), 0 0 25px rgba(6,182,212,0.1), 0 0 50px rgba(6,182,212,0.05)', border: '1px solid rgba(6,182,212,0.15)' }}>
-                    <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #f0f9ff, #ecfeff)', borderBottom: '1px solid #cffafe' }}>
-                        <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#164e63' }}>
-                            <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #06b6d4, #0891b2)', boxShadow: '0 2px 8px rgba(6,182,212,0.3)' }}>
-                                <Clock size={13} style={{ color: '#fff' }} />
-                            </div>
-                            Recent Attempts
-                        </h3>
-                        <button onClick={() => d.reloadAll()} className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10px] font-bold transition-all hover:shadow-md hover:scale-[1.03] text-white" style={{ background: 'linear-gradient(135deg, #06b6d4, #0891b2)', boxShadow: '0 2px 8px rgba(6,182,212,0.25)' }}>
-                            <RefreshCw size={11} />Refresh
-                        </button>
-                    </div>
-                    <div className="p-3">
-                        {d.attemptHistory.length === 0 && d.mySimpleResults.length === 0 ? (
-                            <div className="text-center py-8">
-                                <span className="text-3xl mb-2 block">📝</span>
-                                <p className="text-[11px] font-medium" style={{ color: '#475569' }}>No attempts yet. Complete a test to see results!</p>
-                            </div>
-                        ) : (
-                            <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
-                                {(d.attemptHistory.length > 0 ? d.attemptHistory : d.mySimpleResults.map((r: any) => ({
-                                    id: r.id, test_title: d.simpleTests.find((t: any) => t.id === r.test_id)?.title || 'Test',
-                                    total_marks: r.total_points || r.score || 0, score: r.score || 0, accuracy: r.total_points ? Math.round((r.score / r.total_points) * 100) : 0,
-                                    status: 'SUBMITTED', durationLabel: '-', submitted_at: r.completed_at,
-                                }))).map((row: any) => {
-                                    const isAuto = row.status === 'AUTO_SUBMITTED';
-                                    const acc = row.accuracy || 0;
-                                    const accColor = acc >= 70 ? '#10b981' : acc >= 40 ? '#f59e0b' : '#ef4444';
-                                    return (
-                                        <div key={row.id} className="relative rounded-xl overflow-hidden transition-all hover:shadow-md hover:scale-[1.005]" style={{ background: '#fafbfc', border: '1px solid #f1f5f9' }}>
-                                            <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: isAuto ? 'linear-gradient(180deg, #f59e0b, #d97706)' : 'linear-gradient(180deg, #10b981, #059669)' }} />
-                                            <div className="flex items-center gap-3 pl-4 pr-3 py-3">
-                                                <div className="h-11 w-11 rounded-xl flex flex-col items-center justify-center flex-shrink-0" style={{ background: `linear-gradient(135deg, ${accColor}15, ${accColor}25)`, border: `1.5px solid ${accColor}35` }}>
-                                                    <span className="text-[13px] font-black" style={{ color: accColor }}>{row.score}</span>
-                                                    <span className="text-[7px] font-bold" style={{ color: `${accColor}99` }}>/{row.total_marks} pts</span>
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-2">
-                                                        <h4 className="text-[12px] font-bold truncate" style={{ color: '#0f172a' }}>{row.test_title}</h4>
-                                                        <span className="text-[8px] px-2 py-0.5 rounded-full font-bold flex-shrink-0" style={{ background: isAuto ? '#fffbeb' : '#ecfdf5', color: isAuto ? '#d97706' : '#059669', border: `1px solid ${isAuto ? '#fde68a' : '#a7f3d0'}` }}>
-                                                            {isAuto ? '⏱ Auto' : '✅ Done'}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex items-center gap-2.5 mt-1">
-                                                        <span className="text-[9px] font-bold" style={{ color: accColor }}>{acc.toFixed ? acc.toFixed(0) : acc}% accuracy</span>
-                                                        <span className="h-1 w-1 rounded-full" style={{ background: '#cbd5e1' }}></span>
-                                                        <span className="text-[9px] font-medium" style={{ color: '#475569' }}>{d.formatDateTime(row.submitted_at || row.started_at)}</span>
-                                                    </div>
-                                                </div>
-                                                <Link href={`/review/${row.id}`} className="px-4 py-2 rounded-xl text-[10px] font-bold flex items-center gap-1.5 transition-all hover:shadow-lg hover:scale-[1.05] flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 3px 10px rgba(99,102,241,0.3)', color: '#ffffff' }}>
-                                                    <Eye size={12} style={{ color: '#ffffff' }} />Review
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* ═══ BADGE EXPLANATION ═══ */}
-            <div className="max-w-6xl mx-auto px-4 mb-6">
-                <div className="rounded-2xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 2px 12px rgba(0,0,0,0.04), 0 0 20px rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.1)' }}>
-                    <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe, #e0e7ff)', borderBottom: '1px solid #ddd6fe' }}>
-                        <h3 className="text-sm font-black flex items-center gap-2" style={{ color: '#4c1d95' }}>
-                            <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', boxShadow: '0 2px 8px rgba(139,92,246,0.3)' }}>
-                                <span className="text-[13px]">🏅</span>
-                            </div>
-                            How Badges & Ranks Work
-                        </h3>
-                    </div>
-                    <div className="p-5">
-                        <p className="text-[12px] font-medium mb-4" style={{ color: '#475569', lineHeight: '1.7' }}>
-                            Earn points by completing tests! Each correct answer earns you points (only on your <strong>first attempt</strong>). As you collect points, you unlock higher rank badges:
-                        </p>
-                        <div className="rounded-xl overflow-hidden mb-4" style={{ border: '1px solid #e2e8f0' }}>
-                            <table className="w-full text-[11px]">
-                                <thead>
-                                    <tr style={{ background: '#f8fafc' }}>
-                                        <th className="text-left px-3 py-2.5 font-bold" style={{ color: '#475569', borderBottom: '1px solid #e2e8f0' }}>Badge</th>
-                                        <th className="text-left px-3 py-2.5 font-bold" style={{ color: '#475569', borderBottom: '1px solid #e2e8f0' }}>Rank</th>
-                                        <th className="text-left px-3 py-2.5 font-bold" style={{ color: '#475569', borderBottom: '1px solid #e2e8f0' }}>Points Required</th>
-                                        <th className="text-left px-3 py-2.5 font-bold hidden sm:table-cell" style={{ color: '#475569', borderBottom: '1px solid #e2e8f0' }}>Note</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {[
-                                        { icon: '🥉', name: 'Bronze', pts: '0', color: '#cd7f32', note: 'Starting rank for everyone' },
-                                        { icon: '🥈', name: 'Silver', pts: '50', color: '#94a3b8', note: 'Keep practicing!' },
-                                        { icon: '🥇', name: 'Gold', pts: '150', color: '#f59e0b', note: 'Great progress!' },
-                                        { icon: '💎', name: 'Platinum', pts: '300', color: '#06b6d4', note: 'You\'re a pro!' },
-                                        { icon: '💠', name: 'Diamond', pts: '500', color: '#8b5cf6', note: 'Elite performer' },
-                                        { icon: '👑', name: 'Legend', pts: '800+', color: '#ef4444', note: '⭐ Exclusive — Only #1 player!' },
-                                    ].map((r, i) => (
-                                        <tr key={i} style={{ borderBottom: i < 5 ? '1px solid #f1f5f9' : 'none', background: r.name === 'Legend' ? '#fef2f210' : 'transparent' }}>
-                                            <td className="px-3 py-2.5">
-                                                <span className="text-lg">{r.icon}</span>
-                                            </td>
-                                            <td className="px-3 py-2.5 font-bold" style={{ color: r.color }}>{r.name}</td>
-                                            <td className="px-3 py-2.5 font-semibold" style={{ color: '#475569' }}>{r.pts} pts</td>
-                                            <td className="px-3 py-2.5 font-medium hidden sm:table-cell" style={{ color: '#475569' }}>{r.note}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: '#fffbeb', border: '1px solid #fde68a' }}>
-                                <span className="text-[13px] mt-0.5">⚡</span>
-                                <p className="text-[11px] font-medium" style={{ color: '#92400e', lineHeight: '1.6' }}>
-                                    <strong>Points are earned only on your first test attempt.</strong> Retaking a test does not add extra points. Your score equals the number of correct answers.
-                                </p>
-                            </div>
-                            <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
-                                <span className="text-[13px] mt-0.5">👑</span>
-                                <p className="text-[11px] font-medium" style={{ color: '#991b1b', lineHeight: '1.6' }}>
-                                    <strong>Legend badge is exclusive!</strong> Only the #1 ranked player with at least 800 points can hold the Legend title. All other players with 500+ points receive the Diamond badge.
-                                </p>
-                            </div>
-                            <div className="flex items-start gap-2 p-3 rounded-lg" style={{ background: '#ecfdf5', border: '1px solid #a7f3d0' }}>
-                                <span className="text-[13px] mt-0.5">🎯</span>
-                                <p className="text-[11px] font-medium" style={{ color: '#065f46', lineHeight: '1.6' }}>
-                                    <strong>Tip:</strong> Focus on accuracy! More correct answers = more points = higher rank. Practice regularly to climb the leaderboard!
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* ── FOOTER ── */}
-            <footer style={{ background: '#ffffff', borderTop: '1px solid #e8ecf1' }}>
-                <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between text-[10px] font-semibold" style={{ color: '#475569' }}>
-                    <span>© Knobly Web · Powered by knobly</span>
-                    <Link href="/" className="flex items-center gap-1 transition-all hover:text-indigo-500" style={{ color: '#475569' }}>
-                        <ArrowLeft size={10} /> Back to Home
-                    </Link>
-                </div>
-            </footer>
-        </div>
-    );
+            <footer className={styles.footer}><Link href="/"><ArrowLeft size={14}/>Back to Home</Link><span>One concept. One practice. One step forward.</span></footer>
+        </main>
+    </div>;
 }

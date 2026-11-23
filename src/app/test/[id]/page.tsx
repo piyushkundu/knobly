@@ -10,6 +10,8 @@ import {
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import OptionText from '@/components/exam/OptionText';
+import QuestionBookmark from '@/components/learning/QuestionBookmark';
+import { practiceResume } from '@/lib/practice-resume';
 
 // --- Types ---
 interface TestData {
@@ -115,6 +117,10 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
 
     // Timer state
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
+    const [resumeAttempt, setResumeAttempt] = useState<{ id: string; deadline: number } | null>(null);
+    const [startError, setStartError] = useState('');
+    const deadlineRef = useRef<number | null>(null);
+    const startingRef = useRef(false);
 
     // Anti cheat
     const [warningCount, setWarningCount] = useState(0);
@@ -179,11 +185,33 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                     quest.exam_options = shuffleArray(optionsByQuestion[quest.id] || []);
                     return quest;
                 });
-                setQuestions(shuffleArray(loadedQ));
+                let orderedQuestions = shuffleArray(loadedQ);
+                const resumeId = new URLSearchParams(window.location.search).get('resume');
+                if (resumeId) {
+                    const savedAttempt = await getDoc(doc(db, 'exam_attempts', resumeId));
+                    const plan = savedAttempt.exists() ? practiceResume(savedAttempt.data(), user.uid, { id: testId, mode: tData.mode, duration_minutes: tData.duration_minutes }) : null;
+                    if (!plan) { setStartError('This practice cannot be resumed. It may have expired or already been submitted.'); setQuestions(orderedQuestions); return; }
+                    const savedAnswers = await getDocs(query(collection(db, 'exam_responses'), where('attempt_id', '==', resumeId)));
+                    const restored: ResponsesMap = {};
+                    savedAnswers.forEach(answer => {
+                        const value = answer.data(), question = loadedQ.find(q => q.id === value.question_id);
+                        if (question && (question.exam_options?.some(option => option.id === value.option_id) || question.question_type === 'SHORT'))
+                            restored[question.id] = { option_id: value.option_id || null, short_answer: value.short_answer || null };
+                    });
+                    if (plan.order.length) {
+                        const positions = new Map(plan.order.map((id, i) => [id, i]));
+                        orderedQuestions = [...loadedQ].sort((a, b) => (positions.get(a.id) ?? 99999) - (positions.get(b.id) ?? 99999));
+                    }
+                    setResponsesMap(restored);
+                    setCurrentIndex(Math.max(0, orderedQuestions.findIndex(q => !restored[q.id])));
+                    setResumeAttempt({ id: resumeId, deadline: plan.deadline });
+                    setTimeLeft(plan.seconds);
+                }
+                setQuestions(orderedQuestions);
 
                 // Set timer from test data (attempt is created on Start click)
                 const duration = Math.max(1, tData.duration_minutes || 60);
-                setTimeLeft(duration * 60);
+                if (!resumeId) setTimeLeft(duration * 60);
 
             } catch (err) {
                 console.error(err);
@@ -217,12 +245,12 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                     finalizeSubmit('AUTO_SUBMITTED');
                     return 0;
                 }
-                return prev - 1;
+                return deadlineRef.current ? Math.max(0, Math.ceil((deadlineRef.current - Date.now()) / 1000)) : prev - 1;
             });
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [examStarted, examFinished, timeLeft]);
+    }, [examStarted, examFinished, timeLeft, responsesMap]);
 
     // --------------------------------------------------
     // PROCTOR LOG
@@ -491,6 +519,8 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
         );
     }
 
+    if (startError) return <div className="min-h-screen flex flex-col items-center justify-center gap-5 bg-indigo-50 p-8 text-center"><p role="alert" className="max-w-md text-slate-700">{startError}</p><button className="rounded-xl bg-indigo-600 px-5 py-3 text-white" onClick={() => router.push('/dashboard')}>Back to Dashboard</button></div>;
+
     const currentQ = questions[currentIndex];
     const existingResp = responsesMap[currentQ.id] || {};
 
@@ -523,17 +553,29 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
 
     // Create attempt when user clicks Start (deferred from init for faster load)
     const createAttemptAndStart = async () => {
-        if (!user || !testData) return;
+        if (!user || !testData || startingRef.current) return;
+        startingRef.current = true;
         try {
+            if (resumeAttempt) {
+                if (resumeAttempt.deadline <= Date.now()) { setStartError('This practice time has expired. Return to Dashboard to choose a new attempt.'); return; }
+                deadlineRef.current = resumeAttempt.deadline;
+                setTimeLeft(Math.ceil((resumeAttempt.deadline - Date.now()) / 1000));
+                setAttempt({ id: resumeAttempt.id });
+            } else {
+            const startedAt = new Date().toISOString();
             const attRef = await addDoc(collection(db, 'exam_attempts'), {
                 user_id: user.uid,
                 test_id: testId,
-                started_at: new Date().toISOString(),
+                started_at: startedAt,
+                question_order: questions.map(question => question.id),
                 status: 'IN_PROGRESS',
                 created_at: serverTimestamp()
             });
             setAttempt({ id: attRef.id });
-        } catch (e) { console.error('Attempt create error:', e); }
+            deadlineRef.current = Date.parse(startedAt) + Math.max(1, testData.duration_minutes || 60) * 60_000;
+            }
+        } catch (e) { console.error('Attempt create error:', e); setStartError('Your attempt could not be saved. Please return to Dashboard and try again.'); return; }
+        finally { startingRef.current = false; }
         try {
             const el = document.documentElement as any;
             if (el.requestFullscreen) el.requestFullscreen().catch(() => { });
@@ -757,7 +799,7 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                         </div>
                         <div className="px-6 pb-6">
                             <button onClick={createAttemptAndStart} className="w-full py-3.5 rounded-2xl text-white text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', boxShadow: '0 8px 25px rgba(109,40,217,0.4)' }}>
-                                ▶ Enter Fullscreen & Start Exam
+                                {resumeAttempt ? '▶ Enter Fullscreen & Resume Practice' : '▶ Enter Fullscreen & Start Exam'}
                             </button>
                             <p className="mt-3 text-center text-[10px] font-medium" style={{ color: '#475569' }}>By clicking Start, you agree to the monitoring rules.</p>
                         </div>
@@ -829,6 +871,7 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                         {/* Question Card — LARGER */}
                         <div className="flex-1 min-h-0 overflow-y-auto px-5 sm:px-8 py-5 sm:py-6">
                             <div className="max-w-4xl mx-auto">
+                                <div className="mb-4 flex justify-end"><QuestionBookmark questionId={currentQ.id}/></div>
                                 {currentQ.chapter && (
                                     <p className="text-[12px] font-bold mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-white" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', boxShadow: '0 2px 8px rgba(109,40,217,0.25)' }}>📚 {currentQ.chapter}</p>
                                 )}

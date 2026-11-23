@@ -37,6 +37,7 @@ export function useDashboard() {
     const [leaderboard, setLeaderboard] = useState<LeaderRow[]>([]);
     const [badges, setBadges] = useState<Badge[]>([]);
     const [attemptHistory, setAttemptHistory] = useState<Attempt[]>([]);
+    const [allAttempts, setAllAttempts] = useState<Record<string, any>[]>([]);
     const [isLoadingMain, setIsLoadingMain] = useState(true);
     const [trackSaving, setTrackSaving] = useState(false);
     const [trackError, setTrackError] = useState('');
@@ -284,6 +285,7 @@ export function useDashboard() {
             const q = query(collection(db, 'exam_attempts'), where('user_id', '==', user.uid));
             const snap = await getDocs(q);
             const attempts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            setAllAttempts(attempts);
             // Sort client-side to avoid Firebase composite index errors
             attempts.sort((a: any, b: any) => new Date(b.submitted_at || 0).getTime() - new Date(a.submitted_at || 0).getTime());
             const recentAttempts = attempts.slice(0, 20);
@@ -448,6 +450,6 @@ export function useDashboard() {
         isLoadingMain, stats, avatarInitials, totalPoints, currentRank, nextRank, rankProgressPercent, pointsToNextRank, RANKS, getRankForPoints, isLegendUser,
         unlockedTestsForLevel, lockedTestsForLevel, formatDateTime,
         activeTest, setActiveTest, setTrack, trackSaving, trackError, reloadAll,
-        simpleTests, mySimpleResults, categories,
+        simpleTests, mySimpleResults, categories, allAttempts,
     };
 }
