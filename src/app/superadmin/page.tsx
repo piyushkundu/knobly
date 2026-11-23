@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useSuperAdmin } from './useSuperAdmin';
+import { formattedQuestionCount } from '@/lib/formatted-question-import';
 import {
     LayoutDashboard, FlaskConical, HelpCircle, BarChart3, Users, Medal, Bell,
     Plus, Trash2, Pencil, Play, Lock, X, Eye, RefreshCw, Upload, Send,
@@ -41,6 +42,7 @@ export default function SuperAdminPage() {
     const [qForm, setQForm] = useState({ id: null as any, text: '', type: 'MCQ', marks: 1, difficulty: 'EASY', options: [{ text: '', is_correct: false }, { text: '', is_correct: false }] });
     const [importMode, setImportMode] = useState(false);
     const [importText, setImportText] = useState('');
+    const readyImportCount = formattedQuestionCount(importText);
     const [importLog, setImportLog] = useState('');
     const [aiGenerating, setAiGenerating] = useState(false);
     const [aiTopic, setAiTopic] = useState('');
@@ -374,9 +376,19 @@ export default function SuperAdminPage() {
                                     <div className={`${card} p-4 border border-blue-200 grid grid-cols-1 md:grid-cols-2 gap-5`}>
                                         <div className="flex flex-col gap-3">
                                             <div>
-                                                <h3 className="text-[10px] font-black uppercase text-blue-600 mb-2 flex items-center gap-1">1. Paste Raw Questions (AI Will Form & Import)</h3>
+                                                <h3 className="text-[10px] font-black uppercase text-blue-600 mb-2 flex items-center gap-1">1. Paste Questions</h3>
                                                 <textarea value={importText} onChange={e => setImportText(e.target.value)} className={`${inp} h-[210px] text-xs leading-relaxed`} placeholder="Paste ANY unstructured questions here.&#10;&#10;The AI will automatically understand them, perfectly format them, and import them into your test without changing your language!&#10;&#10;Example:&#10;Q1. What is HTML?&#10;1. Language&#10;2. Browser&#10;Ans: 1" />
                                                 <button disabled={aiGenerating || !importText.trim()} onClick={async () => {
+                                                    if (readyImportCount > 0) {
+                                                        setAiGenerating(true); setImportLog(`Importing ${readyImportCount} prepared questions unchanged...`);
+                                                        try {
+                                                            const count = await d.importQuestions(selTestId, importText);
+                                                            setImportLog(`Success! Imported ${count} prepared questions unchanged.`);
+                                                            setImportText('');
+                                                        } catch (error) { setImportLog('Error: ' + error); }
+                                                        finally { setAiGenerating(false); }
+                                                        return;
+                                                    }
                                                     setAiGenerating(true); setImportLog('🤖 AI is reading & formatting your questions...');
                                                     try {
                                                         const res = await fetch('/api/admin-ai-format', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({input: importText, mode: 'format'})});
@@ -391,8 +403,9 @@ export default function SuperAdminPage() {
                                                     } catch(e) { console.error(e); setImportLog('Error: ' + e); }
                                                     setAiGenerating(false);
                                                 }} className="w-full mt-3 py-3 text-white font-bold rounded-xl text-xs shadow-md transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed group" style={{ background: 'linear-gradient(135deg, #3b82f6, #6366f1)' }}>
-                                                    {aiGenerating ? <Loader2 size={16} className="animate-spin inline mr-2" /> : <Crown size={16} className="inline mr-2 group-hover:scale-110 transition-transform"/>} Magic Process & Import
+                                                    {aiGenerating ? <Loader2 size={16} className="animate-spin inline mr-2" /> : <Upload size={16} className="inline mr-2"/>} {readyImportCount ? `Import ${readyImportCount} prepared questions` : 'Magic Process & Import'}
                                                 </button>
+                                                {readyImportCount > 0 && <p className="mt-2 text-xs text-emerald-700" role="status">Prepared format detected. Questions and answers will be imported unchanged.</p>}
                                             </div>
                                         </div>
 

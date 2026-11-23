@@ -16,14 +16,15 @@ function load(file, deps = {}, globals = {}) {
     return exports;
 }
 const order = load('src/lib/dashboard-test-order.ts');
+const formatted = load('src/lib/formatted-question-import.ts');
 const day = order.NEW_TEST_WINDOW_MS;
 const epoch = Date.parse('2026-11-23T12:00:00Z');
 const entry = (id, title, extra = {}) => ({id, title, category: 'IT TOOLS', ...extra});
 
-test('chapter serial order is natural, stable and immutable, including mixed explicit serials', () => {
-    const input = [entry('10', 'IT TOOLS CHAPTER 10 TEST'), entry('6', 'IT TOOLS CHAPTER 6 TEST'), entry('2', 'IT TOOLS CHAPTER 2 TEST'), entry('1', 'IT TOOLS CHAPTER 1 TEST'), entry('3', 'Custom test', {serial_no: 3})];
+test('chapter serial order is natural, stable and immutable, with model papers after chapters', () => {
+    const input = [entry('model', 'IT TOOLS MODEL PAPER 1 TEST'), entry('10', 'IT TOOLS CHAPTER 10 TEST'), entry('6', 'IT TOOLS CHAPTER 6 TEST'), entry('2', 'IT TOOLS CHAPTER 2 TEST'), entry('1', 'IT TOOLS CHAPTER 1 TEST'), entry('3', 'IT TOOLS CHAPTER 3 TEST')];
     const before = JSON.stringify(input);
-    assert.deepEqual([...order.sortDashboardTests(input, epoch)].map(t => t.id), ['1', '2', '3', '6', '10']);
+    assert.deepEqual([...order.sortDashboardTests(input, epoch)].map(t => t.id), ['1', '2', '3', '6', '10', 'model']);
     assert.equal(JSON.stringify(input), before);
     const grouped = order.sortDashboardTests([...input, entry('ccc', 'CCC TEST 1', {category: 'CCC'})], epoch);
     assert.equal(grouped[0].id, 'ccc');
@@ -113,4 +114,31 @@ test('actual admin importer round-trips all 80 questions and 320 options without
         assert.equal(choices.filter(o => o.is_correct).length, 1);
         assert.equal(choices.findIndex(o => o.is_correct), expected.correctIndex);
     });
+});
+
+test('prepared import is detected only for complete MCQs with exactly one correct answer', () => {
+    const good = examImportText();
+    assert.equal(formatted.formattedQuestionCount(good), 80);
+    assert.equal(formatted.formattedQuestionCount(good.replaceAll('\n', '\r\n')), 80);
+    for (const bad of ['', 'Create HTML questions', good.replace('B. HighText Machine Language', 'A. HighText Machine Language'), good.replace(' *', ''), good.replace('B. HighText Machine Language', 'B. HighText Machine Language *'), good + '\nExplanation: not an option']) {
+        assert.equal(formatted.formattedQuestionCount(bad), 0);
+    }
+});
+
+test('admin imports reviewed questions without calling AI or altering text and retains errors for review', async () => {
+    const states = new Map([[0, 'questions'], [6, 'new-html-test'], [13, true], [14, examImportText()]]);
+    let index = 0, fail = false, writes = 0;
+    const component = load('src/app/superadmin/page.tsx', {
+        react: {...React, useState(initial) {const i = index++; if (!states.has(i)) states.set(i, initial); return [states.get(i), value => states.set(i, value)];}},
+        'react/jsx-runtime': runtime, 'lucide-react': new Proxy({}, {get: () => () => null}),
+        '@/lib/formatted-question-import': formatted,
+        './useSuperAdmin': {useSuperAdmin: () => ({user: {}, isAdmin: true, categories: [], users: [], tests: [], questions: [], async importQuestions(id, text) {assert.equal(id, 'new-html-test'); assert.equal(text, examImportText()); if (fail) throw Error('network'); writes++; return 80;}})},
+    }, {fetch() {throw Error('Prepared questions must not be rewritten by AI');}}).default;
+    const render = () => {index = 0; return component();};
+    const button = () => walk(render(), node => node.type === 'button' && text(node).includes('Import 80 prepared questions'))[0];
+    await button().props.onClick(); assert.equal(writes, 1); assert.equal(states.get(14), '');
+    assert.match(states.get(15), /Imported 80 prepared questions unchanged/); assert.equal(states.get(16), false);
+    states.set(14, examImportText()); fail = true;
+    await button().props.onClick(); assert.equal(writes, 1); assert.equal(states.get(14), examImportText());
+    assert.match(states.get(15), /Error:.*network/); assert.equal(states.get(16), false);
 });

@@ -29,12 +29,6 @@ export function isNewDashboardTest(test: DashboardTest, now: number): boolean {
 }
 
 const natural = new Intl.Collator('en-IN', { numeric: true, sensitivity: 'base' });
-function serial(test: DashboardTest): number {
-    const explicit = test.serial_no ?? test.sort_order;
-    if (typeof explicit === 'number' && Number.isFinite(explicit)) return explicit;
-    const match = test.title.match(/\d+/);
-    return match ? Number(match[0]) : Number.MAX_SAFE_INTEGER;
-}
 export function sortDashboardTests<T extends DashboardTest>(tests: readonly T[], now: number): T[] {
     return [...tests].sort((a, b) => {
         const freshA = isNewDashboardTest(a, now), freshB = isNewDashboardTest(b, now);
@@ -45,8 +39,6 @@ export function sortDashboardTests<T extends DashboardTest>(tests: readonly T[],
         }
         const category = natural.compare(a.category || '', b.category || '');
         if (category) return category;
-        const serialA = serial(a), serialB = serial(b);
-        if (serialA !== serialB) return serialA - serialB;
         return natural.compare(a.title, b.title) || natural.compare(a.id, b.id);
     });
 }
