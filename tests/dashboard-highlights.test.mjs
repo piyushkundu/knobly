@@ -21,7 +21,7 @@ test('India greetings cross morning, afternoon and evening boundaries without re
     const {DashboardGreeting}=load('src/app/dashboard/DashboardHighlights.tsx',deps,{Date:{now(){throw Error('Clock read during initial render');}}});
     assert.match(renderToStaticMarkup(React.createElement(DashboardGreeting,{name:'Student'})),/Welcome back.*Student/);
 });
-test('daily rings show real answered counts, including skipped questions and smaller pools; loading stays indeterminate',()=>{
+test('daily card progress shows real answered counts, including skipped questions and smaller pools; loading stays indeterminate',()=>{
     assert.equal(pure.dailyAnswerProgress({answered:4,total:10,status:'in_progress'}).percent,40);
     assert.equal(pure.dailyAnswerProgress({answered:2,total:5,status:'in_progress'}).percent,40);
     assert.equal(pure.dailyAnswerProgress({answered:8,total:10,status:'completed'}).percent,80);

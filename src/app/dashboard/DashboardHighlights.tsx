@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, type CSSProperties } from 'react';
-import { Check, CheckCircle2, Moon, Sparkles, Sun } from 'lucide-react';
+import { Check, CheckCircle2, Moon, Sun } from 'lucide-react';
 import { dailyAnswerProgress, dashboardGreeting } from '@/lib/dashboard-highlights';
 import styles from './dashboard.module.css';
 
@@ -54,15 +54,14 @@ export function DailyProgress({ daily, userId, day }: { daily: Daily; userId: st
         }, 0);
         return () => { clearTimeout(beginTimer); if (stopTimer !== undefined) clearTimeout(stopTimer); };
     }, [complete, dailyId, day, userId, stamp]);
-    const circumference = 2 * Math.PI * 70;
     const ready = Boolean(day);
     return <div className={styles.dailyProgress} data-complete={complete || undefined} data-celebrate={celebrating || undefined}>
-        <div className={styles.progressDial} role="progressbar" aria-label="Daily practice questions answered" aria-busy={!ready} aria-valuemin={0} aria-valuemax={total} aria-valuenow={ready ? answered : undefined} aria-valuetext={ready ? answered + ' of ' + total + ' answered' + (complete ? ', practice completed' : '') : 'Loading today’s progress'}>
-            <svg viewBox="0 0 168 168" aria-hidden="true"><circle cx="84" cy="84" r="70" className={styles.ringTrack}/><circle cx="84" cy="84" r="70" className={styles.ringArc} strokeDasharray={circumference} strokeDashoffset={circumference * (1 - percent / 100)}/></svg>
-            <div className={styles.ringCenter}><strong>{ready ? answered : '—'}<small>/{total}</small></strong><span>ANSWERED</span></div>
-            <span className={styles.dialBadge} aria-hidden="true">{complete ? <CheckCircle2 size={21}/> : <Sparkles size={19}/>}</span>
+        <div className={styles.dailyPaper} aria-hidden="true"><span>YOUR DAILY</span><strong>{total}</strong><b>QUESTIONS</b><i/></div>
+        <div className={styles.dailyAnswerMeter} role="progressbar" aria-label="Daily practice questions answered" aria-busy={!ready} aria-valuemin={0} aria-valuemax={total} aria-valuenow={ready ? answered : undefined} aria-valuetext={ready ? answered + ' of ' + total + ' answered' + (complete ? ', practice completed' : '') : 'Loading today’s progress'}>
+            <div className={styles.dailyMeterLabel}><strong>{ready ? answered : '—'}<small>/{total}</small></strong><span>answered</span></div>
+            <div className={styles.dailyMeterTrack}><i style={{ width: (ready ? percent : 0) + '%' }}/></div>
         </div>
-        <span className={styles.dialCaption}>{!ready ? 'Loading your progress' : complete ? 'Today’s practice complete ✓' : answered ? 'Keep your momentum' : 'Your next small win'}</span>
+        <span className={styles.dialCaption}>{complete && <CheckCircle2 size={12} aria-hidden="true"/>}{!ready ? 'Loading your progress' : complete ? 'Today’s practice complete ✓' : answered ? 'Keep your momentum' : 'Your next small win'}</span>
         {celebrating && <div className={styles.confetti} aria-hidden="true">{Array.from({ length: 8 }, (_, i) => <i key={i} style={{ '--piece': i } as CSSProperties}/>)}</div>}
     </div>;
 }
