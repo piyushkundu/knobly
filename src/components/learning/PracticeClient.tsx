@@ -88,7 +88,7 @@ export default function PracticeClient() {
             if (saveTimer.current) clearTimeout(saveTimer.current);
             try { await queueSave(answers, index); router.push('/dashboard'); }
             catch { setError('Your answers could not be saved yet. Please retry before leaving.'); }
-        }}><ArrowLeft size={17}/>Dashboard</Link><div><strong>{kind === 'daily' ? 'Daily 10' : kind === 'wrong' ? 'Wrong Answers Notebook' : 'Bookmarked Questions'}</strong><small>{complete ? 'Review & learn' : 'Practice at your pace'} · {session.day} · India time</small></div><span className={styles.chip}>{complete ? 'Completed' : saveStatus}</span></header>
+        }}><ArrowLeft size={17}/>Dashboard</Link><div><strong>{kind === 'daily' ? 'Daily 10' : kind === 'wrong' ? 'Wrong Answers Notebook' : 'Bookmarked Questions'}</strong><small>{complete ? 'Review & learn' : 'Practice at your pace'} · {session.day} · India time</small></div><span role="status" className={styles.chip}>{complete ? 'Completed' : saveStatus}</span></header>
         <main className={styles.practiceGrid}>
             <div>
                 {complete && <section className={styles.result}><CheckCircle2 size={30}/><div><h1>{session.score} / {session.questions.length} correct</h1><p>{Math.round((session.score || 0) / session.questions.length * 100)}% accuracy · {session.questions.length - answered} skipped</p><small>{kind === 'daily' ? 'Daily league counts one completed Daily 10 per India calendar day.' : 'Revision helps you practise; exam points stay separate.'}</small></div><Link href="/dashboard">View progress <ArrowRight size={16}/></Link></section>}
