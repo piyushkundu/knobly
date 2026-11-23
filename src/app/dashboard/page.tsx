@@ -8,6 +8,8 @@ import { useDashboard } from './useDashboard';
 import DashboardTestList from './DashboardTestList';
 import { practiceRequest, useLearning } from '@/components/learning/useLearning';
 import ProgressChart from '@/components/learning/ProgressChart';
+import { DashboardGreeting, DailyProgress, RankJourney } from './DashboardHighlights';
+import { latestScoreComparison } from '@/lib/dashboard-highlights';
 import styles from './dashboard.module.css';
 
 const completed = (status?: string) => status === 'SUBMITTED' || status === 'AUTO_SUBMITTED';
@@ -41,6 +43,7 @@ export default function DashboardPage() {
         (status === 'all' || (status === 'attempted' ? d.attemptedTestIds.has(test.id) : !d.attemptedTestIds.has(test.id))) &&
         (duration === 'all' || (test.duration_minutes || 0) <= Number(duration));
     const recent = d.attemptHistory.filter(a => completed(a.status));
+    const comparison = latestScoreComparison(d.attemptHistory);
     const chart = recent.slice(0, 10).reverse().filter(row => row.total_marks > 0).map(row =>
         ({ label: row.test_title, value: (row.score || 0) / row.total_marks * 100 }));
     const resume = d.allAttempts.filter(attempt => {
@@ -72,18 +75,19 @@ export default function DashboardPage() {
             <button className={styles.logout} onClick={logout} aria-label="Log out"><LogOut size={16}/><span>Log out</span></button>
         </header>
         <main className={styles.container}>
-            <section className={styles.welcome}><div><span className={styles.eyebrow}>YOUR NEXT STEP STARTS HERE</span><h1>Welcome back, {firstName}<span>Let’s make today count.</span></h1><p>Practise a little. Understand your mistakes. See yourself improve.</p>
+            <section className={styles.welcome}><div><DashboardGreeting name={firstName}/>
                 <div className={styles.heroActions}>{resume ? <Link href={'/test/' + resume.test_id + '?resume=' + resume.id}><Play size={15}/>Continue your practice</Link> : <Link href="/practice"><Sparkles size={15}/>Your daily practice</Link>}<a href="#tests">Explore tests<ArrowRight size={15}/></a></div>
-            </div><div className={styles.rank}><span className={styles.rankMedal}>{d.currentRank.icon}</span><div><small>YOUR EXAM RANK</small><strong>{d.currentRank.name}<b>{d.totalPoints} pts</b></strong><div className={styles.rankBar}><i style={{ width: d.rankProgressPercent + '%' }}/></div><p>{d.nextRank ? d.pointsToNextRank + ' points to ' + d.nextRank.name : 'Highest rank reached'}</p></div></div></section>
+            </div><RankJourney ranks={d.RANKS} current={d.currentRank} points={d.totalPoints} progress={d.rankProgressPercent} next={d.nextRank} remaining={d.pointsToNextRank}/></section>
             <div className={styles.metrics}>
                 <Metric label="Exam points" value={d.totalPoints} icon={<Zap size={20}/>} help="Points are awarded for correct answers on your first completed attempt at each exam. Retakes and Daily 10 do not add exam-rank points."/>
                 <Metric label="Tests completed" value={d.stats.testsCompleted} icon={<CheckCircle2 size={20}/>} help="Number of different tests you have submitted. Repeated attempts at the same test count once here."/>
                 <Metric label="First-attempt score" value={Math.round(d.stats.avgScore) + '%'} icon={<TrendingUp size={20}/>} help="Average score percentage from your first submitted attempt at each test. The progress chart below also shows later attempts."/>
                 <Metric label="Accuracy" value={Math.round(d.stats.avgAccuracy) + '%'} icon={<Target size={20}/>} help="Average recorded accuracy on first submitted attempts. Older imported records may store accuracy separately from the calculated score."/>
             </div>
+            {comparison && <div className={styles.scoreInsight} data-direction={comparison.change > 0 ? 'up' : comparison.change < 0 ? 'down' : 'steady'}><TrendingUp size={17} aria-hidden="true"/><p><strong>{comparison.change > 0 ? '+' : ''}{comparison.change} percentage points</strong> on your latest <b>{comparison.title}</b> attempt <span>· compared with your previous attempt at the same test</span></p></div>}
             {(learning.error || actionError) && <div className={styles.error} role="alert">{actionError || learning.error}<button onClick={learning.refresh}>Retry</button></div>}
             <div className={styles.featureGrid}>
-                <section className={styles.daily}><div className={styles.dailyCopy}><span className={styles.dailyPill}><Sparkles size={13}/>A LITTLE EVERY DAY</span><h2>Your daily 10.<br/><span>Small steps. Real progress.</span></h2><p>Questions from all active tests, with extra attention to the questions you’ve answered incorrectly.</p><Link href="/practice" className={styles.dailyButton}>{dailyLabel}<ArrowRight size={17}/></Link><small>{daily?.status === 'completed' ? daily.score + '/' + daily.total + ' correct today · saved for review' : daily ? daily.answered + '/' + daily.total + ' answered · pick up where you left off' : 'Mixed subjects · saves as you go · refreshes at midnight, India time'}</small></div><div className={styles.dailyArt} aria-hidden="true"><div>10<span>QUESTIONS</span></div><b>✦</b><i>✓</i></div></section>
+                <section className={styles.daily} data-complete={daily?.status === 'completed' || undefined}><div className={styles.dailyCopy}><span className={styles.dailyPill}><Sparkles size={13}/>{daily?.status === 'completed' ? 'TODAY’S WIN, SAVED' : 'A LITTLE EVERY DAY'}</span><h2>Your daily 10.<br/><span>Small steps. Real progress.</span></h2><p>Questions from all active tests, with extra attention to the questions you’ve answered incorrectly.</p><Link href="/practice" className={styles.dailyButton}>{dailyLabel}<ArrowRight size={17}/></Link><small>{daily?.status === 'completed' ? daily.score + '/' + daily.total + ' correct today · saved for review' : daily ? daily.answered + '/' + daily.total + ' answered · pick up where you left off' : 'Mixed subjects · saves as you go · refreshes at midnight, India time'}</small></div><DailyProgress daily={daily} userId={user.uid} day={data?.day}/></section>
                 <div className={styles.revisionCards} id="revision"><Link href="/practice?mode=wrong" className={styles.revision}><div className={styles.revisionIcon}><RotateCcw size={20}/></div><span>{data ? data.wrongCount : '—'}<small>questions to revisit</small></span><h3>Wrong Answers Notebook</h3><p>Turn past mistakes into your next improvement.</p><b>Revise mistakes<ArrowRight size={15}/></b></Link>
                     <Link href="/practice?mode=bookmarks" className={styles.bookmarks}><Bookmark size={20}/><div><h3>Saved for later <span>{data?.bookmarks.length || 0}</span></h3><p>Your personal revision collection.</p></div><ChevronRight size={18}/></Link></div>
             </div>

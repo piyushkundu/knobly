@@ -64,10 +64,13 @@ test('dashboard search, completion and duration filters combine without changing
         '@/components/auth/LoginModal':{default:()=>null},'./useDashboard':{useDashboard:()=>state},'./DashboardTestList':{default:List},
         '@/components/learning/useLearning':{useLearning:()=>({data:null,error:'',refresh(){}}),practiceRequest(){}},'@/components/learning/ProgressChart':{default:()=>null},
         './dashboard.module.css':{default:new Proxy({},{get:(_,key)=>key})},
+        './DashboardHighlights':{DashboardGreeting:()=>null,DailyProgress:()=>null,RankJourney:()=>null},
+        '@/lib/dashboard-highlights':load('src/lib/dashboard-highlights.ts',{}),
     }).default;
     let tree=h.render(Page);
     const list=()=>nodes(tree).find(n=>n.type===List).props;
-    assert.equal(list().available.length,2);assert.ok(text(tree).includes('42'));
+    assert.equal(list().available.length,2);
+    assert.equal(nodes(tree).find(n=>n.props?.remaining===8).props.points,42,'Rank panel receives the original exam points');
     const entry=nodes(tree).find(n=>n.props?.position===1);
     assert.equal(entry.props.score,650);assert.equal(entry.props.rank,'Diamond');
     const row=entry.type(entry.props);

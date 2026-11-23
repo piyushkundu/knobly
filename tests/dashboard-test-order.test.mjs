@@ -16,6 +16,7 @@ function load(file, deps = {}, globals = {}) {
     return exports;
 }
 const order = load('src/lib/dashboard-test-order.ts');
+const highlights = load('src/lib/dashboard-highlights.ts');
 const formatted = load('src/lib/formatted-question-import.ts');
 const day = order.NEW_TEST_WINDOW_MS;
 const epoch = Date.parse('2026-11-23T12:00:00Z');
@@ -59,6 +60,7 @@ test('cards filter categories, retain locks and attempts, show 80Q/160pts, and e
     const component = load('src/app/dashboard/DashboardTestList.tsx', {
         react: {...React, useState(initial) {state ??= initial(); return [state, value => {state = value;}];}, useMemo: fn => fn(), useEffect: fn => {effect = fn;}},
         'react/jsx-runtime': runtime, 'lucide-react': new Proxy({}, {get: () => () => null}), '@/lib/dashboard-test-order': order,
+        '@/lib/dashboard-highlights': highlights, './dashboard.module.css': {default:new Proxy({}, {get:(_,key)=>key})},
     }, globals).default;
     const props = {available: [entry('html', htmlExam.title, {...htmlExam, id: 'html', created_at: epoch}), entry('it', 'IT TOOLS CHAPTER 1 TEST')], locked: [entry('locked', 'IT TOOLS CHAPTER 2 TEST', {level_no: 3})], simple: [], subject: 'all', attempted: new Set(['html'])};
     let tree = component(props);
