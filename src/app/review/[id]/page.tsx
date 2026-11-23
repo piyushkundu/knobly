@@ -7,6 +7,7 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc, getDocs, collection, query, where } from 'firebase/firestore';
 import Link from 'next/link';
 import { Sparkles, Loader2 } from 'lucide-react';
+import OptionText from '@/components/exam/OptionText';
 
 /* ── Types ── */
 interface Option { id: string; option_text: string; is_correct: boolean; question_id: string; }
@@ -449,7 +450,7 @@ export default function ReviewPage() {
                                                     return (
                                                         <div key={opt.id} className="p-3 rounded-xl text-xs sm:text-sm flex items-start gap-3 transition-all" style={style}>
                                                             {icon}
-                                                            <span className="flex-1 leading-snug">{cleanText}</span>
+                                                            <span className="flex-1 leading-snug"><OptionText testId={attempt?.test_id} text={cleanText}/></span>
                                                             {isSelected && <span className="text-[9px] font-bold uppercase flex-shrink-0 mt-0.5" style={{ color: isCorrect ? '#10b981' : '#ef4444' }}>(Your pick)</span>}
                                                         </div>
                                                     );

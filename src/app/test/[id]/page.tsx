@@ -9,6 +9,7 @@ import {
 } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
+import OptionText from '@/components/exam/OptionText';
 
 // --- Types ---
 interface TestData {
@@ -869,7 +870,7 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                                                     style={isSelected ? { background: 'rgba(255,255,255,0.25)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.4)' } : { background: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0' }}>
                                                     {letters[oi] || oi + 1}
                                                 </div>
-                                                <div className="flex-1 pt-1.5 text-[14px] sm:text-[15px] font-medium">{opt.option_text}</div>
+                                                <div className="flex-1 pt-1.5 text-[14px] sm:text-[15px] font-medium"><OptionText testId={testId} text={opt.option_text}/></div>
                                                 {isSelected && <span className="mt-1.5 text-xl text-white">✓</span>}
                                             </button>
                                         );
