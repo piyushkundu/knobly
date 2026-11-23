@@ -58,7 +58,7 @@ test('practice autosaves the latest answers, resumes its saved index and does no
 test('dashboard search, completion and duration filters combine without changing exam statistics',()=>{
     const h=harness(),List=()=>null;
     const testRows=[{id:'a',title:'HTML chapter 1',category:'Web Design',mode:'PRACTICE',duration_minutes:80},{id:'b',title:'Python chapter 2',category:'Python',mode:'PRACTICE',duration_minutes:30}];
-    const state={profile:{full_name:'Student'},availableTests:testRows,lockedTests:[],simpleTests:[],attemptHistory:[],allAttempts:[],attemptedTestIds:new Set(['b']),currentRank:{icon:'🥉',name:'Bronze'},nextRank:{name:'Silver'},totalPoints:42,rankProgressPercent:84,pointsToNextRank:8,stats:{testsCompleted:2,avgScore:60,avgAccuracy:60},categories:[],liveTests:[],leaderboard:[],RANKS:[],isLoadingMain:false};
+    const state={profile:{full_name:'Student'},availableTests:testRows,lockedTests:[],simpleTests:[],attemptHistory:[],allAttempts:[],attemptedTestIds:new Set(['b']),currentRank:{icon:'🥉',name:'Bronze'},nextRank:{name:'Silver'},totalPoints:42,rankProgressPercent:84,pointsToNextRank:8,stats:{testsCompleted:2,avgScore:60,avgAccuracy:60},categories:[],liveTests:[],leaderboard:[{id:'leader',user_id:'other',full_name:'Class Leader',total_xp:650}],getRankForPoints:()=>({name:'Diamond',icon:'💠'}),RANKS:[],isLoadingMain:false};
     const Page=load('src/app/dashboard/page.tsx',{
         react:h.React,'react/jsx-runtime':jsx,'next/link':{default:'a'},'lucide-react':icons,'@/context/AuthContext':{useAuth:()=>({user:{uid:'u'},loading:false,logout(){}})},
         '@/components/auth/LoginModal':{default:()=>null},'./useDashboard':{useDashboard:()=>state},'./DashboardTestList':{default:List},
@@ -68,9 +68,15 @@ test('dashboard search, completion and duration filters combine without changing
     let tree=h.render(Page);
     const list=()=>nodes(tree).find(n=>n.type===List).props;
     assert.equal(list().available.length,2);assert.ok(text(tree).includes('42'));
+    const entry=nodes(tree).find(n=>n.props?.position===1);
+    assert.equal(entry.props.score,650);assert.equal(entry.props.rank,'Diamond');
+    const row=entry.type(entry.props);
+    assert.ok(text(row).includes('Class Leader'));assert.ok(text(row).includes('650'));assert.equal(row.props['data-place'],1);
     nodes(tree).find(n=>n.props?.['aria-label']==='Maximum duration').props.onChange({target:{value:'30'}});tree=h.render(Page);assert.equal(list().available[0].id,'b');
     nodes(tree).find(n=>n.props?.['aria-label']==='Attempt status').props.onChange({target:{value:'unattempted'}});tree=h.render(Page);assert.equal(list().available.length,0);
     nodes(tree).find(n=>n.props?.['aria-label']==='Maximum duration').props.onChange({target:{value:'all'}});tree=h.render(Page);assert.equal(list().available[0].id,'a');
     nodes(tree).find(n=>n.props?.['aria-label']==='Search tests').props.onChange({target:{value:'does not exist'}});tree=h.render(Page);assert.equal(list().available.length,0);
+    nodes(tree).find(n=>n.props?.['aria-label']==='Clear search').props.onClick();tree=h.render(Page);
+    assert.equal(list().available[0].id,'a','Clearing search retains the selected completion filter');
     assert.equal(state.totalPoints,42);assert.equal(state.stats.testsCompleted,2);
 });

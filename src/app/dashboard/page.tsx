@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Bookmark, BookOpen, CheckCircle2, ChevronRight, Flame, Globe, HelpCircle, Loader2, LogOut, Play, RotateCcw, Search, Sparkles, Target, TrendingUp, Trophy, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bookmark, BookOpen, CheckCircle2, ChevronRight, Flame, Globe, HelpCircle, Loader2, LogOut, Play, RotateCcw, Search, Sparkles, Target, TrendingUp, Trophy, X, Zap } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import LoginModal from '@/components/auth/LoginModal';
 import { useDashboard } from './useDashboard';
@@ -14,11 +14,24 @@ const completed = (status?: string) => status === 'SUBMITTED' || status === 'AUT
 function Metric({ label, value, help, icon }: { label: string; value: string | number; help: string; icon: React.ReactNode }) {
     return <div className={styles.metric}><div className={styles.metricIcon}>{icon}</div><div><strong>{value}</strong><span>{label}</span></div><details className={styles.metricHelp}><summary aria-label={'About ' + label}><HelpCircle size={14}/></summary><p>{help}</p></details></div>;
 }
+function LeaderboardEntry({ position, name, rank, rankIcon, score, scoreLabel, isYou }: {
+    position: number; name: string; rank: string; rankIcon?: string; score: number; scoreLabel: string; isYou: boolean;
+}) {
+    const initials = name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'K';
+    return <li className={styles.leaderEntry} data-place={position <= 3 ? position : undefined} data-you={isYou || undefined}
+        style={{ animationDelay: Math.min(position - 1, 9) * 55 + 'ms' }}>
+        <div className={styles.leaderAvatar} aria-hidden="true"><span>{rankIcon || initials}</span>{position <= 3 && <b>{['🥇', '🥈', '🥉'][position - 1]}</b>}</div>
+        <div className={styles.leaderIdentity}><strong>{name}{isYou && <span className={styles.youBadge}>YOU</span>}</strong><small>{rankIcon && <span aria-hidden="true">{rankIcon}</span>}{rank}</small></div>
+        <div className={styles.leaderScore}><strong><Zap size={12} aria-hidden="true"/>{score}</strong><small>{scoreLabel}</small></div>
+        <span className={styles.leaderPosition} aria-label={'Rank ' + position}>#{position}</span>
+    </li>;
+}
 export default function DashboardPage() {
     const d = useDashboard(), { user, loading: authLoading, logout } = useAuth(), learning = useLearning(user);
     const [subject, setSubject] = useState('all'), [search, setSearch] = useState(''), [status, setStatus] = useState('all'), [duration, setDuration] = useState('all');
     const [league, setLeague] = useState<'all' | 'week'>('all'), [analysing, setAnalysing] = useState(false), [analysisMessage, setAnalysisMessage] = useState(''), [actionError, setActionError] = useState('');
     const [showHistory, setShowHistory] = useState(false);
+    const searchInput = useRef<HTMLInputElement>(null);
     if (authLoading) return <div className={styles.loading}><Loader2 className="animate-spin"/>Loading your learning space…</div>;
     if (!user) return <LoginModal isOpen onClose={() => { window.location.href = '/'; }}/>;
     const data = learning.data, firstName = (d.profile?.full_name || user.displayName || 'Student').split(' ')[0];
@@ -77,7 +90,7 @@ export default function DashboardPage() {
             <div className={styles.mainGrid}>
                 <div className={styles.mainColumn}>
                     <section className={styles.card} id="tests"><div className={styles.sectionTitle}><div><span className={styles.eyebrow}>CHOOSE YOUR NEXT CHALLENGE</span><h2>Available tests <small>{tests.length || d.simpleTests.length}</small></h2></div><BookOpen size={22}/></div>
-                        <div className={styles.filters}><label className={styles.search}><Search size={16}/><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Search test or chapter…" aria-label="Search tests"/></label>
+                        <div className={styles.filters}><div className={styles.search} role="search" aria-label="Find an available test"><span className={styles.searchIcon}><Search size={18} aria-hidden="true"/></span><input ref={searchInput} type="search" autoComplete="off" value={search} onChange={event => setSearch(event.target.value)} placeholder="Search tests, subjects or chapters…" aria-label="Search tests"/>{search && <button type="button" className={styles.clearSearch} aria-label="Clear search" onClick={() => { setSearch(''); searchInput.current?.focus(); }}><X size={15}/></button>}</div>
                             <select aria-label="Attempt status" value={status} onChange={event => setStatus(event.target.value)}><option value="all">All attempts</option><option value="unattempted">Not attempted</option><option value="attempted">Attempted</option></select>
                             <select aria-label="Maximum duration" value={duration} onChange={event => setDuration(event.target.value)}><option value="all">Any duration</option><option value="15">Up to 15 min</option><option value="30">Up to 30 min</option><option value="60">Up to 60 min</option></select></div>
                         <div className={styles.subjects}><button aria-pressed={subject === 'all'} onClick={() => setSubject('all')}>📚 All</button>{d.categories.map((category: { id: string; name: string; emoji?: string }) => <button key={category.id} aria-pressed={subject === category.name} onClick={() => setSubject(category.name)}>{category.emoji || '📚'} {category.name}</button>)}</div>
@@ -106,10 +119,15 @@ export default function DashboardPage() {
                         }}>{goal} days</button>)}</div>{goalDays >= (data?.weeklyGoal || 3) && <p className={styles.success}>🎉 Weekly goal complete. Keep going!</p>}
                     </section>
                     {d.liveTests.length > 0 && <section className={styles.card}><span className={styles.eyebrow}>LIVE & UPCOMING</span>{d.liveTests.map(test => <Link key={test.id} href={'/test/' + test.id} className={styles.live}><strong>{test.title}</strong><small>{d.formatDateTime(test.live_start)}</small><Play size={15}/></Link>)}</section>}
-                    <section className={styles.card}><div className={styles.sectionTitle}><div><span className={styles.eyebrow}>GROW TOGETHER</span><h2>Leaderboard</h2></div><Trophy size={22}/></div><div className={styles.leagueTabs}><button aria-pressed={league === 'all'} onClick={() => setLeague('all')}>Exam ranks</button><button aria-pressed={league === 'week'} onClick={() => setLeague('week')}>This week</button></div>
+                    <section className={styles.card + ' ' + styles.leaderboardCard} aria-label="Student leaderboard"><div className={styles.leaderboardHeader}><div className={styles.trophyTile}><Trophy size={25} aria-hidden="true"/></div><div><span className={styles.eyebrow}>GROW TOGETHER</span><h2>Leaderboard</h2></div><span className={styles.topRanks}><Sparkles size={11} aria-hidden="true"/>TOP RANKS</span></div><div className={styles.leaderboardBody}><div className={styles.leagueTabs}><button aria-pressed={league === 'all'} onClick={() => setLeague('all')}>Exam ranks</button><button aria-pressed={league === 'week'} onClick={() => setLeague('week')}>This week</button></div>
                         <p className={styles.caption}>{league === 'all' ? 'Existing exam points and ranks.' : 'Daily 10 correct answers this week. One scored set per day; separate from exam points.'}</p>
-                        {league === 'all' ? d.leaderboard.slice(0, 10).map((row, i) => <div key={row.id} className={styles.leader}><b>{String(i + 1).padStart(2, '0')}</b><span>{row.full_name}<small>{d.getRankForPoints(row.total_xp || 0, i === 0 && row.total_xp >= 800).name}</small></span><strong>{row.total_xp || 0}<small>pts</small></strong></div>) :
-                            data?.weekly.length ? data.weekly.map((row, i) => <div key={row.id} className={styles.leader}><b>{i + 1}</b><span>{row.name}<small>{row.days.length} practice days</small></span><strong>{row.score}<small>correct</small></strong></div>) : <p className={styles.empty}>Complete Daily 10 to join this week’s league.</p>}
+                        <ol key={league} className={styles.leaderList} aria-label={league === 'all' ? 'Exam rankings' : 'Weekly practice rankings'}>{league === 'all' ? d.leaderboard.slice(0, 10).map((row, i) => {
+                            const rank = d.getRankForPoints(row.total_xp || 0, i === 0 && row.total_xp >= 800);
+                            return <LeaderboardEntry key={row.id} position={i + 1} name={row.full_name} rank={rank.name} rankIcon={rank.icon} score={row.total_xp || 0} scoreLabel="points" isYou={row.user_id === user.uid}/>;
+                        }) : data?.weekly.map((row, i) => <LeaderboardEntry key={row.id} position={i + 1} name={row.name} rank={row.days.length + ' practice days'} score={row.score} scoreLabel="correct" isYou={row.id === user.uid}/>)}</ol>
+                        {league === 'all' && !d.leaderboard.length && <p className={styles.empty}>Your class rankings will appear here.</p>}
+                        {league === 'week' && !data?.weekly.length && <p className={styles.empty}>Complete Daily 10 to join this week’s league.</p>}
+                        <div className={styles.leaderboardFooter}><Trophy size={13} aria-hidden="true"/><span>{league === 'all' ? 'Every correct answer moves you forward.' : 'A little practice. A stronger you.'}</span></div></div>
                     </section>
                     <details className={styles.card}><summary className={styles.recommendTitle}>How exam ranks work</summary><p className={styles.caption}>Correct answers on the first completed attempt earn exam points. Retakes and Daily 10 leave those points unchanged.</p>{d.RANKS.map(rank => <div key={rank.name} className={styles.leader}><b>{rank.icon}</b><span>{rank.name}</span><strong>{rank.minPoints}<small>points</small></strong></div>)}<p className={styles.caption}>Legend is reserved for the top-ranked student with at least 800 exam points.</p></details>
                 </aside>
