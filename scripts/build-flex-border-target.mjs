@@ -11,6 +11,9 @@ function load(relative) {
     return exports;
 }
 const { flexBorderTask } = load('../src/data/css-flex-border-task.ts');
+const { displayBorderTask } = load('../src/data/css-display-border-task.ts');
 const { previewDocument } = load('../src/lib/style-course-demo.ts');
-writeFileSync(new URL('../public' + flexBorderTask.target, import.meta.url), previewDocument(flexBorderTask.solution, 'css') + '\n');
-process.stdout.write('Built Flexbox & Border Cards reference.\n');
+for (const task of [displayBorderTask, flexBorderTask]) {
+    writeFileSync(new URL('../public' + task.target, import.meta.url), previewDocument(task.solution, 'css') + '\n');
+    process.stdout.write(`Built ${task.title} reference.\n`);
+}

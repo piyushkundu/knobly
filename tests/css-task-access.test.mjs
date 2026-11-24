@@ -19,7 +19,8 @@ function load(file,deps={},globals={}) {
     return exports;
 }
 const authored=load('src/data/css-flex-border-task.ts');
-const courses=load('src/lib/style-courses.ts',{'@/data/style-courses.generated.json':{default:generated},'@/data/css-flex-border-task':authored});
+const displayAuthored=load('src/data/css-display-border-task.ts');
+const courses=load('src/lib/style-courses.ts',{'@/data/style-courses.generated.json':{default:generated},'@/data/css-flex-border-task':authored,'@/data/css-display-border-task':displayAuthored});
 const password=load('src/lib/task-admin-password.ts',{'server-only':{},'node:crypto':crypto});
 const instructorPassword=source('src/lib/task-admin-password.ts').match(/const taskPassword = '([^']+)'/)[1];
 const response={NextResponse:{json(data,init={}){return {data,status:init.status||200,headers:init.headers||{}};}}};
@@ -108,16 +109,18 @@ test('direct CSS task and compiler routes hide locked content; unlocked tasks, l
     });
     const task=generated.css.tasks[0], newTask=authored.flexBorderTask;
     const render=async element=>renderToStaticMarkup(resolve(await element));
-    for(const example of [task,newTask])for(const method of ['StyleTaskPage','StyleCompilerPage']) {
+    for(const example of [task,newTask,displayAuthored.displayBorderTask])for(const method of ['StyleTaskPage','StyleCompilerPage']) {
         const locked=await render(pages[method]({id:'css',taskId:example.id}));
         assert.match(locked,/LOCKED/);assert.ok(!locked.includes('<iframe'));assert.ok(!locked.includes('COMPILER'));assert.ok(!locked.includes(example.solution.html));
     }
     unlocked=[task.id];
     assert.match(await render(pages.StyleTaskPage({id:'css',taskId:task.id})),/<iframe/);
     assert.match(await render(pages.StyleCompilerPage({id:'css',taskId:task.id})),/COMPILER/);
-    unlocked=[newTask.id];
-    assert.match(await render(pages.StyleTaskPage({id:'css',taskId:newTask.id})),/flex-border-cards\.html/);
-    assert.match(await render(pages.StyleCompilerPage({id:'css',taskId:newTask.id})),/COMPILER/);
+    for(const example of [newTask,displayAuthored.displayBorderTask]) {
+        unlocked=[example.id];
+        assert.ok((await render(pages.StyleTaskPage({id:'css',taskId:example.id}))).includes(example.target));
+        assert.match(await render(pages.StyleCompilerPage({id:'css',taskId:example.id})),/COMPILER/);
+    }
     offline=true;
     assert.match(await render(pages.StyleCompilerPage({id:'css',taskId:task.id})),/LOCKED/);
     const previousReads=reads;

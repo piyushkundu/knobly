@@ -4,6 +4,7 @@ export const flexBorderTask: StyleTask = {
     id: 'flex-border-cards',
     title: 'Flexbox & Border Cards',
     subtitle: 'Arrange three study cards with Flexbox and style solid, dashed and double borders.',
+    inlineDescription: 'Ab khud banayein: teen cards ko ek row mein sajayein aur har card par alag border lagayein.',
     source: 'Knobly original exercise',
     lesson: 'display-flex',
     inlineAfter: 'display-flex',
