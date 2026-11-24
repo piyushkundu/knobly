@@ -23,6 +23,7 @@ const examples=load('src/lib/css-foundation-examples.ts');
 const demo=load('src/lib/style-course-demo.ts');
 const basic={react:React,'react/jsx-runtime':runtime,'next/link':link,'lucide-react':icons};
 const progress={default:()=>React.createElement('button',{},'Mark lesson complete'),useCourseProgress:()=>({completed:[]})};
+const inlineTasks=load('src/components/style-course/LessonTaskCard.tsx',basic);
 const Locked=load('src/components/style-course/LockedNotes.tsx',basic).default;
 const Foundation=load('src/components/style-course/FoundationLesson.tsx',{...basic,'@/lib/css-foundation-examples':examples}).default;
 const Reader=load('src/components/style-course/LessonReader.tsx',{
@@ -51,7 +52,7 @@ test('all CSS and W3.CSS chapters share one document with unique anchors and no 
     for(const [id,source] of Object.entries(data)) {
         const course={...source,id};
         const Component=load('src/components/style-course/CourseReader.tsx',{
-            ...basic,'@/lib/style-course-reading':reading,'./CourseProgress':progress,'./LessonReader':{default:Reader},
+            ...basic,'@/lib/style-course-reading':reading,'./CourseProgress':progress,'./LessonReader':{default:Reader},'./LessonTaskCard':inlineTasks,
         }).default;
         const html=renderToStaticMarkup(React.createElement(Component,{course,initialId:course.lessons[0].id,chapters:course.lessons.map(lesson=>({lesson,demo:demo.lessonDraft(id,lesson)}))}));
         assert.equal((html.match(/<article\b/g)||[]).length,course.lessons.length);
@@ -89,10 +90,10 @@ test('scroll events update the active chapter and URL without reload or completi
     const window={location,history:{state:{existing:true},replaceState(state,_,url){changes.push({state,url});location.pathname=url.split('?')[0];location.hash='';}},addEventListener(name,fn){listeners.set(name,fn);},removeEventListener(name,fn){assert.equal(listeners.get(name),fn);listeners.delete(name);},matchMedia:()=>({matches:true})};
     const target={scrollIntoView:options=>assert.equal(options.behavior,'instant')};
     const Component=load('src/components/style-course/CourseReader.tsx',{
-        ...basic,react,'@/lib/style-course-reading':reading,'./CourseProgress':progress,'./LessonReader':{default:()=>null},
+        ...basic,react,'@/lib/style-course-reading':reading,'./CourseProgress':progress,'./LessonReader':{default:()=>null},'./LessonTaskCard':inlineTasks,
     },{window,document:{getElementById:id=>id==='two-reference'?target:null},requestAnimationFrame:fn=>{frames.set(++frameId,fn);return frameId;},cancelAnimationFrame:id=>frames.delete(id),ResizeObserver:class{observe(){} disconnect(){disconnects++;}}}).default;
     const chapters=['one','two','three'].map((id,index)=>({lesson:{id,title:id,group:'Basics'},demo:{html:'',css:''}}));
-    const props={course:{id:'css',name:'CSS',lessons:chapters.map(item=>item.lesson)},chapters,initialId:'two'};
+    const props={course:{id:'css',name:'CSS',lessons:chapters.map(item=>item.lesson),tasks:[]},chapters,initialId:'two'};
     const render=()=>{cursor=0;refCursor=0;return Component(props);};
     let tree=render();
     const sectionObjects=chapters.map(({lesson},i)=>({top:(i-1)*3000,scrolls:[],getBoundingClientRect(){return{top:this.top,bottom:this.top+3000};},scrollIntoView(options){this.scrolls.push(options);},contains:node=>lesson.id==='two'&&node===target,parentElement:{}}));

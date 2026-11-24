@@ -8,7 +8,8 @@ export interface StyleLesson {
 export interface StyleTask {
     id: string; title: string; subtitle: string; source: string; steps: string[]; skills: string[];
     lesson: string; target: string; starter: StyleDraft; solution: StyleDraft; note: string;
+    inlineAfter?: string;
 }
 export interface StyleQuestion { question: string; options: string[]; correctAnswer: number; explanation: string; source: string; sourceQuestion: string }
 export interface StyleCourse { id: StyleCourseId; name: string; description: string; notesUrl: string; lessons: StyleLesson[]; tasks: StyleTask[]; quiz: StyleQuestion[] }
-export interface CourseSummary { id: StyleCourseId; name: string; description: string; notesUrl: string; lessons: Pick<StyleLesson, 'id' | 'title' | 'group'>[]; tasks: Pick<StyleTask,'id'|'title'|'subtitle'|'skills'>[]; quizCount: number; exampleCount: number }
+export interface CourseSummary { id: StyleCourseId; name: string; description: string; notesUrl: string; lessons: Pick<StyleLesson, 'id' | 'title' | 'group'>[]; tasks: Pick<StyleTask,'id'|'title'|'subtitle'|'skills'|'inlineAfter'>[]; quizCount: number; exampleCount: number }

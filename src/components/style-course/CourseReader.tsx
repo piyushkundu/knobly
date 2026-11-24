@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, BookOpen, Check, ChevronDown, ChevronRight, Lock
 import type { CourseSummary, StyleDraft, StyleLesson } from '@/lib/style-course-types';
 import { activeReadingChapter, courseChapterFromPath } from '@/lib/style-course-reading';
 import LessonReader from './LessonReader';
+import LessonTaskCard from './LessonTaskCard';
 import { useCourseProgress } from './CourseProgress';
 
 const ChapterContent=memo(LessonReader);
@@ -94,6 +95,7 @@ export default function CourseReader({ course, chapters, initialId }: {course:Co
         <main className="sc-lesson sc-reading-stream"><h1 className="sc-visually-hidden">{course.name} complete learning guide</h1><div className="sc-stream-position"><span><BookOpen size={13}/><strong>{current.title.replace(/^\d+\.\s*/,'')}</strong></span><small>{index+1} / {chapters.length} · Keep scrolling</small></div>
             {chapters.map(({lesson,demo},position)=><article key={lesson.id} id={`chapter-${lesson.id}`} ref={element=>{if(element)sections.current.set(lesson.id,element);else sections.current.delete(lesson.id);}} className="sc-stream-chapter" aria-label={`Chapter ${position+1}: ${lesson.title}`}>
                 <ChapterContent course={course} lesson={lesson} demo={demo} embedded/>
+                {course.tasks.filter(task=>task.inlineAfter===lesson.id).map(task=><LessonTaskCard key={task.id} course={course.id} task={task}/>)}
                 {position+1<chapters.length&&<div className="sc-chapter-bridge"><span><ChevronDown size={17}/></span><div><small>KEEP SCROLLING · NEXT CHAPTER</small><strong>{chapters[position+1].lesson.title.replace(/^\d+\.\s*/,'')}</strong></div></div>}
             </article>)}
             <section className="sc-card sc-reading-finish"><BookOpen size={25}/><h2>You have reached the end of the guide.</h2><p>Revise a chapter using the sidebar, or put your skills into practice.</p><Link href={`${base}/tasks`} className="sc-primary">Explore practice projects<ArrowRight size={15}/></Link></section>

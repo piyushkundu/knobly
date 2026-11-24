@@ -18,7 +18,8 @@ function load(file,deps={},globals={}) {
     vm.runInNewContext(js,{exports,require(name){assert.ok(name in deps,name);return deps[name];},...globals});
     return exports;
 }
-const courses=load('src/lib/style-courses.ts',{'@/data/style-courses.generated.json':{default:generated}});
+const authored=load('src/data/css-flex-border-task.ts');
+const courses=load('src/lib/style-courses.ts',{'@/data/style-courses.generated.json':{default:generated},'@/data/css-flex-border-task':authored});
 const password=load('src/lib/task-admin-password.ts',{'server-only':{},'node:crypto':crypto});
 const instructorPassword=source('src/lib/task-admin-password.ts').match(/const taskPassword = '([^']+)'/)[1];
 const response={NextResponse:{json(data,init={}){return {data,status:init.status||200,headers:init.headers||{}};}}};
@@ -71,7 +72,7 @@ test('CSS task state starts locked; instructor actions persist only CSS settings
     await post({password:instructorPassword,taskId:first,action:'lock'});
     assert.deepEqual([...state.ids],[second]);
     await post({password:instructorPassword,taskId:'all',action:'unlock'});
-    assert.equal(state.ids.length,generated.css.tasks.length);
+    assert.equal(state.ids.length,courses.getStyleCourse('css').tasks.length);
     await post({password:instructorPassword,taskId:'all',action:'lock'});
     assert.equal(state.ids.length,0);
     assert.equal((await api.GET()).data.unlockedTasks.length,0,'a saved empty list stays locked');
@@ -105,15 +106,18 @@ test('direct CSS task and compiler routes hide locked content; unlocked tasks, l
         './CssTaskManager':{default:({lockedTask})=>React.createElement('p',{},'LOCKED '+lockedTask?.id)},
         './StylePlayground':{default:()=>React.createElement('p',{},'COMPILER')},
     });
-    const task=generated.css.tasks[0];
+    const task=generated.css.tasks[0], newTask=authored.flexBorderTask;
     const render=async element=>renderToStaticMarkup(resolve(await element));
-    for(const method of ['StyleTaskPage','StyleCompilerPage']) {
-        const locked=await render(pages[method]({id:'css',taskId:task.id}));
-        assert.match(locked,/LOCKED/);assert.ok(!locked.includes('<iframe'));assert.ok(!locked.includes('COMPILER'));assert.ok(!locked.includes(task.solution.html));
+    for(const example of [task,newTask])for(const method of ['StyleTaskPage','StyleCompilerPage']) {
+        const locked=await render(pages[method]({id:'css',taskId:example.id}));
+        assert.match(locked,/LOCKED/);assert.ok(!locked.includes('<iframe'));assert.ok(!locked.includes('COMPILER'));assert.ok(!locked.includes(example.solution.html));
     }
     unlocked=[task.id];
     assert.match(await render(pages.StyleTaskPage({id:'css',taskId:task.id})),/<iframe/);
     assert.match(await render(pages.StyleCompilerPage({id:'css',taskId:task.id})),/COMPILER/);
+    unlocked=[newTask.id];
+    assert.match(await render(pages.StyleTaskPage({id:'css',taskId:newTask.id})),/flex-border-cards\.html/);
+    assert.match(await render(pages.StyleCompilerPage({id:'css',taskId:newTask.id})),/COMPILER/);
     offline=true;
     assert.match(await render(pages.StyleCompilerPage({id:'css',taskId:task.id})),/LOCKED/);
     const previousReads=reads;
