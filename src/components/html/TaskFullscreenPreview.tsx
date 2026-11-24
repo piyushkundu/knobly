@@ -3,12 +3,13 @@
 import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
-export default function TaskFullscreenPreview({ mode, targetSrc, previewHtml, previewKey, onClose }: {
+export default function TaskFullscreenPreview({ mode, targetSrc, previewHtml, previewKey, onClose, sandbox }: {
     mode: 'preview' | 'target' | 'compare';
     targetSrc: string;
     previewHtml: string;
     previewKey: number;
     onClose: () => void;
+    sandbox?: string;
 }) {
     const dialogRef = useRef<HTMLDialogElement>(null);
     const title = mode === 'target' ? 'Target fullscreen' : mode === 'compare' ? 'Compare fullscreen' : 'My preview fullscreen';
@@ -29,12 +30,12 @@ export default function TaskFullscreenPreview({ mode, targetSrc, previewHtml, pr
                 <div className={`flex min-h-0 flex-1 ${mode === 'compare' ? 'flex-col sm:flex-row' : ''}`}>
                     {mode !== 'preview' && <section className="flex min-h-0 min-w-0 flex-1 flex-col">
                         {mode === 'compare' && <h3 className="border-b px-3 py-1 text-xs font-bold" style={{ backgroundColor: '#fff7ed', color: '#9a3412' }}>Target task</h3>}
-                        <iframe src={targetSrc} title="Fullscreen target output" className="min-h-0 w-full flex-1 border-0 bg-white" />
+                        <iframe src={targetSrc} sandbox={sandbox} title="Fullscreen target output" className="min-h-0 w-full flex-1 border-0 bg-white" />
                     </section>}
                     {mode !== 'target' && <section className="flex min-h-0 min-w-0 flex-1 flex-col">
                         {mode === 'compare' && <h3 className="border-b px-3 py-1 text-xs font-bold" style={{ backgroundColor: '#ecfdf5', color: '#065f46' }}>My preview</h3>}
                         <iframe key={previewKey} srcDoc={previewHtml} title="Fullscreen student output" className="min-h-0 w-full flex-1 border-0 bg-white"
-                            sandbox="allow-scripts allow-modals allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox" />
+                            sandbox={sandbox ?? 'allow-scripts allow-modals allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox'} />
                     </section>}
                 </div>
             </div>

@@ -106,6 +106,7 @@ test('direct CSS task and compiler routes hide locked content; unlocked tasks, l
         './CourseShell':{default:({children})=>React.createElement('div',{},children)},'./CourseHub':{default:()=>null},'./CourseReader':{default:()=>null},'./LockedNotes':{default:()=>null},'./CourseQuiz':{default:()=>null},
         './CssTaskManager':{default:({lockedTask})=>React.createElement('p',{},'LOCKED '+lockedTask?.id)},
         './StylePlayground':{default:()=>React.createElement('p',{},'COMPILER')},
+        './StyleTaskView':load('src/components/style-course/StyleTaskView.tsx',{'react/jsx-runtime':runtime,react:{...React,useState:initial=>[initial,()=>{}]},'next/link':link,'lucide-react':icons,'@/components/html/TaskFullscreenPreview':{default:()=>null}}),
     });
     const task=generated.css.tasks[0], newTask=authored.flexBorderTask;
     const render=async element=>renderToStaticMarkup(resolve(await element));

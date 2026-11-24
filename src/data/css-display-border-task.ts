@@ -5,92 +5,105 @@ const html = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Display &amp; Border Lab</title>
+  <title>Learning Hub</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="display-lab">
-    <p class="eyebrow">CSS PRACTICE / DISPLAY + BORDERS</p>
-    <h1>Display &amp; Border Lab</h1>
-    <p class="intro">Same span elements. Three different display behaviours.</p>
-
-    <section class="demo-panel block-panel">
-      <h2>01 / Block</h2>
-      <p>Every box starts on a new line. Width and height apply.</p>
-      <div class="sample-row"><span class="sample">Box A</span><span class="sample">Box B</span><span class="sample">Box C</span></div>
-      <p class="rule-label">display: block; border: 2px solid;</p>
+  <main class="learning-hub">
+    <header class="site-heading" id="home">
+      <p class="eyebrow">LEARN TOGETHER. BUILD SOMETHING NEW.</p>
+      <h1>Learning Hub</h1>
+      <p>Your first step into web design starts here.</p>
+    </header>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="#home">Home</a>
+      <a href="#courses">Courses</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <section class="courses" id="courses">
+      <p class="section-label">PICK YOUR STARTING POINT</p>
+      <h2>Small lessons. Big possibilities.</h2>
+      <p class="section-intro">Explore the three building blocks of the web.</p>
+      <div class="course-list">
+        <article class="course-card html-card">
+          <span class="course-number">01 / STRUCTURE</span>
+          <h3>HTML</h3>
+          <p>Build a strong foundation with headings, images and links.</p>
+          <a href="#html">Explore HTML →</a>
+        </article>
+        <article class="course-card css-card">
+          <span class="course-number">02 / DESIGN</span>
+          <h3>CSS</h3>
+          <p>Bring your pages to life with colours, borders and layouts.</p>
+          <a href="#css">Explore CSS →</a>
+        </article>
+        <article class="course-card js-card">
+          <span class="course-number">03 / INTERACTION</span>
+          <h3>JavaScript</h3>
+          <p>Add useful interactions that respond to your visitors.</p>
+          <a href="#javascript">Explore JS →</a>
+        </article>
+      </div>
     </section>
-
-    <section class="demo-panel inline-panel">
-      <h2>02 / Inline</h2>
-      <p>Boxes follow the text. Width and height do not size these spans.</p>
-      <div class="sample-row">Read <span class="sample">HTML</span> <span class="sample">CSS</span> <span class="sample">JS</span> together.</div>
-      <p class="rule-label">display: inline; border: 2px dashed;</p>
-    </section>
-
-    <section class="demo-panel inline-block-panel">
-      <h2>03 / Inline-block</h2>
-      <p>Boxes sit beside each other, accept width and height, and wrap when needed.</p>
-      <div class="sample-row"><span class="sample">HTML</span> <span class="sample">CSS</span> <span class="sample">JavaScript</span></div>
-      <p class="rule-label">display: inline-block; border: 4px double;</p>
-    </section>
-
-    <footer>Build this layout using block, inline and inline-block. No Flexbox or Grid needed.</footer>
+    <section class="about-strip" id="about"><h2>Made for curious learners.</h2><p>One topic at a time. Learn, practise, and keep creating.</p></section>
+    <footer id="contact"><strong>Learning Hub</strong><span>Keep learning. Keep building.</span></footer>
   </main>
 </body>
 </html>`;
 
 export const displayBorderTask: StyleTask = {
     id: 'display-border-lab',
-    title: 'Block, Inline & Inline-block Lab',
-    subtitle: 'Use the same span elements to compare three display behaviours and practise solid, dashed and double borders.',
-    inlineDescription: 'Ab khud banayein: block ko nayi line par, inline ko text ke saath aur inline-block ko fixed size ke saath dikhayein. Har group par alag border lagayein.',
+    title: 'Learning Hub — Display & Borders',
+    subtitle: 'Recreate the learning website: a full-width heading, inline navigation and inline-block course cards with three border styles.',
+    inlineDescription: 'Design dekhkar website banayein: heading poori line mein, menu links saath-saath aur teen fixed-size course cards alag borders ke saath.',
     source: 'Knobly original exercise',
     lesson: 'display-property',
     inlineAfter: 'display-property',
     target: '/style-course/display-border-lab.html',
     skills: ['display: block', 'display: inline', 'display: inline-block', 'border-style', 'border-width', 'border-color', 'border-radius', 'width', 'height'],
     steps: [
-        'Create a centred white lab board, max-width: 860px, padding: 24px, with a 2px solid blue-grey border and 20px rounded corners. / Board ko page ke beech mein rakhein aur bahar border lagayein.',
-        'Keep the three demonstration panels one below another. Give each panel padding: 18px and a 1px solid border. / Teen sections ek ke neeche ek aayein; Flexbox ya Grid ka use na karein.',
-        'Block group: apply display: block to its spans, width: 180px, height: 46px and margin: 8px 0. Use a 2px solid blue border. / Har span apni nayi line se shuru ho aur size saaf dikhna chahiye.',
-        'Inline group: apply display: inline, width: 180px and height: 46px to its spans, with a 2px dashed orange border. / Width aur height likhne ke baad bhi inline spans text ke size mein hi rahenge. Read aur together. ke beech ek hi text flow banayein.',
-        'Inline-block group: apply display: inline-block, width: 160px, height: 54px, margin: 4px and vertical-align: top. Use a 4px double green border. / Boxes ek doosre ke paas aayein aur width-height bhi kaam kare.',
-        'Give all sample spans padding: 8px and border-radius: 8px. Keep the supplied box-sizing helper. / Padding aur border ko box ke total size ke andar rakhein.',
-        'Match the blue, orange and green groups to the target. Keep the display and border rule labels visible beneath each example. / Har section ka heading, output aur neeche uski CSS pehchaan saaf dikhe.',
-        'Narrow the preview: inline-block boxes should wrap naturally, while block boxes stay on separate lines. / Chhoti screen par boxes bahar na niklein. Compare karein ki inline spans par fixed width-height kyun nahi lagti.'
+        'Make index.html and style.css. Link style.css in the HTML head. / Dono files khud likhein aur HTML mein CSS file ka link lagayein.',
+        'Recreate the centred Learning Hub website, maximum width 940px, with a white background, 2px outer border and 20px rounded corners. / Target ki tarah website beech mein banayein.',
+        'Use a block header with a dark-blue background, white Learning Hub heading and a 4px solid blue bottom border. / Header poori available width le aur uske baad menu nayi line par aaye.',
+        'Put Home, Courses, About and Contact links in the navigation. Use display: inline for these links. / Links text ki tarah ek hi line mein aayein; inline links par width aur height lagane ki zaroorat nahi hai.',
+        'Make three course cards with display: inline-block, width: 220px, height: 260px, padding: 20px, margin: 8px and vertical-align: top. / Cards saath-saath aur same height mein dikhne chahiye. Flexbox ya Grid ka use na karein.',
+        'HTML: 3px solid blue border. CSS: 3px dashed green border. JavaScript: 5px double orange border. Give all three cards 14px rounded corners. / Target dekhkar har card ka colour aur border match karein.',
+        'Style each Explore link as an inline-block button. Put the about section and footer on separate full-width lines. / Button ko padding dein aur neeche ke sections ko target ki tarah banayein.',
+        'Check the page in a narrow preview: inline-block cards should naturally move onto the next line. / Cards screen se bahar na niklein. HTML aur CSS dono file tabs mein apna code save rahega.'
     ],
-    note: 'The HTML uses span elements in all three groups: change their display with CSS instead of replacing them with different tags. Inline width and height are intentionally ignored for these non-replaced spans; padding and borders still appear. This exercise comes before Flexbox, so solve it without display: flex or display: grid.',
-    starter: {
-        html,
-        css: `/* Helper: include padding and borders inside a sized box. Keep this rule. */
-* { box-sizing: border-box; }
-
-/* Write your CSS below. Use the three group classes to style their .sample spans. */
-`
-    },
+    note: 'Build the website shown in the target. Use block for full-width sections, inline for text navigation, and inline-block for sized cards and buttons. Complete this task without Flexbox or Grid.',
+    starter: { html: '', css: '' },
     solution: {
         html,
         css: `* { box-sizing: border-box; }
-body { margin: 0; padding: 24px 14px; background: #f3f6fc; color: #25334d; font-family: Arial, sans-serif; }
-.display-lab { width: 100%; max-width: 860px; margin: 0 auto; padding: 24px; border: 2px solid #b6c7e3; border-radius: 20px; background: #fff; }
-.eyebrow { margin: 0 0 12px; font-size: 10px; letter-spacing: 1.5px; font-weight: bold; color: #536b9c; }
-h1 { margin: 0 0 12px; font-size: 28px; color: #203052; }
-.intro { margin: 0 0 24px; font-size: 14px; line-height: 1.7; color: #62708a; }
-.demo-panel { margin: 16px 0; padding: 18px; border: 1px solid #d9e3f2; border-radius: 14px; }
-.demo-panel h2 { margin: 0 0 9px; font-size: 19px; }
-.demo-panel p { margin: 0 0 14px; font-size: 13px; line-height: 1.8; }
-.sample-row { padding: 6px 0; font-size: 13px; line-height: 2.4; }
-.sample { padding: 8px; border-radius: 8px; font-size: 12px; font-weight: bold; line-height: 24px; }
-.block-panel { background: #f4f8ff; color: #315c9e; }
-.block-panel .sample { display: block; width: 180px; max-width: 100%; height: 46px; margin: 8px 0; border: 2px solid #5486d9; background: #fff; }
-.inline-panel { background: #fff8ef; color: #945414; }
-.inline-panel .sample { display: inline; width: 180px; height: 46px; border: 2px dashed #d98a3d; background: #fff; }
-.inline-panel .sample-row { line-height: 3.6; }
-.inline-block-panel { background: #f0faf5; color: #276c51; }
-.inline-block-panel .sample { display: inline-block; width: 160px; max-width: calc(100% - 8px); height: 54px; margin: 4px; vertical-align: top; border: 4px double #419777; background: #fff; }
-.inline-block-panel .sample-row { padding: 6px 4px; }
-.demo-panel .rule-label { margin: 14px 0 0; font-family: Consolas, monospace; font-size: 11px; overflow-wrap: anywhere; }
-footer { margin-top: 20px; padding-top: 16px; border-top: 1px solid #d9e3f2; font-size: 12px; line-height: 1.8; color: #62708a; }
+body { margin: 0; padding: 26px 16px; background: #f1f5fb; color: #25334d; font-family: Arial, sans-serif; }
+.learning-hub { width: 100%; max-width: 940px; margin: 0 auto; overflow: hidden; border: 2px solid #c5d2e7; border-radius: 20px; background: #fff; }
+.site-heading { display: block; padding: 30px 24px; background: #17365d; color: #fff; text-align: center; border-bottom: 4px solid #5084d7; }
+.eyebrow { margin: 0 0 12px; color: #b7d1f7; font-size: 9px; font-weight: bold; letter-spacing: 2px; }
+h1 { margin: 0 0 11px; color: #fff; font-size: 34px; }
+.site-heading > p:last-child { margin: 0; color: #d7e4f8; font-size: 13px; line-height: 1.7; }
+.site-nav { display: block; padding: 17px 12px; border-bottom: 1px solid #dae5f4; background: #eff5ff; text-align: center; line-height: 2; }
+.site-nav a { display: inline; margin: 0 13px; color: #305a92; text-decoration: none; font-size: 12px; font-weight: bold; }
+.courses { display: block; padding: 30px 16px 22px; text-align: center; }
+.section-label { margin: 0 0 10px; color: #6681aa; font-size: 9px; font-weight: bold; letter-spacing: 1.7px; }
+.courses h2 { margin: 0 0 11px; color: #203858; font-size: 25px; }
+.section-intro { margin: 0 0 18px; color: #708099; font-size: 12px; line-height: 1.8; }
+.course-list { text-align: center; }
+.course-card { display: inline-block; width: 220px; max-width: calc(100% - 16px); height: 260px; margin: 8px; padding: 20px; vertical-align: top; border-radius: 14px; text-align: left; }
+.html-card { border: 3px solid #5486d9; background: #f2f7ff; }
+.css-card { border: 3px dashed #419777; background: #f1faf5; }
+.js-card { border: 5px double #d98a3d; background: #fff8ef; }
+.course-number { color: #6b7d96; font-size: 9px; letter-spacing: .7px; font-weight: bold; }
+.course-card h3 { margin: 20px 0 13px; color: #233b5d; font-size: 25px; }
+.course-card p { height: 65px; margin: 0 0 18px; color: #5b6e87; font-size: 12px; line-height: 1.8; }
+.course-card a { display: inline-block; padding: 9px 12px; border: 1px solid #ccd9ec; border-radius: 7px; background: #fff; color: #355883; text-decoration: none; font-size: 11px; font-weight: bold; }
+.about-strip { display: block; margin: 0 24px 24px; padding: 20px; border: 1px dashed #b7cae7; border-radius: 12px; text-align: center; background: #f9fbff; }
+.about-strip h2 { margin: 0 0 8px; color: #35567f; font-size: 17px; }
+.about-strip p { margin: 0; color: #708099; font-size: 12px; line-height: 1.8; }
+footer { display: block; padding: 17px 24px; border-top: 1px solid #dce5f2; background: #f8faff; text-align: center; }
+footer strong { color: #426187; font-size: 12px; }
+footer span { display: inline-block; margin: 0 12px; color: #7b8da6; font-size: 11px; }
 `
     }
 };

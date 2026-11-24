@@ -496,7 +496,7 @@ export default function KnoblyAI() {
     const isHomePage = pathname === '/';
     const isTestPage = pathname?.startsWith('/test/');
     const isPythonLabPage = pathname === '/python-lab' || pathname === '/c-lab';
-    const isCompilerPage = pathname?.includes('/compiler') || pathname?.startsWith('/html/tasks');
+    const isCompilerPage = pathname?.includes('/compiler') || pathname?.startsWith('/html/tasks') || pathname?.startsWith('/web-design/css/tasks/') || pathname?.startsWith('/web-design/w3css/tasks/');
     const isHiddenPage = Boolean(isTestPage || isPythonLabPage || isCompilerPage || pathname === '/practice');
 
     const [open, setOpen] = useState(false);

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowRight, BookOpen, Code2, Target } from 'lucide-react';
+import { BookOpen, Code2, Target } from 'lucide-react';
 import { courseSummary, getStyleCourse } from '@/lib/style-courses';
 import { lessonDraft } from '@/lib/style-course-demo';
 import { getUnlockedCssTasks } from '@/lib/css-task-access';
@@ -12,6 +12,7 @@ import LockedNotes from './LockedNotes';
 import CourseQuiz from './CourseQuiz';
 import StylePlayground from './StylePlayground';
 import CssTaskManager from './CssTaskManager';
+import StyleTaskView from './StyleTaskView';
 
 async function cssTaskIsLocked(taskId: string) {
     try { return !(await getUnlockedCssTasks()).includes(taskId); } catch { return true; }
@@ -39,8 +40,8 @@ export async function StyleTaskPage({ id, taskId }: { id: StyleCourseId; taskId:
     const course = getStyleCourse(id), task = course.tasks.find(item=>item.id===taskId);
     if (!task) notFound();
     if (id === 'css' && await cssTaskIsLocked(taskId)) return <LockedCssTask task={task}/>;
-    const base = `/web-design/${id}`;
-    return <CourseShell course={id}><main className="sc-main"><section className="sc-card"><div className="sc-kicker">{course.name} PRACTICAL PROJECT</div><h1>{task.title}</h1><p>{task.subtitle}</p>{task.note && <div className="sc-remember"><strong>Practice focus</strong><p>{task.note}</p></div>}<h2>Your checklist</h2><ol>{task.steps.map(step=><li key={step}>{step}</li>)}</ol><div className="sc-tags">{task.skills.map(skill=><code key={skill}>{skill}</code>)}</div><div className="sc-actions"><Link className="sc-primary" href={`${base}/tasks/${task.id}/compiler`}>Start in compiler<ArrowRight size={16} /></Link><Link className="sc-secondary" href={`${base}/learn/${task.lesson}`}>Revise related lesson<BookOpen size={15} /></Link><Link className="sc-secondary" href={`${base}/tasks`}>All tasks</Link></div></section><section className="sc-card"><h2>Target output</h2><p>Recreate this reference. Move your pointer over it to check hover effects.</p><iframe className="sc-target" src={task.target} title={`${task.title} target output`} sandbox="allow-scripts" /></section></main></CourseShell>;
+    const index = course.tasks.indexOf(task);
+    return <StyleTaskView course={id} task={{id:task.id,title:task.title,subtitle:task.subtitle,target:task.target,steps:task.steps,skills:task.skills,lesson:task.lesson}} previous={course.tasks[index-1]?.id} next={course.tasks[index+1]?.id}/>;
 }
 export function StyleNotesPage({ id }: { id: StyleCourseId }) {
     const course = getStyleCourse(id);
@@ -56,5 +57,5 @@ export async function StyleCompilerPage({ id, taskId, lessonId }: { id: StyleCou
     if ((taskId && !task) || (lessonId && !lesson)) notFound();
     if (id === 'css' && task && await cssTaskIsLocked(task.id)) return <LockedCssTask task={task}/>;
     const first = course.lessons[0];
-    return <StylePlayground key={`${id}:${taskId || lessonId || 'playground'}`} course={id} title={task?.title || lesson?.title || `${course.name} playground`} draftId={taskId || lessonId || 'playground'} initial={task?.starter || lessonDraft(id, lesson || first)} task={task} backHref={task ? `/web-design/${id}/tasks/${task.id}` : lesson ? `/web-design/${id}/learn/${lesson.id}` : `/web-design/${id}`} />;
+    return <StylePlayground key={`${id}:${taskId || lessonId || 'playground'}`} course={id} title={task?.title || lesson?.title || `${course.name} playground`} draftId={taskId || lessonId || 'playground'} initial={task ? {html:'',css:''} : lessonDraft(id, lesson || first)} task={task ? {id:task.id,title:task.title,subtitle:task.subtitle,target:task.target,steps:task.steps,skills:task.skills} : undefined} backHref={task ? `/web-design/${id}/tasks/${task.id}` : lesson ? `/web-design/${id}/learn/${lesson.id}` : `/web-design/${id}`} />;
 }

@@ -76,6 +76,7 @@ test('compiler waits for draft restoration before mounting an editor and only re
     const react={...React,useState(init){const i=cursor++;if(!(i in cells))cells[i]=typeof init==='function'?init():init;return[cells[i],()=>{}];},useSyncExternalStore(subscribe,snapshot,server){return phase==='server'?server():snapshot();}};
     const {default:Playground}=load('src/components/style-course/StylePlayground.tsx',{
         react,'react/jsx-runtime':runtime,'next/dynamic':{default:()=>()=>null},'next/link':{default:()=>null},'lucide-react':new Proxy({},{get:()=>()=>null}),'@/lib/style-course-demo':{previewDocument},'@/lib/task-practice-shortcuts':{PRACTICE_SHORTCUTS:[]},
+        '@/components/html/TaskPracticeTools':{default:()=>null},'@/components/html/TaskFullscreenPreview':{default:()=>null},'@/lib/style-workspace':{},
     },{localStorage:{getItem(key){assert.equal(key,'knobly_style_draft_v1:css:border-properties');return JSON.stringify(saved);},setItem(){throw Error('A render must not save or overwrite a draft');}}});
     const props={course:'css',title:'Borders',draftId:'border-properties',initial:{html:'<p>Lesson template</p>',css:''},backHref:'/web-design/css'};
     const pending=Playground(props);

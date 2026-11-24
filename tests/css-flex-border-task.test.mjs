@@ -43,17 +43,23 @@ test('task callout occurs once after Display: Flex and before Box Model in the c
     assert.ok(!html.includes('CSS Study Corner'),'The inline summary does not expose the locked target or solution');
 });
 
-test('display task compares the same spans without Flexbox and keeps its public reference equal to the compiler solution',()=>{
+test('display task is a real learning website using block, inline navigation and inline-block cards without Flexbox',()=>{
     assert.equal(displayTask.lesson,'display-property');assert.equal(displayTask.inlineAfter,'display-property');
     const summary=courses.courseSummary('css').tasks.find(t=>t.id===displayTask.id);
     assert.equal(summary.solution,undefined);assert.equal(summary.starter,undefined);
     assert.equal(source('public'+displayTask.target).trimEnd(),demos.previewDocument(displayTask.solution,'css'));
     const rules=new Map();postcss.parse(displayTask.solution.css).walkRules(rule=>rules.set(rule.selector,Object.fromEntries(rule.nodes.filter(n=>n.type==='decl').map(n=>[n.prop,n.value]))));
-    for(const [group,display,border] of [['block','block','2px solid #5486d9'],['inline','inline','2px dashed #d98a3d'],['inline-block','inline-block','4px double #419777']]) {
-        const style=rules.get(`.${group}-panel .sample`);assert.equal(style.display,display);assert.equal(style.border,border);assert.ok(style.width&&style.height);
-    }
+    assert.equal(rules.get('.site-heading').display,'block');
+    assert.equal(rules.get('.site-nav a').display,'inline');
+    assert.equal(rules.get('.course-card').display,'inline-block');
+    assert.equal(rules.get('.course-card').width,'220px');
+    assert.equal(rules.get('.course-card').height,'260px');
+    assert.equal(rules.get('.html-card').border,'3px solid #5486d9');
+    assert.equal(rules.get('.css-card').border,'3px dashed #419777');
+    assert.equal(rules.get('.js-card').border,'5px double #d98a3d');
     assert.doesNotMatch(displayTask.solution.css,/display:\s*(flex|grid)/);
-    assert.equal((displayTask.starter.html.match(/<span class="sample">/g)||[]).length,9);
+    assert.equal((displayTask.solution.html.match(/class="course-card /g)||[]).length,3);
+    assert.equal(displayTask.starter.html,'');
     assert.doesNotMatch(displayTask.starter.css,/display:\s*(block|inline)/);
     assert.doesNotMatch(source('public'+displayTask.target),/<script|https?:\/\//);
 });

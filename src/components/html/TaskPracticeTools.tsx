@@ -12,7 +12,7 @@ export interface TaskEditorApi {
     monaco: typeof Monaco;
 }
 
-export default function TaskPracticeTools({ mode, onModeChange, api, isWhite, onSave, onClear, leading, trailing }: {
+export default function TaskPracticeTools({ mode, onModeChange, api, isWhite, onSave, onClear, leading, trailing, language = 'html' }: {
     mode: TaskEditorMode;
     onModeChange: (mode: TaskEditorMode) => void;
     api: TaskEditorApi | null;
@@ -21,6 +21,7 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite, on
     onClear: () => void;
     leading: ReactNode;
     trailing: ReactNode;
+    language?: 'html' | 'css';
 }) {
     const [panel, setPanel] = useState<'shortcuts' | 'media' | null>(null);
     const [status, setStatus] = useState('');
@@ -63,19 +64,25 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite, on
         let cancelled = false;
         let dispose: (() => void) | undefined;
         setStatus('Loading practice shortcuts…');
-        import('@/lib/task-practice-editor').then(({ installPracticeEditor }) => {
+        const install = language === 'html'
+            ? import('@/lib/task-practice-editor').then(({ installPracticeEditor }) => installPracticeEditor)
+            : import('@/lib/task-practice-shortcuts').then(({ installPracticeShortcuts }) => (editor: TaskEditorApi['editor'], monaco: TaskEditorApi['monaco'], actions: Parameters<typeof installPracticeShortcuts>[2]) => {
+                const bindings = installPracticeShortcuts(editor, monaco, actions);
+                return () => bindings.forEach(binding => binding.dispose());
+            });
+        install.then(installEditor => {
             if (cancelled || api.editor.getModel() === null) return;
-            dispose = installPracticeEditor(api.editor, api.monaco, {
+            dispose = installEditor(api.editor, api.monaco, {
                 showShortcuts: () => setPanel('shortcuts'),
                 save: () => setSaveStatus(saveRef.current() ? 'Task draft saved.' : 'Draft could not be saved in this browser.'),
             });
             setReady(true);
-            setStatus('Type ! or html, then Tab / Enter · Suggestions and closing tags are on');
+            setStatus(language === 'html' ? 'Type ! or html, then Tab / Enter · Suggestions and closing tags are on' : 'CSS property suggestions and VS Code-style editing shortcuts are on');
         }).catch(() => {
             if (!cancelled) setStatus('Shortcuts could not load. Switch to Exam and back to retry; your code is kept.');
         });
         return () => { cancelled = true; dispose?.(); };
-    }, [mode, api]);
+    }, [mode, api, language]);
 
     useEffect(() => {
         if (!copyStatus) return;
@@ -110,7 +117,7 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite, on
                         <button key={value} type="button" aria-label={`${value === 'exam' ? 'Exam' : 'Practice'} mode`} aria-pressed={mode === value}
                             onClick={() => { onModeChange(value); setMenuOpen(false); api?.editor.focus(); }}
                             className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-[10px] font-bold transition-shadow focus-visible:outline-2 focus-visible:outline-blue-500"
-                            title={value === 'practice' ? status || 'Assisted HTML editing with VS Code-style shortcuts' : 'Original exam editor'}
+                            title={value === 'practice' ? status || `Assisted ${language.toUpperCase()} editing with VS Code-style shortcuts` : 'Original exam editor'}
                             style={mode === value ? value === 'practice' ? { backgroundImage: 'linear-gradient(135deg, #2563eb, #4f46e5)', color: '#ffffff', boxShadow: '0 2px 5px #2563eb25' } : { backgroundColor: isWhite ? '#ffffff' : '#334155', color: palette.color, boxShadow: '0 1px 4px #0f172a15' } : { color: isWhite ? '#475569' : '#cbd5e1' }}>
                             {value === 'exam' ? 'Exam' : 'Practice'}
                             {value === 'practice' && <TaskCompilerNewBadge feature="practice" />}
@@ -127,9 +134,11 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite, on
                         <button type="button" aria-label="Practice tools" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)} title="Practice tools" className="inline-flex h-7 items-center gap-1 rounded-lg border px-2 text-[10px] font-bold" style={palette}><MoreHorizontal size={14} /><span className="hidden xl:inline">Tools</span></button>
                         {menuOpen && <div className="absolute right-0 top-full z-50 mt-2 w-52 space-y-1 rounded-xl border p-1.5 shadow-xl" style={palette}>
                             {[
-                                { label: 'Expand abbreviation', disabled: !ready, action: () => { api?.editor.focus(); api?.editor.getAction('knobly.practice.emmet')?.run(); } },
-                                { label: 'HTML structure', disabled: !ready, action: () => api?.editor.getAction('knobly.practice.structure')?.run() },
-                                { label: 'Format HTML', disabled: !api, action: () => api?.editor.getAction('editor.action.formatDocument')?.run() },
+                                ...(language === 'html' ? [
+                                    { label: 'Expand abbreviation', disabled: !ready, action: () => { api?.editor.focus(); api?.editor.getAction('knobly.practice.emmet')?.run(); } },
+                                    { label: 'HTML structure', disabled: !ready, action: () => api?.editor.getAction('knobly.practice.structure')?.run() },
+                                ] : []),
+                                { label: `Format ${language.toUpperCase()}`, disabled: !api, action: () => api?.editor.getAction('editor.action.formatDocument')?.run() },
                                 { label: 'Shortcuts', action: () => setPanel('shortcuts') },
                                 { label: 'Sample media', action: () => setPanel('media') },
                             ].map(item => <button key={item.label} type="button" disabled={item.disabled} className="block w-full rounded-lg px-3 py-2 text-left text-xs font-semibold hover:brightness-95 disabled:opacity-50" style={palette} onClick={() => { setMenuOpen(false); item.action(); }}>{item.label}</button>)}
@@ -154,7 +163,7 @@ export default function TaskPracticeTools({ mode, onModeChange, api, isWhite, on
                             {PRACTICE_SHORTCUTS.filter(item => `${item.keys} ${item.label} ${item.group}`.toLowerCase().includes(shortcutSearch.toLowerCase().trim())).map(item => <div key={item.keys} className="text-xs"><dt className="font-mono font-bold">{item.keys}</dt><dd className="mt-0.5" style={{ color: isWhite ? '#475569' : '#cbd5e1' }}>{item.label} <span className="text-[10px]">· {item.group}</span></dd></div>)}
                         </dl>
                     </div>
-                    <p className="mt-3 text-xs">This single-file HTML editor supports editing, search, selection, folding and preview. Desktop terminal, Git, extensions, multi-file Explorer and debugger commands need VS Code Desktop. Some browser / OS keys, such as closing a browser tab, take priority.</p>
+                    <p className="mt-3 text-xs">This editor supports editing, search, selection, folding and preview in the current file. Desktop terminal, Git, extensions and debugger commands need VS Code Desktop. Some browser / OS keys, such as closing a browser tab, take priority.</p>
                     <a href="https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf" target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-xs underline" style={{ color: isWhite ? '#1d4ed8' : '#93c5fd' }}>Official VS Code shortcut reference</a>
                 </div>
             )}
