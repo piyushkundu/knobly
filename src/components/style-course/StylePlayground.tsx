@@ -3,12 +3,14 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import type { OnMount } from '@monaco-editor/react';
-import { ArrowLeft, Code2, Columns, Download, Eye, FileCode, Maximize2, Moon, Play, Sun, Target, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowLeft, Code2, Columns, Download, Eye, FileCode, Loader2, Maximize2, Moon, Play, Send, Sun, Target, X, ZoomIn, ZoomOut } from 'lucide-react';
 import TaskPracticeTools, { type TaskEditorApi } from '@/components/html/TaskPracticeTools';
 import TaskFullscreenPreview from '@/components/html/TaskFullscreenPreview';
 import type { StyleCourseId, StyleDraft, StyleTask } from '@/lib/style-course-types';
 import { previewDocument } from '@/lib/style-course-demo';
 import { workspaceZip } from '@/lib/style-workspace';
+import type { StyleEvaluation } from '@/lib/style-task-evaluation';
+import StyleSubmissionResult from './StyleSubmissionResult';
 
 const Editor = dynamic(() => import('@monaco-editor/react'), { ssr:false, loading:()=> <p className="sc-editor-loading">Loading code editor…</p> });
 type StudioTask = Pick<StyleTask, 'id' | 'title' | 'subtitle' | 'target' | 'steps' | 'skills'>;
@@ -47,6 +49,11 @@ function PlaygroundSession({ course, title, draftId, initial, task, backHref, st
     const [fullscreen,setFullscreen] = useState(false);
     const [clear,setClear] = useState(false);
     const [notice,setNotice] = useState(restored ? 'Your saved HTML and CSS were restored.' : '');
+    const [submitting,setSubmitting] = useState(false);
+    const [submitError,setSubmitError] = useState('');
+    const [submission,setSubmission] = useState<{evaluation:StyleEvaluation;draft:StyleDraft}|null>(null);
+    const [showResult,setShowResult] = useState(false);
+    const requestRef = useRef<AbortController|null>(null);
     const draftRef = useRef(draft), runRef = useRef<()=>void>(()=>{});
     const confirmDialog = useRef<HTMLDialogElement>(null);
     const preview = useMemo(()=>previewDocument(output,course),[output,course]);
@@ -65,11 +72,34 @@ function PlaygroundSession({ course, title, draftId, initial, task, backHref, st
         return()=>binding.dispose();
     },[api]);
     useEffect(()=>{
+        if(!api||!practice)return;
+        let cancelled=false,dispose:(()=>void)|undefined;
+        void import('@/lib/css-practice-suggestions').then(module=>{if(!cancelled)dispose=module.installCssSuggestions(api.editor,api.monaco);}).catch(()=>{if(!cancelled)setNotice('CSS suggestions could not load. Switch Exam → Practice to retry. Your code is kept.');});
+        return()=>{cancelled=true;dispose?.();};
+    },[api,practice]);
+    useEffect(()=>()=>{requestRef.current?.abort();requestRef.current=null;},[]);
+    useEffect(()=>{
         const keydown=(event: KeyboardEvent)=>{if((event.key==='F5'&&!event.ctrlKey&&!event.metaKey)||((event.ctrlKey||event.metaKey)&&event.altKey&&event.key==='Enter')){event.preventDefault();runRef.current();}};
         window.addEventListener('keydown',keydown);return()=>window.removeEventListener('keydown',keydown);
     },[]);
     useEffect(()=>{const dialog=confirmDialog.current;if(clear&&!dialog?.open)dialog?.showModal();if(!clear&&dialog?.open)dialog.close();},[clear]);
     const mount: OnMount = (editor,monaco)=>setApi({editor,monaco});
+    const submit = async () => {
+        if(!task||requestRef.current)return;
+        if(!draft.html.trim()){setSubmitError('Pehle apna HTML code likhein, phir Submit karein.');return;}
+        const submitted={...draft},controller=new AbortController();requestRef.current=controller;
+        setSubmitting(true);setSubmitError('');setShowResult(false);saveDraft();setOutput(submitted);
+        const timeout=setTimeout(()=>controller.abort(),20_000);
+        try {
+            const response=await fetch('/api/evaluate-style-task',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({course,taskId:task.id,...submitted}),signal:controller.signal});
+            const data=await response.json();
+            if(!response.ok)throw Error(typeof data.error==='string'?data.error:'Your project could not be reviewed. Please try again.');
+            if(!data.evaluation||typeof data.evaluation.score!=='number'||!Array.isArray(data.evaluation.breakdown))throw Error('The review response was incomplete. Please try again.');
+            if(requestRef.current===controller){setSubmission({evaluation:data.evaluation,draft:submitted});setShowResult(true);}
+        } catch(error) {
+            if(requestRef.current===controller)setSubmitError(controller.signal.aborted?'Review timed out. Your code is safe; please submit again.':error instanceof Error?error.message:'Review failed. Please try again.');
+        } finally {clearTimeout(timeout);if(requestRef.current===controller){requestRef.current=null;setSubmitting(false);}}
+    };
     const download = () => {
         const url=URL.createObjectURL(new Blob([workspaceZip(draft,course)],{type:'application/zip'}));
         const link=document.createElement('a');link.href=url;link.download=`${course}-${draftId}.zip`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -89,16 +119,18 @@ function PlaygroundSession({ course, title, draftId, initial, task, backHref, st
                 <button className="sc-studio-button sc-download-project" onClick={download} title="Download index.html and style.css in one ZIP"><Download size={14}/><span>Download</span></button>
                 <button type="button" role="switch" aria-checked={auto} className={`sc-studio-button sc-auto-run ${auto?'is-on':''}`} onClick={()=>setAuto(value=>!value)}><span className="sc-toggle-track"><i/></span>Auto Run</button>
                 <button className="sc-studio-run" onClick={run}><Play size={14} fill="currentColor"/>Run</button>
+                {task&&<button className="sc-studio-submit" onClick={()=>void submit()} disabled={submitting}>{submitting?<Loader2 size={14} className="sc-submit-spinner"/>:<Send size={14}/>}<span>{submitting?'Checking…':'Submit'}</span></button>}
             </div>
         </header>
         {task&&<details className="sc-studio-goal"><summary><Target size={15}/><strong>Task Goal:</strong><span>{task.subtitle}</span></summary><div><ol>{task.steps.map(step=><li key={step}>{step}</li>)}</ol></div></details>}
+        {submitError&&<div className="sc-submit-error" role="alert"><span>{submitError}</span><button onClick={()=>setSubmitError('')} aria-label="Dismiss submission error"><X size={15}/></button></div>}
         <div className="sc-workspace" data-layout={layout}>
             <section className="sc-editor-pane" aria-label="Code workspace" hidden={layout==='preview'}>
                 <TaskPracticeTools mode={practice?'practice':'exam'} onModeChange={mode=>setPractice(mode==='practice')} api={api} isWhite={!dark} onSave={saveDraft} onClear={()=>setClear(true)} language={file}
                     leading={<><div className="sc-file-tabs" role="group" aria-label="Editor files">{(['html','css'] as const).map(value=><button key={value} aria-pressed={file===value} onClick={()=>setFile(value)}><i data-file={value}/>{value==='html'?'index.html':'style.css'}</button>)}</div><span className="sc-line-count">{draft[file].split('\n').length} lines</span></>}
                     trailing={<div className="sc-code-zoom"><button aria-label="Zoom out code" disabled={fontSize<=10} onClick={()=>setFontSize(value=>Math.max(10,value-1))}><ZoomOut size={12}/></button><button onClick={()=>setFontSize(16)} title="Reset code zoom">{fontSize}px</button><button aria-label="Zoom in code" disabled={fontSize>=24} onClick={()=>setFontSize(value=>Math.min(24,value+1))}><ZoomIn size={12}/></button></div>}/>
                 <div className="sc-monaco"><Editor height="100%" path={`style-course/${course}/${draftId}/${file==='html'?'index.html':'style.css'}`} language={file} value={draft[file]} onChange={value=>{const active=api?.editor.getModel()?.getLanguageId()==='css'?'css':api?'html':file;setDraft(current=>({...current,[active]:value||''}));}} onMount={mount} theme={dark?'vs-dark':'vs'} options={{fontSize,fontFamily:"'JetBrains Mono', 'Fira Code', Consolas, monospace",minimap:{enabled:false},wordWrap:'on',scrollBeyondLastLine:false,automaticLayout:true,padding:{top:12,bottom:12},tabSize:4,quickSuggestions:practice,wordBasedSuggestions:'off',suggestOnTriggerCharacters:practice,tabCompletion:practice?'on':'off',autoClosingBrackets:practice?'languageDefined':'never',autoClosingQuotes:practice?'languageDefined':'never',linkedEditing:practice&&file==='html',formatOnPaste:practice,formatOnType:practice,smoothScrolling:true}}/></div>
-                <footer className="sc-editor-bottom"><span role="status">{notice||'HTML + style.css · Draft saved in this browser.'}</span><span>{file.toUpperCase()}</span></footer>
+                <footer className="sc-editor-bottom"><span role="status">{notice||'HTML + style.css · Draft saved in this browser.'}</span>{submission?<button className="sc-last-result" onClick={()=>setShowResult(true)}>Last result: {submission.evaluation.score}/100</button>:<span>{file.toUpperCase()}</span>}</footer>
             </section>
             <section className="sc-preview-pane" aria-label="Output workspace" hidden={layout==='editor'}>
                 <div className="sc-preview-toolbar"><div role="group" aria-label="Output view"><button data-view="preview" aria-pressed={view==='preview'} onClick={()=>setView('preview')}><Eye size={13}/>My Preview</button>{task&&<><button data-view="target" aria-pressed={view==='target'} onClick={()=>setView('target')}><Target size={13}/>Target Task</button><button data-view="compare" aria-pressed={view==='compare'} onClick={()=>setView('compare')}><Columns size={13}/>Compare</button></>}</div><button className="sc-output-fullscreen" onClick={()=>setFullscreen(true)} aria-label={`Open ${view} fullscreen`}><Maximize2 size={13}/><span>Open {view==='target'?'target':view==='compare'?'compare':'preview'} fullscreen</span></button></div>
@@ -107,6 +139,7 @@ function PlaygroundSession({ course, title, draftId, initial, task, backHref, st
             </section>
         </div>
         {fullscreen&&<TaskFullscreenPreview mode={task?view:'preview'} targetSrc={task?.target||''} previewHtml={preview} previewKey={0} sandbox="allow-scripts allow-forms" onClose={()=>setFullscreen(false)}/>}
+        {showResult&&submission&&<StyleSubmissionResult result={submission.evaluation} changed={draft.html!==submission.draft.html||draft.css!==submission.draft.css} onClose={()=>setShowResult(false)} onCompare={()=>{setShowResult(false);setView('compare');setLayout('split');}} onResubmit={()=>void submit()}/>}
         <dialog ref={confirmDialog} className="sc-clear-dialog" aria-label="Clear current project" onCancel={event=>{event.preventDefault();setClear(false);}}><header><h2>Clear both files?</h2><button aria-label="Close clear dialog" onClick={()=>setClear(false)}><X size={18}/></button></header><p>This clears index.html and style.css. Download your project first if you want to keep it.</p><div><button autoFocus onClick={()=>setClear(false)}>Keep my code</button><button className="sc-clear-confirm" onClick={()=>{const empty={html:'',css:''};draftRef.current=empty;setDraft(empty);setOutput(empty);saveDraft();setNotice('Both files cleared.');setClear(false);}}>Clear both files</button></div></dialog>
     </main>;
 }

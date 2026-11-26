@@ -45,14 +45,14 @@ test('download is a valid two-file ZIP with a linked external stylesheet, exact 
     assert.match(workspace.workspaceHtml('<html><body>Hello</body></html>','w3css'),/w3schools.com\/w3css\/4\/w3.css/);
 });
 
-function studio() {
+function studio(fetcher) {
     const cells=[];let cursor=0,session=false;
     const react={...React,useState(init){if(!session)return[typeof init==='function'?init():init,()=>{}];const i=cursor++;if(!(i in cells))cells[i]=typeof init==='function'?init():init;return[cells[i],next=>{cells[i]=typeof next==='function'?next(cells[i]):next;}];},useRef(initial){const i=cursor++;return cells[i]??(cells[i]={current:initial});},useCallback:fn=>fn,useMemo:fn=>fn(),useEffect(){},useSyncExternalStore:()=>null};
-    const Editor=()=>null,Tools=()=>null,Fullscreen=()=>null;
-    const Playground=load('src/components/style-course/StylePlayground.tsx',{...basics,react,'next/dynamic':{default:()=>Editor},'@/components/html/TaskPracticeTools':{default:Tools},'@/components/html/TaskFullscreenPreview':{default:Fullscreen},'@/lib/style-course-demo':demo,'@/lib/style-workspace':workspace},{localStorage:{getItem:()=>null}}).default;
+    const Editor=()=>null,Tools=()=>null,Fullscreen=()=>null,Result=()=>null;
+    const Playground=load('src/components/style-course/StylePlayground.tsx',{...basics,react,'next/dynamic':{default:()=>Editor},'@/components/html/TaskPracticeTools':{default:Tools},'@/components/html/TaskFullscreenPreview':{default:Fullscreen},'@/lib/style-course-demo':demo,'@/lib/style-workspace':workspace,'./StyleSubmissionResult':{default:Result}},{localStorage:{getItem:()=>null,setItem(){}},fetch:fetcher,AbortController,setTimeout,clearTimeout}).default;
     const child=Playground({course:'css',title:'Test task',draftId:'display-border-lab',initial:{html:'',css:''},task:{id:'display-border-lab',title:'Test task',subtitle:'Build the website',target:'/style-course/display-border-lab.html',steps:[],skills:[]},backHref:'/tasks'});
     session=true;
-    return{Editor,Tools,Fullscreen,render(){cursor=0;return child.type(child.props);}};
+    return{Editor,Tools,Fullscreen,Result,render(){cursor=0;return child.type(child.props);}};
 }
 function nodes(tree,predicate){if(!tree||typeof tree!=='object')return[];return[...(predicate(tree)?[tree]:[]),...[tree.props?.children].flat(Infinity).flatMap(child=>nodes(child,predicate))];}
 const button=(tree,label)=>nodes(tree,n=>n.type==='button'&&n.props['aria-label']===label)[0];
@@ -75,4 +75,22 @@ test('HTML and CSS edits remain separate across modes, run combines both, target
     button(tree,'Open compare fullscreen').props.onClick();tree=app.render();assert.equal(nodes(tree,n=>n.type===app.Fullscreen)[0].props.mode,'compare');
     nodes(tools().props.leading,n=>n.type==='button'&&n.props.children?.[1]==='index.html')[0].props.onClick();tree=app.render();assert.match(editor().props.value,/My website/);
     button(tree,'Editor only').props.onClick();tree=app.render();assert.equal(nodes(tree,n=>n.props?.['aria-label']==='Output workspace')[0].props.hidden,true);
+});
+
+test('Submit sends both current files, prevents repeat clicks, shows the real response and keeps edits on errors',async()=>{
+    const calls=[];let resolveReview;
+    const evaluation={score:65,grade:'C',breakdown:[],strengths:[],improvements:['Keep practising.']};
+    const app=studio((url,options)=>{calls.push({url,...JSON.parse(options.body)});return new Promise(resolve=>{resolveReview=resolve;});});
+    let tree=app.render();
+    const submit=()=>nodes(tree,n=>n.type==='button'&&n.props.className==='sc-studio-submit')[0];
+    const editor=()=>nodes(tree,n=>n.type===app.Editor)[0];
+    submit().props.onClick();tree=app.render();assert.equal(calls.length,0);assert.ok(nodes(tree,n=>n.props?.role==='alert').length);
+    editor().props.onChange('<h1>My submitted project</h1>');tree=app.render();
+    const tools=nodes(tree,n=>n.type===app.Tools)[0];nodes(tools.props.leading,n=>n.type==='button'&&n.props.children?.[1]==='style.css')[0].props.onClick();tree=app.render();editor().props.onChange('h1 { color: blue }');tree=app.render();
+    submit().props.onClick();submit().props.onClick();tree=app.render();assert.equal(submit().props.disabled,true);assert.equal(calls.length,1);
+    assert.equal(calls[0].url,'/api/evaluate-style-task');assert.equal(calls[0].html,'<h1>My submitted project</h1>');assert.equal(calls[0].css,'h1 { color: blue }');
+    editor().props.onChange('h1 { color: green }');tree=app.render();
+    resolveReview({ok:true,json:async()=>({evaluation})});await new Promise(setImmediate);tree=app.render();
+    const result=nodes(tree,n=>n.type===app.Result)[0];assert.equal(result.props.result.score,65);assert.equal(result.props.changed,true);assert.equal(submit().props.disabled,false);assert.equal(editor().props.value,'h1 { color: green }');
+    result.props.onClose();tree=app.render();submit().props.onClick();resolveReview({ok:false,json:async()=>({error:'Try again later'})});await new Promise(setImmediate);tree=app.render();assert.equal(editor().props.value,'h1 { color: green }');assert.ok(nodes(tree,n=>n.props?.role==='alert').length);assert.equal(submit().props.disabled,false);
 });
