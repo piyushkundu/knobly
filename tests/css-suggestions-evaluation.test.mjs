@@ -26,20 +26,38 @@ test('real CSS language service suggests properties and values in CSS files and 
 });
 
 test('CSS providers are restricted to the current editor model and dispose completely when Practice is disabled',()=>{
-    const providers=[],listeners=[];let disposed=0,triggers=0;
-    const value='<style>h1 { co }</style>',column=value.indexOf('co')+3;
+    const providers=[],colorProviders=[],listeners=[];let disposed=0,triggers=0;
+    let value='<style>h1 { co }</style>';const column=value.indexOf('co')+3;
     const model={getValue:()=>value,getLanguageId:()=> 'html',getOffsetAt:()=>column-1,getWordUntilPosition:()=>({startColumn:column-2,endColumn:column,word:'co'})};
     const editor={getModel:()=>model,getPosition:()=>({lineNumber:1,column}),onDidType(fn){listeners.push(fn);return{dispose(){disposed++;}};},trigger(){triggers++;}};
     class Range{constructor(startLineNumber,startColumn,endLineNumber,endColumn){Object.assign(this,{startLineNumber,startColumn,endLineNumber,endColumn});}}
-    const defaults=()=>({modeConfiguration:{completionItems:true,hovers:true},setModeConfiguration(value){this.modeConfiguration=value;}});
+    const defaults=()=>({modeConfiguration:{completionItems:true,colors:true,hovers:true},setModeConfiguration(value){this.modeConfiguration=value;}});
     const html=defaults(),css=defaults();
-    const monaco={Range,languages:{html:{htmlDefaults:html},css:{cssDefaults:css},CompletionItemKind:{Property:9,Color:15,Value:11},CompletionItemInsertTextRule:{InsertAsSnippet:4},registerCompletionItemProvider(language,provider){providers.push({language,...provider});return{dispose(){disposed++;}};}}};
+    const monaco={Range,languages:{html:{htmlDefaults:html},css:{cssDefaults:css},CompletionItemKind:{Property:9,Color:15,Value:11},CompletionItemInsertTextRule:{InsertAsSnippet:4},registerCompletionItemProvider(language,provider){providers.push({language,...provider});return{dispose(){disposed++;}};},registerColorProvider(language,provider){colorProviders.push({language,...provider});return{dispose(){disposed++;}};}}};
     const stop=suggestions.installCssSuggestions(editor,monaco);
-    assert.equal(html.modeConfiguration.completionItems,false);assert.equal(css.modeConfiguration.completionItems,false);
+    assert.equal(html.modeConfiguration.completionItems,false);assert.equal(css.modeConfiguration.completionItems,false);assert.equal(css.modeConfiguration.colors,false);
     assert.deepEqual(providers.map(p=>p.language),['css','html']);
     const result=providers[1].provideCompletionItems(model,{lineNumber:1,column});assert.ok(result.suggestions.some(item=>item.label==='color'));
     assert.equal(providers[1].provideCompletionItems({},{}).suggestions.length,0);
-    listeners[0]('o');assert.equal(triggers,1);stop();assert.equal(disposed,3);assert.equal(html.modeConfiguration.completionItems,true);assert.equal(css.modeConfiguration.completionItems,true);stop();assert.equal(disposed,3);
+    assert.equal(colorProviders[0].provideDocumentColors({}).length,0);
+    value='<p>Keep me</p><style>h1{color:red}</style>';
+    const color=colorProviders[1].provideDocumentColors(model)[0];assert.ok(color);
+    const choices=colorProviders[1].provideColorPresentations(model,{...color,color:{red:0,green:0,blue:1,alpha:1}});
+    const blue=choices.find(item=>item.textEdit?.text==='#0000ff');assert.ok(blue);
+    const updated=value.slice(0,blue.textEdit.range.startColumn-1)+blue.textEdit.text+value.slice(blue.textEdit.range.endColumn-1);
+    assert.equal(updated,'<p>Keep me</p><style>h1{color:#0000ff}</style>');
+    value='<style>h1 { co }</style>';
+    listeners[0]('o');assert.equal(triggers,1);stop();assert.equal(disposed,5);assert.equal(html.modeConfiguration.completionItems,true);assert.equal(css.modeConfiguration.completionItems,true);assert.equal(css.modeConfiguration.colors,true);stop();assert.equal(disposed,5);
+});
+
+test('named, hex and rgba colors are detected inside CSS and multiple HTML style blocks with exact editable ranges',()=>{
+    const source='<p>red</p>\n<style>h1{color:red;background:#123456}</style>\n<script>"<style>a{color:blue}</style>"</script>\n<style>p{color:rgba(1,2,3,.5)}</style>';
+    const colors=suggestions.cssDocumentColors(source,'html');assert.equal(colors.length,3);
+    assert.equal(colors[0].color.red,1);assert.equal(colors[0].color.green,0);
+    const lines=source.split('\n');assert.equal(lines[colors[0].range.start.line].slice(colors[0].range.start.character,colors[0].range.end.character),'red');
+    assert.equal(colors[2].color.alpha,.5);
+    assert.equal(suggestions.cssDocumentColors('/* color: red */ h1 {color:orange}','css').length,1);
+    assert.equal(suggestions.cssDocumentColors('<p>orange</p>','html').length,0);
 });
 
 test('reference projects score consistently, separate and embedded CSS are both reviewed, and comments or unused selectors earn no CSS credit',()=>{
