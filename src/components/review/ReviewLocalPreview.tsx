@@ -1,7 +1,7 @@
 ﻿"use client";
 import { useState } from "react";
 import ReviewWorkspace from "./ReviewWorkspace";
-import type { ReviewData } from "@/lib/review-model";
+import type { ReviewData, ReviewFilter } from "@/lib/review-model";
 const examples = [
   {
     text: "What is restarting an already running computer called? | पहले से चल रहे कंप्यूटर को दोबारा शुरू करना क्या कहलाता है?",
@@ -112,11 +112,16 @@ const sample: ReviewData = {
   ),
   missing: 0,
 };
-export default function ReviewLocalPreview() {
+export default function ReviewLocalPreview({
+  initialFilter = "all",
+}: {
+  initialFilter?: ReviewFilter;
+}) {
   const [saved, setSaved] = useState(new Set<string>(["sample-1", "sample-3"]));
   return (
     <ReviewWorkspace
       preview
+      initialFilter={initialFilter}
       data={sample}
       userId="preview"
       saved={saved}

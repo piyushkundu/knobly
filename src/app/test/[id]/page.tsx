@@ -10,6 +10,9 @@ import {
 import { useRouter } from 'next/navigation';
 
 import ExamWorkspace from '@/components/exam/ExamWorkspace';
+import ExamEntryScreen from '@/components/exam/ExamEntryScreen';
+import ExamResultScreen from '@/components/exam/ExamResultScreen';
+import {transitionBreakdown} from '@/lib/exam-transition';
 import { htmlOptionHindi } from '@/lib/html-test-option-language';
 import { createExamAnswerSync } from '@/lib/exam-answer-sync';
 import { startExamCountdown } from '@/lib/exam-countdown';
@@ -132,6 +135,7 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
     const [startError, setStartError] = useState('');
     const deadlineRef = useRef<number | null>(null);
     const startingRef = useRef(false);
+    const [starting,setStarting] = useState(false);
 
     // Anti cheat
     const [warningCount, setWarningCount] = useState(0);
@@ -546,6 +550,13 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
         setExamStarted(true);
     };
 
+    const handleStartClick = async () => {
+        if (startingRef.current) return;
+        setStarting(true);
+        try { await createAttemptAndStart(); }
+        finally { setStarting(false); }
+    };
+
     return (
         <div className="min-h-screen overflow-x-hidden" data-exam-page="true" style={{ background: '#f0f2f5' }} onClick={handleContainerClick}>
 
@@ -572,134 +583,15 @@ export default function TestPlayPage({ params }: { params: Promise<{ id: string 
                 </div>
             )}
 
-            {/* Results Overlay */}
-            {resultData && (
-                <div className="fixed inset-0 z-[80] flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4338ca 60%, #6366f1 100%)' }} onClick={e => e.stopPropagation()}>
-                    <div className="w-full max-w-md rounded-3xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 25px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1)' }}>
-                        <div className="px-6 pt-6 pb-4">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="h-11 w-11 rounded-2xl flex items-center justify-center text-white font-black text-lg" style={{ background: resultData.accuracy >= 70 ? 'linear-gradient(135deg, #10b981, #34d399)' : resultData.accuracy >= 40 ? 'linear-gradient(135deg, #f59e0b, #fbbf24)' : 'linear-gradient(135deg, #ef4444, #f87171)', boxShadow: '0 4px 14px rgba(0,0,0,0.1)' }}>
-                                    {resultData.accuracy >= 70 ? '🏆' : resultData.accuracy >= 40 ? '📊' : '💪'}
-                                </div>
-                                <div>
-                                    <h2 className="text-lg font-black" style={{ color: '#0f172a' }}>{resultData.statusType === 'AUTO_SUBMITTED' ? 'Auto-Submitted' : 'Exam Submitted'}</h2>
-                                    <p className="text-[11px] font-medium" style={{ color: '#475569' }}>
-                                        {resultData.accuracy >= 70 ? '🎉 Excellent Performance!' : resultData.accuracy >= 40 ? '👍 Good Effort!' : '📈 Keep Practicing!'}
-                                    </p>
-                                </div>
-                            </div>
-                            {resultData.statusType === 'AUTO_SUBMITTED' && (
-                                <div className="mb-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider" style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca' }}>
-                                    ⚠️ Auto-submitted: Time expired or warnings limit
-                                </div>
-                            )}
-
-                            <div className="rounded-2xl p-4 mb-4" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', border: '1px solid #c7d2fe' }}>
-                                <div className="grid grid-cols-2 gap-2 mb-3">
-                                    <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                                        <div className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: '#6366f1' }}>🪙 Points</div>
-                                        <div className="text-xl font-black" style={{ color: '#4338ca' }}>+{resultData.pointsEarned}</div>
-                                        <div className="text-[9px] font-medium" style={{ color: '#818cf8' }}>of {testData?.xp_reward || resultData.total}</div>
-                                    </div>
-                                    <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                                        <div className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: resultData.accuracy >= 70 ? '#059669' : resultData.accuracy >= 40 ? '#d97706' : '#dc2626' }}>📊 Accuracy</div>
-                                        <div className="text-xl font-black" style={{ color: resultData.accuracy >= 70 ? '#047857' : resultData.accuracy >= 40 ? '#b45309' : '#b91c1c' }}>{resultData.accuracy}%</div>
-                                    </div>
-                                </div>
-                                <div className="mt-2">
-                                    <div className="flex items-center justify-between mb-1.5 px-1">
-                                        <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: '#64748b' }}>Question Breakdown</span>
-                                        <span className="text-[9px] font-bold" style={{ color: '#6366f1' }}>{resultData.correctCount}/{resultData.total} Correct</span>
-                                    </div>
-                                    <div className="h-2.5 rounded-full overflow-hidden flex" style={{ background: 'rgba(255,255,255,0.5)' }}>
-                                        {resultData.correctCount > 0 && <div className="h-full transition-all" style={{ width: `${(resultData.correctCount / resultData.total) * 100}%`, background: 'linear-gradient(90deg, #10b981, #34d399)' }} />}
-                                        {resultData.wrongCount > 0 && <div className="h-full transition-all" style={{ width: `${(resultData.wrongCount / resultData.total) * 100}%`, background: 'linear-gradient(90deg, #ef4444, #f87171)' }} />}
-                                        {resultData.skippedCount > 0 && <div className="h-full transition-all" style={{ width: `${(resultData.skippedCount / resultData.total) * 100}%`, background: '#cbd5e1' }} />}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-2">
-                                <div className="text-center rounded-xl p-2.5" style={{ background: '#ecfdf5', border: '1px solid #a7f3d0' }}>
-                                    <div className="text-sm mb-0.5">✅</div>
-                                    <div className="text-lg font-black" style={{ color: '#059669' }}>{resultData.correctCount}</div>
-                                    <div className="text-[8px] font-bold uppercase tracking-wider" style={{ color: '#10b981' }}>Correct</div>
-                                </div>
-                                <div className="text-center rounded-xl p-2.5" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
-                                    <div className="text-sm mb-0.5">❌</div>
-                                    <div className="text-lg font-black" style={{ color: '#dc2626' }}>{resultData.wrongCount}</div>
-                                    <div className="text-[8px] font-bold uppercase tracking-wider" style={{ color: '#ef4444' }}>Wrong</div>
-                                </div>
-                                <div className="text-center rounded-xl p-2.5" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                                    <div className="text-sm mb-0.5">⏭️</div>
-                                    <div className="text-lg font-black" style={{ color: '#64748b' }}>{resultData.skippedCount}</div>
-                                    <div className="text-[8px] font-bold uppercase tracking-wider" style={{ color: '#475569' }}>Skipped</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="px-6 pb-6">
-                            <button onClick={() => router.push(`/review/${attempt?.id || ''}`)} className="w-full py-3.5 rounded-2xl text-white text-sm font-bold flex items-center justify-center gap-2 mb-3 transition-all hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', boxShadow: '0 8px 25px rgba(109,40,217,0.4)' }}>
-                                📋 Full Analysis
-                            </button>
-                            <button onClick={() => router.push('/dashboard')} className="w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition hover:bg-gray-100" style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' }}>
-                                ← Back to Dashboard
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Start Overlay */}
-            {!examStarted && !examFinished && (
-                <div className="fixed inset-0 z-30 flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4338ca 60%, #6366f1 100%)' }} onClick={e => e.stopPropagation()}>
-                    <div className="w-full max-w-md rounded-3xl overflow-hidden" style={{ background: '#ffffff', boxShadow: '0 25px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1)' }}>
-                        <div className="px-6 pt-6 pb-4">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="h-11 w-11 rounded-2xl flex items-center justify-center text-white font-black text-lg" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 14px rgba(99,102,241,0.4)' }}>K</div>
-                                <div>
-                                    <h2 className="text-lg font-black" style={{ color: '#0f172a' }}>Secure Exam Mode</h2>
-                                    <p className="text-[11px] font-medium" style={{ color: '#475569' }}>Anti-cheat protocols are active</p>
-                                </div>
-                            </div>
-                            <div className="rounded-2xl p-4 mb-4" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', border: '1px solid #c7d2fe' }}>
-                                <h3 className="text-sm font-bold mb-2" style={{ color: '#3730a3' }}>{testData?.title || 'Exam'}</h3>
-                                <div className="grid grid-cols-3 gap-2">
-                                    <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                                        <div className="text-base font-black" style={{ color: '#6366f1' }}>{testData?.duration_minutes || 30}</div>
-                                        <div className="text-[9px] font-bold uppercase" style={{ color: '#475569' }}>Minutes</div>
-                                    </div>
-                                    <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                                        <div className="text-base font-black" style={{ color: '#10b981' }}>{questions.length}</div>
-                                        <div className="text-[9px] font-bold uppercase" style={{ color: '#475569' }}>Questions</div>
-                                    </div>
-                                    <div className="text-center rounded-xl py-2 px-1" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                                        <div className="text-base font-black" style={{ color: '#f59e0b' }}>{testData?.xp_reward || questions.length}</div>
-                                        <div className="text-[9px] font-bold uppercase" style={{ color: '#475569' }}>Total Points</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="px-6 pb-4">
-                            <div className="rounded-xl p-3" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
-                                <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#dc2626' }}>⚠️ Exam Rules</p>
-                                <ul className="space-y-1.5">
-                                    {['Right click & Copy/Paste are **disabled**', 'Exiting fullscreen triggers a **warning**', 'Switching tabs triggers a **warning**', '**3 warnings** = auto-submit'].map((r, i) => (
-                                        <li key={i} className="flex items-center gap-2 text-[11px] font-medium" style={{ color: '#991b1b' }}>
-                                            <span className="h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: '#ef4444' }}></span>
-                                            <span dangerouslySetInnerHTML={{ __html: r.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="px-6 pb-6">
-                            <button onClick={createAttemptAndStart} className="w-full py-3.5 rounded-2xl text-white text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]" style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)', boxShadow: '0 8px 25px rgba(109,40,217,0.4)' }}>
-                                {resumeAttempt ? '▶ Enter Fullscreen & Resume Practice' : '▶ Enter Fullscreen & Start Exam'}
-                            </button>
-                            <p className="mt-3 text-center text-[10px] font-medium" style={{ color: '#475569' }}>By clicking Start, you agree to the monitoring rules.</p>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Result and entry screens share the exam/review design. */}
+            {resultData && <ExamResultScreen title={testData.title} result={resultData}
+                breakdown={transitionBreakdown(questions,responsesMap)} totalPoints={testData.xp_reward||resultData.total}
+                timeUsedSeconds={Math.max(0,(testData.duration_minutes||60)*60-(timeLeft??(testData.duration_minutes||60)*60))}
+                reviewAvailable={Boolean(attempt?.id)} onReview={filter=>router.push(`/review/${attempt?.id}?filter=${filter}`)} onBack={()=>router.push('/dashboard')}/>}
+            {!examStarted&&!examFinished&&<ExamEntryScreen title={testData.title} durationMinutes={testData.duration_minutes||60}
+                questionCount={questions.length} totalPoints={testData.xp_reward||questions.length} maxWarnings={MAX_WARNINGS}
+                resuming={Boolean(resumeAttempt)} remainingSeconds={timeLeft??undefined} resumeDeadline={resumeAttempt?.deadline} starting={starting}
+                onStart={()=>void handleStartClick()} onBack={()=>router.push('/dashboard')}/>}
 
             {/* ═══ MAIN EXAM SHELL — FUTURISTIC FULLSCREEN ═══ */}
             {examStarted&&!examFinished&&<ExamWorkspace key={attempt?.id||testId} test={testData} questions={workspaceQuestions}

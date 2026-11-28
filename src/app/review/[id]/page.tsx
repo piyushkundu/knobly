@@ -8,6 +8,7 @@ import { db } from "@/lib/firebase";
 import { loadCompletedReview } from "@/lib/review-loader";
 import {
   correctReviewOption,
+  reviewFilterFromSearch,
   type ReviewData,
   type ReviewQuestion,
 } from "@/lib/review-model";
@@ -172,6 +173,11 @@ function CompletedReview({
   return (
     <ReviewWorkspace
       data={data}
+      initialFilter={
+        typeof window === "undefined"
+          ? "all"
+          : reviewFilterFromSearch(window.location.search)
+      }
       userId={user.uid}
       saved={saved}
       bookmarkLoading={bookmarkLoading}

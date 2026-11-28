@@ -1,5 +1,12 @@
 export type ReviewStatus = "correct" | "wrong" | "skipped" | "manual";
 export type ReviewFilter = "all" | ReviewStatus | "saved";
+export function reviewFilterFromSearch(search: string): ReviewFilter {
+  const value = new URLSearchParams(search).get("filter");
+  return value &&
+    ["all", "correct", "wrong", "skipped", "manual", "saved"].includes(value)
+    ? (value as ReviewFilter)
+    : "all";
+}
 export interface ReviewOption {
   id: string;
   option_text: string;

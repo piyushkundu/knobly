@@ -45,6 +45,7 @@ export interface ReviewWorkspaceProps {
   onBookmark: (id: string, saved: boolean) => Promise<void>;
   onExplain: (q: ReviewQuestion) => Promise<string>;
   preview?: boolean;
+  initialFilter?: ReviewFilter;
 }
 export default function ReviewWorkspace({
   data,
@@ -57,8 +58,9 @@ export default function ReviewWorkspace({
   onBookmark,
   onExplain,
   preview = false,
+  initialFilter = "all",
 }: ReviewWorkspaceProps) {
-  const [filter, setFilter] = useState<ReviewFilter>("all"),
+  const [filter, setFilter] = useState<ReviewFilter>(initialFilter),
     [language, setLanguage] = useState<ExamLanguage>("both"),
     [saving, setSaving] = useState<Set<string>>(new Set()),
     [saveError, setSaveError] = useState("");

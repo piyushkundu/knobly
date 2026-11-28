@@ -494,7 +494,7 @@ export default function KnoblyAI() {
     const router = useRouter();
     const pathname = usePathname();
     const isHomePage = pathname === '/';
-    const isTestPage = pathname?.startsWith('/test/') || pathname === '/test-preview' || pathname?.startsWith('/review/') || pathname === '/review-preview';
+    const isTestPage = pathname?.startsWith('/test/') || pathname === '/test-preview' || pathname === '/exam-screens-preview' || pathname?.startsWith('/review/') || pathname === '/review-preview';
     const isPythonLabPage = pathname === '/python-lab' || pathname === '/c-lab';
     const isCompilerPage = pathname?.includes('/compiler') || pathname?.startsWith('/html/tasks') || pathname?.startsWith('/web-design/css/tasks/') || pathname?.startsWith('/web-design/w3css/tasks/');
     const isHiddenPage = Boolean(isTestPage || isPythonLabPage || isCompilerPage || pathname === '/practice');
